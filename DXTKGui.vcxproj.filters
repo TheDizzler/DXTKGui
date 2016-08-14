@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{1c37b9f4-880e-4a76-a8c2-d60316d6b5a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{76804a96-ada4-4211-bebe-77a2e1e08339}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\BaseGfx">
+      <UniqueIdentifier>{33fac6d1-0874-4f6b-8c5f-c45db2cd22c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\BaseGfx">
+      <UniqueIdentifier>{ac12ca84-e254-4509-96a2-c85519ce31e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Controls">
+      <UniqueIdentifier>{157f53fe-b816-46b5-882a-9a3d12b87d1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Controls">
+      <UniqueIdentifier>{c1ad0bfe-a060-4641-9a8a-809e1f84c774}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers">
+      <UniqueIdentifier>{9a060f31-a4d6-4638-974c-655e7c31c2fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers">
+      <UniqueIdentifier>{fb7b9b85-d1a0-4686-8393-8d0435547495}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Engine\MouseController.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\main.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\GameEngine.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\GraphicsEngine.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\Input.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\KeyboardController.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BaseGraphics\FontSet.cpp">
+      <Filter>Source Files\Engine\BaseGfx</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BaseGraphics\RectangleSprite.cpp">
+      <Filter>Source Files\Engine\BaseGfx</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\BaseGraphics\Sprite.cpp">
+      <Filter>Source Files\Engine\BaseGfx</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Controls\ComboBox.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Controls\Button.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Controls\Dialog.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Controls\ImageButton.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Controls\ListBox.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Controls\TextButton.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Controls\TextLabel.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Managers\GameManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Managers\MenuManager.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Engine\GameEngine.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\GraphicsEngine.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Input.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\KeyboardController.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\MouseController.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BaseGraphics\FontSet.h">
+      <Filter>Header Files\Engine\BaseGfx</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BaseGraphics\IElement2D.h">
+      <Filter>Header Files\Engine\BaseGfx</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BaseGraphics\RectangleSprite.h">
+      <Filter>Header Files\Engine\BaseGfx</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BaseGraphics\Sprite.h">
+      <Filter>Header Files\Engine\BaseGfx</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Controls\Button.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Controls\ComboBox.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Controls\Dialog.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Controls\ImageButton.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Controls\ListBox.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Controls\TextButton.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Controls\TextLabel.h">
+      <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\assets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Managers\GameManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Managers\MenuManager.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Managers\screen.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>
