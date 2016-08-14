@@ -1,8 +1,9 @@
 #include "Dialog.h"
 
-Dialog::Dialog(const Vector2& position) : Sprite(position) {
+using namespace Controls;
+Dialog::Dialog(const Vector2& pos) {
 
-
+	position = pos;
 }
 
 Dialog::~Dialog() {

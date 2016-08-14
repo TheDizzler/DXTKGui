@@ -133,7 +133,7 @@ MainScreen::MainScreen(MenuManager* mngr, FontSet* fntst) : MenuScreen(mngr, fnt
 MainScreen::~MainScreen() {
 }
 
-
+using namespace Control;
 bool MainScreen::initialize(ID3D11Device* device, MouseController* mouse) {
 
 	TextButton* button = new TextButton();
@@ -231,7 +231,6 @@ void MainScreen::update(double deltaTime,
 						//test->setText("Exit!");
 						break;
 					case Button::PLAY:
-						game->loadLevel(Assets::levelMakoXML);
 						//test->setText("Play!");
 						break;
 					case Button::SETTINGS:

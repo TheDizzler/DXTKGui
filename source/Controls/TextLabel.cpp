@@ -1,13 +1,18 @@
 #include "TextLabel.h"
 
 
+using namespace Controls;
+
+
+TextLabel::TextLabel(Vector2 pos, FontSet* fnt, wstring text) {
+
+	position = pos;
+	font = fnt;
+	label = text;
+}
 
 TextLabel::TextLabel(Vector2 pos, FontSet* fnt) {
 
-	/*wostringstream ws;
-	ws << "Blank Texxt";
-	wstring setupText = ws.str();
-	label = setupText;*/
 	position = pos;
 	font = fnt;
 }
@@ -37,19 +42,38 @@ void TextLabel::setText(string text) {
 
 	wostringstream ws;
 	ws << text.c_str();
-	label = ws.str();
+	setText(ws);
 }
 
 void TextLabel::setText(wostringstream& text) {
 
-	label = text.str();
+	setText(text.str());
 }
 
 void TextLabel::setText(wstring text) {
 
+	size = font->measureString(label.c_str());
 	label = text;
 }
 
 const wchar_t * TextLabel::getText() {
 	return label.c_str();
+}
+
+void Controls::TextLabel::update(double deltaTime, MouseController* mouse) {
+}
+
+void Controls::TextLabel::setPosition(Vector2& position) {
+}
+
+const Vector2& Controls::TextLabel::getPosition() {
+	// TODO: insert return statement here
+}
+
+int Controls::TextLabel::getWidth() {
+	return size.x;
+}
+
+int Controls::TextLabel::getHeight() {
+	return size.y;
 }

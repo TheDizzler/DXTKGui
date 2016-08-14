@@ -4,37 +4,57 @@
 
 
 #include "../BaseGraphics/Sprite.h"
-#include "TextButton.h"
+#include "Button.h"
+
+namespace Controls {
 
 
-class Dialog : public Sprite {
-public:
+	/** Creates a Dialog Box using a custom dds background file. */
+	class CustomBGDialog : public Dialog {
+	public:
+		CustomBGDialog(const Vector2& position);
 
-	enum DialogResult {
-		NONE, CONFIRM, CANCEL
+		bool initialize(ID3D11Device* device, const wchar_t* fontFile,
+			const wchar_t* bgFile);
+
+	private:
+
+		unique_ptr<Sprite> bgSprite;
+
+
 	};
 
-	Dialog(const Vector2& position);
-	~Dialog();
+	class Dialog {
+	public:
 
-	bool initialize(ID3D11Device* device, const wchar_t* fontFile);
+		enum DialogResult {
+			NONE, CONFIRM, CANCEL
+		};
 
-	virtual void update(double deltaTime, MouseController* mouse);
-	virtual void draw(SpriteBatch* batch);
+		Dialog(const Vector2& position);
+		~Dialog();
 
-	void open();
-	void close();
-	DialogResult getResult();
+		bool initialize(ID3D11Device* device, const wchar_t* fontFile);
 
-	bool isOpen = false;
+		virtual void update(double deltaTime, MouseController* mouse);
+		virtual void draw(SpriteBatch* batch);
 
-private:
+		void add(GUIControl control);
 
-	unique_ptr<FontSet> font;
-	vector<TextLabel*> labels;
-	vector<TextButton*> buttons;
+		void open();
+		void close();
+		DialogResult getResult();
 
-	
-	DialogResult result = NONE;
+		bool isOpen = false;
 
+	private:
+
+		unique_ptr<FontSet> font;
+		vector<TextLabel*> labels;
+		vector<TextButton*> buttons;
+
+
+		DialogResult result = NONE;
+
+	};
 };

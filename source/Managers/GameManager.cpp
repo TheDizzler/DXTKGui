@@ -56,16 +56,9 @@ void GameManager::loadLevel(const wchar_t* file) {
 
 void GameManager::loadMainMenu() {
 
-	/*if (lastScreen)
-		delete lastScreen;*/
 	lastScreen = currentScreen;
 	currentScreen = menuScreen.get();
 
-	/*if (!currentScreen->initialize(device, mouse)) {
-		MessageBox(NULL, L"Failed to load main menu", L"ERROR", MB_OK);
-		exit();
-	}
-	currentScreen->setGameManager(this);*/
 }
 
 
