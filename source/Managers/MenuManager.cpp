@@ -133,7 +133,7 @@ MainScreen::MainScreen(MenuManager* mngr, FontSet* fntst) : MenuScreen(mngr, fnt
 MainScreen::~MainScreen() {
 }
 
-using namespace Control;
+using namespace Controls;
 bool MainScreen::initialize(ID3D11Device* device, MouseController* mouse) {
 
 	TextButton* button = new TextButton();
@@ -324,7 +324,7 @@ bool ConfigScreen::initialize(ID3D11Device* device, MouseController* mouse) {
 	if (!button->load(device, Assets::arialFontFile,
 		Assets::buttonUpFile, Assets::buttonDownFile))
 		return false;
-	button->action = Button::ButtonAction::CANCEL;
+	button->action = Button::ClickAction::CANCEL;
 	button->setText("Back");
 	button->setPosition(
 		Vector2(Globals::WINDOW_WIDTH / 2 - button->getWidth(),
@@ -335,7 +335,7 @@ bool ConfigScreen::initialize(ID3D11Device* device, MouseController* mouse) {
 	if (!button->load(device, Assets::arialFontFile,
 		Assets::buttonUpFile, Assets::buttonDownFile))
 		return false;
-	button->action = Button::ButtonAction::OK;
+	button->action = Button::ClickAction::OK;
 	button->setText("Apply");
 	button->setPosition(
 		Vector2(Globals::WINDOW_WIDTH / 2 + button->getWidth(),

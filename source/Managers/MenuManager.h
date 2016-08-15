@@ -5,7 +5,7 @@
 #include "Screen.h"
 #include "../Controls/Dialog.h"
 #include "../Controls/ListBox.h"
-#include "../Controls/TextButton.h"
+#include "../Controls/Button.h"
 
 
 class MenuScreen;
@@ -78,8 +78,8 @@ protected:
 	MenuManager* menuManager;
 	FontSet* menuFont;
 
-	vector<TextLabel*> textLabels;
-	vector<TextButton*> buttons;
+	vector<Controls::TextLabel*> textLabels;
+	vector<Controls::TextButton*> buttons;
 
 	vector<ListBox*> listBoxes; 
 
@@ -92,7 +92,7 @@ public:
 	~ConfigScreen();
 
 	// Inherited via MenuScreen
-	virtual bool initialize(ID3D11Device * device, MouseController * mouse) override;
+	virtual bool initialize(ID3D11Device* device, MouseController * mouse) override;
 	virtual void update(double deltaTime, KeyboardController* keys, MouseController * mouse) override;
 	virtual void draw(SpriteBatch * batch) override;
 

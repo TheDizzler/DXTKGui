@@ -1,5 +1,6 @@
 #include "GameManager.h"
 
+
 GameManager::GameManager(GameEngine* gmngn) {
 
 	gameEngine = gmngn;
@@ -8,11 +9,25 @@ GameManager::GameManager(GameEngine* gmngn) {
 GameManager::~GameManager() {
 }
 
-
 bool GameManager::initializeGame(ID3D11Device* dvc, MouseController* ms) {
 
 	device = dvc;
 	mouse = ms;
+
+	// get graphical assets from xml file
+	docAssMan.reset(new pugi::xml_document());
+	if (!docAssMan->load_file(Assets::assetManifestFile)) {
+		MessageBox(0, L"Could not read AssetManifest file!", L"Fatal Read Error!", MB_OK;
+		return false;
+	}
+
+	pugi::xml_node guiNode = docAssMan->child("root").child("gui");
+
+	guiManager.reset(new GUIManager(guiNode));
+	if (!guiManager->initialize(device)) {
+		MessageBox(0, L"Failed to load GUIManager", L"Fatal Error", MB_OK);
+		return false;
+	}
 
 
 	menuScreen.reset(new MenuManager());
@@ -28,7 +43,6 @@ bool GameManager::initializeGame(ID3D11Device* dvc, MouseController* ms) {
 }
 
 
-
 void GameManager::update(double deltaTime, KeyboardController* keys,
 	MouseController* mouse) {
 
@@ -38,20 +52,15 @@ void GameManager::update(double deltaTime, KeyboardController* keys,
 }
 
 
-
-
 void GameManager::draw(SpriteBatch * batch) {
 
 	currentScreen->draw(batch);
 
 }
 
+
 void GameManager::loadLevel(const wchar_t* file) {
-
-	lastScreen = currentScreen;
-
-
-
+// do nothing for this example
 }
 
 void GameManager::loadMainMenu() {

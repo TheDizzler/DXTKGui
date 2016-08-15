@@ -15,17 +15,18 @@ Dialog::~Dialog() {
 }
 
 #include "../assets.h"
-bool Dialog::initialize(ID3D11Device * device, const wchar_t* fontFile) {
+bool Dialog::initialize(ID3D11Device * device, shared_ptr<FontSet> fnt) {
 
 	if (!Sprite::load(device, Assets::uglyDialogBox))
 		return false;
 
 	setScale(Vector2(3, 1.5));
 
-	font.reset(new FontSet());
+	/*font.reset(new FontSet());
 	if (!font->load(device, fontFile))
 		return false;
-	font->setTint(DirectX::Colors::White.v);
+	font->setTint(DirectX::Colors::White.v);*/
+	font = fnt;
 
 	Vector2 textLoc;
 	Vector2 okBtn;
@@ -36,7 +37,7 @@ bool Dialog::initialize(ID3D11Device * device, const wchar_t* fontFile) {
 	label->setText("Really Quit Tender Torrent?");
 	Vector2 size = font->measureString(label->getText());
 	textLoc = Vector2(position.x - size.x / 2, position.y - height / 4);
-	label->position = textLoc;
+	label->setPosition(textLoc);
 	labels.push_back(label);
 
 
@@ -69,14 +70,35 @@ bool Dialog::initialize(ID3D11Device * device, const wchar_t* fontFile) {
 	return true;
 }
 
+
+void Controls::Dialog::add(GUIControl* control) {
+
+	controls.push_back(control);
+}
+
+
 void Dialog::update(double deltaTime, MouseController* mouse) {
 
 	result = NONE;
 
-	for (TextButton* button : buttons) {
+	/*for (TextButton* button : buttons) {
 		button->update(deltaTime, mouse);
 		if (button->clicked()) {
 			switch (button->action) {
+				case Button::OK:
+					result = CONFIRM;
+					break;
+				case Button::CANCEL:
+					result = DialogResult::CANCEL;
+					break;
+			}
+		}
+	}*/
+
+	for (GUIControl* control : controls) {
+		control->update(deltaTime, mouse);
+		if (control->clicked()) {
+			switch (control->action) {
 				case Button::OK:
 					result = CONFIRM;
 					break;

@@ -6,6 +6,7 @@
 #include "../BaseGraphics/Sprite.h"
 #include "Button.h"
 
+
 namespace Controls {
 
 
@@ -28,18 +29,19 @@ namespace Controls {
 	public:
 
 		enum DialogResult {
-			NONE, CONFIRM, CANCEL
+			NONE, CONFIRM, CANCEL, NEUTRAL
 		};
 
 		Dialog(const Vector2& position);
 		~Dialog();
 
-		bool initialize(ID3D11Device* device, const wchar_t* fontFile);
+		bool initialize(ID3D11Device* device, shared_ptr<FontSet> font);
+		void add(GUIControl* control);
 
 		virtual void update(double deltaTime, MouseController* mouse);
 		virtual void draw(SpriteBatch* batch);
 
-		void add(GUIControl control);
+		
 
 		void open();
 		void close();
@@ -49,10 +51,12 @@ namespace Controls {
 
 	private:
 
-		unique_ptr<FontSet> font;
-		vector<TextLabel*> labels;
-		vector<TextButton*> buttons;
+		shared_ptr<FontSet> font;
+		//vector<TextLabel*> labels;
+		//vector<TextButton*> buttons;
+		vector<GUIControl*> controls;
 
+		Vector2 position;
 
 		DialogResult result = NONE;
 

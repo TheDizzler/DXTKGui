@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root game="DirectX ToolKit GUI" xml="AssetManifest">
+
+
+	<gui dir="assets/gfx/gui/">
+		<spritefonts dir="assets/fonts/">
+			<font name="Arial" file="assets/fonts/Arial.spritefont" fontSize="16" />
+			<font name="Bookshelf" file="assets/fonts/Bookshelf.spritefont" fontSize="42" />
+			<font name="BlackCloak" file="assets/fonts/BlackCloak.spritefont" fontSize="32" />
+		</spritefonts>
+
+		<sprite name="White Pixel" file="assets/gui/WhitePixel.dds" />
+		<sprite name="Mouse Icon" file="assets/gui/mouse icon.dds" />
+		<sprite name="Mouse Reticle" file="assets/gui/reticle (16x16).dds" />
+
+		<sprite name="Button Up" file="assets/gui/button up (256x64).dds" />
+		<sprite name="Button Down" file="assets/gui/button down (256x64).dds" />
+
+		<!-- Excessive buttons are excessive -->
+		<sprite name="Combo Button Closed" file="assets/gui/ComboButtonClosed.dds" />
+		<sprite name="Combo Button Pressed Closed"
+			file="assets/gui/ComboButtonPressedClosed.dds" />
+		<sprite name="Combo Button Opened" file="assets/gui/ComboButtonOpen.dds" />
+		<sprite name="Combo Button Pressed Opened" file="assets/gui/ComboButtonPressedOpen.dds" />
+		<sprite name="ScrollBar Up Button" file="assets/gui/ScrollBarUp.dds" />
+		<sprite name="ScrollBar Up Pressed" file="assets/gui/ScrollBarUpPressed.dds" />
+		<sprite name="ScrollBar Down" file="assets/gui/ScrollBarDown.dds" />
+		<sprite name="ScrollBar Down Pressed" file="assets/gui/ScrollBarDownPressed.dds" />
+
+		<sprite name="Ugly Dialog" file="assets/gui/dialog pink (200x200).dds" />
+	</gui>
+
+</root>

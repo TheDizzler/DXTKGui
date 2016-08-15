@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "TextLabel.h"
-#include "ImageButton.h"
+#include "Button.h"
 #include "../BaseGraphics/RectangleSprite.h"
 
 using namespace std;
@@ -16,7 +16,7 @@ public:
 	~ListItem();
 
 	void initialize(const int width, const int height,
-		FontSet* fnt, ID3D11ShaderResourceView* pixelTexture);
+		shared_ptr<FontSet> fnt, ID3D11ShaderResourceView* pixelTexture);
 
 
 	const wchar_t* toString();
@@ -146,7 +146,7 @@ public:
 	ListBox(const Vector2& position, const int width);
 	~ListBox();
 
-	bool initialize(ID3D11Device* device, const wchar_t* fontFile);
+	bool initialize(ID3D11Device* device, const wchar_t* fontFile, ID3D11ShaderResourceView* whitePixel);
 
 	void addItems(vector<ListItem*> items);
 
@@ -168,8 +168,6 @@ public:
 
 private:
 
-
-
 	/* width of listbox */
 	int width;
 	Vector2 position;
@@ -177,7 +175,7 @@ private:
 	size_t itemsToDisplay;
 	
 
-	unique_ptr<FontSet> font;
+	shared_ptr<FontSet> font;
 	vector<ListItem*> listItems;
 	size_t selectedIndex = 0;
 
@@ -188,7 +186,8 @@ private:
 
 	int firstItemToDisplay = 0;
 
-	ComPtr<ID3D11ShaderResourceView> whiteBG;
+	/** ID3D11ShaderResourceView is a ComPtr! */
+	ID3D11ShaderResourceView* pixel;
 
 	int frameThickness = 2;
 

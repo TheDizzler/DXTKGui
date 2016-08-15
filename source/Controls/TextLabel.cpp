@@ -4,28 +4,27 @@
 using namespace Controls;
 
 
-TextLabel::TextLabel(Vector2 pos, FontSet* fnt, wstring text) {
+TextLabel::TextLabel(Vector2 pos, shared_ptr<FontSet> fnt, wstring text) {
 
 	position = pos;
 	font = fnt;
 	label = text;
 }
 
-TextLabel::TextLabel(Vector2 pos, FontSet* fnt) {
+TextLabel::TextLabel(Vector2 pos, shared_ptr<FontSet> fnt) {
 
 	position = pos;
 	font = fnt;
 }
 
 
-TextLabel::TextLabel(FontSet* fnt) {
+TextLabel::TextLabel(shared_ptr<FontSet> fnt) {
 
 	font = fnt;
 }
 
 TextLabel::~TextLabel() {
 }
-
 
 
 void TextLabel::draw(SpriteBatch* batch) {
@@ -52,28 +51,66 @@ void TextLabel::setText(wostringstream& text) {
 
 void TextLabel::setText(wstring text) {
 
-	size = font->measureString(label.c_str());
+	Vector2 size = font->measureString(label.c_str());
 	label = text;
+	hitArea.reset(new HitArea(position, size));
 }
 
-const wchar_t * TextLabel::getText() {
+const wchar_t* TextLabel::getText() {
 	return label.c_str();
 }
 
-void Controls::TextLabel::update(double deltaTime, MouseController* mouse) {
+
+bool TextLabel::clicked() {
+
+	if (isClicked) {
+		isClicked = isSelected = false;
+		return true;
+	}
+
+	return false;
 }
 
-void Controls::TextLabel::setPosition(Vector2& position) {
+bool TextLabel::selected() {
+
+	return isSelected;
 }
 
-const Vector2& Controls::TextLabel::getPosition() {
-	// TODO: insert return statement here
+bool TextLabel::hovering() {
+	return isHover;
 }
 
-int Controls::TextLabel::getWidth() {
-	return size.x;
+
+void TextLabel::update(double deltaTime, MouseController* mouse) {
+
+	if (isHoverable) {
+		isHover = hitArea->contains(mouse->getPosition());
+
+		if (isSelected && !mouse->leftButtonDown()) {
+			isClicked = true;
+		} else {
+			isClicked = false;
+			if (!isHover)
+				isSelected = false;
+			else if (!mouse->leftButtonLastDown() && mouse->leftButtonDown()) {
+				isSelected = true;
+			}
+		}
+	}
 }
 
-int Controls::TextLabel::getHeight() {
-	return size.y;
+
+const Vector2& TextLabel::getPosition() {
+
+	return position;
+}
+
+
+int TextLabel::getWidth() {
+
+	return hitArea->size.x;
+}
+
+int TextLabel::getHeight() {
+	return hitArea->size.y;
 }

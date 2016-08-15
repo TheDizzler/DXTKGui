@@ -1,6 +1,6 @@
 #include "ListBox.h"
 
-
+using namespace Controls;
 ListBox::ListBox(const Vector2& pos, const int len) {
 
 	position = pos;
@@ -18,8 +18,10 @@ ListBox::~ListBox() {
 
 #include "DDSTextureLoader.h"
 #include "../globals.h"
-bool ListBox::initialize(ID3D11Device* device, const wchar_t* fontFile) {
+bool ListBox::initialize(ID3D11Device* device, const wchar_t* fontFile,
+	ID3D11ShaderResourceView* whitePixel) {
 
+	pixel = whitePixel;
 
 	font.reset(new FontSet());
 	if (!font->load(device, fontFile))
@@ -27,25 +29,20 @@ bool ListBox::initialize(ID3D11Device* device, const wchar_t* fontFile) {
 	font->setTint(DirectX::Colors::White.v);
 
 
-	if (Globals::reportError(DirectX::CreateDDSTextureFromFile(
-		device, Assets::whitePixelFile, NULL, whiteBG.GetAddressOf()))) {
+	//if (Globals::reportError(DirectX::CreateDDSTextureFromFile(
+	//	device, Assets::whitePixelFile, NULL, whiteBG.GetAddressOf()))) {
 
-		MessageBox(NULL, L"Failed to create texture from WhitePixel.dds",
-			L"ERROR", MB_OK);
-		return false;
-	}
+	//	MessageBox(NULL, L"Failed to create texture from WhitePixel.dds",
+	//		L"ERROR", MB_OK);
+	//	return false;
+	//}
 
 	//spaceBetweenItems = 32;
 	firstItemPos = Vector2(position.x, position.y);
 
-	/*wostringstream ws;
-	ws << "\n" << "x: " << position.x;
-	ws << " y: " << position.y << "\n";
-
-	OutputDebugString(ws.str().c_str());*/
 
 	scrollBar.reset(new ScrollBar(Vector2(position.x + width, position.y)));
-	if (!scrollBar->initialize(device, whiteBG.Get(),
+	if (!scrollBar->initialize(device, pixel,
 		itemHeight * maxDisplayItems)) {
 
 		MessageBox(NULL, L"Failed to create ScrollBar",
@@ -62,7 +59,7 @@ void ListBox::addItems(vector<ListItem*> items) {
 
 	for (ListItem* item : items) {
 		item->initialize(width - scrollBar->getWidth(), itemHeight,
-			font.get(), whiteBG.Get());
+			font, pixel);
 		listItems.push_back(item);
 	}
 
@@ -156,7 +153,7 @@ void ListBox::drawFrame(SpriteBatch* batch) {
 	frame.bottom = frameThickness; // thickness of frame
 	Vector2 framePos(position.x, position.y);
 
-	batch->Draw(whiteBG.Get(), framePos, &frame,
+	batch->Draw(pixel, framePos, &frame,
 		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
 		SpriteEffects_None, 0.0f);
 
@@ -164,7 +161,7 @@ void ListBox::drawFrame(SpriteBatch* batch) {
 	int height = itemHeight * itemsToDisplay;
 	framePos.y += height;
 
-	batch->Draw(whiteBG.Get(), framePos, &frame,
+	batch->Draw(pixel, framePos, &frame,
 		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
 		SpriteEffects_None, 0.0f);
 
@@ -173,14 +170,14 @@ void ListBox::drawFrame(SpriteBatch* batch) {
 	frame.right = frameThickness;
 	frame.bottom = height;
 
-	batch->Draw(whiteBG.Get(), framePos, &frame,
+	batch->Draw(pixel, framePos, &frame,
 		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
 		SpriteEffects_None, 0.0f);
 
 	// right vertical frame
 	framePos.x += realWidth;
 
-	batch->Draw(whiteBG.Get(), framePos, &frame,
+	batch->Draw(pixel, framePos, &frame,
 		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
 		SpriteEffects_None, 0.0f);
 
@@ -221,7 +218,8 @@ ListItem::ListItem() {
 ListItem::~ListItem() {
 }
 
-void ListItem::initialize(const int width, const int height, FontSet * fnt, ID3D11ShaderResourceView * pixelTexture) {
+void ListItem::initialize(const int width, const int height,
+	shared_ptr<FontSet> fnt, ID3D11ShaderResourceView* pixelTexture) {
 
 	itemRect.left = 0;
 	itemRect.top = 0;
@@ -270,7 +268,7 @@ void ListItem::updatePosition(const Vector2 & pos) {
 	Vector2 position(pos);
 	position.x += textMarginX;
 	position.y += textMarginY;
-	textLabel->position = position;
+	textLabel->setPosition(position);
 }
 
 

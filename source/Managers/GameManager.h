@@ -2,7 +2,7 @@
 
 //#include <pugixml.hpp>
 #include "MenuManager.h"
-
+#include "../Controls/GUIManager.h"
 
 class GameEngine;
 
@@ -40,12 +40,12 @@ private:
 	Screen* lastScreen = 0;
 	unique_ptr<MenuManager> menuScreen;
 
-
+	shared_ptr<GUIManager> guiManager;
 	GameEngine* gameEngine;
 	MouseController* mouse;
 	ID3D11Device* device;
 	
-
+	unique_ptr<pugi::xml_document> docAssMan;
 
 	
 };

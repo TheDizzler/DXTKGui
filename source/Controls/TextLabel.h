@@ -13,16 +13,17 @@ using namespace std;
 namespace Controls {
 	class TextLabel : public GUIControl {
 	public:
-		TextLabel(Vector2 position, FontSet* font, wstring text);
-		TextLabel(Vector2 position, FontSet* font);
-		/** A Textlabel with no set position. */
-		TextLabel(FontSet* font);
+		TextLabel(Vector2 position, shared_ptr<FontSet> font, wstring text);
+		TextLabel(Vector2 position, shared_ptr<FontSet> font);
+		/** A Textlabel with no set position. Used for ListBoxes, etc. */
+		TextLabel(shared_ptr<FontSet> font);
 		~TextLabel();
 
 
 		virtual void update(double deltaTime, MouseController* mouse) override;
-		virtual void setPosition(Vector2& position) override;
+		//virtual void setPosition(Vector2& position) override;
 		virtual const Vector2& getPosition() override;
+		//virtual void setScale(const Vector2 & scale) override;
 		virtual int getWidth() override;
 		virtual int getHeight() override;
 
@@ -35,16 +36,21 @@ namespace Controls {
 
 		const wchar_t* getText();
 
-		
+		virtual bool clicked() override;
+		virtual bool selected() override;
+		virtual bool hovering() override;
 
 	private:
 
 		wstring label;
-		FontSet* font;
+		shared_ptr<FontSet> font;
 
-		Vector2 position;
-		Vector2 size;
 		
+		
+		/* Sometimes TextLabel is just a TextLabel. */
+		bool isHoverable = false;
 
+		// to do: tooltips
+		
 	};
 };

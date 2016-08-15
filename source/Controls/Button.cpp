@@ -8,6 +8,13 @@ Button::Button() {
 Button::~Button() {
 }
 
+bool Controls::Button::load(ID3D11Device* device, shared_ptr<FontSet> fnt,
+	shared_ptr<ID3D11ShaderResourceView> pixelTexture) {
+
+
+	return true;
+}
+
 
 void Button::update(double deltaTime, MouseController* mouse) {
 
@@ -33,7 +40,7 @@ void Button::setPosition(Vector2& pos) {
 	normalSprite->setPosition(position);
 	pressedSprite->setPosition(position);
 
-	hitArea = normalSprite->getHitArea();
+	//hitArea = normalSprite->getHitArea();
 }
 
 const Vector2& Button::getPosition() {
@@ -58,6 +65,7 @@ int Button::getHeight() {
 	return hitArea->size.y;
 }
 
+
 bool Button::clicked() {
 
 	if (isClicked) {
@@ -76,6 +84,7 @@ bool Button::selected() {
 bool Button::hovering() {
 	return isHover;
 }
+
 
 
 

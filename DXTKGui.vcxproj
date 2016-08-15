@@ -149,9 +149,9 @@
     <ClCompile Include="Source\Controls\Button.cpp" />
     <ClCompile Include="Source\Controls\ComboBox.cpp" />
     <ClCompile Include="Source\Controls\Dialog.cpp" />
-    <ClCompile Include="Source\Controls\ImageButton.cpp" />
+    <ClCompile Include="source\Controls\GUIControl.cpp" />
+    <ClCompile Include="source\Controls\GUIManager.cpp" />
     <ClCompile Include="Source\Controls\ListBox.cpp" />
-    <ClCompile Include="Source\Controls\TextButton.cpp" />
     <ClCompile Include="Source\Controls\TextLabel.cpp" />
     <ClCompile Include="Source\Engine\GameEngine.cpp" />
     <ClCompile Include="Source\Engine\GraphicsEngine.cpp" />
@@ -171,9 +171,9 @@
     <ClInclude Include="Source\Controls\Button.h" />
     <ClInclude Include="Source\Controls\ComboBox.h" />
     <ClInclude Include="Source\Controls\Dialog.h" />
-    <ClInclude Include="Source\Controls\ImageButton.h" />
+    <ClInclude Include="source\Controls\GUIControl.h" />
+    <ClInclude Include="source\Controls\GUIManager.h" />
     <ClInclude Include="Source\Controls\ListBox.h" />
-    <ClInclude Include="Source\Controls\TextButton.h" />
     <ClInclude Include="Source\Controls\TextLabel.h" />
     <ClInclude Include="Source\Engine\GameEngine.h" />
     <ClInclude Include="Source\Engine\GraphicsEngine.h" />
@@ -188,9 +188,13 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="assets\AssetManifest.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="packages\directxtk_desktop_2015.2016.8.4.1\build\native\directxtk_desktop_2015.targets" Condition="Exists('packages\directxtk_desktop_2015.2016.8.4.1\build\native\directxtk_desktop_2015.targets')" />
+    <Import Project="packages\pugixml.1.7.2\build\native\pugixml.targets" Condition="Exists('packages\pugixml.1.7.2\build\native\pugixml.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -198,5 +202,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('packages\directxtk_desktop_2015.2016.8.4.1\build\native\directxtk_desktop_2015.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtk_desktop_2015.2016.8.4.1\build\native\directxtk_desktop_2015.props'))" />
     <Error Condition="!Exists('packages\directxtk_desktop_2015.2016.8.4.1\build\native\directxtk_desktop_2015.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtk_desktop_2015.2016.8.4.1\build\native\directxtk_desktop_2015.targets'))" />
+    <Error Condition="!Exists('packages\pugixml.1.7.2\build\native\pugixml.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\pugixml.1.7.2\build\native\pugixml.targets'))" />
   </Target>
 </Project>
