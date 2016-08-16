@@ -10,47 +10,47 @@
 
 using namespace std;
 
-namespace Controls {
-	class TextLabel : public GUIControl {
-	public:
-		TextLabel(Vector2 position, shared_ptr<FontSet> font, wstring text);
-		TextLabel(Vector2 position, shared_ptr<FontSet> font);
-		/** A Textlabel with no set position. Used for ListBoxes, etc. */
-		TextLabel(shared_ptr<FontSet> font);
-		~TextLabel();
+class TextLabel : public GUIControl {
+public:
+	TextLabel(Vector2 position, shared_ptr<FontSet> font, wstring text);
+	TextLabel(Vector2 position, shared_ptr<FontSet> font);
+	/** A Textlabel with no set position. Used for ListBoxes, etc. */
+	TextLabel(shared_ptr<FontSet> font);
+	~TextLabel();
 
 
-		virtual void update(double deltaTime, MouseController* mouse) override;
-		//virtual void setPosition(Vector2& position) override;
-		virtual const Vector2& getPosition() override;
-		//virtual void setScale(const Vector2 & scale) override;
-		virtual int getWidth() override;
-		virtual int getHeight() override;
+	virtual void update(double deltaTime, MouseController* mouse) override;
+	//virtual void setPosition(Vector2& position) override;
+	virtual const Vector2& getPosition() override;
+	//virtual void setScale(const Vector2 & scale) override;
+	virtual int getWidth() override;
+	virtual int getHeight() override;
 
-		void draw(SpriteBatch* batch);
-		void draw(SpriteBatch* batch, Color tint);
+	void draw(SpriteBatch* batch);
+	void draw(SpriteBatch* batch, Color tint);
 
-		void setText(string text);
-		void setText(wostringstream& text);
-		void setText(wstring text);
+	virtual void setFont(shared_ptr<FontSet> newFont) override;
 
-		const wchar_t* getText();
+	void setText(string text);
+	void setText(wostringstream& text);
+	void setText(wstring text);
 
-		virtual bool clicked() override;
-		virtual bool selected() override;
-		virtual bool hovering() override;
+	const wchar_t* getText();
 
-	private:
+	virtual bool clicked() override;
+	virtual bool selected() override;
+	virtual bool hovering() override;
 
-		wstring label;
-		shared_ptr<FontSet> font;
+private:
 
-		
-		
-		/* Sometimes TextLabel is just a TextLabel. */
-		bool isHoverable = false;
+	wstring label;
+	shared_ptr<FontSet> font;
 
-		// to do: tooltips
-		
-	};
+
+
+	/* Sometimes TextLabel is just a TextLabel. */
+	bool isHoverable = false;
+
+	// to do: tooltips
+
 };

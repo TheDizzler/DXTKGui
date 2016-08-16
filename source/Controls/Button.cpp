@@ -1,6 +1,5 @@
 #include "Button.h"
 
-using namespace Controls;
 
 Button::Button() {
 }
@@ -8,13 +7,16 @@ Button::Button() {
 Button::~Button() {
 }
 
-bool Controls::Button::load(ID3D11Device* device, shared_ptr<FontSet> fnt,
-	shared_ptr<ID3D11ShaderResourceView> pixelTexture) {
 
+void Button::load(shared_ptr<FontSet> font,
+	ComPtr<ID3D11ShaderResourceView> pixelTexture) {
 
-	return true;
+	buttonFont = font;
+	pixel = pixelTexture;
+
+	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
+	buttonLabel.reset(new TextLabel(Vector2(0, 0), buttonFont));
 }
-
 
 void Button::update(double deltaTime, MouseController* mouse) {
 
@@ -33,26 +35,70 @@ void Button::update(double deltaTime, MouseController* mouse) {
 }
 
 
-void Button::setPosition(Vector2& pos) {
+void Button::draw(SpriteBatch * batch) {
+
+
+	if (isSelected) {
+		batch->Draw(pixel.Get(), position, &buttonRect,
+			selectedColor, 0.0f, Vector2(0, 0), scale,
+			SpriteEffects_None, 0.0f);
+		buttonFont->setTint(selectedColorText);
+	} else if (isHover) {
+		batch->Draw(pixel.Get(), position, &buttonRect,
+			hoverColor, 0.0f, Vector2(0, 0), scale,
+			SpriteEffects_None, 0.0f);
+		buttonFont->setTint(hoverColorText);
+	} else {
+		batch->Draw(pixel.Get(), position, &buttonRect,
+			normalColor, 0.0f, Vector2(0, 0), scale,
+			SpriteEffects_None, 0.0f);
+		buttonFont->setTint(normalColorText);
+	}
+
+
+	buttonLabel->draw(batch);
+}
+
+
+
+void Button::setText(string text) {
+
+	buttonLabel->setText(text);
+}
+
+
+void Button::setDimensions(const Vector2& pos, const Vector2& size) {
 
 	position = pos;
 
-	normalSprite->setPosition(position);
-	pressedSprite->setPosition(position);
+	buttonRect.left = 0;
+	buttonRect.top = 0;
+	buttonRect.right = size.x * scale.x;
+	buttonRect.bottom = size.y * scale.y;
 
-	//hitArea = normalSprite->getHitArea();
+	hitArea.reset(new HitArea(
+		position, Vector2(buttonRect.right, buttonRect.bottom)));
+
+}
+
+void Button::setPosition(Vector2& pos) {
+
+	GUIControl::setPosition(pos);
+
+	Vector2 size = buttonFont->measureString(buttonLabel->getText());
+	buttonLabel->setPosition(Vector2(position.x - size.x / 2, position.y - size.y / 2 - 5));
+
 }
 
 const Vector2& Button::getPosition() {
 	return position;
 }
 
-void Button::setScale(const Vector2 & scale) {
+void Button::setScale(const Vector2& scale) {
 
-	normalSprite->setScale(scale);
-	pressedSprite->setScale(scale);
+	buttonLabel->setScale(scale);
+	GUIControl::setScale(scale);
 
-	hitArea = normalSprite->getHitArea();
 }
 
 int Button::getWidth() {
@@ -85,71 +131,11 @@ bool Button::hovering() {
 	return isHover;
 }
 
+void Button::setFont(shared_ptr<FontSet> newFont) {
 
-
-
-/** **** TextButton **** **/
-TextButton::TextButton() {
-
+	buttonFont = newFont;
 }
 
-TextButton::~TextButton() {
-}
-
-
-bool TextButton::load(ID3D11Device* device, const wchar_t* fontFile,
-	const wchar_t* upButtonFile, const wchar_t* downButtonFile) {
-
-	buttonFont.reset(new FontSet());
-	if (!buttonFont->load(device, fontFile))
-		return false;
-	buttonFont->setTint(normalColor);
-
-	buttonLabel.reset(new TextLabel(
-		Vector2(0, 0), buttonFont.get()));
-
-	normalSprite.reset(new Sprite());
-	pressedSprite.reset(new Sprite());
-	if (!normalSprite->load(device, upButtonFile) ||
-		!pressedSprite->load(device, downButtonFile))
-		return false;
-
-	hitArea = normalSprite->getHitArea();
-
-	return true;
-}
-
-
-void TextButton::draw(SpriteBatch* batch) {
-
-	Sprite* drawSprite;
-	drawSprite = normalSprite.get();
-
-	if (isSelected) {
-		drawSprite = pressedSprite.get();
-		buttonFont->setTint(selectedColor);
-	} else if (isHover)
-		buttonFont->setTint(hoverColor);
-	else
-		buttonFont->setTint(normalColor);
-
-	drawSprite->draw(batch);
-	buttonLabel->draw(batch);
-
-}
-
-
-void TextButton::setPosition(Vector2& position) {
-
-	Button::setPosition(position);
-	Vector2 size = buttonFont->measureString(buttonLabel->getText());
-	buttonLabel->setPosition(Vector2(position.x - size.x / 2, position.y - size.y / 2 - 5));
-}
-
-void TextButton::setText(string text) {
-
-	buttonLabel->setText(text);
-}
 
 
 
@@ -160,19 +146,16 @@ ImageButton::ImageButton() {
 ImageButton::~ImageButton() {
 }
 
-bool ImageButton::load(ID3D11Device * device, const wchar_t * upButtonFile,
-	const wchar_t * downButtonFile) {
 
+void ImageButton::load(shared_ptr<FontSet> fnt,
+	shared_ptr<Sprite> upButtonSprite, shared_ptr<Sprite> downButtonSprite) {
 
-	normalSprite.reset(new Sprite());
-	pressedSprite.reset(new Sprite());
-	if (!normalSprite->load(device, upButtonFile) ||
-		!pressedSprite->load(device, downButtonFile))
-		return false;
+	buttonFont = fnt;
+	normalSprite = upButtonSprite;
+	pressedSprite = downButtonSprite;
 
-	hitArea = normalSprite->getHitArea();
-
-	return true;
+	hitArea.reset(new HitArea(*normalSprite->getHitArea()));
+	buttonLabel.reset(new TextLabel(Vector2(0, 0), buttonFont));
 }
 
 
@@ -190,3 +173,75 @@ void ImageButton::draw(SpriteBatch * batch) {
 
 	drawSprite->draw(batch);
 }
+
+void ImageButton::setScale(const Vector2& scale) {
+
+	Button::setScale(scale);
+	normalSprite->setScale(scale);
+	pressedSprite->setScale(scale);
+}
+
+
+
+/** **** TextButton **** **/
+//TextButton::TextButton() {
+//
+//}
+//
+//TextButton::~TextButton() {
+//}
+
+
+//bool TextButton::load(ID3D11Device* device, const wchar_t* fontFile,
+//	const wchar_t* upButtonFile, const wchar_t* downButtonFile) {
+//
+//	buttonFont.reset(new FontSet());
+//	if (!buttonFont->load(device, fontFile))
+//		return false;
+//	buttonFont->setTint(normalColor);
+//
+//	buttonLabel.reset(new TextLabel(
+//		Vector2(0, 0), buttonFont.get()));
+//
+//	normalSprite.reset(new Sprite());
+//	pressedSprite.reset(new Sprite());
+//	if (!normalSprite->load(device, upButtonFile) ||
+//		!pressedSprite->load(device, downButtonFile))
+//		return false;
+//
+//	hitArea = normalSprite->getHitArea();
+//
+//	return true;
+//}
+
+
+//void TextButton::draw(SpriteBatch* batch) {
+//
+//	Sprite* drawSprite;
+//	drawSprite = normalSprite.get();
+//
+//	if (isSelected) {
+//		drawSprite = pressedSprite.get();
+//		buttonFont->setTint(selectedColor);
+//	} else if (isHover)
+//		buttonFont->setTint(hoverColor);
+//	else
+//		buttonFont->setTint(normalColor);
+//
+//	drawSprite->draw(batch);
+//	buttonLabel->draw(batch);
+//
+//}
+//
+//
+//void TextButton::setPosition(Vector2& position) {
+//
+//	Button::setPosition(position);
+//	Vector2 size = buttonFont->measureString(buttonLabel->getText());
+//	buttonLabel->setPosition(Vector2(position.x - size.x / 2, position.y - size.y / 2 - 5));
+//}
+//
+//void TextButton::setText(string text) {
+//
+//	buttonLabel->setText(text);
+//}

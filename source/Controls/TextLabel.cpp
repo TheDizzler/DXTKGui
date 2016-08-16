@@ -1,9 +1,6 @@
 #include "TextLabel.h"
 
 
-using namespace Controls;
-
-
 TextLabel::TextLabel(Vector2 pos, shared_ptr<FontSet> fnt, wstring text) {
 
 	position = pos;
@@ -51,8 +48,8 @@ void TextLabel::setText(wostringstream& text) {
 
 void TextLabel::setText(wstring text) {
 
-	Vector2 size = font->measureString(label.c_str());
 	label = text;
+	Vector2 size = font->measureString(label.c_str());
 	hitArea.reset(new HitArea(position, size));
 }
 
@@ -78,6 +75,11 @@ bool TextLabel::selected() {
 
 bool TextLabel::hovering() {
 	return isHover;
+}
+
+void TextLabel::setFont(shared_ptr<FontSet> newFont) {
+
+	font = newFont;
 }
 
 

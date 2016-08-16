@@ -8,6 +8,24 @@ MouseController::MouseController(HWND hWnd) {
 MouseController::~MouseController() {
 }
 
+void MouseController::loadTexture(ComPtr<ID3D11ShaderResourceView> txtr,
+	ComPtr<ID3D11Resource> rsrc) {
+
+	texture = txtr;
+	resource = rsrc;
+
+	Assets::getTextureDimensions(resource.Get(), &width, &height);
+	origin = Vector2(width / 2.0f, height / 2.0f);
+	sourceRect.left = 0;
+	sourceRect.top = 0;
+	sourceRect.bottom = height;
+	sourceRect.right = width;
+
+	hitArea.reset(new HitArea(
+		Vector2(position.x - width / 2, position.y - height / 2),
+		Vector2(width, height)));
+}
+
 void MouseController::getRawInput(RAWMOUSE* raw) {
 
 	getLastRawInput();

@@ -6,6 +6,8 @@
 
 class GameEngine;
 
+
+
 /** The lowest level of class where game code should be included.
 	Everything below this (GameEngine downward) should generally go unmodified. */
 class GameManager {
@@ -34,13 +36,16 @@ public:
 	size_t getSelectedAdapterIndex();
 	size_t getSelectedDisplayMode();
 
+
+	static unique_ptr<GUIManager> guiManager;
+
 private:
 
 	Screen* currentScreen;
 	Screen* lastScreen = 0;
 	unique_ptr<MenuManager> menuScreen;
 
-	shared_ptr<GUIManager> guiManager;
+	
 	GameEngine* gameEngine;
 	MouseController* mouse;
 	ID3D11Device* device;

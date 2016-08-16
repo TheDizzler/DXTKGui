@@ -22,7 +22,7 @@ bool FontSet::load(ID3D11Device* device, const wchar_t* file) {
 	return true;
 }
 
-XMVECTOR XM_CALLCONV FontSet::measureString(wchar_t const * text) const {
+XMVECTOR XM_CALLCONV FontSet::measureString(wchar_t const* text) const {
 
 	Vector2 measurement = font->MeasureString(text);
 	measurement.x *= scale.x;

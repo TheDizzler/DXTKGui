@@ -1,26 +1,29 @@
 #include "Dialog.h"
 
-using namespace Controls;
+
 Dialog::Dialog(const Vector2& pos) {
 
 	position = pos;
 }
 
 Dialog::~Dialog() {
-	for (TextButton* button : buttons)
+	/*for (Button* button : buttons)
 		delete button;
 
 	for (TextLabel* label : labels)
-		delete label;
+		delete label;*/
+
+	for (GUIControl* control : controls)
+		delete control;
 }
 
 #include "../assets.h"
 bool Dialog::initialize(ID3D11Device * device, shared_ptr<FontSet> fnt) {
 
-	if (!Sprite::load(device, Assets::uglyDialogBox))
+	/*if (!Sprite::load(device, Assets::uglyDialogBox))
 		return false;
 
-	setScale(Vector2(3, 1.5));
+	setScale(Vector2(3, 1.5));*/
 
 	/*font.reset(new FontSet());
 	if (!font->load(device, fontFile))
@@ -33,12 +36,12 @@ bool Dialog::initialize(ID3D11Device * device, shared_ptr<FontSet> fnt) {
 	Vector2 cancelBtn;
 
 
-	TextLabel* label = new TextLabel(textLoc, font.get());
+	/*TextLabel* label = new TextLabel(textLoc, font.get());
 	label->setText("Really Quit Tender Torrent?");
 	Vector2 size = font->measureString(label->getText());
 	textLoc = Vector2(position.x - size.x / 2, position.y - height / 4);
 	label->setPosition(textLoc);
-	labels.push_back(label);
+	controls.push_back(label);
 
 
 	Vector2 scaleFactor = Vector2(.75, 1);
@@ -65,13 +68,13 @@ bool Dialog::initialize(ID3D11Device * device, shared_ptr<FontSet> fnt) {
 	cancelBtn = Vector2(position.x + width - button->getWidth() / 3,
 		position.y + height / 4);
 	button->setPosition(cancelBtn);
-	buttons.push_back(button);
+	buttons.push_back(button);*/
 
 	return true;
 }
 
 
-void Controls::Dialog::add(GUIControl* control) {
+void Dialog::add(GUIControl* control) {
 
 	controls.push_back(control);
 }
@@ -124,13 +127,12 @@ Dialog::DialogResult Dialog::getResult() {
 
 void Dialog::draw(SpriteBatch* batch) {
 
-	Sprite::draw(batch);
+	/*Sprite::draw(batch);
 
 	for (TextButton* button : buttons)
 		button->draw(batch);
 
 	for (TextLabel* label : labels)
-		label->draw(batch);
+		label->draw(batch);*/
 }
-
 

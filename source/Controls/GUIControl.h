@@ -1,41 +1,37 @@
 #pragma once
 
+#include <vector>
 #include "../Engine/MouseController.h"
+#include "../BaseGraphics/FontSet.h"
+using namespace std;
 
-namespace Controls {
-	interface GUIControl {
+//class GUIControlBox;
+class GUIControl {
+public:
+	enum ClickAction {
+		EXIT, PLAY, SETTINGS, CANCEL, OK, UP, DOWN
 
-		enum ClickAction {
-			EXIT, PLAY, SETTINGS, CANCEL, OK, UP, DOWN
+	};
 
-		};
+	virtual void update(double deltaTime, MouseController* mouse) = 0;
+	virtual void draw(SpriteBatch* batch) = 0;
 
-		virtual void update(double deltaTime, MouseController* mouse) = 0;
-		virtual void draw(SpriteBatch* batch) = 0;
+	virtual void setFont(shared_ptr<FontSet> newFont) = 0;
+	virtual void setPosition(Vector2& pos);
 
-		void setPosition(Vector2& pos) {
-			position = pos;
-			hitArea->position = Vector2(pos.x - getWidth()*scale.x / 2,
-				pos.y - getHeight()*scale.y / 2);
-			hitArea->size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
-		};
+	virtual const Vector2& getPosition() = 0;
 
-		virtual const Vector2& getPosition() = 0;
+	virtual void setScale(const Vector2& scl);
 
-		void setScale(const Vector2& scl) {
-			scale = scl;
-			setPosition(position);
-		};
-
-		virtual int getWidth() = 0;
-		virtual int getHeight() = 0;
+	virtual int getWidth() = 0;
+	virtual int getHeight() = 0;
 
 
-		virtual bool clicked() = 0;
-		virtual bool selected() = 0;
-		virtual bool hovering() = 0;
+	virtual bool clicked() = 0;
+	virtual bool selected() = 0;
+	virtual bool hovering() = 0;
 
-		ClickAction action;
+	ClickAction action;
 
 
 protected:
@@ -49,6 +45,12 @@ protected:
 	/** While still hovering over control, button has been pressed and released. */
 	bool isClicked = false;
 
-	};
-
 };
+
+
+//interface GUIControlBox : public GUIControl {
+//public:
+//	void addItems(GUIControl* control);
+//	void addItems(std::vector<GUIControl*> controls);
+//
+//};

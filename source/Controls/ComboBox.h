@@ -2,7 +2,6 @@
 
 #include "ListBox.h"
 
-
 class ComboBox {
 public:
 	ComboBox(const Vector2& position, const int width);

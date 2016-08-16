@@ -1,6 +1,6 @@
 #include "ListBox.h"
 
-using namespace Controls;
+
 ListBox::ListBox(const Vector2& pos, const int len) {
 
 	position = pos;
@@ -18,39 +18,58 @@ ListBox::~ListBox() {
 
 #include "DDSTextureLoader.h"
 #include "../globals.h"
-bool ListBox::initialize(ID3D11Device* device, const wchar_t* fontFile,
-	ID3D11ShaderResourceView* whitePixel) {
+	//bool ListBox::initialize(ID3D11Device* device, const wchar_t* fontFile,
+		//ID3D11ShaderResourceView* whitePixel) {
 
+		//pixel = whitePixel;
+
+		//font.reset(new FontSet());
+		//if (!font->load(device, fontFile))
+		//	return false;
+		//font->setTint(DirectX::Colors::White.v);
+
+
+		//if (Globals::reportError(DirectX::CreateDDSTextureFromFile(
+		//	device, Assets::whitePixelFile, NULL, whiteBG.GetAddressOf()))) {
+
+		//	MessageBox(NULL, L"Failed to create texture from WhitePixel.dds",
+		//		L"ERROR", MB_OK);
+		//	return false;
+		//}
+
+		//spaceBetweenItems = 32;
+		/*firstItemPos = Vector2(position.x, position.y);
+
+
+		scrollBar.reset(new ScrollBar(Vector2(position.x + width, position.y)));
+		if (!scrollBar->initialize(device, pixel,
+			itemHeight * maxDisplayItems)) {
+
+			MessageBox(NULL, L"Failed to create ScrollBar",
+				L"GUI initialization ERROR", MB_OK);
+			return false;
+		}
+
+		return true;
+	}*/
+
+void ListBox::initialize(shared_ptr<FontSet> fnt,
+	ComPtr<ID3D11ShaderResourceView> whitePixel) {
+
+	font = fnt;
 	pixel = whitePixel;
 
-	font.reset(new FontSet());
-	if (!font->load(device, fontFile))
-		return false;
-	font->setTint(DirectX::Colors::White.v);
-
-
-	//if (Globals::reportError(DirectX::CreateDDSTextureFromFile(
-	//	device, Assets::whitePixelFile, NULL, whiteBG.GetAddressOf()))) {
-
-	//	MessageBox(NULL, L"Failed to create texture from WhitePixel.dds",
-	//		L"ERROR", MB_OK);
-	//	return false;
-	//}
-
-	//spaceBetweenItems = 32;
 	firstItemPos = Vector2(position.x, position.y);
 
-
 	scrollBar.reset(new ScrollBar(Vector2(position.x + width, position.y)));
-	if (!scrollBar->initialize(device, pixel,
-		itemHeight * maxDisplayItems)) {
-
+	if (!scrollBar->initialize(pixel, itemHeight * maxDisplayItems)) {
 		MessageBox(NULL, L"Failed to create ScrollBar",
 			L"GUI initialization ERROR", MB_OK);
-		return false;
+		//return false;
 	}
 
-	return true;
+	//return true;
+
 }
 
 
@@ -153,16 +172,16 @@ void ListBox::drawFrame(SpriteBatch* batch) {
 	frame.bottom = frameThickness; // thickness of frame
 	Vector2 framePos(position.x, position.y);
 
-	batch->Draw(pixel, framePos, &frame,
-		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
+	batch->Draw(pixel.Get(), framePos, &frame,
+		::DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
 		SpriteEffects_None, 0.0f);
 
 	// lower horizontal frame
 	int height = itemHeight * itemsToDisplay;
 	framePos.y += height;
 
-	batch->Draw(pixel, framePos, &frame,
-		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
+	batch->Draw(pixel.Get(), framePos, &frame,
+		::DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
 		SpriteEffects_None, 0.0f);
 
 	// left vertical frame
@@ -170,15 +189,15 @@ void ListBox::drawFrame(SpriteBatch* batch) {
 	frame.right = frameThickness;
 	frame.bottom = height;
 
-	batch->Draw(pixel, framePos, &frame,
-		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
+	batch->Draw(pixel.Get(), framePos, &frame,
+		::DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
 		SpriteEffects_None, 0.0f);
 
 	// right vertical frame
 	framePos.x += realWidth;
 
-	batch->Draw(pixel, framePos, &frame,
-		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
+	batch->Draw(pixel.Get(), framePos, &frame,
+		::DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
 		SpriteEffects_None, 0.0f);
 
 }
@@ -219,7 +238,7 @@ ListItem::~ListItem() {
 }
 
 void ListItem::initialize(const int width, const int height,
-	shared_ptr<FontSet> fnt, ID3D11ShaderResourceView* pixelTexture) {
+	shared_ptr<FontSet> fnt, ComPtr<ID3D11ShaderResourceView> pixelTexture) {
 
 	itemRect.left = 0;
 	itemRect.top = 0;
@@ -276,22 +295,22 @@ void ListItem::draw(SpriteBatch* batch) {
 
 	if (isSelected) {// draw selected color bg
 
-		batch->Draw(pixel, itemPosition, &itemRect,
-			DirectX::Colors::White.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
+		batch->Draw(pixel.Get(), itemPosition, &itemRect,
+			::DirectX::Colors::White.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
 			SpriteEffects_None, 0.0f);
-		textLabel->draw(batch, DirectX::Colors::Black.v);
+		textLabel->draw(batch, ::DirectX::Colors::Black.v);
 
 	} else if (isHover) { // draw hover color bg
 
-		batch->Draw(pixel, itemPosition, &itemRect,
-			DirectX::Colors::Aqua.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
+		batch->Draw(pixel.Get(), itemPosition, &itemRect,
+			::DirectX::Colors::Aqua.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
 			SpriteEffects_None, 0.0f);
 		textLabel->draw(batch);
 
 	} else { // draw basic bg
 
-		batch->Draw(pixel, itemPosition, &itemRect,
-			DirectX::Colors::BurlyWood.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
+		batch->Draw(pixel.Get(), itemPosition, &itemRect,
+			::DirectX::Colors::BurlyWood.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
 			SpriteEffects_None, 0.0f);
 		textLabel->draw(batch);
 	}
@@ -311,18 +330,15 @@ ScrollBar::ScrollBar(Vector2 pos) {
 ScrollBar::~ScrollBar() {
 }
 
-bool ScrollBar::initialize(ID3D11Device* device,
-	ID3D11ShaderResourceView* pixelTexture, size_t maxHght) {
+#include "../Managers/GameManager.h"
+bool ScrollBar::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
+	size_t maxHght) {
 
 	maxHeight = maxHght;
 
-	scrollBarDownButton.reset(new ImageButton());
-	if (!scrollBarDownButton->load(device, Assets::scrollBarDownFile,
-		Assets::scrollBarDownPressedFile)) {
-		MessageBox(NULL, L"Unable to load ScrollBarDown",
-			L"SPRITE LOAD ERROR", MB_OK);
-		return false;
-	}
+	scrollBarDownButton.reset((ImageButton*)
+		GameManager::guiManager->createImageButton("Arial", "ScrollBar Down Button",
+			"ScrollBar Down Pressed"));
 	scrollBarDownButton->setPosition(
 		Vector2(position.x - scrollBarDownButton->getWidth() / 2,
 			position.y + maxHeight
@@ -331,19 +347,15 @@ bool ScrollBar::initialize(ID3D11Device* device,
 	scrollBarDownButton->action = Button::DOWN;
 
 
-	scrollBarUpButton.reset(new ImageButton());
-	if (!scrollBarUpButton->load(device, Assets::scrollBarUpFile,
-		Assets::scrollBarUpPressedFile)) {
-		MessageBox(NULL, L"Unable to load ScrollBarUp",
-			L"SPRITE LOAD ERROR", MB_OK);
-		return false;
-	}
+	scrollBarUpButton.reset((ImageButton*)
+		GameManager::guiManager->createImageButton("Arial", "ScrollBar Up Button",
+			"ScrollBar Up Pressed"));
 	scrollBarUpButton->setPosition(
 		Vector2(position.x - scrollBarUpButton->getWidth() / 2,
 			position.y + scrollBarUpButton->getHeight() / 2));
 
-
 	scrollBarUpButton->action = Button::UP;
+
 
 	scrollBarPosition =
 		Vector2(position.x - scrollBarUpButton->getWidth(),
@@ -367,6 +379,7 @@ bool ScrollBar::initialize(ID3D11Device* device,
 
 	return true;
 }
+
 
 
 void ScrollBar::setScrollBar(int totalItems, int itemHeight, int maxDisplayItems) {
@@ -453,8 +466,8 @@ void ScrollBar::draw(SpriteBatch * batch) {
 	scrollBarUpButton->draw(batch);
 
 	// draw bar
-	batch->Draw(pixel, scrollBarPosition, &scrollBarRect,
-		DirectX::Colors::Gray.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
+	batch->Draw(pixel.Get(), scrollBarPosition, &scrollBarRect,
+		::DirectX::Colors::Gray.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
 		SpriteEffects_None, 0.0f);
 
 	// draw scrubber
@@ -473,7 +486,7 @@ int ScrollBar::getWidth() {
 
 
 /** **** Scrubber **** **/
-Scrubber::Scrubber(ID3D11ShaderResourceView* pixel)
+Scrubber::Scrubber(ComPtr<ID3D11ShaderResourceView> pixel)
 	: RectangleSprite(pixel) {
 }
 

@@ -16,7 +16,7 @@ public:
 	~ListItem();
 
 	void initialize(const int width, const int height,
-		shared_ptr<FontSet> fnt, ID3D11ShaderResourceView* pixelTexture);
+		shared_ptr<FontSet> fnt, ComPtr<ID3D11ShaderResourceView> pixelTexture);
 
 
 	const wchar_t* toString();
@@ -49,15 +49,14 @@ protected:
 	bool isHover = false;
 	bool buttonDownLast = false;
 
-	ID3D11ShaderResourceView* pixel;
+	ComPtr<ID3D11ShaderResourceView> pixel;
 
 };
 
 
-
 class Scrubber : public RectangleSprite {
 public:
-	Scrubber(ID3D11ShaderResourceView* pixel);
+	Scrubber(ComPtr<ID3D11ShaderResourceView> pixel);
 	~Scrubber();
 
 	void setDimensions(const Vector2& startPosition,
@@ -100,15 +99,16 @@ public:
 	ScrollBar(Vector2 position);
 	~ScrollBar();
 
-	bool initialize(ID3D11Device* device,
-		ID3D11ShaderResourceView* pixelTexture, size_t maxHeight);
+	/*bool initialize(ID3D11Device* device,
+		ID3D11ShaderResourceView* pixelTexture, size_t maxHeight);*/
+	bool initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture, size_t maxHeight);
 	void setScrollBar(int totalItems, int itemHeight, int maxDisplayItems);
 
 	void update(double deltaTime, MouseController* mouse);
 	void draw(SpriteBatch* batch);
 
 	//void setScrollBar(int totalListHeight);
-	
+
 
 	int getWidth();
 
@@ -136,7 +136,7 @@ private:
 	double autoScrollStartDelay = .75; // time in seconds before scrollbar starts scrolling
 	double autoScrollDelay = autoScrollStartDelay * .75; // time between increments while autoscrolling
 
-	ID3D11ShaderResourceView* pixel;
+	ComPtr<ID3D11ShaderResourceView> pixel;
 
 };
 
@@ -146,8 +146,8 @@ public:
 	ListBox(const Vector2& position, const int width);
 	~ListBox();
 
-	bool initialize(ID3D11Device* device, const wchar_t* fontFile, ID3D11ShaderResourceView* whitePixel);
-
+	//bool initialize(ID3D11Device* device, const wchar_t* fontFile, ID3D11ShaderResourceView* whitePixel);
+	void initialize(shared_ptr<FontSet> font, ComPtr<ID3D11ShaderResourceView> whitePixel);
 	void addItems(vector<ListItem*> items);
 
 	/** Returns true if selection changed. */
@@ -173,7 +173,7 @@ private:
 	Vector2 position;
 	/* Always smaller or equal to maxDisplayItems. */
 	size_t itemsToDisplay;
-	
+
 
 	shared_ptr<FontSet> font;
 	vector<ListItem*> listItems;
@@ -187,11 +187,9 @@ private:
 	int firstItemToDisplay = 0;
 
 	/** ID3D11ShaderResourceView is a ComPtr! */
-	ID3D11ShaderResourceView* pixel;
+	ComPtr<ID3D11ShaderResourceView> pixel;
 
 	int frameThickness = 2;
 
 
 };
-
-

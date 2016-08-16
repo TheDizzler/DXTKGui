@@ -14,7 +14,7 @@ using namespace Microsoft::WRL;
 namespace Assets {
 
 	const static char* assetManifestFile = "assets/AssetManifest.xml";
-	//const static wchar_t* arialFontFile = L"assets/Fonts/Arial.spritefont";
+	const static wchar_t* defaultFontFile = L"assets/Fonts/Arial.spritefont";
 
 	//const static wchar_t* mouseIconFile = L"assets/GUI/mouse icon.dds";
 	//const static wchar_t* mouseReticleFile = L"assets/GUI/reticle (16x16).dds";

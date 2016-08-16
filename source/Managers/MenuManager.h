@@ -48,7 +48,7 @@ public:
 	void openMainMenu();
 	void openConfigMenu();
 
-	unique_ptr<FontSet> menuFont;
+	//unique_ptr<FontSet> menuFont;
 
 private:
 
@@ -58,14 +58,17 @@ private:
 
 
 	GameManager* game;
+
+	
+	//unique_ptr<GUIForm> gui;
 };
 
 
-
+/** This class is abstract. */
 class MenuScreen : public Screen {
 public:
 
-	MenuScreen(MenuManager* manager, FontSet* fontSet);
+	MenuScreen(MenuManager* manager);
 	~MenuScreen();
 
 	// Inherited via Screen
@@ -76,19 +79,22 @@ protected:
 
 	GameManager* game;
 	MenuManager* menuManager;
-	FontSet* menuFont;
+	shared_ptr<FontSet> menuFont;
 
-	vector<Controls::TextLabel*> textLabels;
-	vector<Controls::TextButton*> buttons;
+	//vector<TextLabel*> textLabels;
+	//vector<TextButton*> buttons;
 
-	vector<ListBox*> listBoxes; 
+
+	vector<GUIControl*> guiControls;
+
+	//vector<ListBox*> listBoxes;
 
 };
 
 
 class ConfigScreen : public MenuScreen {
 public:
-	ConfigScreen(MenuManager* manager, FontSet* fontSet);
+	ConfigScreen(MenuManager* manager);
 	~ConfigScreen();
 
 	// Inherited via MenuScreen
@@ -97,12 +103,12 @@ public:
 	virtual void draw(SpriteBatch * batch) override;
 
 private:
-	
+
 };
 
 class MainScreen : public MenuScreen {
 public:
-	MainScreen(MenuManager* manager, FontSet* fontSet);
+	MainScreen(MenuManager* manager);
 	~MainScreen();
 
 	// Inherited via MenuScreen
@@ -117,6 +123,6 @@ private:
 
 	void confirmExit();
 
-	
+
 };
 

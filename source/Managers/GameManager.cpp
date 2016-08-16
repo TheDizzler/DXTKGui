@@ -1,6 +1,6 @@
 #include "GameManager.h"
 
-
+unique_ptr<GUIManager> GameManager::guiManager;
 GameManager::GameManager(GameEngine* gmngn) {
 
 	gameEngine = gmngn;
@@ -17,7 +17,8 @@ bool GameManager::initializeGame(ID3D11Device* dvc, MouseController* ms) {
 	// get graphical assets from xml file
 	docAssMan.reset(new pugi::xml_document());
 	if (!docAssMan->load_file(Assets::assetManifestFile)) {
-		MessageBox(0, L"Could not read AssetManifest file!", L"Fatal Read Error!", MB_OK;
+		MessageBox(0, L"Could not read AssetManifest file!",
+			L"Fatal Read Error!", MB_OK);
 		return false;
 	}
 

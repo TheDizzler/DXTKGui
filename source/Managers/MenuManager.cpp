@@ -1,39 +1,44 @@
 #include "MenuManager.h"
 #include "GameManager.h"
 
-
 MenuManager::MenuManager() {
 }
 
 MenuManager::~MenuManager() {
 }
 
-void MenuManager::setGameManager(GameManager * gm) {
+void MenuManager::setGameManager(GameManager* gm) {
 
 	game = gm;
 
 
 }
 
+
 bool MenuManager::initialize(ID3D11Device* device, MouseController* mouse) {
 
-	menuFont.reset(new FontSet());
-	if (!menuFont->load(device, Assets::arialFontFile))
-		return false;
-	menuFont->setTint(DirectX::Colors::Black.v);
 
-	if (!mouse->load(device, Assets::mouseReticleFile))
-		return false;
+	const char_t* spriteName = "Mouse Reticle";
+	shared_ptr<Sprite> mouseSprite =
+		GameManager::guiManager->getSprite(spriteName);
+	if (mouseSprite == NULL) {
+		wostringstream ws;
+		ws << "Cannot find sprite file: " << spriteName;
+		MessageBox(0, ws.str().c_str(), L"Critical failure", MB_OK);
 
-	mainScreen.reset(new MainScreen(this, menuFont.get()));
+		return false;
+	}
+	mouse->loadTexture(mouseSprite->getTexture(), mouseSprite->getResource());
+
+	mainScreen.reset(new MainScreen(this));
 	mainScreen->setGameManager(game);
 	if (!mainScreen->initialize(device, mouse))
 		return false;
 
-	configScreen.reset(new ConfigScreen(this, menuFont.get()));
+	/*configScreen.reset(new ConfigScreen(this));
 	configScreen->setGameManager(game);
 	if (!configScreen->initialize(device, mouse))
-		return false;
+		return false;*/
 
 
 
@@ -41,7 +46,7 @@ bool MenuManager::initialize(ID3D11Device* device, MouseController* mouse) {
 	return true;
 }
 
-//bool lastStateDown;
+
 #include "../globals.h"
 void MenuManager::update(double deltaTime,
 	KeyboardController* keys, MouseController* mouse) {
@@ -50,22 +55,18 @@ void MenuManager::update(double deltaTime,
 	Vector2 mousePos = mouse->getPosition();
 	if (mousePos.x > Globals::WINDOW_WIDTH) {
 		mousePos.x = Globals::WINDOW_WIDTH;
-		//SetCursorPos(mousePos.x, mousePos.y);
 		ShowCursor(true);
 	}
 	if (mousePos.y > Globals::WINDOW_HEIGHT) {
 		mousePos.y = Globals::WINDOW_HEIGHT;
-		//SetCursorPos(mousePos.x, mousePos.y);
 		ShowCursor(true);
 	}
 	if (mousePos.x < 0) {
 		mousePos.x = 0;
-		//SetCursorPos(mousePos.x, mousePos.y);
 		ShowCursor(true);
 	}
 	if (mousePos.y < 0) {
 		mousePos.y = 0;
-		//SetCursorPos(mousePos.x, mousePos.y);
 		ShowCursor(true);
 	}
 
@@ -96,23 +97,22 @@ void MenuManager::openConfigMenu() {
 
 
 /** **** MenuScreen abstract class **** */
-MenuScreen::MenuScreen(MenuManager * mngr, FontSet * fntst) {
+MenuScreen::MenuScreen(MenuManager* mngr) {
 
 	menuManager = mngr;
-	menuFont = fntst;
 }
 
 MenuScreen::~MenuScreen() {
 
 // textlabels are unique_ptrs
-	for each (TextLabel* label in textLabels)
+	/*for each (TextLabel* label in textLabels)
 		delete label;
 
 	for (TextButton* button : buttons)
 		delete button;
 
 	for (ListBox* list : listBoxes)
-		delete list;
+		delete list;*/
 }
 
 void MenuScreen::setGameManager(GameManager* gmMng) {
@@ -126,60 +126,56 @@ void MenuScreen::pause() {
 
 
 /** **** MainMenuScreen **** **/
-MainScreen::MainScreen(MenuManager* mngr, FontSet* fntst) : MenuScreen(mngr, fntst) {
+MainScreen::MainScreen(MenuManager* mngr) : MenuScreen(mngr) {
 
+	menuFont = game->guiManager->getFont("Arial");
 }
 
 MainScreen::~MainScreen() {
+
+	for (GUIControl* cntrl : guiControls)
+		delete cntrl;
 }
 
-using namespace Controls;
+
 bool MainScreen::initialize(ID3D11Device* device, MouseController* mouse) {
 
-	TextButton* button = new TextButton();
-	if (!button->load(device, Assets::arialFontFile,
-		Assets::buttonUpFile, Assets::buttonDownFile))
-		return false;
-	button->action = Button::PLAY;
+
+	Button* button;
+	button = game->guiManager->createImageButton("Arial", "Button Up", "Button Down");
+	button->action = GUIControl::PLAY;
 	button->setText("Play");
 	button->setPosition(Vector2(Globals::WINDOW_WIDTH / 2, 200));
-	buttons.push_back(button);
+	guiControls.push_back(button);
 
-
-	button = new TextButton();
-	if (!button->load(device, Assets::arialFontFile,
-		Assets::buttonUpFile, Assets::buttonDownFile))
-		return false;
-	button->action = Button::SETTINGS;
+	button = game->guiManager->createButton("Bookshelf");
+	button->action = GUIControl::SETTINGS;
 	button->setText("Settings");
 	button->setPosition(Vector2(Globals::WINDOW_WIDTH / 2, 350));
-	buttons.push_back(button);
+	guiControls.push_back(button);
 
 
-	button = new TextButton();
-	if (!button->load(device, Assets::arialFontFile,
-		Assets::buttonUpFile, Assets::buttonDownFile))
-		return false;
-	button->action = Button::EXIT;
+
+	button = game->guiManager->createImageButton("Arial", "Button Up", "Button Down");
+	button->action = GUIControl::EXIT;
 	button->setText("Exit");
 	button->setPosition(Vector2(Globals::WINDOW_WIDTH / 2, 500));
-	buttons.push_back(button);
+	guiControls.push_back(button);
 
 
 	test = new TextLabel(Vector2(10, 10), menuFont);
-
-	textLabels.push_back(test);
+	guiControls.push_back(test);
 
 	mouseLabel = new TextLabel(Vector2(10, 100), menuFont);
-	textLabels.push_back(mouseLabel);
+	guiControls.push_back(mouseLabel);
 
 
-	exitDialog.reset(new Dialog(
+	/*exitDialog.reset(new Dialog(
 		Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2)));
 	if (!exitDialog->initialize(device, Assets::arialFontFile)) {
 		MessageBox(0, L"Dialog init failed", L"Error", MB_OK);
 		return false;
-	}
+	}*/
 
 
 
@@ -200,60 +196,60 @@ void MainScreen::update(double deltaTime,
 	//if (keyboardState[DIK_ESCAPE] && !lastStateDown) {
 	if (keys->keyDown[KeyboardController::ESC]
 		&& !keys->lastDown[KeyboardController::ESC]) {
-		if (exitDialog->isOpen)
+		/*if (exitDialog->isOpen)
 			exitDialog->close();
 		else
-			confirmExit();
+			confirmExit();*/
 	}
 
 	//lastStateDown = keyboardState[DIK_ESCAPE];
 
 
-	if (exitDialog->isOpen) {
-		exitDialog->update(deltaTime, mouse);
-		switch (exitDialog->getResult()) {
-			case Dialog::CONFIRM:
-				game->exit();
-				break;
-			case Dialog::CANCEL:
-				exitDialog->close();
-				break;
-		}
+	//if (exitDialog->isOpen) {
+	//	exitDialog->update(deltaTime, mouse);
+	//	switch (exitDialog->getResult()) {
+	//		case Dialog::CONFIRM:
+	//			game->exit();
+	//			break;
+	//		case Dialog::CANCEL:
+	//			exitDialog->close();
+	//			break;
+	//	}
 
-	} else {
-		for (TextButton* button : buttons) {
-			button->update(deltaTime, mouse);
-			if (button->clicked()) {
-				//test->setText("Clicked!");
-				switch (button->action) {
-					case Button::EXIT:
-						confirmExit();
-						//test->setText("Exit!");
-						break;
-					case Button::PLAY:
-						//test->setText("Play!");
-						break;
-					case Button::SETTINGS:
-						menuManager->openConfigMenu();
-						//test->setText("Settings!!");
-						break;
-				}
+	//} else {
+	for (GUIControl* control : guiControls) {
+		control->update(deltaTime, mouse);
+		if (control->clicked()) {
+			//test->setText("Clicked!");
+			switch (control->action) {
+				case Button::EXIT:
+					confirmExit();
+					//test->setText("Exit!");
+					break;
+				case Button::PLAY:
+					//test->setText("Play!");
+					break;
+				case Button::SETTINGS:
+					menuManager->openConfigMenu();
+					//test->setText("Settings!!");
+					break;
 			}
 		}
 	}
+//}
 }
 
 
 void MainScreen::draw(SpriteBatch* batch) {
 
-	for (TextButton* button : buttons)
-		button->draw(batch);
+	for (GUIControl* control : guiControls)
+		control->draw(batch);
 
-	for (auto const& label : textLabels)
+	/*for (auto const& label : textLabels)
 		label->draw(batch);
 
 	if (exitDialog->isOpen)
-		exitDialog->draw(batch);
+		exitDialog->draw(batch);*/
 
 }
 
@@ -266,8 +262,9 @@ void MainScreen::confirmExit() {
 
 
 /** **** ConfigScreen **** **/
-ConfigScreen::ConfigScreen(MenuManager* mngr, FontSet* fntst) : MenuScreen(mngr, fntst) {
+ConfigScreen::ConfigScreen(MenuManager* mngr) : MenuScreen(mngr) {
 
+	menuFont = game->guiManager->getFont("BlackCloak");
 }
 
 ConfigScreen::~ConfigScreen() {
@@ -277,70 +274,70 @@ ConfigScreen::~ConfigScreen() {
 bool ConfigScreen::initialize(ID3D11Device* device, MouseController* mouse) {
 
 	// Labels for displaying selected info
-	TextLabel* label = new TextLabel(Vector2(50, 50), menuFont);
-	label->setText(L"test");
-	textLabels.push_back(label);
+	//TextLabel* label = new TextLabel(Vector2(50, 50), menuFont);
+	//label->setText(L"test");
+	//textLabels.push_back(label);
 
-	label = new TextLabel(Vector2(475, 50), menuFont);
-	label->setText(L"test 2");
-	textLabels.push_back(label);
+	//label = new TextLabel(Vector2(475, 50), menuFont);
+	//label->setText(L"test 2");
+	//textLabels.push_back(label);
 
-	ListBox* listbox = new ListBox(Vector2(50, 100), 400);
-	listbox->initialize(device, Assets::arialFontFile);
+	//ListBox* listbox = new ListBox(Vector2(50, 100), 400);
+	//listbox->initialize(device, Assets::arialFontFile);
 
-	vector<ListItem*> adapterItems;
-	for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
-		AdapterItem* item = new AdapterItem();
-		item->adapter = adap.Get();
-		adapterItems.push_back(item);
-	}
+	//vector<ListItem*> adapterItems;
+	//for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
+	//	AdapterItem* item = new AdapterItem();
+	//	item->adapter = adap.Get();
+	//	adapterItems.push_back(item);
+	//}
 
-	listbox->addItems(adapterItems);
-	listbox->setSelected(game->getSelectedAdapterIndex());
-	listBoxes.push_back(listbox);
+	//listbox->addItems(adapterItems);
+	//listbox->setSelected(game->getSelectedAdapterIndex());
+	//listBoxes.push_back(listbox);
 
-	textLabels[0]->setText(listBoxes[0]->getSelected()->toString());
-	//listItems.clear();
-
-
-	// Selected adapter display mode list
-	listbox = new ListBox(Vector2(475, 100), 175);
-	listbox->initialize(device, Assets::arialFontFile);
-
-	vector<ListItem*> displayModeItems;
-	for (DXGI_MODE_DESC mode : game->getDisplayModeList(game->getSelectedAdapterIndex())) {
-		DisplayModeItem* item = new DisplayModeItem();
-		item->modeDesc = mode;
-		displayModeItems.push_back(item);
-	}
-	listbox->addItems(displayModeItems);
-	listbox->setSelected(game->getSelectedDisplayMode());
-	listBoxes.push_back(listbox);
-
-	textLabels[1]->setText(listBoxes[1]->getSelected()->toString());
+	//textLabels[0]->setText(listBoxes[0]->getSelected()->toString());
+	////listItems.clear();
 
 
-	TextButton* button = new TextButton();
-	if (!button->load(device, Assets::arialFontFile,
-		Assets::buttonUpFile, Assets::buttonDownFile))
-		return false;
-	button->action = Button::ClickAction::CANCEL;
-	button->setText("Back");
-	button->setPosition(
-		Vector2(Globals::WINDOW_WIDTH / 2 - button->getWidth(),
-			Globals::WINDOW_HEIGHT - button->getHeight()));
-	buttons.push_back(button);
+	//// Selected adapter display mode list
+	//listbox = new ListBox(Vector2(475, 100), 175);
+	//listbox->initialize(device, Assets::arialFontFile);
 
-	button = new TextButton();
-	if (!button->load(device, Assets::arialFontFile,
-		Assets::buttonUpFile, Assets::buttonDownFile))
-		return false;
-	button->action = Button::ClickAction::OK;
-	button->setText("Apply");
-	button->setPosition(
-		Vector2(Globals::WINDOW_WIDTH / 2 + button->getWidth(),
-			Globals::WINDOW_HEIGHT - button->getHeight()));
-	buttons.push_back(button);
+	//vector<ListItem*> displayModeItems;
+	//for (DXGI_MODE_DESC mode : game->getDisplayModeList(game->getSelectedAdapterIndex())) {
+	//	DisplayModeItem* item = new DisplayModeItem();
+	//	item->modeDesc = mode;
+	//	displayModeItems.push_back(item);
+	//}
+	//listbox->addItems(displayModeItems);
+	//listbox->setSelected(game->getSelectedDisplayMode());
+	//listBoxes.push_back(listbox);
+
+	//textLabels[1]->setText(listBoxes[1]->getSelected()->toString());
+
+
+	//TextButton* button = new TextButton();
+	//if (!button->load(device, Assets::arialFontFile,
+	//	Assets::buttonUpFile, Assets::buttonDownFile))
+	//	return false;
+	//button->action = Button::ClickAction::CANCEL;
+	//button->setText("Back");
+	//button->setPosition(
+	//	Vector2(Globals::WINDOW_WIDTH / 2 - button->getWidth(),
+	//		Globals::WINDOW_HEIGHT - button->getHeight()));
+	//buttons.push_back(button);
+
+	//button = new TextButton();
+	//if (!button->load(device, Assets::arialFontFile,
+	//	Assets::buttonUpFile, Assets::buttonDownFile))
+	//	return false;
+	//button->action = Button::ClickAction::OK;
+	//button->setText("Apply");
+	//button->setPosition(
+	//	Vector2(Globals::WINDOW_WIDTH / 2 + button->getWidth(),
+	//		Globals::WINDOW_HEIGHT - button->getHeight()));
+	//buttons.push_back(button);
 
 
 	return true;
@@ -350,40 +347,40 @@ bool ConfigScreen::initialize(ID3D11Device* device, MouseController* mouse) {
 void ConfigScreen::update(double deltaTime, KeyboardController* keys,
 	MouseController* mouse) {
 
-	for (TextButton* button : buttons) {
-		button->update(deltaTime, mouse);
-		if (button->clicked()) {
-			//test->setText("Clicked!");
-			switch (button->action) {
-				case Button::CANCEL:
-					menuManager->openMainMenu();
-					break;
-			}
-		}
-	}
+	//for (TextButton* button : buttons) {
+	//	button->update(deltaTime, mouse);
+	//	if (button->clicked()) {
+	//		//test->setText("Clicked!");
+	//		switch (button->action) {
+	//			case Button::CANCEL:
+	//				menuManager->openMainMenu();
+	//				break;
+	//		}
+	//	}
+	//}
 
-	//for (ListBox* listbox : listBoxes) {
-	for (int i = 0; i < listBoxes.size(); ++i) {
+	////for (ListBox* listbox : listBoxes) {
+	//for (int i = 0; i < listBoxes.size(); ++i) {
 
-		if (listBoxes[i]->update(deltaTime, mouse)) {
+	//	if (listBoxes[i]->update(deltaTime, mouse)) {
 
-			textLabels[i]->setText(listBoxes[i]->getSelected()->toString());
-		}
-	}
+	//		textLabels[i]->setText(listBoxes[i]->getSelected()->toString());
+	//	}
+	//}
 
 
 }
 
 void ConfigScreen::draw(SpriteBatch* batch) {
 
-	for (TextButton* button : buttons)
+	/*for (TextButton* button : buttons)
 		button->draw(batch);
 
 	for (ListBox* listbox : listBoxes)
 		listbox->draw(batch);
 
 	for (TextLabel* label : textLabels)
-		label->draw(batch);
+		label->draw(batch);*/
 }
 
 

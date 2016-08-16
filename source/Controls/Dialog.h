@@ -7,11 +7,9 @@
 #include "Button.h"
 
 
-namespace Controls {
-
 
 	/** Creates a Dialog Box using a custom dds background file. */
-	class CustomBGDialog : public Dialog {
+	/*class CustomBGDialog : public Dialog {
 	public:
 		CustomBGDialog(const Vector2& position);
 
@@ -23,7 +21,7 @@ namespace Controls {
 		unique_ptr<Sprite> bgSprite;
 
 
-	};
+	};*/
 
 	class Dialog {
 	public:
@@ -61,4 +59,3 @@ namespace Controls {
 		DialogResult result = NONE;
 
 	};
-};

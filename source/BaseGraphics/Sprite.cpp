@@ -29,10 +29,8 @@ Sprite::Sprite(const Vector2& pos) {
 
 Sprite::~Sprite() {
 
-	/*if (texture)
-		texture->Release();*/
-	if (resource)
-		resource->Release();
+	/*if (resource)
+		resource->Release();*/
 }
 
 #include "../globals.h"
@@ -40,12 +38,12 @@ bool Sprite::load(ID3D11Device* device, const wchar_t* textureFile) {
 
 
 	if (Globals::reportError(CreateDDSTextureFromFile(device, textureFile,
-		&resource, texture.GetAddressOf()))) {
+		resource.GetAddressOf(), texture.GetAddressOf()))) {
 			//MessageBox(NULL, L"Failed to load sprite", L"ERROR", MB_OK);
 		return false;
 	}
 
-	Assets::getTextureDimensions(resource, &width, &height);
+	Assets::getTextureDimensions(resource.Get(), &width, &height);
 	origin = Vector2(width / 2.0f, height / 2.0f);
 	sourceRect.left = 0;
 	sourceRect.top = 0;
@@ -67,6 +65,14 @@ void Sprite::draw(SpriteBatch* batch) {
 	batch->Draw(texture.Get(), position, &sourceRect, tint, rotation,
 		origin, scale, SpriteEffects_None, layerDepth);
 
+}
+
+ComPtr<ID3D11ShaderResourceView> Sprite::getTexture() {
+	return texture;
+}
+
+ComPtr<ID3D11Resource> Sprite::getResource() {
+	return resource;
 }
 
 

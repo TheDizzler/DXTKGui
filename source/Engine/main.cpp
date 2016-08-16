@@ -215,54 +215,18 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 			return 0;
 
-		//case WM_SETFOCUS:
-		//{
-		//	wostringstream ws;
-		//	ws << "Got focus\n";
-		//	OutputDebugString(ws.str().c_str());
-		//	//SetCapture(hwnd);
-		//	return 0;
-		//}
-
 
 		case WM_KILLFOCUS:
-		{
-			/*wostringstream ws;
-			ws << "Lost focus\n";
-			OutputDebugString(ws.str().c_str());*/
-			//ReleaseCapture();
 
 			gameEngine->pause();
-		}
-		return 0;
+			return 0;
 
-		//case WM_ACTIVATE:
-		//{
-		//	wostringstream ws;
-		//	if (LOWORD(wParam) == WA_ACTIVE) {
-
-		//		ws << "ACTVATED\n";
-		//		OutputDebugString(ws.str().c_str());
-		//		//SetCapture(hwnd);
-		//	} else {
-		//		ws << "DEACTIVATED!\n";
-		//		OutputDebugString(ws.str().c_str());
-		//		//ReleaseCapture();
-		//	}
-		//}
-		//return 0;
 
 		case WM_DESTROY:	// top right x button pressed
 
 			PostQuitMessage(0);
 			return 0;
 
-		/*default:
-		{
-			wostringstream ws;
-			ws << "msg: " << msg << "\n";
-			OutputDebugString(ws.str().c_str());
-		}*/
 	}
 
 	return DefWindowProc(hwnd, msg, wParam, lParam);

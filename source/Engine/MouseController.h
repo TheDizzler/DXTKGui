@@ -21,7 +21,10 @@ public:
 	MouseController(HWND hwnd);
 	~MouseController();
 
-	/** RawInput should be used for moving cameras, etc. 
+	void loadTexture(ComPtr<ID3D11ShaderResourceView> texture,
+		ComPtr<ID3D11Resource> resource);
+
+	/** RawInput should be used for moving cameras, etc.
 		If only using mouse as a cursor, use GetCursorPos(). */
 	void getRawInput(RAWMOUSE* rawMouse);
 	void getLastRawInput();

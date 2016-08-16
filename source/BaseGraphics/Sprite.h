@@ -41,7 +41,7 @@ public:
 	Sprite(const Vector2& position);
 	virtual ~Sprite();
 
-	ComPtr<ID3D11ShaderResourceView> texture;
+	
 	Vector2 origin;
 	Color tint;
 	float alpha;
@@ -76,15 +76,19 @@ public:
 	virtual void update(double deltaTime);
 	virtual void draw(SpriteBatch* batch);
 
+	
+	ComPtr<ID3D11ShaderResourceView> getTexture();
+	ComPtr<ID3D11Resource> getResource();
+
 
 	bool isAlive = true;
 
 
 protected:
-	//std::unique_ptr<ID3D11Resource*> resource;
-	//std::unique_ptr<ID3D11ShaderResourceView*> texture;
+	ComPtr<ID3D11ShaderResourceView> texture;
+	ComPtr<ID3D11Resource> resource;
 	
-	ID3D11Resource* resource = 0;
+	//ID3D11Resource* resource = 0;
 	
 
 	UINT width;
