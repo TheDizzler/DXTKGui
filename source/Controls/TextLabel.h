@@ -21,19 +21,22 @@ public:
 
 	virtual void update(double deltaTime, MouseController* mouse) override;
 	//virtual void setPosition(Vector2& position) override;
-	virtual const Vector2& getPosition() override;
+	virtual const Vector2& getPosition() const override;
 	//virtual void setScale(const Vector2 & scale) override;
-	virtual int getWidth() override;
-	virtual int getHeight() override;
+	virtual const int getWidth() const override;
+	virtual const int getHeight() const override;
 
 	void draw(SpriteBatch* batch);
 	void draw(SpriteBatch* batch, Color tint);
 
-	virtual void setFont(shared_ptr<FontSet> newFont) override;
+	virtual void setFont(unique_ptr<FontSet> newFont) override;
+	virtual void setTint(const Color & color) override;
 
 	void setText(string text);
 	void setText(wostringstream& text);
 	void setText(wstring text);
+
+	XMVECTOR XM_CALLCONV measureString() const;
 
 	const wchar_t* getText();
 

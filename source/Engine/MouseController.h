@@ -21,8 +21,10 @@ public:
 	MouseController(HWND hwnd);
 	~MouseController();
 
-	void loadTexture(ComPtr<ID3D11ShaderResourceView> texture,
-		ComPtr<ID3D11Resource> resource);
+	bool loadMenuMouse();
+
+	/*void loadTexture(ComPtr<ID3D11ShaderResourceView> texture,
+		ComPtr<ID3D11Resource> resource);*/
 
 	/** RawInput should be used for moving cameras, etc.
 		If only using mouse as a cursor, use GetCursorPos(). */

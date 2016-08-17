@@ -93,6 +93,9 @@
     <ClCompile Include="source\Controls\GUIControl.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="source\BaseGraphics\GraphicsAsset.cpp">
+      <Filter>Source Files\Engine\BaseGfx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\GameEngine.h">
@@ -157,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="source\Controls\GUIManager.h">
       <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\BaseGraphics\GraphicsAsset.h">
+      <Filter>Header Files\Engine\BaseGfx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

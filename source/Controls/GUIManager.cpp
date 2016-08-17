@@ -6,13 +6,17 @@ GUIManager::GUIManager(pugi::xml_node guiAssets) {
 }
 
 GUIManager::~GUIManager() {
+
+	assetMap.clear();
+	fontMap.clear();
 }
 
 
 #include "../globals.h"
 #include "DDSTextureLoader.h"
-bool GUIManager::initialize(ID3D11Device* device) {
+bool GUIManager::initialize(ID3D11Device* dev) {
 
+	device = dev;
 	if (!getGUIAssets(device)) {
 		MessageBox(0, L"Sprite retrieval from Asset Manifest failed.",
 			L"Epic failure", MB_OK);
@@ -23,34 +27,58 @@ bool GUIManager::initialize(ID3D11Device* device) {
 	return true;
 }
 
-shared_ptr<FontSet> GUIManager::getFont(const char_t* fontName) {
+unique_ptr<FontSet> GUIManager::getFont(const char_t* fontName) {
 
 	if (fontMap.find(fontName) == fontMap.end()) {
 
 		wostringstream ws;
 		ws << "Cannot find font file. Using default font instead.";
 		OutputDebugString(ws.str().c_str());
+
+		unique_ptr<FontSet> defaultFont;
+		defaultFont.reset(new FontSet());
+		defaultFont->load(device, defaultFontFile);
+		defaultFont->setTint(DirectX::Colors::White.v);
+
 		return defaultFont;
-	} else
-		return fontMap[fontName];
+	}
+
+	const char_t* fontFile = fontMap[fontName];
+
+	unique_ptr<FontSet> font;
+	font.reset(new FontSet());
+	font->load(device, Assets::convertCharStarToWCharT(fontFile));
+	font->setTint(DirectX::Colors::White.v);
+	return font;
 
 
 }
 
-shared_ptr<Sprite> GUIManager::getSprite(const char_t* spriteName) {
 
-	shared_ptr<Sprite> sprite;
+GraphicsAsset* GUIManager::getAsset(const char_t* assetName) {
 
-	
-	if (spriteMap.find(spriteName) == spriteMap.end()) {
+	if (assetMap.find(assetName) == assetMap.end()) {
 		wostringstream ws;
-		ws << "Cannot find sprite file: " << spriteName << "\n";
-		ws << "Count : " << spriteMap.count(spriteName) << "\n";
+		ws << "Cannot find asset file: " << assetName << "\n";
+		ws << "Count : " << assetMap.count(assetName) << "\n";
 		OutputDebugString(ws.str().c_str());
+		//MessageBox(0, ws.str().c_str(), L"Fatal Error", MB_OK);
 		return NULL;
 	}
 
-	return spriteMap[spriteName];
+	return assetMap[assetName].get();
+}
+
+
+unique_ptr<Sprite> GUIManager::getSpriteFromAsset(const char_t* assetName) {
+
+	GraphicsAsset* asset = getAsset(assetName);
+	if (asset == NULL)
+		return NULL;
+	unique_ptr<Sprite> sprite;
+	sprite.reset(new Sprite());
+	sprite->load(asset);
+	return sprite;
 }
 
 
@@ -58,33 +86,31 @@ Button* GUIManager::createImageButton(const char_t* fontName,
 	const char_t* upImageName, const char_t* downImageName) {
 
 
-	if (spriteMap.find(upImageName) == spriteMap.end()
-		|| spriteMap.find(downImageName) == spriteMap.end()) {
+	if (assetMap.find(upImageName) == assetMap.end()
+		|| assetMap.find(downImageName) == assetMap.end()) {
 
 		wostringstream ws;
-		ws << "Could not find button image files.";
-		ws << "Creating non-image button instead." << "\n";
+		ws << "Could not find button image files: ";
+		ws << upImageName << " and " << downImageName;
+		ws << "\nCreating non-image button instead." << "\n";
 		OutputDebugString(ws.str().c_str());
 
 		return createButton(fontName);
 	};
 
-	shared_ptr<FontSet> font = getFont(fontName);
-
 
 	ImageButton* button = new ImageButton();
-	button->load(font, spriteMap[upImageName], spriteMap[downImageName]);
+	button->load(getFont(fontName),
+		getSpriteFromAsset(upImageName), getSpriteFromAsset(downImageName));
 
 	return button;
 }
 
 
-Button* GUIManager::createButton(const char_t * fontName) {
-
-	shared_ptr<FontSet> font = getFont(fontName);
+Button* GUIManager::createButton(const char_t* fontName) {
 
 	Button* button = new Button();
-	button->load(font, whitePixel);
+	button->load(getFont(fontName), whitePixel);
 	return button;
 }
 
@@ -98,22 +124,26 @@ bool GUIManager::getGUIAssets(ID3D11Device* device) {
 		const char_t* file = fontNode.attribute("file").as_string();
 		const char_t* name = fontNode.attribute("name").as_string();
 
-		shared_ptr<FontSet> font;
+		/*unique_ptr<FontSet> font;
 		font.reset(new FontSet());
 		if (!font->load(device, Assets::convertCharStarToWCharT(file)))
 			return false;
 		font->setTint(DirectX::Colors::White.v);
 
-		fontMap[name] = font;
+		fontMap[name] = move(font);*/
+
+		fontMap[name] = file;
 
 	}
 
-	defaultFont.reset(new FontSet());
+	/*defaultFont.reset(new FontSet());
 	if (!defaultFont->load(device, Assets::defaultFontFile)) {
 		MessageBox(0, L"Could not find default font file.", L"Critical Failure", MB_OK);
 		return false;
-	}
-	
+	}*/
+
+	defaultFontFile = Assets::defaultFontFile;
+
 
 	for (xml_node spriteNode = guiAssetsNode.child("sprite"); spriteNode;
 		spriteNode = spriteNode.next_sibling("sprite")) {
@@ -132,12 +162,12 @@ bool GUIManager::getGUIAssets(ID3D11Device* device) {
 				return false;
 			}
 		} else {
-			shared_ptr<Sprite> guiSprite;
-			guiSprite.reset(new Sprite());
-			if (!guiSprite->load(device, Assets::convertCharStarToWCharT(file)))
+			unique_ptr<GraphicsAsset> guiAsset;
+			guiAsset.reset(new GraphicsAsset());
+			if (!guiAsset->load(device, Assets::convertCharStarToWCharT(file)))
 				return false;
 
-			spriteMap[check] = guiSprite;
+			assetMap[check] = move(guiAsset);
 		}
 
 		/*wostringstream ws;

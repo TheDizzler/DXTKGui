@@ -12,15 +12,14 @@ using namespace DirectX::SimpleMath;
 class IElement2D {
 public:
 
-
-	virtual bool load(ID3D11Device* device, const wchar_t* file) = 0;
-
 	virtual const Vector2& getPosition() const = 0;
 	virtual const Vector2& getOrigin() const = 0;
 	virtual const Vector2& getScale() const = 0;
 	virtual const float getRotation() const = 0;
 	virtual const Color& getTint() const = 0;
 	virtual const float getAlpha() const = 0;
+	virtual const int getWidth() const = 0;
+	virtual const int getHeight() const =0 ;
 
 	virtual void setPosition(const Vector2& position) = 0;
 	virtual void setOrigin(const Vector2& origin) = 0;

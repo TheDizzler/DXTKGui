@@ -53,6 +53,10 @@ void TextLabel::setText(wstring text) {
 	hitArea.reset(new HitArea(position, size));
 }
 
+XMVECTOR XM_CALLCONV TextLabel::measureString() const {
+	return font->measureString(label.c_str());
+}
+
 const wchar_t* TextLabel::getText() {
 	return label.c_str();
 }
@@ -77,9 +81,15 @@ bool TextLabel::hovering() {
 	return isHover;
 }
 
-void TextLabel::setFont(shared_ptr<FontSet> newFont) {
+void TextLabel::setFont(unique_ptr<FontSet> newFont) {
 
-	font = newFont;
+	font = move(newFont);
+}
+
+void TextLabel::setTint(const Color& color) {
+
+	tint = color; // this kind of irrelevant, but oh well
+	font->setTint(color);
 }
 
 
@@ -102,17 +112,16 @@ void TextLabel::update(double deltaTime, MouseController* mouse) {
 }
 
 
-const Vector2& TextLabel::getPosition() {
-
+const Vector2& TextLabel::getPosition() const {
 	return position;
 }
 
 
-int TextLabel::getWidth() {
+int const TextLabel::getWidth() const {
 
 	return hitArea->size.x;
 }
 
-int TextLabel::getHeight() {
+int const TextLabel::getHeight() const {
 	return hitArea->size.y;
 }

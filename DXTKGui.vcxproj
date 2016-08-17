@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\BaseGraphics\FontSet.cpp" />
+    <ClCompile Include="source\BaseGraphics\GraphicsAsset.cpp" />
     <ClCompile Include="Source\BaseGraphics\RectangleSprite.cpp" />
     <ClCompile Include="Source\BaseGraphics\Sprite.cpp" />
     <ClCompile Include="Source\Controls\Button.cpp" />
@@ -165,6 +166,7 @@
   <ItemGroup>
     <ClInclude Include="Source\assets.h" />
     <ClInclude Include="Source\BaseGraphics\FontSet.h" />
+    <ClInclude Include="source\BaseGraphics\GraphicsAsset.h" />
     <ClInclude Include="Source\BaseGraphics\IElement2D.h" />
     <ClInclude Include="Source\BaseGraphics\RectangleSprite.h" />
     <ClInclude Include="Source\BaseGraphics\Sprite.h" />

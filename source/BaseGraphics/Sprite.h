@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IElement2D.h"
+#include "GraphicsAsset.h"
 
 
 struct HitArea {
@@ -41,44 +41,34 @@ public:
 	Sprite(const Vector2& position);
 	virtual ~Sprite();
 
-	
-	Vector2 origin;
-	Color tint;
-	float alpha;
-	float rotation;
-	float layerDepth;
-
-	
-	RECT sourceRect;
-
-	virtual bool load(ID3D11Device* device, const wchar_t* file);
+	virtual void load(GraphicsAsset* graphicsAsset);
 
 	const HitArea* getHitArea() const;
-	virtual const Vector2& getPosition() const;
-	virtual const Vector2& getOrigin() const;
-	virtual const Vector2& getScale() const;
-	virtual const float getRotation() const;
-	virtual const Color& getTint() const;
-	virtual const float getAlpha() const;
+	virtual const Vector2& getPosition() const override;
+	virtual const Vector2& getOrigin() const override;
+	virtual const Vector2& getScale() const override;
+	virtual const float getRotation() const override;
+	virtual const Color& getTint() const override;
+	virtual const float getAlpha() const override;
+	virtual const int getWidth() const override;
+	virtual const int getHeight() const override;
 	virtual const RECT getRect() const;
-	const int getWidth() const;
-	const int getHeight() const;
 
 	//virtual void setHitArea(const HitArea* hitarea);
 	virtual void setDimensions(Sprite* baseSprite);
-	virtual void setPosition(const Vector2& position);
-	virtual void setOrigin(const Vector2& origin);
-	virtual void setScale(const Vector2& scale);
-	virtual void setRotation(const float rotation);
-	virtual void setTint(const Color& color);
-	virtual void setAlpha(const float alpha);
+	virtual void setPosition(const Vector2& position) override;
+	virtual void setOrigin(const Vector2& origin) override;
+	virtual void setScale(const Vector2& scale) override;
+	virtual void setRotation(const float rotation) override;
+	virtual void setTint(const Color& color) override;
+	virtual void setAlpha(const float alpha) override;
 
 	virtual void update(double deltaTime);
-	virtual void draw(SpriteBatch* batch);
+	virtual void draw(SpriteBatch* batch) override;
 
 	
 	ComPtr<ID3D11ShaderResourceView> getTexture();
-	ComPtr<ID3D11Resource> getResource();
+	//ComPtr<ID3D11Resource> getResource();
 
 
 	bool isAlive = true;
@@ -86,10 +76,15 @@ public:
 
 protected:
 	ComPtr<ID3D11ShaderResourceView> texture;
-	ComPtr<ID3D11Resource> resource;
+	//ComPtr<ID3D11Resource> resource;
 	
-	//ID3D11Resource* resource = 0;
-	
+	RECT sourceRect;
+
+	Vector2 origin;
+	Color tint;
+	float alpha;
+	float rotation;
+	float layerDepth;
 
 	UINT width;
 	UINT height;

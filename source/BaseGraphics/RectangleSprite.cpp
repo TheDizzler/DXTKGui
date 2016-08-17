@@ -6,13 +6,19 @@ RectangleSprite::RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel)
 	texture = pixel;
 }
 
+RectangleSprite::RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel,
+	const Vector2& pos, const Vector2 & size) : Sprite(pos) {
+
+	setDimensions(pos, size);
+}
+
 RectangleSprite::~RectangleSprite() {
 }
 
 void RectangleSprite::setDimensions(const Vector2& pos, const Vector2& size) {
 
 	position = pos;
-	
+
 	width = size.x;
 	height = size.y;
 	origin = Vector2(width / 2.0f, height / 2.0f);

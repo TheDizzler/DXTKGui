@@ -1,5 +1,4 @@
 #include "Sprite.h"
-#include "DDSTextureLoader.h"
 
 
 Sprite::Sprite() {
@@ -29,21 +28,16 @@ Sprite::Sprite(const Vector2& pos) {
 
 Sprite::~Sprite() {
 
-	/*if (resource)
-		resource->Release();*/
 }
 
 #include "../globals.h"
-bool Sprite::load(ID3D11Device* device, const wchar_t* textureFile) {
+void Sprite::load(GraphicsAsset* graphicsAsset) {
+
+	texture = graphicsAsset->getTexture();
+	width = graphicsAsset->getWidth();
+	height = graphicsAsset->getHeight();
 
 
-	if (Globals::reportError(CreateDDSTextureFromFile(device, textureFile,
-		resource.GetAddressOf(), texture.GetAddressOf()))) {
-			//MessageBox(NULL, L"Failed to load sprite", L"ERROR", MB_OK);
-		return false;
-	}
-
-	Assets::getTextureDimensions(resource.Get(), &width, &height);
 	origin = Vector2(width / 2.0f, height / 2.0f);
 	sourceRect.left = 0;
 	sourceRect.top = 0;
@@ -54,8 +48,6 @@ bool Sprite::load(ID3D11Device* device, const wchar_t* textureFile) {
 		Vector2(position.x - width / 2, position.y - height / 2),
 		Vector2(width, height)));
 
-
-	return true;
 }
 
 
@@ -71,15 +63,14 @@ ComPtr<ID3D11ShaderResourceView> Sprite::getTexture() {
 	return texture;
 }
 
-ComPtr<ID3D11Resource> Sprite::getResource() {
-	return resource;
-}
+//ComPtr<ID3D11Resource> Sprite::getResource() {
+//	return resource;
+//}
 
 
 void Sprite::update(double deltaTime) {
 
 	hitArea->position = Vector2(position.x - width / 2, position.y - height / 2);
-
 
 }
 

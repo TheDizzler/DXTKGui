@@ -18,17 +18,8 @@ void MenuManager::setGameManager(GameManager* gm) {
 bool MenuManager::initialize(ID3D11Device* device, MouseController* mouse) {
 
 
-	const char_t* spriteName = "Mouse Reticle";
-	shared_ptr<Sprite> mouseSprite =
-		GameManager::guiManager->getSprite(spriteName);
-	if (mouseSprite == NULL) {
-		wostringstream ws;
-		ws << "Cannot find sprite file: " << spriteName;
-		MessageBox(0, ws.str().c_str(), L"Critical failure", MB_OK);
-
-		return false;
-	}
-	mouse->loadTexture(mouseSprite->getTexture(), mouseSprite->getResource());
+	mouse->loadMenuMouse();
+	
 
 	mainScreen.reset(new MainScreen(this));
 	mainScreen->setGameManager(game);
@@ -148,12 +139,13 @@ bool MainScreen::initialize(ID3D11Device* device, MouseController* mouse) {
 	button->setPosition(Vector2(Globals::WINDOW_WIDTH / 2, 200));
 	guiControls.push_back(button);
 
+	Vector2 size = Vector2(button->getWidth(), button->getHeight());
+
 	button = game->guiManager->createButton("Bookshelf");
 	button->action = GUIControl::SETTINGS;
 	button->setText("Settings");
-	button->setPosition(Vector2(Globals::WINDOW_WIDTH / 2, 350));
+	button->setDimensions(Vector2(Globals::WINDOW_WIDTH / 2, 350), size);
 	guiControls.push_back(button);
-
 
 
 	button = game->guiManager->createImageButton("Arial", "Button Up", "Button Down");
@@ -256,7 +248,8 @@ void MainScreen::draw(SpriteBatch* batch) {
 
 void MainScreen::confirmExit() {
 
-	exitDialog->open();
+	//exitDialog->open();
+	game->exit();
 }
 
 

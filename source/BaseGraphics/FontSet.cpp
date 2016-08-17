@@ -3,23 +3,22 @@
 
 FontSet::FontSet() {
 
-	alpha = 1.0f;
+	//alpha = 1.0f;
 	rotation = 0.0f;
 	scale = Vector2(1, 1);
 	tint = DirectX::Colors::White.v;
 	layerDepth = 1.0f;
 }
 
+
 FontSet::~FontSet() {
 }
 
 
-bool FontSet::load(ID3D11Device* device, const wchar_t* file) {
+void FontSet::load(ID3D11Device* device, const wchar_t* file) {
 
 	font.reset(new SpriteFont(device, file));
 
-
-	return true;
 }
 
 XMVECTOR XM_CALLCONV FontSet::measureString(wchar_t const* text) const {
@@ -50,10 +49,10 @@ void FontSet::draw(SpriteBatch* batch) {
 }
 
 
-const Vector2& FontSet::getPosition() const {
-
-	return Vector2(0, 0);
-}
+//const Vector2& FontSet::getPosition() const {
+//
+//	return Vector2(0, 0);
+//}
 
 
 const Vector2& FontSet::getOrigin() const {
@@ -77,20 +76,20 @@ const Color& FontSet::getTint() const {
 }
 
 
-const float FontSet::getAlpha() const {
-
-	return alpha;
-}
-
-
-void FontSet::setPosition(const Vector2& position) {
-
-}
+//const float FontSet::getAlpha() const {
+//
+//	return alpha;
+//}
 
 
-void FontSet::setOrigin(const Vector2& origin) {
+//void FontSet::setPosition(const Vector2& position) {
+//
+//}
 
 
+void FontSet::setOrigin(const Vector2& org) {
+
+	origin = org;
 }
 
 
@@ -112,7 +111,7 @@ void FontSet::setTint(const Color& color) {
 }
 
 
-void FontSet::setAlpha(const float alph) {
-
-	alpha = alph;
-}
+//void FontSet::setAlpha(const float alph) {
+//
+//	alpha = alph;
+//}

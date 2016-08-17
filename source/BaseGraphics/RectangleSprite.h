@@ -6,10 +6,12 @@
 class RectangleSprite : public Sprite {
 public:
 	RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel);
+	RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel,
+		const Vector2& position, const Vector2& size);
 	~RectangleSprite();
 
-	virtual void setDimensions(const Vector2& position, const Vector2& size);
-	//void setSize(const Vector2& size);
+	void setDimensions(const Vector2& position, const Vector2& size);
+
 private:
 
 };

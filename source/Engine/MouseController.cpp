@@ -8,23 +8,42 @@ MouseController::MouseController(HWND hWnd) {
 MouseController::~MouseController() {
 }
 
-void MouseController::loadTexture(ComPtr<ID3D11ShaderResourceView> txtr,
-	ComPtr<ID3D11Resource> rsrc) {
+#include "../Managers/GameManager.h"
+bool MouseController::loadMenuMouse() {
 
-	texture = txtr;
-	resource = rsrc;
+	const char_t* spriteName = "Mouse Reticle";
+	GraphicsAsset* mouseAsset =
+		GameManager::guiManager->getAsset(spriteName);
+	if (mouseAsset == NULL) {
+		wostringstream ws;
+		ws << "Cannot find mouse sprite file: " << spriteName;
+		MessageBox(0, ws.str().c_str(), L"Critical failure", MB_OK);
 
-	Assets::getTextureDimensions(resource.Get(), &width, &height);
-	origin = Vector2(width / 2.0f, height / 2.0f);
-	sourceRect.left = 0;
-	sourceRect.top = 0;
-	sourceRect.bottom = height;
-	sourceRect.right = width;
+		return false;
+	}
 
-	hitArea.reset(new HitArea(
-		Vector2(position.x - width / 2, position.y - height / 2),
-		Vector2(width, height)));
+	Sprite::load(mouseAsset);
+
+	return true;
 }
+
+//void MouseController::loadTexture(ComPtr<ID3D11ShaderResourceView> txtr,
+//	ComPtr<ID3D11Resource> rsrc) {
+//
+//	texture = txtr;
+//	resource = rsrc;
+//
+//	Assets::getTextureDimensions(resource.Get(), &width, &height);
+//	origin = Vector2(width / 2.0f, height / 2.0f);
+//	sourceRect.left = 0;
+//	sourceRect.top = 0;
+//	sourceRect.bottom = height;
+//	sourceRect.right = width;
+//
+//	hitArea.reset(new HitArea(
+//		Vector2(position.x - width / 2, position.y - height / 2),
+//		Vector2(width, height)));
+//}
 
 void MouseController::getRawInput(RAWMOUSE* raw) {
 

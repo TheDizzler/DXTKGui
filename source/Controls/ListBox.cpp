@@ -279,7 +279,7 @@ bool ListItem::update(double deltaTime, MouseController* mouse) {
 	return isSelected;
 }
 
-void ListItem::updatePosition(const Vector2 & pos) {
+void ListItem::updatePosition(const Vector2& pos) {
 
 	itemPosition = pos;
 	hitArea->position = itemPosition;
