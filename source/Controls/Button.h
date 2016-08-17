@@ -75,29 +75,9 @@ public:
 
 	virtual void draw(SpriteBatch* batch) override;
 
+	virtual void setPosition(Vector2& position) override;
 	virtual void setScale(const Vector2 & scale) override;
 private:
 	shared_ptr<Sprite> normalSprite;
 	shared_ptr<Sprite> pressedSprite;
 };
-
-
-//class TextButton : public Button {
-//public:
-//	TextButton();
-//	~TextButton();
-
-
-//	/*bool load(ID3D11Device* device, const wchar_t* fontFile,
-//		const wchar_t* upButtonFile, const wchar_t* downButtonFile);*/
-
-
-//	virtual void setPosition(Vector2& position);
-//	void setText(string text);
-//	virtual void draw(SpriteBatch* batch);
-
-//private:
-
-//	shared_ptr<FontSet> buttonFont;
-//	unique_ptr<TextLabel> buttonLabel;
-//};

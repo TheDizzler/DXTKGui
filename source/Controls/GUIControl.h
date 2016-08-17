@@ -37,7 +37,7 @@ public:
 protected:
 	unique_ptr<HitArea> hitArea;
 	Vector2 position;
-	Vector2 scale;
+	Vector2 scale = Vector2(1, 1);
 
 	bool isHover = false;
 	/** Button is held down over control but has not been released. */

@@ -55,7 +55,7 @@ void MouseController::getRawInput(RAWMOUSE* raw) {
 	GetCursorPos(&cursorPos);
 	ScreenToClient(hwnd, &cursorPos);
 	//SetCursorPos(cursorPos.x, cursorPos.y);
-	setPosition(Vector2(cursorPos.x, cursorPos.y + 30));
+	setPosition(Vector2(cursorPos.x, cursorPos.y));
 
 }
 

@@ -22,6 +22,9 @@ void Button::update(double deltaTime, MouseController* mouse) {
 
 	isHover = hitArea->contains(mouse->getPosition());
 
+	if (isHover)
+		int x = 1;
+
 	if (isSelected && !mouse->leftButtonDown()) {
 		isClicked = true;
 	} else {
@@ -60,7 +63,6 @@ void Button::draw(SpriteBatch * batch) {
 }
 
 
-
 void Button::setText(string text) {
 
 	buttonLabel->setText(text);
@@ -85,8 +87,9 @@ void Button::setPosition(Vector2& pos) {
 
 	GUIControl::setPosition(pos);
 
-	Vector2 size = buttonFont->measureString(buttonLabel->getText());
-	buttonLabel->setPosition(Vector2(position.x - size.x / 2, position.y - size.y / 2 - 5));
+	Vector2 textsize = buttonFont->measureString(buttonLabel->getText());
+	buttonLabel->setPosition(
+		Vector2(position.x - textsize.x / 2, position.y - textsize.y / 2 - 5));
 
 }
 
@@ -94,10 +97,10 @@ const Vector2& Button::getPosition() {
 	return position;
 }
 
-void Button::setScale(const Vector2& scale) {
+void Button::setScale(const Vector2& scl) {
 
+	GUIControl::setScale(scl);
 	buttonLabel->setScale(scale);
-	GUIControl::setScale(scale);
 
 }
 
@@ -154,12 +157,13 @@ void ImageButton::load(shared_ptr<FontSet> fnt,
 	normalSprite = upButtonSprite;
 	pressedSprite = downButtonSprite;
 
-	hitArea.reset(new HitArea(*normalSprite->getHitArea()));
+	hitArea.reset(new HitArea(normalSprite->getHitArea()->position,
+		normalSprite->getHitArea()->size));
 	buttonLabel.reset(new TextLabel(Vector2(0, 0), buttonFont));
 }
 
 
-void ImageButton::draw(SpriteBatch * batch) {
+void ImageButton::draw(SpriteBatch* batch) {
 
 	Sprite* drawSprite;
 	drawSprite = normalSprite.get();
@@ -167,16 +171,25 @@ void ImageButton::draw(SpriteBatch * batch) {
 	if (isSelected) {
 		drawSprite = pressedSprite.get();
 	} else if (isHover)
-		drawSprite->setTint(hoverColor);
+		buttonFont->setTint(hoverColorText);
 	else
-		drawSprite->setTint(normalColor);
+		buttonFont->setTint(normalColorText);
 
 	drawSprite->draw(batch);
+	buttonLabel->draw(batch);
 }
 
-void ImageButton::setScale(const Vector2& scale) {
+void ImageButton::setPosition(Vector2& pos) {
 
-	Button::setScale(scale);
+	Button::setPosition(pos);
+	normalSprite->setPosition(position);
+	pressedSprite->setPosition(position);
+
+}
+
+void ImageButton::setScale(const Vector2& scl) {
+
+	Button::setScale(scl);
 	normalSprite->setScale(scale);
 	pressedSprite->setScale(scale);
 }

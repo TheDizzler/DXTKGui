@@ -224,10 +224,10 @@ void MainScreen::update(double deltaTime,
 			switch (control->action) {
 				case Button::EXIT:
 					confirmExit();
-					//test->setText("Exit!");
+					test->setText("Exit!");
 					break;
 				case Button::PLAY:
-					//test->setText("Play!");
+					test->setText("Play!");
 					break;
 				case Button::SETTINGS:
 					menuManager->openConfigMenu();
