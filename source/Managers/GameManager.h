@@ -2,7 +2,7 @@
 
 //#include <pugixml.hpp>
 #include "MenuManager.h"
-#include "../Controls/GUIManager.h"
+#include "../Controls/GUIFactory.h"
 
 class GameEngine;
 
@@ -16,7 +16,7 @@ public:
 	~GameManager();
 
 
-	bool initializeGame(ID3D11Device* device, MouseController* mouse);
+	bool initializeGame(ComPtr<ID3D11Device> device, MouseController* mouse);
 
 
 	void update(double deltaTime, KeyboardController* keys, MouseController* mouse);
@@ -37,7 +37,7 @@ public:
 	size_t getSelectedDisplayMode();
 
 
-	static unique_ptr<GUIManager> guiManager;
+	static unique_ptr<GUIFactory> guiFactory;
 
 private:
 
@@ -48,7 +48,7 @@ private:
 	
 	GameEngine* gameEngine;
 	MouseController* mouse;
-	ID3D11Device* device;
+	ComPtr<ID3D11Device> device;
 	
 	unique_ptr<pugi::xml_document> docAssMan;
 

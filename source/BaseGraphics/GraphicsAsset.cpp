@@ -8,9 +8,9 @@ GraphicsAsset::~GraphicsAsset() {
 }
 
 #include "../globals.h"
-bool GraphicsAsset::load(ID3D11Device* device, const wchar_t* textureFile) {
+bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const wchar_t* textureFile) {
 	
-	if (Globals::reportError(CreateDDSTextureFromFile(device, textureFile,
+	if (Globals::reportError(CreateDDSTextureFromFile(device.Get(), textureFile,
 		resource.GetAddressOf(), texture.GetAddressOf()))) {
 		//MessageBox(NULL, L"Failed to load sprite", L"ERROR", MB_OK);
 		return false;

@@ -9,14 +9,14 @@ using namespace std;
 class GUIControl : public IElement2D {
 public:
 	enum ClickAction {
-		EXIT, PLAY, SETTINGS, CANCEL, OK, UP, DOWN
-
+		EXIT, PLAY, SETTINGS, CANCEL, OK, UP, DOWN,	NONE, CONFIRM, NEUTRAL
 	};
 
 	virtual void update(double deltaTime, MouseController* mouse) = 0;
 
 	virtual void setFont(unique_ptr<FontSet> newFont) = 0;
 	virtual void setScale(const Vector2& scl);
+	//void setScale(const int scl);
 
 	virtual void setPosition(const Vector2 & position) override;
 	virtual void setOrigin(const Vector2 & origin) override;
@@ -64,10 +64,10 @@ protected:
 
 };
 
+/** A GUI control that can hold other GUI controls. */
+interface GUIControlBox : public GUIControl {
+public:
+	virtual void addItem(unique_ptr<GUIControl> control) = 0;
+	virtual void addItems(std::vector<unique_ptr<GUIControl> > controls) = 0;
 
-//interface GUIControlBox : public GUIControl {
-//public:
-//	void addItems(GUIControl* control);
-//	void addItems(std::vector<GUIControl*> controls);
-//
-//};
+};

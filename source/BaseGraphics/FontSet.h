@@ -8,7 +8,7 @@ public:
 	FontSet();
 	~FontSet();
 
-	virtual void load(ID3D11Device* device, const wchar_t* file);
+	virtual void load(ComPtr<ID3D11Device> device, const wchar_t* file);
 
 	XMVECTOR XM_CALLCONV measureString(_In_z_ wchar_t const* text) const;
 

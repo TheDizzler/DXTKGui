@@ -151,7 +151,7 @@
     <ClCompile Include="Source\Controls\ComboBox.cpp" />
     <ClCompile Include="Source\Controls\Dialog.cpp" />
     <ClCompile Include="source\Controls\GUIControl.cpp" />
-    <ClCompile Include="source\Controls\GUIManager.cpp" />
+    <ClCompile Include="source\Controls\GUIFactory.cpp" />
     <ClCompile Include="Source\Controls\ListBox.cpp" />
     <ClCompile Include="Source\Controls\TextLabel.cpp" />
     <ClCompile Include="Source\Engine\GameEngine.cpp" />
@@ -174,7 +174,7 @@
     <ClInclude Include="Source\Controls\ComboBox.h" />
     <ClInclude Include="Source\Controls\Dialog.h" />
     <ClInclude Include="source\Controls\GUIControl.h" />
-    <ClInclude Include="source\Controls\GUIManager.h" />
+    <ClInclude Include="source\Controls\GUIFactory.h" />
     <ClInclude Include="Source\Controls\ListBox.h" />
     <ClInclude Include="Source\Controls\TextLabel.h" />
     <ClInclude Include="Source\Engine\GameEngine.h" />

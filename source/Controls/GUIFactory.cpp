@@ -1,11 +1,11 @@
-#include "GUIManager.h"
+#include "GUIFactory.h"
 
-GUIManager::GUIManager(pugi::xml_node guiAssets) {
+GUIFactory::GUIFactory(pugi::xml_node guiAssets) {
 
 	guiAssetsNode = guiAssets;
 }
 
-GUIManager::~GUIManager() {
+GUIFactory::~GUIFactory() {
 
 	assetMap.clear();
 	fontMap.clear();
@@ -14,7 +14,7 @@ GUIManager::~GUIManager() {
 
 #include "../globals.h"
 #include "DDSTextureLoader.h"
-bool GUIManager::initialize(ID3D11Device* dev) {
+bool GUIFactory::initialize(ComPtr<ID3D11Device> dev) {
 
 	device = dev;
 	if (!getGUIAssets(device)) {
@@ -27,7 +27,7 @@ bool GUIManager::initialize(ID3D11Device* dev) {
 	return true;
 }
 
-unique_ptr<FontSet> GUIManager::getFont(const char_t* fontName) {
+unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 
 	if (fontMap.find(fontName) == fontMap.end()) {
 
@@ -53,7 +53,7 @@ unique_ptr<FontSet> GUIManager::getFont(const char_t* fontName) {
 }
 
 
-GraphicsAsset* GUIManager::getAsset(const char_t* assetName) {
+ GraphicsAsset* const GUIFactory::getAsset(const char_t* assetName) {
 
 	if (assetMap.find(assetName) == assetMap.end()) {
 		wostringstream ws;
@@ -68,9 +68,9 @@ GraphicsAsset* GUIManager::getAsset(const char_t* assetName) {
 }
 
 
-unique_ptr<Sprite> GUIManager::getSpriteFromAsset(const char_t* assetName) {
+unique_ptr<Sprite> GUIFactory::getSpriteFromAsset(const char_t* assetName) {
 
-	GraphicsAsset* asset = getAsset(assetName);
+	 GraphicsAsset* const asset = getAsset(assetName);
 	if (asset == NULL)
 		return NULL;
 	unique_ptr<Sprite> sprite;
@@ -80,7 +80,7 @@ unique_ptr<Sprite> GUIManager::getSpriteFromAsset(const char_t* assetName) {
 }
 
 
-Button* GUIManager::createImageButton(const char_t* fontName,
+Button* GUIFactory::createImageButton(const char_t* fontName,
 	const char_t* upImageName, const char_t* downImageName) {
 
 
@@ -106,15 +106,22 @@ Button* GUIManager::createImageButton(const char_t* fontName,
 }
 
 
-Button* GUIManager::createButton(const char_t* fontName) {
+Button* GUIFactory::createButton(const char_t* fontName) {
 
 	Button* button = new Button();
 	button->load(getFont(fontName), whitePixel);
 	return button;
 }
 
+Dialog* GUIFactory::createDialog(const char_t* fontName) {
 
-bool GUIManager::getGUIAssets(ID3D11Device* device) {
+	Dialog* dialog = new Dialog();
+	dialog->initialize(getFont(fontName), whitePixel);
+	return dialog;
+}
+
+
+bool GUIFactory::getGUIAssets(ComPtr<ID3D11Device> device) {
 
 	xml_node fonts = guiAssetsNode.child("spritefonts");
 	for (xml_node fontNode = fonts.child("font"); fontNode;
@@ -153,7 +160,7 @@ bool GUIManager::getGUIAssets(ID3D11Device* device) {
 		string check = name; // I think this is required - pretty sure it is
 		if (name == string("White Pixel")) {
 			if (Globals::reportError(DirectX::CreateDDSTextureFromFile(
-				device, Assets::convertCharStarToWCharT(file), NULL,
+				device.Get(), Assets::convertCharStarToWCharT(file), NULL,
 				whitePixel.GetAddressOf()))) {
 
 				MessageBox(NULL, L"Failed to create texture from WhitePixel.dds",

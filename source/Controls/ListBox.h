@@ -99,7 +99,7 @@ public:
 	ScrollBar(Vector2 position);
 	~ScrollBar();
 
-	/*bool initialize(ID3D11Device* device,
+	/*bool initialize(ComPtr<ID3D11Device> device,
 		ID3D11ShaderResourceView* pixelTexture, size_t maxHeight);*/
 	bool initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture, size_t maxHeight);
 	void setScrollBar(int totalItems, int itemHeight, int maxDisplayItems);
@@ -146,7 +146,7 @@ public:
 	ListBox(const Vector2& position, const int width);
 	~ListBox();
 
-	//bool initialize(ID3D11Device* device, const wchar_t* fontFile, ID3D11ShaderResourceView* whitePixel);
+	//bool initialize(ComPtr<ID3D11Device> device, const wchar_t* fontFile, ID3D11ShaderResourceView* whitePixel);
 	void initialize(shared_ptr<FontSet> font, ComPtr<ID3D11ShaderResourceView> whitePixel);
 	void addItems(vector<ListItem*> items);
 

@@ -87,14 +87,14 @@
     <ClCompile Include="source\Managers\MenuManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="source\Controls\GUIManager.cpp">
-      <Filter>Source Files\Controls</Filter>
-    </ClCompile>
     <ClCompile Include="source\Controls\GUIControl.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
     <ClCompile Include="source\BaseGraphics\GraphicsAsset.cpp">
       <Filter>Source Files\Engine\BaseGfx</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Controls\GUIFactory.cpp">
+      <Filter>Source Files\Controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -158,11 +158,11 @@
     <ClInclude Include="source\Controls\GUIControl.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="source\Controls\GUIManager.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
     <ClInclude Include="source\BaseGraphics\GraphicsAsset.h">
       <Filter>Header Files\Engine\BaseGfx</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Controls\GUIFactory.h">
+      <Filter>Header Files\Controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

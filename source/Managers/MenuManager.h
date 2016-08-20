@@ -38,7 +38,7 @@ public:
 
 	virtual void setGameManager(GameManager* game);
 
-	virtual bool initialize(ID3D11Device* device, MouseController* mouse);
+	virtual bool initialize(ComPtr<ID3D11Device> device, MouseController* mouse);
 	virtual void update(double deltaTime, KeyboardController* keys,
 		MouseController* mouse);
 	virtual void draw(SpriteBatch* batch);
@@ -98,7 +98,7 @@ public:
 	~ConfigScreen();
 
 	// Inherited via MenuScreen
-	virtual bool initialize(ID3D11Device* device, MouseController * mouse) override;
+	virtual bool initialize(ComPtr<ID3D11Device> device, MouseController * mouse) override;
 	virtual void update(double deltaTime, KeyboardController* keys, MouseController * mouse) override;
 	virtual void draw(SpriteBatch * batch) override;
 
@@ -112,7 +112,7 @@ public:
 	~MainScreen();
 
 	// Inherited via MenuScreen
-	virtual bool initialize(ID3D11Device * device, MouseController * mouse) override;
+	virtual bool initialize(ComPtr<ID3D11Device> device, MouseController * mouse) override;
 	virtual void update(double deltaTime, KeyboardController* keys, MouseController * mouse) override;
 	virtual void draw(SpriteBatch * batch) override;
 

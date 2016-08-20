@@ -7,7 +7,7 @@ public:
 	ComboBox(const Vector2& position, const int width);
 	~ComboBox();
 
-	virtual bool initialize(ID3D11Device* device, const wchar_t* fontFile);
+	virtual bool initialize(ComPtr<ID3D11Device> device, const wchar_t* fontFile);
 	virtual void update(double deltaTime, MouseController* mouse);
 	virtual void draw(SpriteBatch* batch);
 

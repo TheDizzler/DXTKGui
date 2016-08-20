@@ -1,6 +1,6 @@
 #include "GameManager.h"
 
-unique_ptr<GUIManager> GameManager::guiManager;
+unique_ptr<GUIFactory> GameManager::guiFactory;
 GameManager::GameManager(GameEngine* gmngn) {
 
 	gameEngine = gmngn;
@@ -9,7 +9,7 @@ GameManager::GameManager(GameEngine* gmngn) {
 GameManager::~GameManager() {
 }
 
-bool GameManager::initializeGame(ID3D11Device* dvc, MouseController* ms) {
+bool GameManager::initializeGame(ComPtr<ID3D11Device> dvc, MouseController* ms) {
 
 	device = dvc;
 	mouse = ms;
@@ -24,9 +24,9 @@ bool GameManager::initializeGame(ID3D11Device* dvc, MouseController* ms) {
 
 	pugi::xml_node guiNode = docAssMan->child("root").child("gui");
 
-	guiManager.reset(new GUIManager(guiNode));
-	if (!guiManager->initialize(device)) {
-		MessageBox(0, L"Failed to load GUIManager", L"Fatal Error", MB_OK);
+	guiFactory.reset(new GUIFactory(guiNode));
+	if (!guiFactory->initialize(device)) {
+		MessageBox(0, L"Failed to load GUIFactory", L"Fatal Error", MB_OK);
 		return false;
 	}
 

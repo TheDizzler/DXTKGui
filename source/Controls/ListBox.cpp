@@ -18,7 +18,7 @@ ListBox::~ListBox() {
 
 #include "DDSTextureLoader.h"
 #include "../globals.h"
-	//bool ListBox::initialize(ID3D11Device* device, const wchar_t* fontFile,
+	//bool ListBox::initialize(ComPtr<ID3D11Device> device, const wchar_t* fontFile,
 		//ID3D11ShaderResourceView* whitePixel) {
 
 		//pixel = whitePixel;
@@ -345,7 +345,7 @@ bool ScrollBar::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 	maxHeight = maxHght;
 
 	scrollBarDownButton.reset((ImageButton*)
-		GameManager::guiManager->createImageButton("Arial", "ScrollBar Down Button",
+		GameManager::guiFactory->createImageButton("Arial", "ScrollBar Down Button",
 			"ScrollBar Down Pressed"));
 	scrollBarDownButton->setPosition(
 		Vector2(position.x - scrollBarDownButton->getWidth() / 2,
@@ -356,7 +356,7 @@ bool ScrollBar::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 
 
 	scrollBarUpButton.reset((ImageButton*)
-		GameManager::guiManager->createImageButton("Arial", "ScrollBar Up Button",
+		GameManager::guiFactory->createImageButton("Arial", "ScrollBar Up Button",
 			"ScrollBar Up Pressed"));
 	scrollBarUpButton->setPosition(
 		Vector2(position.x - scrollBarUpButton->getWidth() / 2,

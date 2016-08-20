@@ -14,7 +14,7 @@ class GameManager;
 	level screens, etc. */
 interface Screen {
 public:
-	virtual bool initialize(ID3D11Device* device, MouseController* mouse) = 0;
+	virtual bool initialize(ComPtr<ID3D11Device> device, MouseController* mouse) = 0;
 	virtual void setGameManager(GameManager* game) = 0;
 	virtual void update(double deltaTime, KeyboardController* keys,
 		MouseController* mouse) = 0;

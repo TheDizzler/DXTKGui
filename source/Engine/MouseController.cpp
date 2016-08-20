@@ -13,7 +13,7 @@ bool MouseController::loadMenuMouse() {
 
 	const char_t* spriteName = "Mouse Reticle";
 	GraphicsAsset* mouseAsset =
-		GameManager::guiManager->getAsset(spriteName);
+		GameManager::guiFactory->getAsset(spriteName);
 	if (mouseAsset == NULL) {
 		wostringstream ws;
 		ws << "Cannot find mouse sprite file: " << spriteName;

@@ -15,9 +15,9 @@ FontSet::~FontSet() {
 }
 
 
-void FontSet::load(ID3D11Device* device, const wchar_t* file) {
+void FontSet::load(ComPtr<ID3D11Device> device, const wchar_t* file) {
 
-	font.reset(new SpriteFont(device, file));
+	font.reset(new SpriteFont(device.Get(), file));
 
 }
 

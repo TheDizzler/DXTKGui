@@ -1,9 +1,9 @@
 #pragma once
 
-#include <vector>
+//#include <vector>
 
 
-#include "../BaseGraphics/Sprite.h"
+#include "../BaseGraphics/RectangleSprite.h"
 #include "Button.h"
 
 
@@ -13,7 +13,7 @@
 	public:
 		CustomBGDialog(const Vector2& position);
 
-		bool initialize(ID3D11Device* device, const wchar_t* fontFile,
+		bool initialize(ComPtr<ID3D11Device> device, const wchar_t* fontFile,
 			const wchar_t* bgFile);
 
 	private:
@@ -23,39 +23,64 @@
 
 	};*/
 
-	class Dialog {
-	public:
+class Dialog : GUIControlBox {
+public:
 
-		enum DialogResult {
-			NONE, CONFIRM, CANCEL, NEUTRAL
-		};
+	Dialog();
+	~Dialog();
 
-		Dialog(const Vector2& position);
-		~Dialog();
+	void initialize(unique_ptr<FontSet> font,
+		ComPtr<ID3D11ShaderResourceView> pixelTexture);
 
-		bool initialize(ID3D11Device* device, shared_ptr<FontSet> font);
-		void add(GUIControl* control);
+	void setDimensions(const Vector2& position, const Vector2& size,
+		const int frameThickness = 2);
 
-		virtual void update(double deltaTime, MouseController* mouse);
-		virtual void draw(SpriteBatch* batch);
+	void setTitle(wstring text);
+	void setText(wstring text);
 
-		
+	virtual void update(double deltaTime, MouseController* mouse);
+	virtual void draw(SpriteBatch* batch);
 
-		void open();
-		void close();
-		DialogResult getResult();
+	virtual void addItem(unique_ptr<GUIControl> control) override;
+	virtual void addItems(vector<unique_ptr<GUIControl>> controls) override;
 
-		bool isOpen = false;
+	virtual void setFont(unique_ptr<FontSet> newFont) override;
 
-	private:
+	virtual const Vector2& getPosition() const override;
+	virtual const int getWidth() const override;
+	virtual const int getHeight() const override;
 
-		shared_ptr<FontSet> font;
-		//vector<TextLabel*> labels;
-		//vector<TextButton*> buttons;
-		vector<GUIControl*> controls;
+	virtual bool clicked() override;
+	virtual bool selected() override;
+	virtual bool hovering() override;
 
-		Vector2 position;
 
-		DialogResult result = NONE;
+	void open();
+	void close();
+	ClickAction getResult();
 
-	};
+	bool isOpen = false;
+
+private:
+
+	unique_ptr<FontSet> font;
+	vector<unique_ptr<GUIControl> > controls;
+
+	ClickAction result = NONE;
+
+	unique_ptr<TextLabel> titleText;
+	unique_ptr<TextLabel> textLabel;
+
+	Vector2 size;
+
+	Vector2 titlePosition;
+	Vector2 textPosition;
+	Vector2 btn1Position;
+	Vector2 btn2Position;
+	Vector2 btn3Position;
+
+	unique_ptr<RectangleSprite> bgSprite;
+	unique_ptr<RectangleFrame> frame;
+	
+
+};

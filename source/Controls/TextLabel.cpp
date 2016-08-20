@@ -86,10 +86,20 @@ void TextLabel::setFont(unique_ptr<FontSet> newFont) {
 	font = move(newFont);
 }
 
+void TextLabel::setFont(shared_ptr<FontSet> newFont) {
+
+	font = newFont;
+}
+
 void TextLabel::setTint(const Color& color) {
 
 	tint = color; // this kind of irrelevant, but oh well
 	font->setTint(color);
+}
+
+/** Warning: this will affect all text sharing this font! */
+void TextLabel::setScale(const Vector2 & scl) {
+	font->setScale(scl);
 }
 
 

@@ -8,7 +8,7 @@ public:
 	GraphicsAsset();
 	~GraphicsAsset();
 
-	bool load(ID3D11Device* device, const wchar_t* file);
+	bool load(ComPtr<ID3D11Device> device, const wchar_t* file);
 
 	const int getWidth() const;
 	const int getHeight() const;

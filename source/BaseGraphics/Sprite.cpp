@@ -31,13 +31,13 @@ Sprite::~Sprite() {
 }
 
 #include "../globals.h"
-void Sprite::load(GraphicsAsset* graphicsAsset) {
+void Sprite::load( GraphicsAsset* const graphicsAsset) {
 
 	texture = graphicsAsset->getTexture();
 	width = graphicsAsset->getWidth();
 	height = graphicsAsset->getHeight();
 
-
+	
 	origin = Vector2(width / 2.0f, height / 2.0f);
 	sourceRect.left = 0;
 	sourceRect.top = 0;

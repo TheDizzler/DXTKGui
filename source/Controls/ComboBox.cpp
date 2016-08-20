@@ -15,7 +15,7 @@ ComboBox::~ComboBox() {
 }
 
 #include "../assets.h"
-bool ComboBox::initialize(ID3D11Device* device, const wchar_t* fontFile) {
+bool ComboBox::initialize(ComPtr<ID3D11Device> device, const wchar_t* fontFile) {
 
 	//listBox->initialize(device, fontFile);
 

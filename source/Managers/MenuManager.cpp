@@ -15,11 +15,11 @@ void MenuManager::setGameManager(GameManager* gm) {
 }
 
 
-bool MenuManager::initialize(ID3D11Device* device, MouseController* mouse) {
+bool MenuManager::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
 
 	mouse->loadMenuMouse();
-	
+
 
 	mainScreen.reset(new MainScreen(this));
 	mainScreen->setGameManager(game);
@@ -119,7 +119,7 @@ void MenuScreen::pause() {
 /** **** MainMenuScreen **** **/
 MainScreen::MainScreen(MenuManager* mngr) : MenuScreen(mngr) {
 
-	menuFont = game->guiManager->getFont("Arial");
+	menuFont = game->guiFactory->getFont("Arial");
 }
 
 MainScreen::~MainScreen() {
@@ -129,11 +129,11 @@ MainScreen::~MainScreen() {
 }
 
 
-bool MainScreen::initialize(ID3D11Device* device, MouseController* mouse) {
+bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
 
 	Button* button;
-	button = game->guiManager->createImageButton("Arial", "Button Up", "Button Down");
+	button = GameManager::guiFactory->createImageButton("Arial", "Button Up", "Button Down");
 	button->action = GUIControl::PLAY;
 	button->setText("Play");
 	button->setPosition(Vector2(Globals::WINDOW_WIDTH / 2, 200));
@@ -141,15 +141,14 @@ bool MainScreen::initialize(ID3D11Device* device, MouseController* mouse) {
 
 	Vector2 size = Vector2(button->getWidth(), button->getHeight());
 
-	button = game->guiManager->createButton("BlackCloak");
+	button = GameManager::guiFactory->createButton("Arial");
 	button->action = GUIControl::SETTINGS;
 	button->setText("Settings");
-	//button->setScale(Vector2(.5, .5));
 	button->setDimensions(Vector2(Globals::WINDOW_WIDTH / 2, 350), size, 2);
 	guiControls.push_back(button);
 
 
-	button = game->guiManager->createImageButton("Arial", "Button Up", "Button Down");
+	button = GameManager::guiFactory->createImageButton("Arial", "Button Up", "Button Down");
 	button->action = GUIControl::EXIT;
 	button->setText("Exit");
 	button->setPosition(Vector2(Globals::WINDOW_WIDTH / 2, 500));
@@ -162,14 +161,25 @@ bool MainScreen::initialize(ID3D11Device* device, MouseController* mouse) {
 	mouseLabel = new TextLabel(Vector2(10, 100), menuFont);
 	guiControls.push_back(mouseLabel);
 
+	{
+		exitDialog.reset(GameManager::guiFactory->createDialog("Arial"));
+		exitDialog->setDimensions(
+			Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2),
+			Vector2(Globals::WINDOW_WIDTH / 3, Globals::WINDOW_HEIGHT / 3));
 
-	/*exitDialog.reset(new Dialog(
-		Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2)));
-	if (!exitDialog->initialize(device, Assets::arialFontFile)) {
-		MessageBox(0, L"Dialog init failed", L"Error", MB_OK);
-		return false;
-	}*/
+		exitDialog->setTitle(L"Exit Game?");
+		exitDialog->setText(L"Really Quit Tender Torrent?");
+		
 
+		//unique_ptr<Button> okButton;
+
+		/*exitDialog.reset(new Dialog(
+			Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2)));
+		if (!exitDialog->initialize(device, "Arial")) {
+			MessageBox(0, L"Dialog init failed", L"Error", MB_OK);
+			return false;
+		}*/
+	}
 
 
 
@@ -189,10 +199,10 @@ void MainScreen::update(double deltaTime,
 	//if (keyboardState[DIK_ESCAPE] && !lastStateDown) {
 	if (keys->keyDown[KeyboardController::ESC]
 		&& !keys->lastDown[KeyboardController::ESC]) {
-		/*if (exitDialog->isOpen)
+		if (exitDialog->isOpen)
 			exitDialog->close();
 		else
-			confirmExit();*/
+			confirmExit();
 	}
 
 	//lastStateDown = keyboardState[DIK_ESCAPE];
@@ -215,14 +225,14 @@ void MainScreen::update(double deltaTime,
 		if (control->clicked()) {
 			//test->setText("Clicked!");
 			switch (control->action) {
-				case Button::EXIT:
+				case GUIControl::EXIT:
 					confirmExit();
 					test->setText("Exit!");
 					break;
-				case Button::PLAY:
+				case GUIControl::PLAY:
 					test->setText("Play!");
 					break;
-				case Button::SETTINGS:
+				case GUIControl::SETTINGS:
 					menuManager->openConfigMenu();
 					//test->setText("Settings!!");
 					break;
@@ -258,14 +268,14 @@ void MainScreen::confirmExit() {
 /** **** ConfigScreen **** **/
 ConfigScreen::ConfigScreen(MenuManager* mngr) : MenuScreen(mngr) {
 
-	menuFont = game->guiManager->getFont("BlackCloak");
+	menuFont = game->guiFactory->getFont("BlackCloak");
 }
 
 ConfigScreen::~ConfigScreen() {
 }
 
 
-bool ConfigScreen::initialize(ID3D11Device* device, MouseController* mouse) {
+bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
 	// Labels for displaying selected info
 	//TextLabel* label = new TextLabel(Vector2(50, 50), menuFont);

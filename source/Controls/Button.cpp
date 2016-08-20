@@ -59,6 +59,8 @@ void Button::setToUnpressedState() {
 
 	rectSprite->setTint(normalColor);
 	buttonLabel->setTint(normalColorText);
+	buttonLabel->setPosition(unpressedTextPosition);
+
 }
 
 void Button::setToHoverState() {
@@ -71,22 +73,11 @@ void Button::setToSelectedState() {
 
 	rectSprite->setTint(selectedColor);
 	buttonLabel->setTint(selectedColorText);
+	buttonLabel->setPosition(pressedTextPosition);
 }
 
 
 void Button::draw(SpriteBatch* batch) {
-
-
-	/*if (isSelected) {
-		rectSprite->setTint(selectedColor);
-		buttonLabel->setTint(selectedColorText);
-	} else if (isHover) {
-		rectSprite->setTint(hoverColor);
-		buttonLabel->setTint(hoverColorText);
-	}else {
-		rectSprite->setTint(normalColor);
-		buttonLabel->setTint(normalColorText);
-	} */
 
 	rectSprite->draw(batch);
 	frame->draw(batch);
@@ -100,8 +91,12 @@ void Button::setText(string text) {
 }
 
 
+void Button::setTextOffset(const Vector2& unpressedOffset,
+	const Vector2& pressedOffset) {
 
-
+	unpressedTextOffset = unpressedOffset;
+	pressedTextOffset = pressedOffset;
+}
 
 void Button::setPosition(const Vector2& pos) {
 
@@ -109,8 +104,20 @@ void Button::setPosition(const Vector2& pos) {
 
 	// center text
 	Vector2 textsize = buttonLabel->measureString();
-	buttonLabel->setPosition(
-		Vector2(position.x - textsize.x / 2, position.y - textsize.y / 2 - 5));
+	//if (textsize.x > getWidth()) {
+	//	int newTextWidth = .9; // text disappears when scale below 1!
+	//	buttonLabel->setScale(Vector2(newTextWidth, newTextWidth));
+	//	textsize = buttonLabel->measureString();
+	//}
+	//buttonLabel->setPosition(
+		//Vector2(position.x - textsize.x / 2, position.y - textsize.y / 2 - 5));
+	Vector2 newPos = Vector2(position.x - textsize.x / 2,
+		position.y - textsize.y / 2);
+	unpressedTextPosition = newPos;
+	unpressedTextPosition += unpressedTextOffset;
+	pressedTextPosition = newPos;
+	pressedTextPosition += pressedTextOffset;
+	buttonLabel->setPosition(unpressedTextPosition);
 
 }
 
@@ -124,6 +131,7 @@ void Button::setScale(const Vector2& scl) {
 	buttonLabel->setScale(scale);
 
 }
+
 
 const int Button::getWidth() const {
 
@@ -157,7 +165,6 @@ bool Button::hovering() {
 
 void Button::setFont(unique_ptr<FontSet> newFont) {
 
-	//buttonFont.release();
 	buttonLabel->setFont(move(newFont));
 }
 
@@ -166,6 +173,9 @@ void Button::setFont(unique_ptr<FontSet> newFont) {
 
 /** **** ImageButton **** **/
 ImageButton::ImageButton() {
+
+	// a rough guesstimate
+	setTextOffset(Vector2(0, -5), Vector2(0, 0));
 }
 
 ImageButton::~ImageButton() {
@@ -186,16 +196,6 @@ void ImageButton::load(unique_ptr<FontSet> font, unique_ptr<Sprite> upButtonSpri
 
 
 void ImageButton::draw(SpriteBatch* batch) {
-
-	//Sprite* drawSprite;
-	//drawSprite = normalSprite.get();
-
-	//if (isSelected) {
-		//drawSprite = pressedSprite.get();
-	//} else if (isHover)
-		//buttonLabel->setTint(hoverColorText);
-	//else
-		//buttonLabel->setTint(normalColorText);
 
 	drawSprite->draw(batch);
 	buttonLabel->draw(batch);
@@ -219,6 +219,8 @@ void ImageButton::setScale(const Vector2& scl) {
 
 void ImageButton::setToUnpressedState() {
 	buttonLabel->setTint(normalColorText);
+	Vector2 pos = buttonLabel->getPosition();
+	buttonLabel->setPosition(unpressedTextPosition);
 	drawSprite = normalSprite.get();
 }
 
@@ -229,5 +231,7 @@ void ImageButton::setToHoverState() {
 
 void ImageButton::setToSelectedState() {
 
+	Vector2 pos = buttonLabel->getPosition();
+	buttonLabel->setPosition(pressedTextPosition);
 	drawSprite = pressedSprite.get();
 }

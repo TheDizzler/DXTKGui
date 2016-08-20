@@ -1,9 +1,8 @@
 #include "Dialog.h"
 
 
-Dialog::Dialog(const Vector2& pos) {
+Dialog::Dialog() {
 
-	position = pos;
 }
 
 Dialog::~Dialog() {
@@ -13,28 +12,27 @@ Dialog::~Dialog() {
 	for (TextLabel* label : labels)
 		delete label;*/
 
-	for (GUIControl* control : controls)
-		delete control;
+	/*for (GUIControl* control : controls)
+		delete control;*/
 }
 
-#include "../assets.h"
-bool Dialog::initialize(ID3D11Device * device, shared_ptr<FontSet> fnt) {
+#include "../Managers/GameManager.h"
+void Dialog::initialize(unique_ptr<FontSet> fnt,
+	ComPtr<ID3D11ShaderResourceView> pixelTexture) {
 
 	/*if (!Sprite::load(device, Assets::uglyDialogBox))
 		return false;
 
 	setScale(Vector2(3, 1.5));*/
 
-	/*font.reset(new FontSet());
-	if (!font->load(device, fontFile))
-		return false;
-	font->setTint(DirectX::Colors::White.v);*/
-	font = fnt;
+	font = move(fnt);
+	font->setTint(DirectX::Colors::White.v);
 
-	Vector2 textLoc;
-	Vector2 okBtn;
-	Vector2 cancelBtn;
+	frame.reset(new RectangleFrame(pixelTexture));
+	bgSprite.reset(new RectangleSprite(pixelTexture));
+	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
 
+	titleText.reset(new TextLabel(GameManager::guiFactory->getFont("BlackCloak")));
 
 	/*TextLabel* label = new TextLabel(textLoc, font.get());
 	label->setText("Really Quit Tender Torrent?");
@@ -70,13 +68,56 @@ bool Dialog::initialize(ID3D11Device * device, shared_ptr<FontSet> fnt) {
 	button->setPosition(cancelBtn);
 	buttons.push_back(button);*/
 
-	return true;
+}
+
+void Dialog::setDimensions(const Vector2& pos, const Vector2& sz,
+	const int frameThickness) {
+
+	setPosition(pos);
+	size = sz;
+	frame->setDimensions(position, size, frameThickness);
+
+	Vector2 titlePos = position;
+	titlePos.y += 10;
+	Vector2 titlesize = titleText->measureString();
+	titlePos.x = position.x - titlesize.x / 2;
+	titleText->setPosition(titlePos);
+	//TextLabel* label = new TextLabel(textLoc, font.get());
 }
 
 
-void Dialog::add(GUIControl* control) {
+void Dialog::setTitle(wstring text) {
 
-	controls.push_back(control);
+	titleText->setText(text);
+	Vector2 titlePos = position;
+	titlePos.y += 10; // random offset?
+	Vector2 titlesize = titleText->measureString();
+	titlePos.x = position.x - titlesize.x / 2;
+	titleText->setPosition(titlePos);
+}
+
+
+void Dialog::setText(wstring text) {
+
+	textLabel->setText(text);
+	Vector2 textsize = font->measureString(textLabel->getText());
+	Vector2 textLoc = Vector2(position.x - textsize.x / 2,
+		position.y - textsize.y / 4);
+	textLabel->setPosition(textLoc);
+	//controls.push_back(label);
+}
+
+
+void Dialog::addItem(unique_ptr<GUIControl> control) {
+
+	controls.push_back(move(control));
+}
+
+/* Not too sure how this will behave....*/
+void Dialog::addItems(vector<unique_ptr<GUIControl>> newControls) {
+
+	for (int i = 0; i < newControls.size(); ++i)
+		controls.push_back(move(newControls[i]));
 }
 
 
@@ -98,19 +139,34 @@ void Dialog::update(double deltaTime, MouseController* mouse) {
 		}
 	}*/
 
-	for (GUIControl* control : controls) {
+	//for (unique_ptr<GUIControl> control : controls) {
+	for (auto const& control : controls) {
 		control->update(deltaTime, mouse);
 		if (control->clicked()) {
 			switch (control->action) {
-				case Button::OK:
+				case GUIControl::OK:
 					result = CONFIRM;
 					break;
-				case Button::CANCEL:
-					result = DialogResult::CANCEL;
+				case GUIControl::CANCEL:
+					result = ClickAction::CANCEL;
 					break;
 			}
 		}
 	}
+}
+
+
+void Dialog::draw(SpriteBatch* batch) {
+
+	for (auto const& control : controls)
+		control->draw(batch);
+	/*Sprite::draw(batch);
+
+	for (TextButton* button : buttons)
+		button->draw(batch);
+
+	for (TextLabel* label : labels)
+		label->draw(batch);*/
 }
 
 void Dialog::open() {
@@ -121,18 +177,43 @@ void Dialog::close() {
 	isOpen = false;
 }
 
-Dialog::DialogResult Dialog::getResult() {
+GUIControl::ClickAction Dialog::getResult() {
 	return result;
 }
 
-void Dialog::draw(SpriteBatch* batch) {
 
-	/*Sprite::draw(batch);
 
-	for (TextButton* button : buttons)
-		button->draw(batch);
 
-	for (TextLabel* label : labels)
-		label->draw(batch);*/
+void Dialog::setFont(unique_ptr<FontSet> newFont) {
+
+	font.release();
+	font = move(newFont);
 }
+
+const Vector2& Dialog::getPosition() const {
+
+	return position;
+}
+
+const int Dialog::getWidth() const {
+	return 0;
+}
+
+const int Dialog::getHeight() const {
+	return 0;
+}
+
+bool Dialog::clicked() {
+	return isClicked;
+}
+
+bool Dialog::selected() {
+	return isSelected;
+}
+
+bool Dialog::hovering() {
+	return isHover;
+}
+
+
 

@@ -41,7 +41,7 @@ public:
 	Sprite(const Vector2& position);
 	virtual ~Sprite();
 
-	virtual void load(GraphicsAsset* graphicsAsset);
+	virtual void load(GraphicsAsset* const graphicsAsset);
 
 	const HitArea* getHitArea() const;
 	virtual const Vector2& getPosition() const override;
