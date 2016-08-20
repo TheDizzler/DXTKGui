@@ -50,8 +50,6 @@ unique_ptr<FontSet> GUIManager::getFont(const char_t* fontName) {
 	font->load(device, Assets::convertCharStarToWCharT(fontFile));
 	font->setTint(DirectX::Colors::White.v);
 	return font;
-
-
 }
 
 
@@ -101,7 +99,8 @@ Button* GUIManager::createImageButton(const char_t* fontName,
 
 	ImageButton* button = new ImageButton();
 	button->load(getFont(fontName),
-		getSpriteFromAsset(upImageName), getSpriteFromAsset(downImageName));
+		getSpriteFromAsset(upImageName),
+		getSpriteFromAsset(downImageName));
 
 	return button;
 }

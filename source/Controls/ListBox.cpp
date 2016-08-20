@@ -68,6 +68,7 @@ void ListBox::initialize(shared_ptr<FontSet> fnt,
 		//return false;
 	}
 
+	frame.reset(new RectangleFrame(pixel));
 	//return true;
 
 }
@@ -87,7 +88,14 @@ void ListBox::addItems(vector<ListItem*> items) {
 		itemsToDisplay = listItems.size();
 
 	scrollBar->setScrollBar(listItems.size(), itemHeight, maxDisplayItems);
+	int frameWidth;
+	if (listItems.size() > maxDisplayItems || alwaysShowScrollBar)
+		frameWidth = width;
+	else
+		frameWidth = width - scrollBar->getWidth();
 
+	int frameHeight = itemHeight * itemsToDisplay;
+	frame->setDimensions(position, Vector2(frameWidth, frameHeight), frameThickness);
 }
 
 
@@ -150,57 +158,57 @@ void ListBox::draw(SpriteBatch* batch) {
 		scrollBar->draw(batch);
 
 	if (listItems.size() > 0) { // draw frame
-		drawFrame(batch);
+		frame->draw(batch);
 	}
 
 }
 
 /** THIS CAN BE OPTIMIZED. **/
-void ListBox::drawFrame(SpriteBatch* batch) {
-
-	int realWidth;
-	if (listItems.size() > maxDisplayItems || alwaysShowScrollBar)
-		realWidth = width;
-	else
-		realWidth = width - scrollBar->getWidth();
-		// upper horizontal frame
-	RECT frame;
-	frame.left = 0;
-	frame.top = 0;
-
-	frame.right = realWidth;
-	frame.bottom = frameThickness; // thickness of frame
-	Vector2 framePos(position.x, position.y);
-
-	batch->Draw(pixel.Get(), framePos, &frame,
-		::DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
-		SpriteEffects_None, 0.0f);
-
-	// lower horizontal frame
-	int height = itemHeight * itemsToDisplay;
-	framePos.y += height;
-
-	batch->Draw(pixel.Get(), framePos, &frame,
-		::DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
-		SpriteEffects_None, 0.0f);
-
-	// left vertical frame
-	framePos.y = position.y;
-	frame.right = frameThickness;
-	frame.bottom = height;
-
-	batch->Draw(pixel.Get(), framePos, &frame,
-		::DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
-		SpriteEffects_None, 0.0f);
-
-	// right vertical frame
-	framePos.x += realWidth;
-
-	batch->Draw(pixel.Get(), framePos, &frame,
-		::DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
-		SpriteEffects_None, 0.0f);
-
-}
+//void ListBox::drawFrame(SpriteBatch* batch) {
+//
+//	int realWidth;
+//	if (listItems.size() > maxDisplayItems || alwaysShowScrollBar)
+//		realWidth = width;
+//	else
+//		realWidth = width - scrollBar->getWidth();
+//
+//	// upper horizontal frame
+//	RECT frame;
+//	frame.left = 0;
+//	frame.top = 0;
+//	frame.right = realWidth;
+//	frame.bottom = frameThickness; // thickness of frame
+//	Vector2 framePos(position.x, position.y);
+//
+//	batch->Draw(pixel.Get(), framePos, &frame,
+//		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
+//		SpriteEffects_None, 0.0f);
+//
+//	// lower horizontal frame
+//	int height = itemHeight * itemsToDisplay;
+//	framePos.y += height;
+//
+//	batch->Draw(pixel.Get(), framePos, &frame,
+//		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
+//		SpriteEffects_None, 0.0f);
+//
+//	// left vertical frame
+//	framePos.y = position.y;
+//	frame.right = frameThickness;
+//	frame.bottom = height;
+//
+//	batch->Draw(pixel.Get(), framePos, &frame,
+//		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
+//		SpriteEffects_None, 0.0f);
+//
+//	// right vertical frame
+//	framePos.x += realWidth;
+//
+//	batch->Draw(pixel.Get(), framePos, &frame,
+//		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
+//		SpriteEffects_None, 0.0f);
+//
+//}
 
 
 void ListBox::drawSelected(SpriteBatch* batch, const Vector2& selectedPosition) {
@@ -395,7 +403,8 @@ void ScrollBar::setScrollBar(int totalItems, int itemHeight, int maxDisplayItems
 			- scrollBarUpButton->getHeight() * 2;
 
 		Vector2 newButtonPos = scrollBarDownButton->getPosition();
-		newButtonPos.y = scrollBarPosition.y + scrollBarRect.bottom + scrollBarDownButton->getHeight() / 2;
+		newButtonPos.y = scrollBarPosition.y + scrollBarRect.bottom
+			+ scrollBarDownButton->getHeight() / 2;
 		scrollBarDownButton->setPosition(newButtonPos);
 
 	} else {

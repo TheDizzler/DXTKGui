@@ -19,16 +19,18 @@ public:
 	void load(unique_ptr<FontSet> font,
 		ComPtr<ID3D11ShaderResourceView> pixelTexture);
 
+	void setDimensions(const Vector2& position, const Vector2& size,
+		const int frameThickness);
 
 	virtual void update(double deltaTime, MouseController* mouse) override;
 	virtual void draw(SpriteBatch* batch) override;
 
 	void setText(string text);
 
-	
+
 	virtual void setFont(unique_ptr<FontSet> newFont) override;
-	
-	void setDimensions(const Vector2& position, const Vector2& size);
+
+
 	virtual void setPosition(const Vector2& position) override;
 	virtual const Vector2& getPosition() const override;
 
@@ -52,13 +54,14 @@ public:
 
 protected:
 
-	//ComPtr<ID3D11ShaderResourceView> pixel;
+	virtual void setToUnpressedState();
+	virtual void setToHoverState();
+	virtual void setToSelectedState();
 
-	//unique_ptr<FontSet> buttonFont;
 	unique_ptr<TextLabel> buttonLabel;
 
-	//RECT buttonRect;
 	unique_ptr<RectangleSprite> rectSprite;
+	unique_ptr<RectangleFrame> frame;
 };
 
 
@@ -77,7 +80,13 @@ public:
 
 	virtual void setPosition(const Vector2& position) override;
 	virtual void setScale(const Vector2 & scale) override;
+
+protected:
+	virtual void setToUnpressedState() override;
+	virtual void setToHoverState() override;
+	virtual void setToSelectedState() override;
 private:
 	unique_ptr<Sprite> normalSprite;
 	unique_ptr<Sprite> pressedSprite;
+	Sprite* drawSprite;
 };

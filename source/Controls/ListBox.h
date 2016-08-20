@@ -153,7 +153,7 @@ public:
 	/** Returns true if selection changed. */
 	bool update(double deltaTime, MouseController* mouse);
 	void draw(SpriteBatch* batch);
-	void drawFrame(SpriteBatch* batch);
+	//void drawFrame(SpriteBatch* batch);
 
 	void drawSelected(SpriteBatch* batch, const Vector2& selectedPosition);
 
@@ -183,7 +183,7 @@ private:
 	Vector2 firstItemPos;
 
 	unique_ptr<ScrollBar> scrollBar;
-
+	unique_ptr<RectangleFrame> frame;
 	int firstItemToDisplay = 0;
 
 	/** ID3D11ShaderResourceView is a ComPtr! */

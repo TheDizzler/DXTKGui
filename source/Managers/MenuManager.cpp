@@ -141,10 +141,11 @@ bool MainScreen::initialize(ID3D11Device* device, MouseController* mouse) {
 
 	Vector2 size = Vector2(button->getWidth(), button->getHeight());
 
-	button = game->guiManager->createButton("Bookshelf");
+	button = game->guiManager->createButton("BlackCloak");
 	button->action = GUIControl::SETTINGS;
 	button->setText("Settings");
-	button->setDimensions(Vector2(Globals::WINDOW_WIDTH / 2, 350), size);
+	//button->setScale(Vector2(.5, .5));
+	button->setDimensions(Vector2(Globals::WINDOW_WIDTH / 2, 350), size, 2);
 	guiControls.push_back(button);
 
 
