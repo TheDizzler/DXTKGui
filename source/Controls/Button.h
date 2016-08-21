@@ -3,7 +3,7 @@
 #include "../Engine/MouseController.h"
 #include "GUIControl.h"
 #include "TextLabel.h"
-#include "../BaseGraphics/RectangleSprite.h"
+#include "../BaseGraphics/PrimitiveShapes.h"
 
 using namespace std;
 
@@ -19,18 +19,20 @@ public:
 	void load(unique_ptr<FontSet> font,
 		ComPtr<ID3D11ShaderResourceView> pixelTexture);
 
+	/* position is center point of button. */
 	void setDimensions(const Vector2& position, const Vector2& size,
 		const int frameThickness);
 
 	virtual void update(double deltaTime, MouseController* mouse) override;
 	virtual void draw(SpriteBatch* batch) override;
 
-	void setText(string text);
-
+	virtual void setText(wstring text) override;
+	virtual XMVECTOR XM_CALLCONV measureString() const override;
 
 	virtual void setFont(unique_ptr<FontSet> newFont) override;
 
 	void setTextOffset(const Vector2& unpressedOffset, const Vector2& pressedOffset);
+	/* position is top left corner. */
 	virtual void setPosition(const Vector2& position) override;
 	virtual const Vector2& getPosition() const override;
 
@@ -54,6 +56,8 @@ public:
 	virtual bool hovering() override;
 
 protected:
+
+	void positionText();
 
 	virtual void setToUnpressedState();
 	virtual void setToHoverState();

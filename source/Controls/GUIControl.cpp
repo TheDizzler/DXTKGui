@@ -2,8 +2,8 @@
 
 void GUIControl::setPosition(const Vector2& pos) {
 	position = pos;
-	hitArea->position = Vector2(pos.x - getWidth()*scale.x / 2,
-		pos.y - getHeight()*scale.y / 2);
+	hitArea->position = Vector2(position.x /*- getWidth()*scale.x / 2*/,
+		position.y/* - getHeight()*scale.y / 2*/);
 	hitArea->size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
 }
 

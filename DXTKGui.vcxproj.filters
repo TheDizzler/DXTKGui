@@ -60,9 +60,6 @@
     <ClCompile Include="Source\BaseGraphics\FontSet.cpp">
       <Filter>Source Files\Engine\BaseGfx</Filter>
     </ClCompile>
-    <ClCompile Include="Source\BaseGraphics\RectangleSprite.cpp">
-      <Filter>Source Files\Engine\BaseGfx</Filter>
-    </ClCompile>
     <ClCompile Include="Source\BaseGraphics\Sprite.cpp">
       <Filter>Source Files\Engine\BaseGfx</Filter>
     </ClCompile>
@@ -96,6 +93,9 @@
     <ClCompile Include="source\Controls\GUIFactory.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="Source\BaseGraphics\PrimitiveShapes.cpp">
+      <Filter>Source Files\Engine\BaseGfx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\GameEngine.h">
@@ -117,9 +117,6 @@
       <Filter>Header Files\Engine\BaseGfx</Filter>
     </ClInclude>
     <ClInclude Include="Source\BaseGraphics\IElement2D.h">
-      <Filter>Header Files\Engine\BaseGfx</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\BaseGraphics\RectangleSprite.h">
       <Filter>Header Files\Engine\BaseGfx</Filter>
     </ClInclude>
     <ClInclude Include="Source\BaseGraphics\Sprite.h">
@@ -163,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="source\Controls\GUIFactory.h">
       <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BaseGraphics\PrimitiveShapes.h">
+      <Filter>Header Files\Engine\BaseGfx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

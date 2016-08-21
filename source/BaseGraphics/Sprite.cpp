@@ -31,13 +31,13 @@ Sprite::~Sprite() {
 }
 
 #include "../globals.h"
-void Sprite::load( GraphicsAsset* const graphicsAsset) {
+void Sprite::load(GraphicsAsset* const graphicsAsset) {
 
 	texture = graphicsAsset->getTexture();
 	width = graphicsAsset->getWidth();
 	height = graphicsAsset->getHeight();
 
-	
+
 	origin = Vector2(width / 2.0f, height / 2.0f);
 	sourceRect.left = 0;
 	sourceRect.top = 0;
@@ -50,6 +50,12 @@ void Sprite::load( GraphicsAsset* const graphicsAsset) {
 
 }
 
+
+void Sprite::update(double deltaTime) {
+
+	hitArea->position = Vector2(position.x - width / 2, position.y - height / 2);
+
+}
 
 
 void Sprite::draw(SpriteBatch* batch) {
@@ -66,13 +72,6 @@ ComPtr<ID3D11ShaderResourceView> Sprite::getTexture() {
 //ComPtr<ID3D11Resource> Sprite::getResource() {
 //	return resource;
 //}
-
-
-void Sprite::update(double deltaTime) {
-
-	hitArea->position = Vector2(position.x - width / 2, position.y - height / 2);
-
-}
 
 
 const HitArea* Sprite::getHitArea() const {

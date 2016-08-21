@@ -3,7 +3,7 @@
 //#include <vector>
 
 
-#include "../BaseGraphics/RectangleSprite.h"
+#include "../BaseGraphics/PrimitiveShapes.h"
 #include "Button.h"
 
 
@@ -36,15 +36,20 @@ public:
 		const int frameThickness = 2);
 
 	void setTitle(wstring text);
-	void setText(wstring text);
+	virtual void setText(wstring text) override;
+	/** Not used in DialogBox */
+	virtual XMVECTOR XM_CALLCONV measureString() const override;
 
 	virtual void update(double deltaTime, MouseController* mouse);
 	virtual void draw(SpriteBatch* batch);
+
+	void setConfirmButton(unique_ptr<Button> okButton);
 
 	virtual void addItem(unique_ptr<GUIControl> control) override;
 	virtual void addItems(vector<unique_ptr<GUIControl>> controls) override;
 
 	virtual void setFont(unique_ptr<FontSet> newFont) override;
+	virtual void setTint(const Color& color) override;
 
 	virtual const Vector2& getPosition() const override;
 	virtual const int getWidth() const override;
@@ -63,24 +68,36 @@ public:
 
 private:
 
-	unique_ptr<FontSet> font;
+	enum GUIControlLookUp {
+		TitleText, DialogText, ButtonOK, ButtonNeutral, ButtonCancel, Other
+	};
+		//unique_ptr<FontSet> font;
 	vector<unique_ptr<GUIControl> > controls;
 
 	ClickAction result = NONE;
 
-	unique_ptr<TextLabel> titleText;
-	unique_ptr<TextLabel> textLabel;
+	//unique_ptr<TextLabel> titleText;
+	//unique_ptr<TextLabel> dialogText;
 
 	Vector2 size;
+	Vector2 titleFrameSize = Vector2(0, 40);
+	Vector2 titleFramePosition;
+	Vector2 dialogFrameSize;
+	Vector2 dialogFramePosition;
+	Vector2 buttonFramePosition;
+	Vector2 buttonFrameSize;
 
-	Vector2 titlePosition;
+	void calculateTitlePos();
+	void calculateDialogTextPos();
+	/*Vector2 titlePosition;
 	Vector2 textPosition;
 	Vector2 btn1Position;
 	Vector2 btn2Position;
-	Vector2 btn3Position;
+	Vector2 btn3Position;*/
 
 	unique_ptr<RectangleSprite> bgSprite;
 	unique_ptr<RectangleFrame> frame;
-	
+	unique_ptr<RectangleSprite> titleSprite;
 
+	Vector2 standardButtonSize = Vector2(150, 35);
 };

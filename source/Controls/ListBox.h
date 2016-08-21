@@ -4,7 +4,7 @@
 
 #include "TextLabel.h"
 #include "Button.h"
-#include "../BaseGraphics/RectangleSprite.h"
+#include "../BaseGraphics/PrimitiveShapes.h"
 
 using namespace std;
 
@@ -160,6 +160,8 @@ public:
 	void setSelected(size_t newIndex);
 	ListItem* getSelected();
 
+	virtual void setText(wstring text) /*override*/;
+	virtual XMVECTOR XM_CALLCONV measureString() const /*override*/;
 
 	bool multiSelect = false;
 	bool alwaysShowScrollBar = false;

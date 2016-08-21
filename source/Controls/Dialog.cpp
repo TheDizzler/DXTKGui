@@ -17,7 +17,7 @@ Dialog::~Dialog() {
 }
 
 #include "../Managers/GameManager.h"
-void Dialog::initialize(unique_ptr<FontSet> fnt,
+void Dialog::initialize(unique_ptr<FontSet> font,
 	ComPtr<ID3D11ShaderResourceView> pixelTexture) {
 
 	/*if (!Sprite::load(device, Assets::uglyDialogBox))
@@ -25,23 +25,43 @@ void Dialog::initialize(unique_ptr<FontSet> fnt,
 
 	setScale(Vector2(3, 1.5));*/
 
-	font = move(fnt);
+	//font = move(fnt);
 	font->setTint(DirectX::Colors::White.v);
 
 	frame.reset(new RectangleFrame(pixelTexture));
 	bgSprite.reset(new RectangleSprite(pixelTexture));
+	titleSprite.reset(new RectangleSprite(pixelTexture));
+	titleSprite->setTint(Color(128, 128, 128));
 	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
 
-	titleText.reset(new TextLabel(GameManager::guiFactory->getFont("BlackCloak")));
+	controls.resize(5);
 
-	/*TextLabel* label = new TextLabel(textLoc, font.get());
-	label->setText("Really Quit Tender Torrent?");
-	Vector2 size = font->measureString(label->getText());
-	textLoc = Vector2(position.x - size.x / 2, position.y - height / 4);
-	label->setPosition(textLoc);
-	controls.push_back(label);
+	unique_ptr<GUIControl> titleText;
+	titleText.reset(new TextLabel(GameManager::guiFactory->getFont("Arial")));
+	titleText->setScale(Vector2(1.5, 1.5));
+	titleText->setTint(Color(0, 0, 0));
+	controls[TitleText] = move(titleText);
+	unique_ptr<GUIControl> dialogText;
+	dialogText.reset(new TextLabel(move(font)));
+	dialogText->setTint(Color(0, 0, 0));
+	controls[DialogText] = move(dialogText);
 
 
+
+	/*unique_ptr<Button> junkOkButton;
+	junkOkButton.reset(new Button());
+	controls.push_back(move(junkOkButton));
+
+	unique_ptr<Button> junkNeutralButton;
+	junkNeutralButton.reset(new Button());
+	controls.push_back(move(junkNeutralButton));
+
+	unique_ptr<Button> junkCancelButton;
+	junkCancelButton.reset(new Button());
+	controls.push_back(move(junkCancelButton));*/
+
+
+	/*
 	Vector2 scaleFactor = Vector2(.75, 1);
 	TextButton* button = new TextButton();
 	if (!button->load(device, fontFile,
@@ -73,38 +93,94 @@ void Dialog::initialize(unique_ptr<FontSet> fnt,
 void Dialog::setDimensions(const Vector2& pos, const Vector2& sz,
 	const int frameThickness) {
 
-	setPosition(pos);
+	//position = pos;
 	size = sz;
-	frame->setDimensions(position, size, frameThickness);
+	/*position.x -= size.x / 2;
+	position.y -= size.y / 2;*/
+	setPosition(pos);
 
-	Vector2 titlePos = position;
-	titlePos.y += 10;
-	Vector2 titlesize = titleText->measureString();
-	titlePos.x = position.x - titlesize.x / 2;
-	titleText->setPosition(titlePos);
-	//TextLabel* label = new TextLabel(textLoc, font.get());
+	bgSprite->setDimensions(position, size);
+	frame->setDimensions(position, size, frameThickness);
+	titleFrameSize.x = size.x;
+	titleFramePosition = Vector2(position.x, position.y);
+	titleSprite->setDimensions(titleFramePosition, titleFrameSize);
+	dialogFramePosition = Vector2(position.x, position.y + titleFrameSize.y);
+	dialogFrameSize = Vector2(size.x, size.y - titleFrameSize.y);
+	buttonFramePosition =
+		Vector2(position.x, dialogFramePosition.y + dialogFrameSize.y);
+
+
+	Vector2 titlesize = controls[TitleText]->measureString();
+	if (titlesize.x > 0) {
+		calculateTitlePos();
+	}
+
+	Vector2 dialogsize = controls[DialogText]->measureString();
+	if (dialogsize.x > 0) {
+		calculateDialogTextPos();
+	}
+}
+
+int titleTextMargin = 10;
+void Dialog::calculateTitlePos() {
+
+	Vector2 titlesize = controls[TitleText]->measureString();
+
+	if (titlesize.x > titleFrameSize.x
+		|| titlesize.y > titleFrameSize.y) { // if title is bigger than dialog box
+		//expand the box
+		Vector2 newSize = size;
+		Vector2 newPos = position;
+		if (titlesize.x > titleFrameSize.x) {
+			newSize.x = titlesize.x + titleTextMargin;
+			newPos.x -= (newSize.x - size.x) / 2;
+		}
+		if (titlesize.y > titleFrameSize.y) {
+			titleFrameSize.y += titleTextMargin;
+			// might have to do somethin here
+			//newPos.y -= titleTextMargin;
+		}
+
+
+		setDimensions(newPos, newSize);
+		// not sure if this is necessary, but it was a fun excersize :O
+	}
+	Vector2 titlePos = Vector2(
+		titleFramePosition.x + (titleFrameSize.x - titlesize.x) / 2,
+		titleFramePosition.y + (titleFrameSize.y - titlesize.y) / 2);
+	controls[TitleText]->setPosition(titlePos);
 }
 
 
 void Dialog::setTitle(wstring text) {
 
-	titleText->setText(text);
-	Vector2 titlePos = position;
-	titlePos.y += 10; // random offset?
-	Vector2 titlesize = titleText->measureString();
-	titlePos.x = position.x - titlesize.x / 2;
-	titleText->setPosition(titlePos);
+	controls[TitleText]->setText(text);
+	calculateTitlePos();
 }
 
+void Dialog::calculateDialogTextPos() {
+
+	Vector2 dialogtextsize = controls[DialogText]->measureString();
+	if (dialogtextsize.x > dialogFrameSize.x) { // if the text is longer than the dialog box
+	//	TODO:
+	//		break the text down into multiple lines
+
+	}
+	Vector2 dialogpos = Vector2(
+		dialogFramePosition.x + (dialogFrameSize.x - dialogtextsize.x) / 2,
+		dialogFramePosition.y + (dialogFrameSize.y - dialogtextsize.y) / 2);
+	controls[DialogText]->setPosition(dialogpos);
+}
 
 void Dialog::setText(wstring text) {
 
-	textLabel->setText(text);
-	Vector2 textsize = font->measureString(textLabel->getText());
-	Vector2 textLoc = Vector2(position.x - textsize.x / 2,
-		position.y - textsize.y / 4);
-	textLabel->setPosition(textLoc);
-	//controls.push_back(label);
+	controls[DialogText]->setText(text);
+	calculateDialogTextPos();
+}
+
+/** Not used in DialogBox */
+XMVECTOR XM_CALLCONV Dialog::measureString() const {
+	return Vector2::Zero;
 }
 
 
@@ -125,22 +201,9 @@ void Dialog::update(double deltaTime, MouseController* mouse) {
 
 	result = NONE;
 
-	/*for (TextButton* button : buttons) {
-		button->update(deltaTime, mouse);
-		if (button->clicked()) {
-			switch (button->action) {
-				case Button::OK:
-					result = CONFIRM;
-					break;
-				case Button::CANCEL:
-					result = DialogResult::CANCEL;
-					break;
-			}
-		}
-	}*/
-
-	//for (unique_ptr<GUIControl> control : controls) {
 	for (auto const& control : controls) {
+		if (control == NULL)
+			continue;
 		control->update(deltaTime, mouse);
 		if (control->clicked()) {
 			switch (control->action) {
@@ -158,15 +221,26 @@ void Dialog::update(double deltaTime, MouseController* mouse) {
 
 void Dialog::draw(SpriteBatch* batch) {
 
-	for (auto const& control : controls)
+	bgSprite->draw(batch);
+	titleSprite->draw(batch);
+	frame->draw(batch);
+
+
+	for (auto const& control : controls) {
+		if (control == NULL)
+			continue;
 		control->draw(batch);
-	/*Sprite::draw(batch);
+	}
+}
 
-	for (TextButton* button : buttons)
-		button->draw(batch);
+void Dialog::setConfirmButton(unique_ptr<Button> okButton) {
 
-	for (TextLabel* label : labels)
-		label->draw(batch);*/
+
+	okButton->action = Button::OK;
+	okButton->setDimensions(buttonFramePosition, standardButtonSize, 3);
+	controls[ButtonOK].release();
+	controls[ButtonOK] = move(okButton);
+
 }
 
 void Dialog::open() {
@@ -186,8 +260,12 @@ GUIControl::ClickAction Dialog::getResult() {
 
 void Dialog::setFont(unique_ptr<FontSet> newFont) {
 
-	font.release();
-	font = move(newFont);
+	//font.release();
+	controls[DialogText]->setFont(move(newFont));
+}
+
+void Dialog::setTint(const Color& color) {
+	bgSprite->setTint(color);
 }
 
 const Vector2& Dialog::getPosition() const {

@@ -232,6 +232,16 @@ void ListBox::setSelected(size_t newIndex) {
 ListItem * ListBox::getSelected() {
 	return listItems[selectedIndex];
 }
+
+// do nothing for now
+void ListBox::setText(wstring text) {
+	// do nothing for now
+}
+
+// do nothing for now
+XMVECTOR XM_CALLCONV ListBox::measureString() const {
+	return XMVECTOR();
+}
 /** **** ListBox END **** **/
 
 

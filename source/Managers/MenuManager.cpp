@@ -135,22 +135,22 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 	Button* button;
 	button = GameManager::guiFactory->createImageButton("Arial", "Button Up", "Button Down");
 	button->action = GUIControl::PLAY;
-	button->setText("Play");
+	button->setText(L"Play");
 	button->setPosition(Vector2(Globals::WINDOW_WIDTH / 2, 200));
 	guiControls.push_back(button);
 
-	Vector2 size = Vector2(button->getWidth(), button->getHeight());
+	Vector2 size = Vector2(/*button->getWidth()*/5, button->getHeight());
 
 	button = GameManager::guiFactory->createButton("Arial");
 	button->action = GUIControl::SETTINGS;
-	button->setText("Settings");
 	button->setDimensions(Vector2(Globals::WINDOW_WIDTH / 2, 350), size, 2);
+	button->setText(L"Settings");
 	guiControls.push_back(button);
 
 
 	button = GameManager::guiFactory->createImageButton("Arial", "Button Up", "Button Down");
 	button->action = GUIControl::EXIT;
-	button->setText("Exit");
+	button->setText(L"Exit");
 	button->setPosition(Vector2(Globals::WINDOW_WIDTH / 2, 500));
 	guiControls.push_back(button);
 
@@ -163,15 +163,22 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 
 	{
 		exitDialog.reset(GameManager::guiFactory->createDialog("Arial"));
+		Vector2 dialogPos, dialogSize;
+		dialogSize = Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2);
+		dialogPos = dialogSize;
+		dialogPos.x -= dialogSize.x/2;
+		dialogPos.y -= dialogSize.y / 2;
 		exitDialog->setDimensions(
-			Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2),
-			Vector2(Globals::WINDOW_WIDTH / 3, Globals::WINDOW_HEIGHT / 3));
-
+			dialogPos, dialogSize);
+		exitDialog->setTint(Color(0, 120, 207));
 		exitDialog->setTitle(L"Exit Game?");
 		exitDialog->setText(L"Really Quit Tender Torrent?");
-		
 
-		//unique_ptr<Button> okButton;
+
+		unique_ptr<Button> okButton;
+		okButton.reset(GameManager::guiFactory->createButton("BlackCloak"));
+		okButton->setText(L"Quit");
+		exitDialog->setConfirmButton(move(okButton));
 
 		/*exitDialog.reset(new Dialog(
 			Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2)));
@@ -196,50 +203,50 @@ void MainScreen::update(double deltaTime,
 
 
 
-	//if (keyboardState[DIK_ESCAPE] && !lastStateDown) {
-	if (keys->keyDown[KeyboardController::ESC]
-		&& !keys->lastDown[KeyboardController::ESC]) {
+	if (keys->keyDown[KeyboardController::ESC] && !lastStateDown) {
+	/*if (keys->keyDown[KeyboardController::ESC]
+		&& !keys->lastDown[KeyboardController::ESC]) {*/
 		if (exitDialog->isOpen)
 			exitDialog->close();
 		else
-			confirmExit();
+			exitDialog->open();
 	}
 
-	//lastStateDown = keyboardState[DIK_ESCAPE];
+	lastStateDown = keys->keyDown[KeyboardController::ESC];
 
 
-	//if (exitDialog->isOpen) {
-	//	exitDialog->update(deltaTime, mouse);
-	//	switch (exitDialog->getResult()) {
-	//		case Dialog::CONFIRM:
-	//			game->exit();
-	//			break;
-	//		case Dialog::CANCEL:
-	//			exitDialog->close();
-	//			break;
-	//	}
+	if (exitDialog->isOpen) {
+		exitDialog->update(deltaTime, mouse);
+		switch (exitDialog->getResult()) {
+			case GUIControl::CONFIRM:
+				game->exit();
+				break;
+			case GUIControl::CANCEL:
+				exitDialog->close();
+				break;
+		}
 
-	//} else {
-	for (GUIControl* control : guiControls) {
-		control->update(deltaTime, mouse);
-		if (control->clicked()) {
-			//test->setText("Clicked!");
-			switch (control->action) {
-				case GUIControl::EXIT:
-					confirmExit();
-					test->setText("Exit!");
-					break;
-				case GUIControl::PLAY:
-					test->setText("Play!");
-					break;
-				case GUIControl::SETTINGS:
-					menuManager->openConfigMenu();
-					//test->setText("Settings!!");
-					break;
+	} else {
+		for (GUIControl* control : guiControls) {
+			control->update(deltaTime, mouse);
+			if (control->clicked()) {
+				//test->setText("Clicked!");
+				switch (control->action) {
+					case GUIControl::EXIT:
+						confirmExit();
+						test->setText("Exit!");
+						break;
+					case GUIControl::PLAY:
+						test->setText("Play!");
+						break;
+					case GUIControl::SETTINGS:
+						menuManager->openConfigMenu();
+						//test->setText("Settings!!");
+						break;
+				}
 			}
 		}
 	}
-//}
 }
 
 
@@ -248,11 +255,8 @@ void MainScreen::draw(SpriteBatch* batch) {
 	for (GUIControl* control : guiControls)
 		control->draw(batch);
 
-	/*for (auto const& label : textLabels)
-		label->draw(batch);
-
 	if (exitDialog->isOpen)
-		exitDialog->draw(batch);*/
+		exitDialog->draw(batch);
 
 }
 

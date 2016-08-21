@@ -9,14 +9,16 @@ using namespace std;
 class GUIControl : public IElement2D {
 public:
 	enum ClickAction {
-		EXIT, PLAY, SETTINGS, CANCEL, OK, UP, DOWN,	NONE, CONFIRM, NEUTRAL
+		EXIT, PLAY, SETTINGS, CANCEL, OK, UP, DOWN, NONE, CONFIRM, NEUTRAL
 	};
 
 	virtual void update(double deltaTime, MouseController* mouse) = 0;
 
 	virtual void setFont(unique_ptr<FontSet> newFont) = 0;
+	virtual void setText(wstring text) = 0;
+	virtual XMVECTOR XM_CALLCONV measureString() const = 0;
+
 	virtual void setScale(const Vector2& scl);
-	//void setScale(const int scl);
 
 	virtual void setPosition(const Vector2 & position) override;
 	virtual void setOrigin(const Vector2 & origin) override;
@@ -43,7 +45,7 @@ public:
 
 protected:
 	unique_ptr<HitArea> hitArea;
-	Vector2 position;
+	Vector2 position = Vector2::Zero;
 	Vector2 scale = Vector2(1, 1);
 
 	Vector2 origin;
@@ -59,7 +61,7 @@ protected:
 	bool isClicked = false;
 
 
-	
+
 
 
 };

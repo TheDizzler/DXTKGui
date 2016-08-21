@@ -1,4 +1,4 @@
-#include "RectangleSprite.h"
+#include "PrimitiveShapes.h"
 
 RectangleSprite::RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel)
 	: Sprite() {
@@ -21,10 +21,8 @@ void RectangleSprite::setDimensions(const Vector2& pos, const Vector2& size) {
 
 	width = size.x;
 	height = size.y;
-	origin = Vector2(width / 2.0f, height / 2.0f);
+	//origin = Vector2(width / 2.0f, height / 2.0f);
 
-	/*position.x += width / 2;
-	position.y += height /2;*/
 
 	sourceRect.left = 0;
 	sourceRect.top = 0;
@@ -32,7 +30,7 @@ void RectangleSprite::setDimensions(const Vector2& pos, const Vector2& size) {
 	sourceRect.right = width;
 
 	hitArea.reset(new HitArea(
-		Vector2(position.x - width*scale.x / 2, position.y - height*scale.y / 2),
+		Vector2(position.x /*- width*scale.x / 2*/, position.y/* - height*scale.y / 2*/),
 		Vector2(width*scale.x, height*scale.y)));
 }
 
@@ -58,11 +56,13 @@ RectangleFrame::~RectangleFrame() {
 }
 
 void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
-	int frameThickness) {
+	int frmThcknss) {
 
+	frameThickness = frmThcknss;
 	Vector2 position = pos;
-	position.x -= size.x/2;
-	position.y -= size.y/2;
+	/*position.x -= size.x / 2;
+	position.y -= size.y / 2;*/
+
 	// upper horizontal frame
 	frameHorizontal.left = 0;
 	frameHorizontal.top = 0;
@@ -74,8 +74,8 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	// lower horizontal frame
 	int height = size.y;
 	frameBottomPos = frameTopPos;
-	frameBottomPos.y += height;
-
+	frameBottomPos.y += height - frameThickness;
+	// frame sticks out passed rectangle area; (-frameThickness) pulls it back in
 
 	// left vertical frame
 	frameLeftPos = frameBottomPos;
@@ -87,7 +87,8 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 
 	// right vertical frame
 	frameRightPos = frameLeftPos;
-	frameRightPos.x += size.x;
+	frameRightPos.x += size.x - frameThickness;
+	// frame sticks out passed rectangle area; (-frameThickness) pulls it back in
 
 
 }
@@ -116,6 +117,51 @@ void RectangleFrame::draw(SpriteBatch* batch) {
 
 	// draw right vertical bar
 	batch->Draw(pixel.Get(), frameRightPos, &frameVertical,
+		tint, 0.0f, Vector2(0, 0), Vector2(1, 1),
+		SpriteEffects_None, 0.0f);
+}
+
+int RectangleFrame::getThickness() {
+	return frameThickness;
+}
+
+
+
+
+Line::Line(ComPtr<ID3D11ShaderResourceView> whitePixel) {
+
+	pixel = whitePixel;
+}
+
+Line::Line(ComPtr<ID3D11ShaderResourceView> whitePixel,
+	const Vector2& pos, const Vector2& size) {
+
+	pixel = whitePixel;
+	setDimensions(pos, size);
+}
+
+Line::~Line() {
+}
+
+void Line::setDimensions(const Vector2& pos, const Vector2& size) {
+
+	Vector2 position = pos;
+	/*position.x -= size.x / 2;
+	position.y -= size.y / 2;*/
+
+	lineRect.left = 0;
+	lineRect.top = 0;
+	lineRect.right = size.x;
+	lineRect.bottom = size.y;
+}
+
+void Line::setTint(const Color& color) {
+	tint = color;
+}
+
+void Line::draw(SpriteBatch* batch) {
+
+	batch->Draw(pixel.Get(), position, &lineRect,
 		tint, 0.0f, Vector2(0, 0), Vector2(1, 1),
 		SpriteEffects_None, 0.0f);
 }

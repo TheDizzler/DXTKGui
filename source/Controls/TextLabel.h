@@ -37,9 +37,9 @@ public:
 
 	void setText(string text);
 	void setText(wostringstream& text);
-	void setText(wstring text);
+	virtual void setText(wstring text) override;
 
-	XMVECTOR XM_CALLCONV measureString() const;
+	virtual XMVECTOR XM_CALLCONV measureString() const override;
 
 	const wchar_t* getText();
 

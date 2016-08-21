@@ -123,6 +123,6 @@ private:
 
 	void confirmExit();
 
-
+	bool lastStateDown = false;
 };
 
