@@ -19,9 +19,9 @@ public:
 	void load(unique_ptr<FontSet> font,
 		ComPtr<ID3D11ShaderResourceView> pixelTexture);
 
-	/* position is center point of button. */
+	/* position is topleft of button. */
 	void setDimensions(const Vector2& position, const Vector2& size,
-		const int frameThickness);
+		const int frameThickness = 2);
 
 	virtual void update(double deltaTime, MouseController* mouse) override;
 	virtual void draw(SpriteBatch* batch) override;
@@ -32,7 +32,7 @@ public:
 	virtual void setFont(unique_ptr<FontSet> newFont) override;
 
 	void setTextOffset(const Vector2& unpressedOffset, const Vector2& pressedOffset);
-	/* position is top left corner. */
+	/* position is topleft of button. */
 	virtual void setPosition(const Vector2& position) override;
 	virtual const Vector2& getPosition() const override;
 
@@ -72,6 +72,7 @@ protected:
 
 	unique_ptr<RectangleSprite> rectSprite;
 	unique_ptr<RectangleFrame> frame;
+	int frameThickness = 2;
 };
 
 

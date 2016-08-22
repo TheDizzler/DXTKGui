@@ -29,7 +29,7 @@ public:
 		const char_t* upImage, const char_t* downImage);
 	Button* createButton(const char_t* fontName);
 
-	Dialog* createDialog(const char_t* fontName);
+	Dialog* createDialog(const char_t* fontName = "Default Font");
 
 	//bool createForm();
 

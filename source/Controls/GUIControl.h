@@ -5,7 +5,7 @@
 #include "../BaseGraphics/FontSet.h"
 using namespace std;
 
-//class GUIControlBox;
+
 class GUIControl : public IElement2D {
 public:
 	enum ClickAction {
@@ -20,10 +20,10 @@ public:
 
 	virtual void setScale(const Vector2& scl);
 
-	virtual void setPosition(const Vector2 & position) override;
-	virtual void setOrigin(const Vector2 & origin) override;
+	virtual void setPosition(const Vector2& position) override;
+	virtual void setOrigin(const Vector2& origin) override;
 	virtual void setRotation(const float rotation) override;
-	virtual void setTint(const Color & color) override;
+	virtual void setTint(const Color& color) override;
 	virtual void setAlpha(const float alpha) override;
 
 	virtual const Vector2& getPosition() const = 0;

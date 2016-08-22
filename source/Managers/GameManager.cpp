@@ -39,6 +39,7 @@ bool GameManager::initializeGame(ComPtr<ID3D11Device> dvc, MouseController* ms) 
 
 	currentScreen = menuScreen.get();
 
+	ShowCursor(false);
 
 	return true;
 }

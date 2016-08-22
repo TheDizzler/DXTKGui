@@ -130,23 +130,9 @@ bool GUIFactory::getGUIAssets(ComPtr<ID3D11Device> device) {
 		const char_t* file = fontNode.attribute("file").as_string();
 		const char_t* name = fontNode.attribute("name").as_string();
 
-		/*unique_ptr<FontSet> font;
-		font.reset(new FontSet());
-		if (!font->load(device, Assets::convertCharStarToWCharT(file)))
-			return false;
-		font->setTint(DirectX::Colors::White.v);
-
-		fontMap[name] = move(font);*/
-
 		fontMap[name] = file;
 
 	}
-
-	/*defaultFont.reset(new FontSet());
-	if (!defaultFont->load(device, Assets::defaultFontFile)) {
-		MessageBox(0, L"Could not find default font file.", L"Critical Failure", MB_OK);
-		return false;
-	}*/
 
 	defaultFontFile = Assets::defaultFontFile;
 

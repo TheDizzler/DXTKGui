@@ -25,9 +25,10 @@ void Button::load(unique_ptr<FontSet> font,
 int textMargin = 5;
 bool resized = false;
 void Button::setDimensions(const Vector2& pos, const Vector2& size,
-	const int frameThickness) {
+	const int frmThcknss) {
 
-	position = pos;
+	//position = pos;
+	frameThickness = frmThcknss;
 
 	Vector2 labelSize = measureString();
 	Vector2 newSize = size;
@@ -42,14 +43,7 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 	}
 	hitArea->size = newSize;
 
-	position.x -= newSize.x / 2;
-	position.y -= newSize.y / 2;
-
-
-	frame->setDimensions(position, newSize, frameThickness);
-	rectSprite->setDimensions(position, newSize);
-
-	setPosition(position);
+	setPosition(pos);
 
 }
 
@@ -133,6 +127,11 @@ void Button::setPosition(const Vector2& pos) {
 
 	GUIControl::setPosition(pos);
 
+	if (frame != NULL)
+		frame->setDimensions(position, hitArea->size, frameThickness);
+	if (rectSprite != NULL)
+		rectSprite->setDimensions(position, hitArea->size);
+
 	// center text
 	positionText();
 
@@ -144,11 +143,12 @@ void Button::positionText() {
 	if (textsize.x > 0) {
 
 		Vector2 newPos;
-		if (resized)
+		if (resized) {
 			newPos = Vector2(
 				position.x + (getWidth() - textsize.x) / 2 - textMargin,
 				position.y + (getHeight() - textsize.y) / 2 - textMargin);
-		else
+			resized = false;
+		} else
 			newPos = Vector2(
 				position.x + (getWidth() - textsize.x) / 2,
 				position.y + (getHeight() - textsize.y) / 2);
@@ -247,8 +247,8 @@ void ImageButton::draw(SpriteBatch* batch) {
 void ImageButton::setPosition(const Vector2& pos) {
 
 	position = pos;
-	position.x -= getWidth() / 2;
-	position.y -= getHeight() / 2;
+	//position.x -= getWidth() / 2;
+	//position.y -= getHeight() / 2;
 	Button::setPosition(position);
 	normalSprite->setPosition(position);
 	pressedSprite->setPosition(position);

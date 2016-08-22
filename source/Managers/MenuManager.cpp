@@ -42,24 +42,24 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, MouseController* mouse
 void MenuManager::update(double deltaTime,
 	KeyboardController* keys, MouseController* mouse) {
 
-	ShowCursor(false);
-	Vector2 mousePos = mouse->getPosition();
-	if (mousePos.x > Globals::WINDOW_WIDTH) {
-		mousePos.x = Globals::WINDOW_WIDTH;
-		ShowCursor(true);
-	}
-	if (mousePos.y > Globals::WINDOW_HEIGHT) {
-		mousePos.y = Globals::WINDOW_HEIGHT;
-		ShowCursor(true);
-	}
-	if (mousePos.x < 0) {
-		mousePos.x = 0;
-		ShowCursor(true);
-	}
-	if (mousePos.y < 0) {
-		mousePos.y = 0;
-		ShowCursor(true);
-	}
+	//ShowCursor(false);
+	//Vector2 mousePos = mouse->getPosition();
+	//if (mousePos.x > Globals::WINDOW_WIDTH) {
+	//	mousePos.x = Globals::WINDOW_WIDTH;
+	//	//ShowCursor(true);
+	//}
+	//if (mousePos.y > Globals::WINDOW_HEIGHT) {
+	//	mousePos.y = Globals::WINDOW_HEIGHT;
+	//	//ShowCursor(true);
+	//}
+	//if (mousePos.x < 0) {
+	//	mousePos.x = 0;
+	//	//ShowCursor(true);
+	//}
+	//if (mousePos.y < 0) {
+	//	mousePos.y = 0;
+	//	//ShowCursor(true);
+	//}
 
 	currentScreen->update(deltaTime, keys, mouse);
 
@@ -131,27 +131,31 @@ MainScreen::~MainScreen() {
 
 bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
-
 	Button* button;
-	button = GameManager::guiFactory->createImageButton("Arial", "Button Up", "Button Down");
+	button = GameManager::guiFactory->createImageButton(
+		"Arial", "Button Up", "Button Down");
+	Vector2 buttonpos = Vector2((Globals::WINDOW_WIDTH - button->getWidth()) / 2,
+		Globals::WINDOW_HEIGHT / 3 - button->getHeight() / 2);
 	button->action = GUIControl::PLAY;
 	button->setText(L"Play");
-	button->setPosition(Vector2(Globals::WINDOW_WIDTH / 2, 200));
+	button->setPosition(
+		buttonpos);
 	guiControls.push_back(button);
 
-	Vector2 size = Vector2(/*button->getWidth()*/5, button->getHeight());
-
+	Vector2 size = Vector2(button->getWidth(), button->getHeight());
+	buttonpos.y += 150;
 	button = GameManager::guiFactory->createButton("Arial");
 	button->action = GUIControl::SETTINGS;
-	button->setDimensions(Vector2(Globals::WINDOW_WIDTH / 2, 350), size, 2);
+	button->setDimensions(buttonpos, size, 2);
 	button->setText(L"Settings");
 	guiControls.push_back(button);
 
-
-	button = GameManager::guiFactory->createImageButton("Arial", "Button Up", "Button Down");
+	buttonpos.y += 150;
+	button = GameManager::guiFactory->createImageButton(
+		"Arial", "Button Up", "Button Down");
 	button->action = GUIControl::EXIT;
 	button->setText(L"Exit");
-	button->setPosition(Vector2(Globals::WINDOW_WIDTH / 2, 500));
+	button->setPosition(buttonpos);
 	guiControls.push_back(button);
 
 
@@ -166,20 +170,17 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		Vector2 dialogPos, dialogSize;
 		dialogSize = Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2);
 		dialogPos = dialogSize;
-		dialogPos.x -= dialogSize.x/2;
+		dialogPos.x -= dialogSize.x / 2;
 		dialogPos.y -= dialogSize.y / 2;
-		exitDialog->setDimensions(
-			dialogPos, dialogSize);
+		exitDialog->setDimensions(dialogPos, dialogSize);
 		exitDialog->setTint(Color(0, 120, 207));
 		exitDialog->setTitle(L"Exit Game?");
 		exitDialog->setText(L"Really Quit Tender Torrent?");
 
-
-		unique_ptr<Button> okButton;
-		okButton.reset(GameManager::guiFactory->createButton("BlackCloak"));
-		okButton->setText(L"Quit");
-		exitDialog->setConfirmButton(move(okButton));
-
+		exitDialog->setConfirmButton(L"Quit");
+		exitDialog->setCancelButton(L"Keep Playing!");
+		
+		
 		/*exitDialog.reset(new Dialog(
 			Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2)));
 		if (!exitDialog->initialize(device, "Arial")) {
