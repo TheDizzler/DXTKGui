@@ -1,7 +1,6 @@
 #pragma once
 
 //#include <vector>
-#include <pugixml.hpp>
 
 #include "../BaseGraphics/PrimitiveShapes.h"
 #include "Button.h"
@@ -23,19 +22,22 @@
 
 	};*/
 
+/** A pop-up Dialog Box. Title area and button area
+	automatically adjust to size of their components. */
 class Dialog : GUIControlBox {
 public:
 
 	Dialog();
 	~Dialog();
 
-	void initialize(unique_ptr<FontSet> font,
-		ComPtr<ID3D11ShaderResourceView> pixelTexture);
+	void initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
+		const pugi::char_t* font = "Default Font");
 
 	void setDimensions(const Vector2& position, const Vector2& size,
 		const int frameThickness = 2);
 
-	void setTitle(wstring text, const pugi::char_t* font = "Default Font");
+	void setTitle(wstring text, const Vector2& scale = Vector2(1.5, 1.5),
+		const pugi::char_t* font = "Default Font");
 	virtual void setText(wstring text) override;
 	/** Adds pre-created button to dialog as confirm button.
 		Note: user must initalize everything except for position. */
@@ -51,7 +53,7 @@ public:
 	virtual void addItem(unique_ptr<GUIControl> control) override;
 	virtual void addItems(vector<unique_ptr<GUIControl>> controls) override;
 
-	virtual void setFont(unique_ptr<FontSet> newFont) override;
+	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 	virtual void setTint(const Color& color) override;
 
 	virtual const Vector2& getPosition() const override;

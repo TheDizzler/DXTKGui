@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <pugixml.hpp>
 #include "../Engine/MouseController.h"
 #include "../BaseGraphics/FontSet.h"
 using namespace std;
@@ -14,7 +15,7 @@ public:
 
 	virtual void update(double deltaTime, MouseController* mouse) = 0;
 
-	virtual void setFont(unique_ptr<FontSet> newFont) = 0;
+	virtual void setFont(const pugi::char_t* font = "Default Font") = 0;
 	virtual void setText(wstring text) = 0;
 	virtual XMVECTOR XM_CALLCONV measureString() const = 0;
 

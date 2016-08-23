@@ -67,14 +67,6 @@ GraphicsAsset* const GUIFactory::getAsset(const char_t* assetName) {
 	return assetMap[assetName].get();
 }
 
-TextLabel* GUIFactory::createTextLabel(const Vector2& position,
-	wstring text, const char_t* fontName) {
-
-	//TextLabel* label = new TextLabel(position, text, getFont(fontName));
-
-	return new TextLabel(position, text, getFont(fontName));
-}
-
 
 unique_ptr<Sprite> GUIFactory::getSpriteFromAsset(const char_t* assetName) {
 
@@ -85,6 +77,20 @@ unique_ptr<Sprite> GUIFactory::getSpriteFromAsset(const char_t* assetName) {
 	sprite.reset(new Sprite());
 	sprite->load(asset);
 	return sprite;
+}
+
+
+TextLabel* GUIFactory::createTextLabel(const Vector2& position,
+	const char_t* fontName) {
+	return new TextLabel(position, getFont(fontName));
+}
+
+TextLabel* GUIFactory::createTextLabel(const Vector2& position,
+	wstring text, const char_t* fontName) {
+
+	TextLabel* label = new TextLabel(position, text, getFont(fontName));
+
+	return label;
 }
 
 
@@ -102,7 +108,7 @@ Button* GUIFactory::createImageButton(const char_t* upImageName,
 		OutputDebugString(ws.str().c_str());
 
 		return createButton(fontName);
-	};
+	}
 
 
 	ImageButton* button = new ImageButton(getSpriteFromAsset(upImageName),
@@ -121,18 +127,28 @@ Button* GUIFactory::createButton(const char_t* fontName) {
 	return button;
 }
 
+
 Button* GUIFactory::createButton(const Vector2& position, const Vector2& size,
-	int frameThickness, const char_t* fontName) {
-	
+	wstring text, const char_t* fontName, const int frameThickness) {
+
 	Button* button = new Button(whitePixel, getFont(fontName));
 	button->setDimensions(position, size, frameThickness);
+	button->setText(text);
 	return button;
+}
+
+ListBox* GUIFactory::createListBox(const Vector2& position,
+	const int width, const int maxItemsShown, const char_t* fontName) {
+
+	ListBox* listbox = new ListBox(position, width, maxItemsShown);
+	listbox->initialize(getFont(fontName), whitePixel);
+	return listbox;
 }
 
 Dialog* GUIFactory::createDialog(const char_t* fontName) {
 
 	Dialog* dialog = new Dialog();
-	dialog->initialize(getFont(fontName), whitePixel);
+	dialog->initialize(whitePixel, fontName);
 	return dialog;
 }
 

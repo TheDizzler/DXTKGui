@@ -17,16 +17,14 @@ Dialog::~Dialog() {
 }
 
 #include "../Managers/GameManager.h"
-void Dialog::initialize(unique_ptr<FontSet> font,
-	ComPtr<ID3D11ShaderResourceView> pixelTexture) {
+void Dialog::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
+	const pugi::char_t* font) {
 
 	/*if (!Sprite::load(device, Assets::uglyDialogBox))
 		return false;
 
 	setScale(Vector2(3, 1.5));*/
 
-	//font = move(fnt);
-	font->setTint(DirectX::Colors::White.v);
 
 	frame.reset(new RectangleFrame(pixelTexture));
 	bgSprite.reset(new RectangleSprite(pixelTexture));
@@ -39,43 +37,11 @@ void Dialog::initialize(unique_ptr<FontSet> font,
 	controls.resize(5);
 
 	unique_ptr<GUIControl> titleText;
-	//titleText.reset(new TextLabel(GameManager::guiFactory->getFont("Arial")));
-	//titleText->setScale(Vector2(1.5, 1.5));
-	//titleText->setTint(Color(0, 0, 0));
-	//controls[TitleText] = move(titleText);
 
 	unique_ptr<GUIControl> dialogText;
-	dialogText.reset(new TextLabel(move(font)));
+	dialogText.reset(new TextLabel(GameManager::guiFactory->getFont(font)));
 	dialogText->setTint(Color(0, 0, 0));
 	controls[DialogText] = move(dialogText);
-
-
-	/*
-	Vector2 scaleFactor = Vector2(.75, 1);
-	TextButton* button = new TextButton();
-	if (!button->load(device, fontFile,
-		Assets::buttonUpFile, Assets::buttonDownFile))
-		return false;
-	button->action = Button::OK;
-	button->setScale(scaleFactor);
-	button->setText("Quit");
-	okBtn = Vector2(position.x - width + button->getWidth() / 3,
-		position.y + height / 4);
-	button->setPosition(okBtn);
-	buttons.push_back(button);
-
-
-	button = new TextButton();
-	if (!button->load(device, fontFile,
-		Assets::buttonUpFile, Assets::buttonDownFile))
-		return false;
-	button->action = Button::CANCEL;
-	button->setScale(scaleFactor);
-	button->setText("Keep Playing!");
-	cancelBtn = Vector2(position.x + width - button->getWidth() / 3,
-		position.y + height / 4);
-	button->setPosition(cancelBtn);
-	buttons.push_back(button);*/
 
 }
 
@@ -143,12 +109,12 @@ void Dialog::calculateTitlePos() {
 }
 
 
-void Dialog::setTitle(wstring text, const pugi::char_t* font) {
+void Dialog::setTitle(wstring text, const Vector2& scale, const pugi::char_t* font) {
 
 	controls[TitleText].release();
 	controls[TitleText].reset(new TextLabel(GameManager::guiFactory->getFont(font)));
 	controls[TitleText]->setText(text);
-	controls[TitleText]->setScale(Vector2(1.5, 1.5));
+	controls[TitleText]->setScale(scale);
 	controls[TitleText]->setTint(Color(0, 0, 0));
 	calculateTitlePos();
 }
@@ -222,7 +188,7 @@ void Dialog::setCancelButton(wstring text, const pugi::char_t * font) {
 	cancelButtonPosition.x =
 		position.x + size.x - controls[ButtonCancel]->getWidth() - buttonMargin;
 	if (calculateButtonPosition(cancelButtonPosition))
-	cancelButtonPosition.y -= controls[ButtonCancel]->getHeight() / 2;
+		cancelButtonPosition.y -= controls[ButtonCancel]->getHeight() / 2;
 	controls[ButtonCancel]->setPosition(cancelButtonPosition);
 }
 
@@ -331,9 +297,9 @@ GUIControl::ClickAction Dialog::getResult() {
 }
 
 
-void Dialog::setFont(unique_ptr<FontSet> newFont) {
+void Dialog::setFont(const pugi::char_t* fontName) {
 
-	controls[DialogText]->setFont(move(newFont));
+	controls[DialogText]->setFont(fontName);
 }
 
 void Dialog::setTint(const Color& color) {
@@ -385,5 +351,7 @@ int Dialog::getMaxButtonHeight() {
 
 /** Used for dragging dialog around, if draggable set. */
 void Dialog::setPosition(const Vector2& position) {
+
+
 }
 

@@ -29,7 +29,7 @@ public:
 	void draw(SpriteBatch* batch);
 	void draw(SpriteBatch* batch, Color tint);
 
-	virtual void setFont(unique_ptr<FontSet> newFont) override;
+	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 	virtual void setFont(shared_ptr<FontSet> newFont);
 	virtual void setTint(const Color& color) override;
 	/** Warning: this will affect all text sharing this font! */

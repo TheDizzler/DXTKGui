@@ -114,8 +114,7 @@ MainScreen::~MainScreen() {
 bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
 	Button* button;
-	button = GameManager::guiFactory->createImageButton(
-		"Button Up", "Button Down", "Arial");
+	button = GameManager::guiFactory->createImageButton("Button Up", "Button Down");
 	Vector2 buttonpos = Vector2((Globals::WINDOW_WIDTH - button->getWidth()) / 2,
 		Globals::WINDOW_HEIGHT / 3 - button->getHeight() / 2);
 	button->action = GUIControl::PLAY;
@@ -125,10 +124,8 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 
 	Vector2 size = Vector2(button->getWidth(), button->getHeight());
 	buttonpos.y += 150;
-	button = GameManager::guiFactory->createButton();
+	button = GameManager::guiFactory->createButton(buttonpos, size, L"Settings");
 	button->action = GUIControl::SETTINGS;
-	button->setDimensions(buttonpos, size, 2);
-	button->setText(L"Settings");
 	guiControls.push_back(button);
 
 	buttonpos.y += 150;
@@ -155,11 +152,11 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		dialogPos.y -= dialogSize.y / 2;
 		exitDialog->setDimensions(dialogPos, dialogSize);
 		exitDialog->setTint(Color(0, 120, 207));
-		exitDialog->setTitle(L"Exit Game?");
-		exitDialog->setText(L"Really Quit Tender Torrent?");
+		exitDialog->setTitle(L"Exit Test?");
+		exitDialog->setText(L"Really Quit The Test Project?");
 
 		exitDialog->setConfirmButton(L"Quit");
-		exitDialog->setCancelButton(L"Keep Playing!");
+		exitDialog->setCancelButton(L"Keep Testing!");
 	}
 
 
@@ -202,11 +199,10 @@ void MainScreen::update(double deltaTime,
 		for (GUIControl* control : guiControls) {
 			control->update(deltaTime, mouse);
 			if (control->clicked()) {
-				//test->setText("Clicked!");
 				switch (control->action) {
 					case GUIControl::EXIT:
 						confirmExit();
-						test->setText("Exit!");
+						//test->setText("Exit!");
 						break;
 					case GUIControl::PLAY:
 						test->setText("Play!");
@@ -254,16 +250,15 @@ ConfigScreen::~ConfigScreen() {
 bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
 	// Labels for displaying selected info
-	//TextLabel* label = new TextLabel(Vector2(50, 50));
-	//label->setText(L"test");
-	//guiControls.push_back(label);
+	guiControls.push_back(
+		GameManager::guiFactory->createTextLabel(Vector2(50, 50), L"Test"));
 
-	//label = new TextLabel(Vector2(475, 50), menuFont);
-	//label->setText(L"test 2");
-	//textLabels.push_back(label);
 
-	//ListBox* listbox = new ListBox(Vector2(50, 100), 400);
-	//listbox->initialize(device, Assets::arialFontFile);
+	guiControls.push_back(
+		GameManager::guiFactory->createTextLabel(Vector2(475, 50), L"Test2"));
+
+	ListBox* listbox = GameManager::guiFactory->createListBox(Vector2(50, 100), 400);
+	
 
 	//vector<ListItem*> adapterItems;
 	//for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
@@ -346,19 +341,44 @@ void ConfigScreen::update(double deltaTime, KeyboardController* keys,
 	//	}
 	//}
 
-	////for (ListBox* listbox : listBoxes) {
-	//for (int i = 0; i < listBoxes.size(); ++i) {
 
-	//	if (listBoxes[i]->update(deltaTime, mouse)) {
+	for (GUIControl* control : guiControls) {
+		control->update(deltaTime, mouse);
+		switch (control->action) {
+			case GUIControl::EXIT:
+				menuManager->openMainMenu();
+				break;
+			case GUIControl::CONFIRM:
+				//test->setText("Play!");
+				break;
+		}
+	}
 
-	//		textLabels[i]->setText(listBoxes[i]->getSelected()->toString());
-	//	}
-	//}
+//for (TextButton* button : buttons) {
+//	button->update(deltaTime, mouse);
+//	if (button->clicked()) {
+//		//test->setText("Clicked!");
+//		switch (button->action) {
+//			case Button::CANCEL:
+//				menuManager->openMainMenu();
+//				break;
+//		}
+//	}
+//}
 
+////for (ListBox* listbox : listBoxes) {
+//for (int i = 0; i < listBoxes.size(); ++i) {
+
+//	if (listBoxes[i]->update(deltaTime, mouse)) {
+
+//		textLabels[i]->setText(listBoxes[i]->getSelected()->toString());
+//	}
+//}
 
 }
 
 void ConfigScreen::draw(SpriteBatch* batch) {
+
 
 	for (GUIControl* control : guiControls)
 		control->draw(batch);

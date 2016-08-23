@@ -5,7 +5,7 @@ TextLabel::TextLabel(Vector2 pos, wstring text, shared_ptr<FontSet> fnt) {
 
 	position = pos;
 	font = fnt;
-	label = text;
+	setText(text);
 }
 
 TextLabel::TextLabel(Vector2 pos, shared_ptr<FontSet> fnt) {
@@ -81,9 +81,10 @@ bool TextLabel::hovering() {
 	return isHover;
 }
 
-void TextLabel::setFont(unique_ptr<FontSet> newFont) {
+#include "../Managers/GameManager.h"
+void TextLabel::setFont(const pugi::char_t* fontName) {
 
-	font = move(newFont);
+	font = GameManager::guiFactory->getFont(fontName);
 }
 
 void TextLabel::setFont(shared_ptr<FontSet> newFont) {

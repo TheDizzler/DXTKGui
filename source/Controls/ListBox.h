@@ -141,17 +141,20 @@ private:
 };
 
 /** A simple control to display various (text) items. */
-class ListBox {
+class ListBox : GUIControlBox {
 public:
-	ListBox(const Vector2& position, const int width);
+	ListBox(const Vector2& position, const int width, const int maxItemsShown = 7);
 	~ListBox();
 
 	//bool initialize(ComPtr<ID3D11Device> device, const wchar_t* fontFile, ID3D11ShaderResourceView* whitePixel);
-	void initialize(shared_ptr<FontSet> font, ComPtr<ID3D11ShaderResourceView> whitePixel);
-	void addItems(vector<ListItem*> items);
+	void initialize(shared_ptr<FontSet> font,
+		ComPtr<ID3D11ShaderResourceView> whitePixel);
+	//void addItems(vector<ListItem*> items);
+	virtual void addItem(unique_ptr<GUIControl> control) override ;
+	virtual void addItems(vector<unique_ptr<GUIControl> > items) override;
 
 	/** Returns true if selection changed. */
-	bool update(double deltaTime, MouseController* mouse);
+	//bool update(double deltaTime, MouseController* mouse);
 	void draw(SpriteBatch* batch);
 	//void drawFrame(SpriteBatch* batch);
 
@@ -167,6 +170,18 @@ public:
 	bool alwaysShowScrollBar = false;
 	/* Max items to display before showing scroll bar. */
 	size_t maxDisplayItems = 7;
+
+	// Inherited via GUIControlBox
+	virtual void update(double deltaTime, MouseController * mouse) override;
+
+	virtual void setFont(const pugi::char_t* font = "Default Font") override;
+	virtual const Vector2 & getPosition() const override;
+	virtual const int getWidth() const override;
+	virtual const int getHeight() const override;
+
+	virtual bool clicked() override;
+	virtual bool selected() override;
+	virtual bool hovering() override;
 
 private:
 

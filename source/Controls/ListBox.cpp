@@ -1,10 +1,11 @@
 #include "ListBox.h"
 
 
-ListBox::ListBox(const Vector2& pos, const int len) {
+ListBox::ListBox(const Vector2& pos, const int len, const int maxItemsShown) {
 
 	position = pos;
 	width = len;
+	maxDisplayItems = maxItemsShown;
 
 }
 
@@ -16,43 +17,8 @@ ListBox::~ListBox() {
 }
 
 
-#include "DDSTextureLoader.h"
-#include "../globals.h"
-	//bool ListBox::initialize(ComPtr<ID3D11Device> device, const wchar_t* fontFile,
-		//ID3D11ShaderResourceView* whitePixel) {
-
-		//pixel = whitePixel;
-
-		//font.reset(new FontSet());
-		//if (!font->load(device, fontFile))
-		//	return false;
-		//font->setTint(DirectX::Colors::White.v);
-
-
-		//if (Globals::reportError(DirectX::CreateDDSTextureFromFile(
-		//	device, Assets::whitePixelFile, NULL, whiteBG.GetAddressOf()))) {
-
-		//	MessageBox(NULL, L"Failed to create texture from WhitePixel.dds",
-		//		L"ERROR", MB_OK);
-		//	return false;
-		//}
-
-		//spaceBetweenItems = 32;
-		/*firstItemPos = Vector2(position.x, position.y);
-
-
-		scrollBar.reset(new ScrollBar(Vector2(position.x + width, position.y)));
-		if (!scrollBar->initialize(device, pixel,
-			itemHeight * maxDisplayItems)) {
-
-			MessageBox(NULL, L"Failed to create ScrollBar",
-				L"GUI initialization ERROR", MB_OK);
-			return false;
-		}
-
-		return true;
-	}*/
-
+//#include "DDSTextureLoader.h"
+//#include "../globals.h"
 void ListBox::initialize(shared_ptr<FontSet> fnt,
 	ComPtr<ID3D11ShaderResourceView> whitePixel) {
 
@@ -75,9 +41,9 @@ void ListBox::initialize(shared_ptr<FontSet> fnt,
 
 
 
-void ListBox::addItems(vector<ListItem*> items) {
+void ListBox::addItems(vector<unique_ptr<GUIControl> > items) {
 
-	for (ListItem* item : items) {
+	/*for (ListItem* item : items) {
 		item->initialize(width - scrollBar->getWidth(), itemHeight,
 			font, pixel);
 		listItems.push_back(item);
@@ -95,53 +61,56 @@ void ListBox::addItems(vector<ListItem*> items) {
 		frameWidth = width - scrollBar->getWidth();
 
 	int frameHeight = itemHeight * itemsToDisplay;
-	frame->setDimensions(position, Vector2(frameWidth, frameHeight), frameThickness);
+	frame->setDimensions(position, Vector2(frameWidth, frameHeight), frameThickness)*/;
+}
+
+void ListBox::addItem(unique_ptr<GUIControl> control) {
 }
 
 
-bool ListBox::update(double deltaTime, MouseController* mouse) {
-
-	bool changesMade = false;
-	for (ListItem* item : listItems) {
-		if (item->update(deltaTime, mouse)) {
-			if (!multiSelect) {
-				for (int i = 0; i < listItems.size(); ++i) {
-					if (listItems[i] == item) {
-						selectedIndex = i;
-						continue;
-					}
-					listItems[i]->isSelected = false;
-				}
-			}
-			changesMade = true;
-		}
-	}
-
-
-	if (itemsToDisplay == maxDisplayItems || alwaysShowScrollBar) {
-		scrollBar->update(deltaTime, mouse);
-		firstItemToDisplay = (scrollBar->percentScroll)
-			* (listItems.size() - maxDisplayItems);
-
-		/*wostringstream ws;
-		ws << "\n" << "%: " << scrollBar->percentScroll;
-		OutputDebugString(ws.str().c_str());*/
-
-		/*if (firstItemToDisplay > listItems.size() - maxDisplayItems)
-			firstItemToDisplay = listItems.size() - maxDisplayItems;*/
-	}
-
-	Vector2 pos = firstItemPos;
-
-	for (int i = firstItemToDisplay;
-		i < firstItemToDisplay + itemsToDisplay; ++i) {
-
-		listItems[i]->updatePosition(pos);
-		pos.y += itemHeight;
-	}
-
-	return changesMade;
-}
+//bool ListBox::update(double deltaTime, MouseController* mouse) {
+//
+//	bool changesMade = false;
+//	for (ListItem* item : listItems) {
+//		if (item->update(deltaTime, mouse)) {
+//			if (!multiSelect) {
+//				for (int i = 0; i < listItems.size(); ++i) {
+//					if (listItems[i] == item) {
+//						selectedIndex = i;
+//						continue;
+//					}
+//					listItems[i]->isSelected = false;
+//				}
+//			}
+//			changesMade = true;
+//		}
+//	}
+//
+//
+//	if (itemsToDisplay == maxDisplayItems || alwaysShowScrollBar) {
+//		scrollBar->update(deltaTime, mouse);
+//		firstItemToDisplay = (scrollBar->percentScroll)
+//			* (listItems.size() - maxDisplayItems);
+//
+//		/*wostringstream ws;
+//		ws << "\n" << "%: " << scrollBar->percentScroll;
+//		OutputDebugString(ws.str().c_str());*/
+//
+//		/*if (firstItemToDisplay > listItems.size() - maxDisplayItems)
+//			firstItemToDisplay = listItems.size() - maxDisplayItems;*/
+//	}
+//
+//	Vector2 pos = firstItemPos;
+//
+//	for (int i = firstItemToDisplay;
+//		i < firstItemToDisplay + itemsToDisplay; ++i) {
+//
+//		listItems[i]->updatePosition(pos);
+//		pos.y += itemHeight;
+//	}
+//
+//	return changesMade;
+//}
 
 
 void ListBox::draw(SpriteBatch* batch) {
@@ -241,6 +210,35 @@ void ListBox::setText(wstring text) {
 // do nothing for now
 XMVECTOR XM_CALLCONV ListBox::measureString() const {
 	return XMVECTOR();
+}
+void ListBox::update(double deltaTime, MouseController * mouse) {
+}
+
+#include "../Managers/GameManager.h"
+void ListBox::setFont(const pugi::char_t* fontName) {
+
+	font = GameManager::guiFactory->getFont(fontName);
+}
+
+
+const Vector2& ListBox::getPosition() const {
+	return position;
+}
+
+const int ListBox::getWidth() const {
+	return 0;
+}
+const int ListBox::getHeight() const {
+	return 0;
+}
+bool ListBox::clicked() {
+	return false;
+}
+bool ListBox::selected() {
+	return false;
+}
+bool ListBox::hovering() {
+	return false;
 }
 /** **** ListBox END **** **/
 
