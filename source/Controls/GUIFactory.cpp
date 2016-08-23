@@ -17,7 +17,7 @@ GUIFactory::~GUIFactory() {
 bool GUIFactory::initialize(ComPtr<ID3D11Device> dev) {
 
 	device = dev;
-	if (!getGUIAssets(device)) {
+	if (!getGUIAssetsFromXML(device)) {
 		MessageBox(0, L"Sprite retrieval from Asset Manifest failed.",
 			L"Epic failure", MB_OK);
 		return false;
@@ -53,7 +53,7 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 }
 
 
- GraphicsAsset* const GUIFactory::getAsset(const char_t* assetName) {
+GraphicsAsset* const GUIFactory::getAsset(const char_t* assetName) {
 
 	if (assetMap.find(assetName) == assetMap.end()) {
 		wostringstream ws;
@@ -67,10 +67,18 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 	return assetMap[assetName].get();
 }
 
+TextLabel* GUIFactory::createTextLabel(const Vector2& position,
+	wstring text, const char_t* fontName) {
+
+	//TextLabel* label = new TextLabel(position, text, getFont(fontName));
+
+	return new TextLabel(position, text, getFont(fontName));
+}
+
 
 unique_ptr<Sprite> GUIFactory::getSpriteFromAsset(const char_t* assetName) {
 
-	 GraphicsAsset* const asset = getAsset(assetName);
+	GraphicsAsset* const asset = getAsset(assetName);
 	if (asset == NULL)
 		return NULL;
 	unique_ptr<Sprite> sprite;
@@ -80,8 +88,8 @@ unique_ptr<Sprite> GUIFactory::getSpriteFromAsset(const char_t* assetName) {
 }
 
 
-Button* GUIFactory::createImageButton(const char_t* fontName,
-	const char_t* upImageName, const char_t* downImageName) {
+Button* GUIFactory::createImageButton(const char_t* upImageName,
+	const char_t* downImageName, const char_t* fontName) {
 
 
 	if (assetMap.find(upImageName) == assetMap.end()
@@ -97,10 +105,11 @@ Button* GUIFactory::createImageButton(const char_t* fontName,
 	};
 
 
-	ImageButton* button = new ImageButton();
-	button->load(getFont(fontName),
+	ImageButton* button = new ImageButton(getSpriteFromAsset(upImageName),
+		getSpriteFromAsset(downImageName), getFont(fontName));
+	/*button->load(getFont(fontName),
 		getSpriteFromAsset(upImageName),
-		getSpriteFromAsset(downImageName));
+		getSpriteFromAsset(downImageName));*/
 
 	return button;
 }
@@ -108,8 +117,15 @@ Button* GUIFactory::createImageButton(const char_t* fontName,
 
 Button* GUIFactory::createButton(const char_t* fontName) {
 
-	Button* button = new Button();
-	button->load(getFont(fontName), whitePixel);
+	Button* button = new Button(whitePixel, getFont(fontName));
+	return button;
+}
+
+Button* GUIFactory::createButton(const Vector2& position, const Vector2& size,
+	int frameThickness, const char_t* fontName) {
+	
+	Button* button = new Button(whitePixel, getFont(fontName));
+	button->setDimensions(position, size, frameThickness);
 	return button;
 }
 
@@ -121,7 +137,7 @@ Dialog* GUIFactory::createDialog(const char_t* fontName) {
 }
 
 
-bool GUIFactory::getGUIAssets(ComPtr<ID3D11Device> device) {
+bool GUIFactory::getGUIAssetsFromXML(ComPtr<ID3D11Device> device) {
 
 	xml_node fonts = guiAssetsNode.child("spritefonts");
 	for (xml_node fontNode = fonts.child("font"); fontNode;

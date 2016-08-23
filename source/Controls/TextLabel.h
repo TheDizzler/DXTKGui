@@ -12,7 +12,7 @@ using namespace std;
 
 class TextLabel : public GUIControl {
 public:
-	TextLabel(Vector2 position, shared_ptr<FontSet> font, wstring text);
+	TextLabel(Vector2 position, wstring text, shared_ptr<FontSet> font);
 	TextLabel(Vector2 position, shared_ptr<FontSet> font);
 	/** A Textlabel with no set position. Used for ListBoxes, etc. */
 	TextLabel(shared_ptr<FontSet> font);

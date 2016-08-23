@@ -1,7 +1,7 @@
 #include "TextLabel.h"
 
 
-TextLabel::TextLabel(Vector2 pos, shared_ptr<FontSet> fnt, wstring text) {
+TextLabel::TextLabel(Vector2 pos, wstring text, shared_ptr<FontSet> fnt) {
 
 	position = pos;
 	font = fnt;

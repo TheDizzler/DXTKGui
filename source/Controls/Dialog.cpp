@@ -253,7 +253,6 @@ bool Dialog::calculateButtonPosition(Vector2& buttonPos) {
 		}
 		return false;
 	} else
-	//buttonPos.x = position.x + buttonMargin;
 		buttonPos.y = buttonFramePosition.y
 		+ buttonFrameSize.y / 2;
 
@@ -334,7 +333,6 @@ GUIControl::ClickAction Dialog::getResult() {
 
 void Dialog::setFont(unique_ptr<FontSet> newFont) {
 
-	//font.release();
 	controls[DialogText]->setFont(move(newFont));
 }
 

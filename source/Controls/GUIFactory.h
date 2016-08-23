@@ -20,14 +20,21 @@ public:
 
 	bool initialize(ComPtr<ID3D11Device> device);
 
-	//void update(double deltaTime, MouseController* mouse, KeyboardController* keys);
 	unique_ptr<FontSet> getFont(const char_t* fontName);
 	unique_ptr<Sprite> getSpriteFromAsset(const char_t* assetName);
-	GraphicsAsset* const getAsset(const char_t* assetName) ;
+	GraphicsAsset* const getAsset(const char_t* assetName);
 
-	Button* createImageButton(const char_t* fontName,
-		const char_t* upImage, const char_t* downImage);
-	Button* createButton(const char_t* fontName);
+	TextLabel* createTextLabel(const Vector2& position,
+		wstring text = L"", const char_t* fontName = "Default Font");
+
+	Button* createImageButton(const char_t* upImage, const char_t* downImage,
+		const char_t* fontName = "Default Font");
+
+
+	Button* createButton(const char_t* fontName = "Default Font");
+	Button* createButton(const Vector2& position, const Vector2& size,
+		int frameThickness = 2, const char_t* fontName = "Default Font");
+
 
 	Dialog* createDialog(const char_t* fontName = "Default Font");
 
@@ -41,13 +48,12 @@ private:
 	ComPtr<ID3D11ShaderResourceView> whitePixel;
 
 
-	bool getGUIAssets(ComPtr<ID3D11Device> device);
+	bool getGUIAssetsFromXML(ComPtr<ID3D11Device> device);
 	xml_node guiAssetsNode;
 
-	//shared_ptr<FontSet> defaultFont;
 	const wchar_t* defaultFontFile;
-	
-	map<string, const char_t* > fontMap;
+
+	map<string, const char_t*> fontMap;
 	map<string, unique_ptr<GraphicsAsset> > assetMap;
 
 
