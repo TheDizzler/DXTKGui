@@ -11,10 +11,9 @@ I literally ripped this out of one of my current projects and I'm in the process
 This is still a massive mess....
 
 
-3rd party utilities used:
-DirectXTK - https://blogs.msdn.microsoft.com/chuckw/2012/03/02/directxtk/
-
-PugiXML - http://pugixml.org/
+##3rd party utilities used:
+>- DirectXTK - https://blogs.msdn.microsoft.com/chuckw/2012/03/02/directxtk/
+>- PugiXML - http://pugixml.org/
 
 
 ##DONE:
