@@ -29,7 +29,7 @@ public:
 	virtual void setText(wstring text) override;
 	virtual XMVECTOR XM_CALLCONV measureString() const override;
 
-	virtual void setFont(unique_ptr<FontSet> newFont) override;
+	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 
 	void setTextOffset(const Vector2& unpressedOffset, const Vector2& pressedOffset);
 	/* position is topleft of button. */

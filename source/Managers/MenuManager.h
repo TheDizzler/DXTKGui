@@ -59,7 +59,7 @@ private:
 
 	GameManager* game;
 
-	
+
 	//unique_ptr<GUIForm> gui;
 };
 
@@ -79,16 +79,11 @@ protected:
 
 	GameManager* game;
 	MenuManager* menuManager;
-	shared_ptr<FontSet> menuFont;
-
-	//vector<TextLabel*> textLabels;
-	//vector<TextButton*> buttons;
-
+	//shared_ptr<FontSet> menuFont;
 
 	vector<GUIControl*> guiControls;
 
-	//vector<ListBox*> listBoxes;
-
+	bool escLastStateDown = false;
 };
 
 
@@ -98,8 +93,10 @@ public:
 	~ConfigScreen();
 
 	// Inherited via MenuScreen
-	virtual bool initialize(ComPtr<ID3D11Device> device, MouseController * mouse) override;
-	virtual void update(double deltaTime, KeyboardController* keys, MouseController * mouse) override;
+	virtual bool initialize(ComPtr<ID3D11Device> device,
+		MouseController* mouse) override;
+	virtual void update(double deltaTime,
+		KeyboardController* keys, MouseController * mouse) override;
 	virtual void draw(SpriteBatch * batch) override;
 
 private:
@@ -112,8 +109,10 @@ public:
 	~MainScreen();
 
 	// Inherited via MenuScreen
-	virtual bool initialize(ComPtr<ID3D11Device> device, MouseController * mouse) override;
-	virtual void update(double deltaTime, KeyboardController* keys, MouseController * mouse) override;
+	virtual bool initialize(ComPtr<ID3D11Device> device,
+		MouseController * mouse) override;
+	virtual void update(double deltaTime, KeyboardController* keys,
+		MouseController* mouse) override;
 	virtual void draw(SpriteBatch * batch) override;
 
 private:
@@ -123,6 +122,6 @@ private:
 
 	void confirmExit();
 
-	bool lastStateDown = false;
+	
 };
 

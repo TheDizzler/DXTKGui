@@ -205,9 +205,10 @@ bool Button::hovering() {
 	return isHover;
 }
 
-void Button::setFont(unique_ptr<FontSet> newFont) {
+#include "../Managers/GameManager.h"
+void Button::setFont(const pugi::char_t* font) {
 
-	buttonLabel->setFont(move(newFont));
+	buttonLabel->setFont(GameManager::guiFactory->getFont(font));
 }
 
 

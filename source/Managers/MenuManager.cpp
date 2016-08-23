@@ -26,10 +26,10 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, MouseController* mouse
 	if (!mainScreen->initialize(device, mouse))
 		return false;
 
-	/*configScreen.reset(new ConfigScreen(this));
+	configScreen.reset(new ConfigScreen(this));
 	configScreen->setGameManager(game);
 	if (!configScreen->initialize(device, mouse))
-		return false;*/
+		return false;
 
 
 
@@ -119,7 +119,7 @@ void MenuScreen::pause() {
 /** **** MainMenuScreen **** **/
 MainScreen::MainScreen(MenuManager* mngr) : MenuScreen(mngr) {
 
-	menuFont = game->guiFactory->getFont("Arial");
+	//menuFont = game->guiFactory->getFont("Arial");
 }
 
 MainScreen::~MainScreen() {
@@ -132,8 +132,7 @@ MainScreen::~MainScreen() {
 bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
 	Button* button;
-	button = GameManager::guiFactory->createImageButton(
-		"Arial", "Button Up", "Button Down");
+	button = GameManager::guiFactory->createImageButton("Button Up", "Button Down");
 	Vector2 buttonpos = Vector2((Globals::WINDOW_WIDTH - button->getWidth()) / 2,
 		Globals::WINDOW_HEIGHT / 3 - button->getHeight() / 2);
 	button->action = GUIControl::PLAY;
@@ -144,25 +143,22 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 
 	Vector2 size = Vector2(button->getWidth(), button->getHeight());
 	buttonpos.y += 150;
-	button = GameManager::guiFactory->createButton("Arial");
+	button = GameManager::guiFactory->createButton(buttonpos, size, L"Settings");
 	button->action = GUIControl::SETTINGS;
-	button->setDimensions(buttonpos, size, 2);
-	button->setText(L"Settings");
 	guiControls.push_back(button);
 
 	buttonpos.y += 150;
-	button = GameManager::guiFactory->createImageButton(
-		"Arial", "Button Up", "Button Down");
+	button = GameManager::guiFactory->createImageButton("Button Up", "Button Down");
 	button->action = GUIControl::EXIT;
 	button->setText(L"Exit");
 	button->setPosition(buttonpos);
 	guiControls.push_back(button);
 
 
-	test = new TextLabel(Vector2(10, 10), menuFont);
+	test = GameManager::guiFactory->createTextLabel(Vector2(10, 10));
 	guiControls.push_back(test);
 
-	mouseLabel = new TextLabel(Vector2(10, 100), menuFont);
+	mouseLabel = GameManager::guiFactory->createTextLabel(Vector2(10, 100));
 	guiControls.push_back(mouseLabel);
 
 	{
@@ -174,19 +170,12 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		dialogPos.y -= dialogSize.y / 2;
 		exitDialog->setDimensions(dialogPos, dialogSize);
 		exitDialog->setTint(Color(0, 120, 207));
-		exitDialog->setTitle(L"Exit Game?");
-		exitDialog->setText(L"Really Quit Tender Torrent?");
+		exitDialog->setTitle(L"Exit Test?");
+		exitDialog->setText(L"Really Quit The Test Project?");
 
 		exitDialog->setConfirmButton(L"Quit");
-		exitDialog->setCancelButton(L"Keep Playing!");
-		
-		
-		/*exitDialog.reset(new Dialog(
-			Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2)));
-		if (!exitDialog->initialize(device, "Arial")) {
-			MessageBox(0, L"Dialog init failed", L"Error", MB_OK);
-			return false;
-		}*/
+		exitDialog->setCancelButton(L"Keep Testing!");
+
 	}
 
 
@@ -204,16 +193,14 @@ void MainScreen::update(double deltaTime,
 
 
 
-	if (keys->keyDown[KeyboardController::ESC] && !lastStateDown) {
-	/*if (keys->keyDown[KeyboardController::ESC]
-		&& !keys->lastDown[KeyboardController::ESC]) {*/
+	if (keys->keyDown[KeyboardController::ESC] && !escLastStateDown) {
 		if (exitDialog->isOpen)
 			exitDialog->close();
 		else
 			exitDialog->open();
 	}
 
-	lastStateDown = keys->keyDown[KeyboardController::ESC];
+	escLastStateDown = keys->keyDown[KeyboardController::ESC];
 
 
 	if (exitDialog->isOpen) {
@@ -231,11 +218,10 @@ void MainScreen::update(double deltaTime,
 		for (GUIControl* control : guiControls) {
 			control->update(deltaTime, mouse);
 			if (control->clicked()) {
-				//test->setText("Clicked!");
 				switch (control->action) {
 					case GUIControl::EXIT:
 						confirmExit();
-						test->setText("Exit!");
+						//test->setText("Exit!");
 						break;
 					case GUIControl::PLAY:
 						test->setText("Play!");
@@ -273,7 +259,7 @@ void MainScreen::confirmExit() {
 /** **** ConfigScreen **** **/
 ConfigScreen::ConfigScreen(MenuManager* mngr) : MenuScreen(mngr) {
 
-	menuFont = game->guiFactory->getFont("BlackCloak");
+	//menuFont = game->guiFactory->getFont("BlackCloak");
 }
 
 ConfigScreen::~ConfigScreen() {
@@ -283,16 +269,16 @@ ConfigScreen::~ConfigScreen() {
 bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
 	// Labels for displaying selected info
-	//TextLabel* label = new TextLabel(Vector2(50, 50), menuFont);
-	//label->setText(L"test");
-	//textLabels.push_back(label);
+	guiControls.push_back(
+		GameManager::guiFactory->createTextLabel(Vector2(50, 50), L"Test"));
 
-	//label = new TextLabel(Vector2(475, 50), menuFont);
-	//label->setText(L"test 2");
-	//textLabels.push_back(label);
+	/*label = new TextLabel(Vector2(475, 50), menuFont);
+	label->setText(L"test 2");*/
+	guiControls.push_back(
+		GameManager::guiFactory->createTextLabel(Vector2(475, 50), L"Test2"));
 
-	//ListBox* listbox = new ListBox(Vector2(50, 100), 400);
-	//listbox->initialize(device, Assets::arialFontFile);
+	ListBox* listbox = GameManager::guiFactory->createListBox(Vector2(50, 100), 400);
+	
 
 	//vector<ListItem*> adapterItems;
 	//for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
@@ -356,40 +342,52 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 void ConfigScreen::update(double deltaTime, KeyboardController* keys,
 	MouseController* mouse) {
 
-	//for (TextButton* button : buttons) {
-	//	button->update(deltaTime, mouse);
-	//	if (button->clicked()) {
-	//		//test->setText("Clicked!");
-	//		switch (button->action) {
-	//			case Button::CANCEL:
-	//				menuManager->openMainMenu();
-	//				break;
-	//		}
-	//	}
-	//}
+	if (escLastStateDown && !keys->keyDown[KeyboardController::ESC])
+		menuManager->openMainMenu();
 
-	////for (ListBox* listbox : listBoxes) {
-	//for (int i = 0; i < listBoxes.size(); ++i) {
+	escLastStateDown = keys->keyDown[KeyboardController::ESC];
 
-	//	if (listBoxes[i]->update(deltaTime, mouse)) {
+	for (GUIControl* control : guiControls) {
+		control->update(deltaTime, mouse);
+		switch (control->action) {
+			case GUIControl::EXIT:
+				//confirmExit();
+				//test->setText("Exit!");
+				break;
+			case GUIControl::CONFIRM:
+				//test->setText("Play!");
+				break;
+		}
+	}
 
-	//		textLabels[i]->setText(listBoxes[i]->getSelected()->toString());
-	//	}
-	//}
+//for (TextButton* button : buttons) {
+//	button->update(deltaTime, mouse);
+//	if (button->clicked()) {
+//		//test->setText("Clicked!");
+//		switch (button->action) {
+//			case Button::CANCEL:
+//				menuManager->openMainMenu();
+//				break;
+//		}
+//	}
+//}
+
+////for (ListBox* listbox : listBoxes) {
+//for (int i = 0; i < listBoxes.size(); ++i) {
+
+//	if (listBoxes[i]->update(deltaTime, mouse)) {
+
+//		textLabels[i]->setText(listBoxes[i]->getSelected()->toString());
+//	}
+//}
 
 
 }
 
 void ConfigScreen::draw(SpriteBatch* batch) {
 
-	/*for (TextButton* button : buttons)
-		button->draw(batch);
-
-	for (ListBox* listbox : listBoxes)
-		listbox->draw(batch);
-
-	for (TextLabel* label : textLabels)
-		label->draw(batch);*/
+	for (GUIControl* control : guiControls)
+		control->draw(batch);
 }
 
 

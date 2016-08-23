@@ -53,7 +53,7 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 }
 
 
- GraphicsAsset* const GUIFactory::getAsset(const char_t* assetName) {
+GraphicsAsset* const GUIFactory::getAsset(const char_t* assetName) {
 
 	if (assetMap.find(assetName) == assetMap.end()) {
 		wostringstream ws;
@@ -70,7 +70,7 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 
 unique_ptr<Sprite> GUIFactory::getSpriteFromAsset(const char_t* assetName) {
 
-	 GraphicsAsset* const asset = getAsset(assetName);
+	GraphicsAsset* const asset = getAsset(assetName);
 	if (asset == NULL)
 		return NULL;
 	unique_ptr<Sprite> sprite;
@@ -80,8 +80,21 @@ unique_ptr<Sprite> GUIFactory::getSpriteFromAsset(const char_t* assetName) {
 }
 
 
-Button* GUIFactory::createImageButton(const char_t* fontName,
-	const char_t* upImageName, const char_t* downImageName) {
+TextLabel* GUIFactory::createTextLabel(const Vector2& position,
+	const char_t* fontName) {
+	return new TextLabel(position, getFont(fontName));
+}
+
+TextLabel* GUIFactory::createTextLabel(const Vector2& position,
+	wstring text, const char_t* fontName) {
+
+	TextLabel* label = new TextLabel(position, getFont(fontName));
+	label->setText(text);
+	return label;
+}
+
+Button* GUIFactory::createImageButton(const char_t* upImageName,
+	const char_t* downImageName, const char_t* fontName) {
 
 
 	if (assetMap.find(upImageName) == assetMap.end()
@@ -94,7 +107,7 @@ Button* GUIFactory::createImageButton(const char_t* fontName,
 		OutputDebugString(ws.str().c_str());
 
 		return createButton(fontName);
-	};
+	}
 
 
 	ImageButton* button = new ImageButton();
@@ -113,10 +126,28 @@ Button* GUIFactory::createButton(const char_t* fontName) {
 	return button;
 }
 
+Button* GUIFactory::createButton(const Vector2& position, const Vector2& size,
+	wstring text, const char_t* fontName, const int frameThickness) {
+
+	Button* button = new Button();
+	button->load(getFont(fontName), whitePixel);
+	button->setDimensions(position, size, frameThickness);
+	button->setText(text);
+	return button;
+}
+
+ListBox* GUIFactory::createListBox(const Vector2& position,
+	const int width, const int maxItemsShown, const char_t* fontName) {
+
+	ListBox* listbox = new ListBox(position, width, maxItemsShown);
+	listbox->initialize(getFont(fontName), whitePixel);
+	return listbox;
+}
+
 Dialog* GUIFactory::createDialog(const char_t* fontName) {
 
 	Dialog* dialog = new Dialog();
-	dialog->initialize(getFont(fontName), whitePixel);
+	dialog->initialize(whitePixel, fontName);
 	return dialog;
 }
 
