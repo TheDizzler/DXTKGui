@@ -17,13 +17,13 @@ PugiXML - http://pugixml.org/
 
 
 ##DONE:
-> Primitve Shapes - filled rectangle, un-filled rectangle, line
-> Button - text and image
-> Dialog Box - text
+>- Primitve Shapes - filled rectangle, un-filled rectangle, line
+>- Button - text and image
+>- Dialog Box - text
 ##TODO:
 > Dialog Box - with custom image
-> List Box
-> Combo Box
-> Primitive Shapes - if I feel they might be useful
+>- List Box
+>- Combo Box
+>- Primitive Shapes - if I feel they might be useful
 > Other stuff I can't think of at the moment
 
