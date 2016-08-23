@@ -22,7 +22,7 @@ PugiXML - http://pugixml.org/
 >- Dialog Box - text
 
 ##TODO:
->- Dialog Box - with custom image
+>- Dialog Box - with custom image, make draggable
 >- List Box
 >- Combo Box
 >- Primitive Shapes - if I feel they might be useful
