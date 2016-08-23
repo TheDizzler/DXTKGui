@@ -7,7 +7,9 @@ This developed out of one part not being able to find any existing frameworks an
 
 
 Included in this project is my custom 2D game engine using DirectX Tool Kit and the test project for trying out all the features.
+I literally ripped this out of one of my current projects and I'm in the process of hacking it into a usable state.
 This is still a massive mess....
+
 
 3rd party utilities used:
 DirectXTK - https://blogs.msdn.microsoft.com/chuckw/2012/03/02/directxtk/
