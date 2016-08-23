@@ -27,4 +27,5 @@ PugiXML - http://pugixml.org/
 >- Combo Box
 >- Primitive Shapes - if I feel they might be useful
 >- Other stuff I can't think of at the moment
+>- Some kind of document to explain what's going on under the hood and how to use it effectivily....
 
