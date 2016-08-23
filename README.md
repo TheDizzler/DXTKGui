@@ -21,9 +21,9 @@ PugiXML - http://pugixml.org/
 >- Button - text and image
 >- Dialog Box - text
 ##TODO:
-> Dialog Box - with custom image
+>- Dialog Box - with custom image
 >- List Box
 >- Combo Box
 >- Primitive Shapes - if I feel they might be useful
-> Other stuff I can't think of at the moment
+>- Other stuff I can't think of at the moment
 
