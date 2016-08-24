@@ -17,13 +17,13 @@ This is still a massive mess....
 
 
 ##DONE:
->- Primitve Shapes - filled rectangle, un-filled rectangle, line
+>- Primitve Shapes - filled rectangle; un-filled rectangle; line
 >- Button - text and image
 >- Dialog Box - text
 
 ##TODO:
->- Dialog Box - with custom image, make draggable
->- List Box
+>- Dialog Box - with custom image; make draggable
+>- List Box - allow scroll button; auto-size to content(maybe)
 >- Combo Box
 >- Primitive Shapes - if I feel they might be useful
 >- Other stuff I can't think of at the moment
