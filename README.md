@@ -20,7 +20,6 @@ This is still a massive mess....
 >- Primitve Shapes - filled rectangle; un-filled rectangle; line
 >- Button - text and image
 >- Dialog Box - text
->- ListBox - with onClickListener
 
 ##TODO:
 >- Dialog Box - with custom image; make draggable
