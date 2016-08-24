@@ -7,10 +7,11 @@
 using namespace std;
 
 
-class GUIControl : public IElement2D {
+interface GUIControl : public IElement2D {
 public:
 	enum ClickAction {
-		EXIT, PLAY, SETTINGS, CANCEL, OK, UP, DOWN, NONE, CONFIRM, NEUTRAL
+		EXIT, PLAY, SETTINGS, CANCEL, OK, UP, DOWN, NONE, CONFIRM,
+		NEUTRAL, CHANGES_MADE
 	};
 
 	virtual void update(double deltaTime, MouseController* mouse) = 0;

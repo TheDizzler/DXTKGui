@@ -48,11 +48,10 @@ public:
 	void openMainMenu();
 	void openConfigMenu();
 
-	//unique_ptr<FontSet> menuFont;
-
 private:
 
 	Screen* currentScreen = NULL;
+	Screen* switchTo = NULL;
 	unique_ptr<MainScreen> mainScreen;
 	unique_ptr<ConfigScreen> configScreen;
 
@@ -62,7 +61,7 @@ private:
 
 
 /** This class is abstract. */
-class MenuScreen : public Screen {
+interface MenuScreen : public Screen {
 public:
 
 	MenuScreen(MenuManager* manager);
@@ -97,7 +96,8 @@ public:
 	virtual void draw(SpriteBatch * batch) override;
 
 private:
-
+	TextLabel* adapterLabel;
+	TextLabel* displayModeLabel;
 };
 
 class MainScreen : public MenuScreen {

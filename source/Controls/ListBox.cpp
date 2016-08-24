@@ -40,14 +40,15 @@ void ListBox::initialize(shared_ptr<FontSet> fnt,
 }
 
 
+/** Adds a vector of ListItems to listbox and clears the vector parameter.*/
+void ListBox::addItems(vector<ListItem* > items) {
 
-void ListBox::addItems(vector<unique_ptr<GUIControl> > items) {
-
-	/*for (ListItem* item : items) {
+	for (ListItem* item : items) {
 		item->initialize(width - scrollBar->getWidth(), itemHeight,
 			font, pixel);
 		listItems.push_back(item);
 	}
+	items.clear();
 
 	itemsToDisplay = maxDisplayItems;
 	if (listItems.size() < itemsToDisplay)
@@ -61,56 +62,56 @@ void ListBox::addItems(vector<unique_ptr<GUIControl> > items) {
 		frameWidth = width - scrollBar->getWidth();
 
 	int frameHeight = itemHeight * itemsToDisplay;
-	frame->setDimensions(position, Vector2(frameWidth, frameHeight), frameThickness)*/;
-}
-
-void ListBox::addItem(unique_ptr<GUIControl> control) {
+	frame->setDimensions(position, Vector2(frameWidth, frameHeight), frameThickness);
 }
 
 
-//bool ListBox::update(double deltaTime, MouseController* mouse) {
-//
-//	bool changesMade = false;
-//	for (ListItem* item : listItems) {
-//		if (item->update(deltaTime, mouse)) {
-//			if (!multiSelect) {
-//				for (int i = 0; i < listItems.size(); ++i) {
-//					if (listItems[i] == item) {
-//						selectedIndex = i;
-//						continue;
-//					}
-//					listItems[i]->isSelected = false;
-//				}
-//			}
-//			changesMade = true;
-//		}
-//	}
-//
-//
-//	if (itemsToDisplay == maxDisplayItems || alwaysShowScrollBar) {
-//		scrollBar->update(deltaTime, mouse);
-//		firstItemToDisplay = (scrollBar->percentScroll)
-//			* (listItems.size() - maxDisplayItems);
-//
-//		/*wostringstream ws;
-//		ws << "\n" << "%: " << scrollBar->percentScroll;
-//		OutputDebugString(ws.str().c_str());*/
-//
-//		/*if (firstItemToDisplay > listItems.size() - maxDisplayItems)
-//			firstItemToDisplay = listItems.size() - maxDisplayItems;*/
-//	}
-//
-//	Vector2 pos = firstItemPos;
-//
-//	for (int i = firstItemToDisplay;
-//		i < firstItemToDisplay + itemsToDisplay; ++i) {
-//
-//		listItems[i]->updatePosition(pos);
-//		pos.y += itemHeight;
-//	}
-//
-//	return changesMade;
-//}
+
+void ListBox::update(double deltaTime, MouseController* mouse) {
+
+	action = ClickAction::NONE;
+	//bool changesMade = false;
+	for (ListItem* item : listItems) {
+		if (item->update(deltaTime, mouse)) {
+			if (!multiSelect) {
+				for (int i = 0; i < listItems.size(); ++i) {
+					if (listItems[i] == item) {
+						selectedIndex = i;
+						continue;
+					}
+					listItems[i]->isSelected = false;
+				}
+			}
+			//changesMade = true;
+			action = ClickAction::CHANGES_MADE;
+		}
+	}
+
+
+	if (itemsToDisplay == maxDisplayItems || alwaysShowScrollBar) {
+		scrollBar->update(deltaTime, mouse);
+		firstItemToDisplay = (scrollBar->percentScroll)
+			* (listItems.size() - maxDisplayItems);
+
+		/*wostringstream ws;
+		ws << "\n" << "%: " << scrollBar->percentScroll;
+		OutputDebugString(ws.str().c_str());*/
+
+		/*if (firstItemToDisplay > listItems.size() - maxDisplayItems)
+			firstItemToDisplay = listItems.size() - maxDisplayItems;*/
+	}
+
+	Vector2 pos = firstItemPos;
+
+	for (int i = firstItemToDisplay;
+		i < firstItemToDisplay + itemsToDisplay; ++i) {
+
+		listItems[i]->updatePosition(pos);
+		pos.y += itemHeight;
+	}
+
+	//return changesMade;
+}
 
 
 void ListBox::draw(SpriteBatch* batch) {
@@ -211,8 +212,7 @@ void ListBox::setText(wstring text) {
 XMVECTOR XM_CALLCONV ListBox::measureString() const {
 	return XMVECTOR();
 }
-void ListBox::update(double deltaTime, MouseController * mouse) {
-}
+
 
 #include "../Managers/GameManager.h"
 void ListBox::setFont(const pugi::char_t* fontName) {
@@ -353,22 +353,22 @@ bool ScrollBar::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 	maxHeight = maxHght;
 
 	scrollBarDownButton.reset((ImageButton*)
-		GameManager::guiFactory->createImageButton("Arial", "ScrollBar Down Button",
+		GameManager::guiFactory->createImageButton("ScrollBar Down",
 			"ScrollBar Down Pressed"));
 	scrollBarDownButton->setPosition(
-		Vector2(position.x - scrollBarDownButton->getWidth() / 2,
+		Vector2(position.x - scrollBarDownButton->getWidth(),
 			position.y + maxHeight
-			- scrollBarDownButton->getHeight() / 2));
+			- scrollBarDownButton->getHeight()));
 
 	scrollBarDownButton->action = Button::DOWN;
 
 
 	scrollBarUpButton.reset((ImageButton*)
-		GameManager::guiFactory->createImageButton("Arial", "ScrollBar Up Button",
+		GameManager::guiFactory->createImageButton("ScrollBar Up",
 			"ScrollBar Up Pressed"));
 	scrollBarUpButton->setPosition(
-		Vector2(position.x - scrollBarUpButton->getWidth() / 2,
-			position.y + scrollBarUpButton->getHeight() / 2));
+		Vector2(position.x - scrollBarUpButton->getWidth(),
+			position.y/*+ scrollBarUpButton->getHeight()*/));
 
 	scrollBarUpButton->action = Button::UP;
 

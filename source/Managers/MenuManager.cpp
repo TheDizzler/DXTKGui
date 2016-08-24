@@ -42,7 +42,11 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, MouseController* mouse
 void MenuManager::update(double deltaTime,
 	KeyboardController* keys, MouseController* mouse) {
 
-
+	if (switchTo != NULL) {
+	// not so optimal, but should be ok for menus
+		currentScreen = switchTo;
+		switchTo = NULL;
+	}
 	currentScreen->update(deltaTime, keys, mouse);
 
 }
@@ -61,11 +65,15 @@ void MenuManager::pause() {
 void MenuManager::openMainMenu() {
 
 	currentScreen = mainScreen.get();
+	// switch screens at next frame
 }
 
 void MenuManager::openConfigMenu() {
 
-	currentScreen = configScreen.get();
+	//currentScreen = configScreen.get();
+
+	// switch screens at next frame
+	switchTo = configScreen.get();
 }
 
 
@@ -250,17 +258,18 @@ ConfigScreen::~ConfigScreen() {
 bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
 	// Labels for displaying selected info
-	TextLabel* label =
+	adapterLabel =
 		GameManager::guiFactory->createTextLabel(Vector2(50, 50), L"Test");
-		label->setHoverable(true);
-	guiControls.push_back(label);
+	adapterLabel->setHoverable(true);
+	guiControls.push_back(adapterLabel);
 
-	guiControls.push_back(
-		GameManager::guiFactory->createTextLabel(Vector2(475, 50), L"Test2"));
+	displayModeLabel =
+		GameManager::guiFactory->createTextLabel(Vector2(475, 50), L"Test2");
+	guiControls.push_back(displayModeLabel);
+
 
 	ListBox* listbox =
 		GameManager::guiFactory->createListBox(Vector2(50, 100), 400);
-
 
 	vector<ListItem*> adapterItems;
 	for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
@@ -269,29 +278,29 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 		adapterItems.push_back(item);
 	}
 
-	//listbox->addItems(adapterItems);
-	//listbox->setSelected(game->getSelectedAdapterIndex());
+	listbox->addItems(adapterItems);
+	listbox->setSelected(game->getSelectedAdapterIndex());
 	guiControls.push_back(listbox);
 
-	//textLabels[0]->setText(listBoxes[0]->getSelected()->toString());
-	////listItems.clear();
+	adapterLabel->setText(listbox->getSelected()->toString());
+
 
 
 	//// Selected adapter display mode list
-	//listbox = new ListBox(Vector2(475, 100), 175);
-	//listbox->initialize(device, Assets::arialFontFile);
+	listbox =
+		GameManager::guiFactory->createListBox(Vector2(475, 100), 175);
 
-	//vector<ListItem*> displayModeItems;
-	//for (DXGI_MODE_DESC mode : game->getDisplayModeList(game->getSelectedAdapterIndex())) {
-	//	DisplayModeItem* item = new DisplayModeItem();
-	//	item->modeDesc = mode;
-	//	displayModeItems.push_back(item);
-	//}
-	//listbox->addItems(displayModeItems);
-	//listbox->setSelected(game->getSelectedDisplayMode());
-	//listBoxes.push_back(listbox);
+	vector<ListItem*> displayModeItems;
+	for (DXGI_MODE_DESC mode : game->getDisplayModeList(game->getSelectedAdapterIndex())) {
+		DisplayModeItem* item = new DisplayModeItem();
+		item->modeDesc = mode;
+		displayModeItems.push_back(item);
+	}
+	listbox->addItems(displayModeItems);
+	listbox->setSelected(game->getSelectedDisplayMode());
+	guiControls.push_back(listbox);
 
-	//textLabels[1]->setText(listBoxes[1]->getSelected()->toString());
+	displayModeLabel->setText(listbox->getSelected()->toString());
 
 
 	//TextButton* button = new TextButton();

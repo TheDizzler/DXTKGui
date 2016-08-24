@@ -32,7 +32,7 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 	if (fontMap.find(fontName) == fontMap.end()) {
 
 		wostringstream ws;
-		ws << "Cannot find font file. Using default font instead.";
+		ws << "Cannot find font file. Using default font instead.\n";
 		OutputDebugString(ws.str().c_str());
 
 		unique_ptr<FontSet> defaultFont;

@@ -7,7 +7,7 @@ Button::Button(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 	frame.reset(new RectangleFrame(pixelTexture));
 	rectSprite.reset(new RectangleSprite(pixelTexture));
 	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
-	buttonLabel.reset(new TextLabel(Vector2(0, 0), move(font)));
+	buttonLabel.reset(new TextLabel(Vector2(0, 0), L"", move(font)));
 
 	position = Vector2(-1, -1);
 }
@@ -282,14 +282,18 @@ void ImageButton::setScale(const Vector2& scl) {
 
 
 void ImageButton::setToUnpressedState() {
+
 	buttonLabel->setTint(normalColorText);
 	Vector2 pos = buttonLabel->getPosition();
 	buttonLabel->setPosition(unpressedTextPosition);
+	normalSprite->setTint(normalColor);
 	drawSprite = normalSprite.get();
 }
 
 void ImageButton::setToHoverState() {
+
 	buttonLabel->setTint(hoverColorText);
+	normalSprite->setTint(hoverColor);
 	drawSprite = normalSprite.get();
 }
 
