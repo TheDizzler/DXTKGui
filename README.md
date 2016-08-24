@@ -20,12 +20,17 @@ This is still a massive mess....
 >- Primitve Shapes - filled rectangle; un-filled rectangle; line
 >- Button - text and image
 >- Dialog Box - text
+>- ListBox - with onClickListener
 
 ##TODO:
 >- Dialog Box - with custom image; make draggable
 >- List Box - allow scroll button; auto-size to content(maybe)
 >- Combo Box
->- Primitive Shapes - if I feel they might be useful
+>- Check Boxes
+>- Radio Buttons
+>- Slider
+>- Scrollbar that can be slapped on to anything
+>- More Primitive Shapes - if I feel they might be useful
 >- Other stuff I can't think of at the moment
 >- Some kind of document to explain what's going on under the hood and how to use it effectivily....
 
