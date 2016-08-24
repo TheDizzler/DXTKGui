@@ -47,12 +47,20 @@ public:
 	virtual bool selected() override;
 	virtual bool hovering() override;
 
+	void setHoverable(bool hoverable);
+
+	Color normalColorText = Color(Vector3(0, 0, 0));
+	Color hoverColorText = Color(Vector3(.5, .75, 1));
+	Color selectedColorText = Color(Vector3(0, .5, 1));
+
 private:
 
 	wstring label;
 	shared_ptr<FontSet> font;
 
-
+	virtual void setToUnpressedState();
+	virtual void setToHoverState();
+	virtual void setToSelectedState();
 
 	/* Sometimes TextLabel is just a TextLabel. */
 	bool isHoverable = false;

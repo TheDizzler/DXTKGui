@@ -250,26 +250,28 @@ ConfigScreen::~ConfigScreen() {
 bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
 	// Labels for displaying selected info
-	guiControls.push_back(
-		GameManager::guiFactory->createTextLabel(Vector2(50, 50), L"Test"));
-
+	TextLabel* label =
+		GameManager::guiFactory->createTextLabel(Vector2(50, 50), L"Test");
+		label->setHoverable(true);
+	guiControls.push_back(label);
 
 	guiControls.push_back(
 		GameManager::guiFactory->createTextLabel(Vector2(475, 50), L"Test2"));
 
-	ListBox* listbox = GameManager::guiFactory->createListBox(Vector2(50, 100), 400);
-	
+	ListBox* listbox =
+		GameManager::guiFactory->createListBox(Vector2(50, 100), 400);
 
-	//vector<ListItem*> adapterItems;
-	//for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
-	//	AdapterItem* item = new AdapterItem();
-	//	item->adapter = adap.Get();
-	//	adapterItems.push_back(item);
-	//}
+
+	vector<ListItem*> adapterItems;
+	for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
+		AdapterItem* item = new AdapterItem();
+		item->adapter = adap.Get();
+		adapterItems.push_back(item);
+	}
 
 	//listbox->addItems(adapterItems);
 	//listbox->setSelected(game->getSelectedAdapterIndex());
-	//listBoxes.push_back(listbox);
+	guiControls.push_back(listbox);
 
 	//textLabels[0]->setText(listBoxes[0]->getSelected()->toString());
 	////listItems.clear();

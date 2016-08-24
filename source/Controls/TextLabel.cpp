@@ -81,6 +81,22 @@ bool TextLabel::hovering() {
 	return isHover;
 }
 
+void TextLabel::setHoverable(bool hoverable) {
+	isHoverable = hoverable;
+}
+
+void TextLabel::setToUnpressedState() {
+	font->setTint(normalColorText);
+}
+
+void TextLabel::setToHoverState() {
+	font->setTint(hoverColorText);
+}
+
+void TextLabel::setToSelectedState() {
+	font->setTint(selectedColorText);
+}
+
 #include "../Managers/GameManager.h"
 void TextLabel::setFont(const pugi::char_t* fontName) {
 
@@ -107,16 +123,24 @@ void TextLabel::setScale(const Vector2 & scl) {
 void TextLabel::update(double deltaTime, MouseController* mouse) {
 
 	if (isHoverable) {
-		isHover = hitArea->contains(mouse->getPosition());
+		if (hitArea->contains(mouse->getPosition())) {
+			isHover = true;
+			if (!isSelected)
+				setToHoverState();
+		} else
+			isHover = false;
 
 		if (isSelected && !mouse->leftButtonDown()) {
 			isClicked = true;
+			setToUnpressedState();
 		} else {
 			isClicked = false;
-			if (!isHover)
+			if (!isHover) {
 				isSelected = false;
-			else if (!mouse->leftButtonLastDown() && mouse->leftButtonDown()) {
+				setToUnpressedState();
+			} else if (!mouse->leftButtonLastDown() && mouse->leftButtonDown()) {
 				isSelected = true;
+				setToSelectedState();
 			}
 		}
 	}

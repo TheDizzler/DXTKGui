@@ -141,7 +141,7 @@ private:
 };
 
 /** A simple control to display various (text) items. */
-class ListBox : GUIControlBox {
+class ListBox : public GUIControlBox {
 public:
 	ListBox(const Vector2& position, const int width, const int maxItemsShown = 7);
 	~ListBox();
@@ -189,7 +189,7 @@ private:
 	int width;
 	Vector2 position;
 	/* Always smaller or equal to maxDisplayItems. */
-	size_t itemsToDisplay;
+	size_t itemsToDisplay = 0;
 
 
 	shared_ptr<FontSet> font;
