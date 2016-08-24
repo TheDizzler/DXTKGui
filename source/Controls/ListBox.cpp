@@ -14,6 +14,7 @@ ListBox::~ListBox() {
 
 	if (onClickI != NULL)
 		delete onClickI;
+
 	for (ListItem* listItem : listItems)
 		delete listItem;
 

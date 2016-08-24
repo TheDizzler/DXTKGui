@@ -11,8 +11,7 @@ using namespace std;
 class ListItem;
 interface OnClickInterface {
 public:
-	virtual void onClick(ListItem*) = 0;
-
+	virtual void onClick(ListItem* selectedItem) = 0;
 };
 
 typedef void (OnClickInterface::*OnClickFunction) (ListItem*);
@@ -201,11 +200,7 @@ public:
 			(onClickI->*onClickFunction)(listItems[selectedIndex]);
 	}
 
-	void testMe() {
-		wostringstream ws;
-		ws << "Hello!" << "\n";
-		OutputDebugString(ws.str().c_str());
-	};
+
 private:
 
 	/* width of listbox */
