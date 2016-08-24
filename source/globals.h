@@ -35,4 +35,9 @@ namespace Globals {
 
 		return ws.str();
 	}*/
+
+
+	/*wostringstream ws;
+	ws << "some writing here" << someVariable;
+	OutputDebugString(ws.str().c_str());*/
 };

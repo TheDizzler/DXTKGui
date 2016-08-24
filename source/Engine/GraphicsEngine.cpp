@@ -298,10 +298,7 @@ bool GraphicsEngine::getDisplayModeList(ComPtr<IDXGIOutput> adapterOut) {
 		}
 	}*/
 
-	//selectedDisplayMode = closestMatch;
-	// getDisplayModeDescriptions
 
-/** Send info to ConfigScreen. **/
 
 	return true;
 }

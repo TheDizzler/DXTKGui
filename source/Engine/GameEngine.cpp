@@ -36,8 +36,10 @@ bool GameEngine::initStage() {
 
 
 	game.reset(new GameManager(this));
-	if (!game->initializeGame(device.Get(), mouse.get()))
+	if (!game->initializeGame(device, mouse.get())) {
+		MessageBox(0, L"Game Manager failed to load.", L"Critical Failure", MB_OK);
 		return false;
+	}
 
 
 	return true;
@@ -76,7 +78,8 @@ void GameEngine::render(double deltaTime) {
 }
 
 void GameEngine::pause() {
-	game->pause();
+	if (game != NULL)
+		game->pause();
 }
 
 void GameEngine::exit() {

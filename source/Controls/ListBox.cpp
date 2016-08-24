@@ -6,6 +6,7 @@ ListBox::ListBox(const Vector2& pos, const int len, const int maxItemsShown) {
 	position = pos;
 	width = len;
 	maxDisplayItems = maxItemsShown;
+	action = SELECTION_CHANGED;
 
 }
 
@@ -69,7 +70,6 @@ void ListBox::addItems(vector<ListItem* > items) {
 
 void ListBox::update(double deltaTime, MouseController* mouse) {
 
-	action = ClickAction::NONE;
 	//bool changesMade = false;
 	for (ListItem* item : listItems) {
 		if (item->update(deltaTime, mouse)) {
@@ -83,7 +83,10 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 				}
 			}
 			//changesMade = true;
-			action = ClickAction::CHANGES_MADE;
+		/*	wostringstream ws;
+			ws << item->toString() << "\n";
+			OutputDebugString(ws.str().c_str());*/
+			isClicked = true;
 		}
 	}
 
@@ -132,53 +135,6 @@ void ListBox::draw(SpriteBatch* batch) {
 	}
 
 }
-
-/** THIS CAN BE OPTIMIZED. **/
-//void ListBox::drawFrame(SpriteBatch* batch) {
-//
-//	int realWidth;
-//	if (listItems.size() > maxDisplayItems || alwaysShowScrollBar)
-//		realWidth = width;
-//	else
-//		realWidth = width - scrollBar->getWidth();
-//
-//	// upper horizontal frame
-//	RECT frame;
-//	frame.left = 0;
-//	frame.top = 0;
-//	frame.right = realWidth;
-//	frame.bottom = frameThickness; // thickness of frame
-//	Vector2 framePos(position.x, position.y);
-//
-//	batch->Draw(pixel.Get(), framePos, &frame,
-//		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
-//		SpriteEffects_None, 0.0f);
-//
-//	// lower horizontal frame
-//	int height = itemHeight * itemsToDisplay;
-//	framePos.y += height;
-//
-//	batch->Draw(pixel.Get(), framePos, &frame,
-//		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
-//		SpriteEffects_None, 0.0f);
-//
-//	// left vertical frame
-//	framePos.y = position.y;
-//	frame.right = frameThickness;
-//	frame.bottom = height;
-//
-//	batch->Draw(pixel.Get(), framePos, &frame,
-//		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
-//		SpriteEffects_None, 0.0f);
-//
-//	// right vertical frame
-//	framePos.x += realWidth;
-//
-//	batch->Draw(pixel.Get(), framePos, &frame,
-//		DirectX::Colors::Black.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
-//		SpriteEffects_None, 0.0f);
-//
-//}
 
 
 void ListBox::drawSelected(SpriteBatch* batch, const Vector2& selectedPosition) {
@@ -232,6 +188,13 @@ const int ListBox::getHeight() const {
 	return 0;
 }
 bool ListBox::clicked() {
+
+	if (isClicked) {
+		//action = ClickAction::NONE;
+		isClicked = isSelected = false;
+		return true;
+	}
+
 	return false;
 }
 bool ListBox::selected() {
@@ -287,12 +250,13 @@ bool ListItem::update(double deltaTime, MouseController* mouse) {
 		else if (!mouse->leftButtonDown() && buttonDownLast) {
 			isSelected = true;
 			buttonDownLast = false;
+			return true;
 		}
 
 	} else
 		buttonDownLast = false;
 
-	return isSelected;
+	return false;
 }
 
 void ListItem::updatePosition(const Vector2& pos) {
@@ -368,7 +332,7 @@ bool ScrollBar::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 			"ScrollBar Up Pressed"));
 	scrollBarUpButton->setPosition(
 		Vector2(position.x - scrollBarUpButton->getWidth(),
-			position.y/*+ scrollBarUpButton->getHeight()*/));
+			position.y));
 
 	scrollBarUpButton->action = Button::UP;
 
@@ -400,9 +364,7 @@ bool ScrollBar::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 
 void ScrollBar::setScrollBar(int totalItems, int itemHeight, int maxDisplayItems) {
 
-	//float totalListHeight = totalItems*itemHeight;
 	percentForOneItem = (double) 1 / (totalItems - maxDisplayItems);
-	//float percentToShow = maxHeight / (float) totalListHeight;
 	double percentToShow;
 	if (totalItems < maxDisplayItems) {
 		percentToShow = 1;

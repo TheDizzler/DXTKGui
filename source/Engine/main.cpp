@@ -151,18 +151,18 @@ bool initWindow(HINSTANCE hInstance, int showWnd, int width, int height, bool wi
 		posY = (GetSystemMetrics(SM_CYSCREEN) - Globals::WINDOW_HEIGHT) / 2;
 	}
 
-
+	DWORD windowStyle = (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
 	hwnd = CreateWindowEx(
 		NULL,					// extended style, check em out here https://msdn.microsoft.com/en-us/library/61fe4bte(v=vs.140).aspx
 		wndClassName,
-		wndClassName,					// title bar text
-		WS_OVERLAPPEDWINDOW,			// window style, mo' styles http://msdn.microsoft.com/zh-cn/library/czada357.aspx
-		posX, posY,						// top left of window
+		wndClassName,			// title bar text
+		windowStyle,			// window style, mo' styles http://msdn.microsoft.com/zh-cn/library/czada357.aspx
+		posX, posY,				// top left of window
 		Globals::WINDOW_WIDTH, Globals::WINDOW_HEIGHT,
-		NULL,							// handle to parent window
-		NULL,							// handle to a menu
-		hInstance,						// instance of current program
-		NULL);							// used for MDI client window
+		NULL,					// handle to parent window
+		NULL,					// handle to a menu
+		hInstance,				// instance of current program
+		NULL);					// used for MDI client window
 
 	if (!hwnd) {
 
@@ -184,8 +184,6 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 	LPBYTE lpb;
 	UINT dwSize;
-
-
 
 	switch (msg) {
 		case WM_CREATE:

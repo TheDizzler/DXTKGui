@@ -2,8 +2,6 @@
 
 #include <map>
 #include <pugixml.hpp>
-//#include "../Engine/MouseController.h"
-//#include "../Engine/KeyboardController.h"
 #include "ComboBox.h"
 #include "../BaseGraphics/GraphicsAsset.h"
 #include "Dialog.h"

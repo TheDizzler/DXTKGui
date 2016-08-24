@@ -33,6 +33,7 @@ Sprite::~Sprite() {
 #include "../globals.h"
 void Sprite::load(GraphicsAsset* const graphicsAsset) {
 
+	texture.Reset();
 	texture = graphicsAsset->getTexture();
 	width = graphicsAsset->getWidth();
 	height = graphicsAsset->getHeight();

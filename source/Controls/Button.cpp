@@ -17,18 +17,6 @@ Button::~Button() {
 }
 
 
-//void Button::load(unique_ptr<FontSet> font,
-//	ComPtr<ID3D11ShaderResourceView> pixelTexture) {
-//
-//	frame.reset(new RectangleFrame(pixelTexture));
-//	rectSprite.reset(new RectangleSprite(pixelTexture));
-//	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
-//	buttonLabel.reset(new TextLabel(Vector2(0, 0), move(font)));
-//
-//
-//
-//}
-
 int textMargin = 5;
 bool resized = false;
 void Button::setDimensions(const Vector2& pos, const Vector2& size,
@@ -240,20 +228,6 @@ ImageButton::ImageButton(unique_ptr<Sprite> upButtonSprite,
 
 ImageButton::~ImageButton() {
 }
-
-
-//void ImageButton::load(unique_ptr<FontSet> font, unique_ptr<Sprite> upButtonSprite,
-//	unique_ptr<Sprite> downButtonSprite) {
-//
-//	/*normalSprite = move(upButtonSprite);
-//	pressedSprite = move(downButtonSprite);
-//	normalSprite->setOrigin(Vector2(0, 0));
-//	pressedSprite->setOrigin(Vector2(0, 0));
-//	Vector2 size = Vector2(normalSprite->getWidth(), normalSprite->getHeight());
-//
-//	hitArea.reset(new HitArea(Vector2::Zero, size));
-//	buttonLabel.reset(new TextLabel(Vector2(0, 0), move(font)));*/
-//}
 
 
 void ImageButton::draw(SpriteBatch* batch) {

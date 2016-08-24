@@ -8,6 +8,15 @@
 
 using namespace std;
 
+class ListItem;
+interface OnClickInterface {
+public:
+	virtual void onClick(ListItem*) = 0;
+
+};
+
+typedef void (OnClickInterface::*OnClickFunction) (ListItem*);
+
 
 class ListItem {
 public:
@@ -169,7 +178,7 @@ public:
 	/* Max items to display before showing scroll bar. */
 	size_t maxDisplayItems = 7;
 
-	
+
 
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 	virtual const Vector2 & getPosition() const override;
@@ -180,6 +189,22 @@ public:
 	virtual bool selected() override;
 	virtual bool hovering() override;
 
+	OnClickFunction onClickFunction;
+	OnClickInterface* onClickI;
+	void setOnClickFunction(OnClickInterface* iOnC) {
+		onClickFunction = &OnClickInterface::onClick;
+		onClickI = iOnC;
+	}
+
+	void triggerOnClick() {
+		(onClickI->*onClickFunction)(listItems[selectedIndex]);
+	}
+
+	void testMe() {
+		wostringstream ws;
+		ws << "Hello!" << "\n";
+		OutputDebugString(ws.str().c_str());
+	};
 private:
 
 	/* width of listbox */

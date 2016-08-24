@@ -82,6 +82,11 @@ protected:
 
 };
 
+class OnClickTest : public OnClickInterface {
+public:
+	virtual void onClick(ListItem* selectedItem) override;
+	ConfigScreen* config;
+};
 
 class ConfigScreen : public MenuScreen {
 public:
@@ -91,11 +96,14 @@ public:
 	// Inherited via MenuScreen
 	virtual bool initialize(ComPtr<ID3D11Device> device,
 		MouseController* mouse) override;
+	void testMe();
 	virtual void update(double deltaTime,
 		KeyboardController* keys, MouseController * mouse) override;
 	virtual void draw(SpriteBatch * batch) override;
 
 private:
+
+	
 	TextLabel* adapterLabel;
 	TextLabel* displayModeLabel;
 };
@@ -119,6 +127,6 @@ private:
 
 	void confirmExit();
 
-	
+
 };
 

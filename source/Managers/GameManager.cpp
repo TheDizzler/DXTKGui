@@ -73,13 +73,13 @@ void GameManager::loadMainMenu() {
 }
 
 
-#include "../Engine/GameEngine.h"
-
 void GameManager::pause() {
 
-	currentScreen->pause();
+	if (currentScreen != NULL)
+		currentScreen->pause();
 }
 
+#include "../Engine/GameEngine.h"
 void GameManager::exit() {
 
 

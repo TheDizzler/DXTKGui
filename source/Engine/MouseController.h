@@ -1,7 +1,9 @@
 #pragma once
 
-//#include <dinput.h>
+#include <pugixml.hpp>
 #include "../BaseGraphics/Sprite.h"
+
+
 
 class MouseButton {
 public:
@@ -11,7 +13,7 @@ public:
 
 };
 
-
+class GUIFactory;
 class MouseController : public Sprite {
 public:
 
@@ -21,7 +23,7 @@ public:
 	MouseController(HWND hwnd);
 	~MouseController();
 
-	bool loadMenuMouse();
+	bool loadMouseIcon(GUIFactory* guiFactory, const  pugi::char_t* spriteName);
 
 	/*void loadTexture(ComPtr<ID3D11ShaderResourceView> texture,
 		ComPtr<ID3D11Resource> resource);*/
@@ -39,9 +41,6 @@ public:
 	bool leftButtonLastDown();
 	bool midButtonLastDown();
 	bool rightButtonLastDown();
-
-
-	void leftButtonHandled();
 
 private:
 

@@ -18,7 +18,8 @@ void MenuManager::setGameManager(GameManager* gm) {
 bool MenuManager::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
 
-	mouse->loadMenuMouse();
+	if (!mouse->loadMouseIcon(GameManager::guiFactory.get(), "Mouse Reticle"))
+		return false;
 
 
 	mainScreen.reset(new MainScreen(this));
@@ -64,8 +65,9 @@ void MenuManager::pause() {
 
 void MenuManager::openMainMenu() {
 
-	currentScreen = mainScreen.get();
+	//currentScreen = mainScreen.get();
 	// switch screens at next frame
+	switchTo = mainScreen.get();
 }
 
 void MenuManager::openConfigMenu() {
@@ -280,18 +282,26 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 
 	listbox->addItems(adapterItems);
 	listbox->setSelected(game->getSelectedAdapterIndex());
+
+
+	OnClickTest* onClickTest = new OnClickTest();
+	onClickTest->config = this;
+	listbox->setOnClickFunction(onClickTest);
+
+
 	guiControls.push_back(listbox);
 
 	adapterLabel->setText(listbox->getSelected()->toString());
 
 
 
-	//// Selected adapter display mode list
+	// Selected adapter display mode list
 	listbox =
 		GameManager::guiFactory->createListBox(Vector2(475, 100), 175);
 
 	vector<ListItem*> displayModeItems;
-	for (DXGI_MODE_DESC mode : game->getDisplayModeList(game->getSelectedAdapterIndex())) {
+	for (DXGI_MODE_DESC mode
+		: game->getDisplayModeList(game->getSelectedAdapterIndex())) {
 		DisplayModeItem* item = new DisplayModeItem();
 		item->modeDesc = mode;
 		displayModeItems.push_back(item);
@@ -303,30 +313,30 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	displayModeLabel->setText(listbox->getSelected()->toString());
 
 
-	//TextButton* button = new TextButton();
-	//if (!button->load(device, Assets::arialFontFile,
-	//	Assets::buttonUpFile, Assets::buttonDownFile))
-	//	return false;
-	//button->action = Button::ClickAction::CANCEL;
-	//button->setText("Back");
-	//button->setPosition(
-	//	Vector2(Globals::WINDOW_WIDTH / 2 - button->getWidth(),
-	//		Globals::WINDOW_HEIGHT - button->getHeight()));
-	//buttons.push_back(button);
+	ImageButton* button = (ImageButton*) GameManager::guiFactory->
+		createImageButton("Button Up", "Button Down");
+	button->action = Button::ClickAction::CANCEL;
+	button->setText(L"Back");
+	button->setPosition(
+		Vector2(Globals::WINDOW_WIDTH / 2 - button->getWidth(),
+			Globals::WINDOW_HEIGHT - button->getHeight()));
+	guiControls.push_back(button);
 
-	//button = new TextButton();
-	//if (!button->load(device, Assets::arialFontFile,
-	//	Assets::buttonUpFile, Assets::buttonDownFile))
-	//	return false;
-	//button->action = Button::ClickAction::OK;
-	//button->setText("Apply");
-	//button->setPosition(
-	//	Vector2(Globals::WINDOW_WIDTH / 2 + button->getWidth(),
-	//		Globals::WINDOW_HEIGHT - button->getHeight()));
-	//buttons.push_back(button);
+	button = (ImageButton*) GameManager::guiFactory->
+		createImageButton("Button Up", "Button Down");
+	button->action = Button::ClickAction::OK;
+	button->setText(L"Apply");
+	button->setPosition(
+		Vector2(Globals::WINDOW_WIDTH / 2 /*+ button->getWidth()*/,
+			Globals::WINDOW_HEIGHT - button->getHeight()));
+	guiControls.push_back(button);
 
 
 	return true;
+}
+
+void ConfigScreen::testMe() {
+	adapterLabel->setText(L"Test Successful!!");
 }
 
 
@@ -340,51 +350,27 @@ void ConfigScreen::update(double deltaTime, KeyboardController* keys,
 
 	escLastStateDown = keys->keyDown[KeyboardController::ESC];
 
-	//for (TextButton* button : buttons) {
-	//	button->update(deltaTime, mouse);
-	//	if (button->clicked()) {
-	//		//test->setText("Clicked!");
-	//		switch (button->action) {
-	//			case Button::CANCEL:
-	//				menuManager->openMainMenu();
-	//				break;
-	//		}
-	//	}
-	//}
-
-
 	for (GUIControl* control : guiControls) {
 		control->update(deltaTime, mouse);
-		switch (control->action) {
-			case GUIControl::EXIT:
-				menuManager->openMainMenu();
-				break;
-			case GUIControl::CONFIRM:
-				//test->setText("Play!");
-				break;
+		if (control->clicked()) {
+			switch (control->action) {
+				case GUIControl::CANCEL:
+					menuManager->openMainMenu();
+					break;
+				case GUIControl::CONFIRM:
+					// update graphics engine
+
+					break;
+				case GUIControl::SELECTION_CHANGED:
+					ListBox* listbox = (ListBox*) control;
+					//const wchar_t* text = listbox->getSelected()->toString();
+					//adapterLabel->setText(text);
+					listbox->triggerOnClick();
+					
+					break;
+			}
 		}
 	}
-
-//for (TextButton* button : buttons) {
-//	button->update(deltaTime, mouse);
-//	if (button->clicked()) {
-//		//test->setText("Clicked!");
-//		switch (button->action) {
-//			case Button::CANCEL:
-//				menuManager->openMainMenu();
-//				break;
-//		}
-//	}
-//}
-
-////for (ListBox* listbox : listBoxes) {
-//for (int i = 0; i < listBoxes.size(); ++i) {
-
-//	if (listBoxes[i]->update(deltaTime, mouse)) {
-
-//		textLabels[i]->setText(listBoxes[i]->getSelected()->toString());
-//	}
-//}
 
 }
 
@@ -417,4 +403,11 @@ void DisplayModeItem::setText() {
 
 	textLabel->setText(mode.str());
 
+}
+
+void OnClickTest::onClick(ListItem* selectedItem) {
+
+	wostringstream ws;
+	ws << selectedItem->toString() << "\n";
+	OutputDebugString(ws.str().c_str());
 }
