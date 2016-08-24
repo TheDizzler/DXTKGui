@@ -87,15 +87,9 @@ MenuScreen::MenuScreen(MenuManager* mngr) {
 
 MenuScreen::~MenuScreen() {
 
-// textlabels are unique_ptrs
-	/*for each (TextLabel* label in textLabels)
-		delete label;
+	for each (GUIControl* control in guiControls)
+		delete control;
 
-	for (TextButton* button : buttons)
-		delete button;
-
-	for (ListBox* list : listBoxes)
-		delete list;*/
 }
 
 void MenuScreen::setGameManager(GameManager* gmMng) {
@@ -116,8 +110,6 @@ MainScreen::MainScreen(MenuManager* mngr) : MenuScreen(mngr) {
 
 MainScreen::~MainScreen() {
 
-	for (GUIControl* cntrl : guiControls)
-		delete cntrl;
 }
 
 
@@ -283,13 +275,13 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	listbox->addItems(adapterItems);
 	listbox->setSelected(game->getSelectedAdapterIndex());
 
-
 	OnClickTest* onClickTest = new OnClickTest();
 	onClickTest->config = this;
 	listbox->setOnClickFunction(onClickTest);
 
-
 	guiControls.push_back(listbox);
+
+
 
 	adapterLabel->setText(listbox->getSelected()->toString());
 

@@ -12,14 +12,14 @@ ListBox::ListBox(const Vector2& pos, const int len, const int maxItemsShown) {
 
 ListBox::~ListBox() {
 
+	if (onClickI != NULL)
+		delete onClickI;
 	for (ListItem* listItem : listItems)
 		delete listItem;
 
 }
 
 
-//#include "DDSTextureLoader.h"
-//#include "../globals.h"
 void ListBox::initialize(shared_ptr<FontSet> fnt,
 	ComPtr<ID3D11ShaderResourceView> whitePixel) {
 
@@ -32,11 +32,9 @@ void ListBox::initialize(shared_ptr<FontSet> fnt,
 	if (!scrollBar->initialize(pixel, itemHeight * maxDisplayItems)) {
 		MessageBox(NULL, L"Failed to create ScrollBar",
 			L"GUI initialization ERROR", MB_OK);
-		//return false;
 	}
 
 	frame.reset(new RectangleFrame(pixel));
-	//return true;
 
 }
 

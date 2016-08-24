@@ -190,14 +190,15 @@ public:
 	virtual bool hovering() override;
 
 	OnClickFunction onClickFunction;
-	OnClickInterface* onClickI;
+	OnClickInterface* onClickI = NULL;
 	void setOnClickFunction(OnClickInterface* iOnC) {
 		onClickFunction = &OnClickInterface::onClick;
 		onClickI = iOnC;
 	}
 
 	void triggerOnClick() {
-		(onClickI->*onClickFunction)(listItems[selectedIndex]);
+		if (onClickI != NULL)
+			(onClickI->*onClickFunction)(listItems[selectedIndex]);
 	}
 
 	void testMe() {
