@@ -78,13 +78,10 @@ private:
 	enum GUIControlLookUp {
 		TitleText, DialogText, ButtonOK, ButtonNeutral, ButtonCancel, Other
 	};
-		//unique_ptr<FontSet> font;
+
 	vector<unique_ptr<GUIControl> > controls;
 
 	ClickAction result = NONE;
-
-	//unique_ptr<TextLabel> titleText;
-	//unique_ptr<TextLabel> dialogText;
 
 	Vector2 size;
 	Vector2 titleFrameSize = Vector2(0, 40);

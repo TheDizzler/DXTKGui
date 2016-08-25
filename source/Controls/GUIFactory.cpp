@@ -37,7 +37,7 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 
 		unique_ptr<FontSet> defaultFont;
 		defaultFont.reset(new FontSet());
-		defaultFont->load(device, defaultFontFile);
+		defaultFont->load(device, Assets::convertCharStarToWCharT(defaultFontFile));
 		defaultFont->setTint(DirectX::Colors::White.v);
 
 		return defaultFont;
@@ -168,7 +168,7 @@ bool GUIFactory::getGUIAssetsFromXML(ComPtr<ID3D11Device> device) {
 	}
 
 	defaultFontFile = Assets::defaultFontFile;
-
+	fontMap["Default Font"] = Assets::defaultFontFile;
 
 	for (xml_node spriteNode = guiAssetsNode.child("sprite"); spriteNode;
 		spriteNode = spriteNode.next_sibling("sprite")) {

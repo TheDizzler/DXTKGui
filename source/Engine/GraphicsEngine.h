@@ -32,17 +32,17 @@ public:
 	virtual void render(double time) = 0;
 
 
-	vector<ComPtr<IDXGIAdapter> > getAdapterList();
+	vector<ComPtr<IDXGIAdapter1> > getAdapterList();
 	vector<ComPtr<IDXGIOutput> > getDisplayListFor(size_t adapterIndex);
-	vector<ComPtr<IDXGIOutput> > getDisplayListFor(ComPtr<IDXGIAdapter> adapter);
+	vector<ComPtr<IDXGIOutput> > getDisplayListFor(ComPtr<IDXGIAdapter1> adapter);
 	vector<DXGI_MODE_DESC> getDisplayModeList(size_t displayIndex);
 	vector<DXGI_MODE_DESC> getDisplayModeList(ComPtr<IDXGIOutput> display);
 
 
-	vector<wstring> getAdapterListDescriptions();
+	/*vector<wstring> getAdapterListDescriptions();
 	vector<wstring> getDisplayList();
 	vector<wstring> getDisplayModeDescriptions();
-	vector<wstring> getDisplayModeListDescriptions(size_t adapterOutputIndex);
+	vector<wstring> getDisplayModeListDescriptions(size_t adapterOutputIndex);*/
 
 
 	size_t getSelectedAdapterIndex();
@@ -53,12 +53,12 @@ protected:
 	unique_ptr<SpriteBatch> batch;
 
 	/* Adapter currently being used. */
-	ComPtr<IDXGIAdapter> selectedAdapter;
+	ComPtr<IDXGIAdapter1> selectedAdapter;
 	/* Monitor being used. */
 	ComPtr<IDXGIOutput> selectedDisplay;
 	/* Display Mode being used. */
 	DXGI_MODE_DESC selectedDisplayMode;
-	size_t selectedAdapterIndex = 0;
+	size_t selectedAdapterIndex = 1;
 	size_t selectedDisplayIndex = 0;
 	size_t selectedDisplayModeIndex = 0;
 	size_t lastDisplayModeIndex = 0;
@@ -66,7 +66,7 @@ protected:
 
 
 
-	unsigned int numModes = 0;
+	//unsigned int numModes = 0;
 	/* Changes backbuffer to front buffer. */
 	ComPtr<IDXGISwapChain> swapChain;
 	/* GPU object */
@@ -76,11 +76,11 @@ protected:
 	/* The backbuffer that gets drawn to. */
 	ComPtr<ID3D11RenderTargetView> renderTargetView;
 
-	D3D_DRIVER_TYPE driverType;
+	//D3D_DRIVER_TYPE driverType;
 	D3D_FEATURE_LEVEL featureLevel;
 	D3D11_VIEWPORT viewport;
 	/* List of all gfx cards on this machine. */
-	vector<ComPtr<IDXGIAdapter> > adapters;
+	vector<ComPtr<IDXGIAdapter1> > adapters;
 	/* List of all monitors available with this adapter. */
 	vector<ComPtr<IDXGIOutput> > displays;
 	vector<DXGI_MODE_DESC> displayModeList; // all possible display modes with this monitor/video card 

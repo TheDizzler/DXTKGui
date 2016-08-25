@@ -90,6 +90,8 @@ MenuScreen::~MenuScreen() {
 	for each (GUIControl* control in guiControls)
 		delete control;
 
+	guiControls.clear();
+
 }
 
 void MenuScreen::setGameManager(GameManager* gmMng) {
@@ -265,7 +267,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 		GameManager::guiFactory->createListBox(Vector2(50, 100), 400, 4, true);
 	guiControls.push_back(adapterListbox);
 	vector<ListItem*> adapterItems;
-	for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
+	for (ComPtr<IDXGIAdapter1> adap : game->getAdapterList()) {
 		AdapterItem* item = new AdapterItem();
 		item->adapter = adap;
 		adapterItems.push_back(item);
@@ -284,17 +286,20 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	// create listbox of monitors available to selected gfx card
 	displayListbox = GameManager::guiFactory->createListBox(Vector2(50, 350), 400, 4, true);
 	guiControls.push_back(displayListbox);
-	populateDisplayList(game->getDisplayListFor(game->getSelectedAdapterIndex()));
+	// because only the one adapter has displays on my laptop
+	// this has to be grab the first (and only) display.
+	populateDisplayList(game->getDisplayListFor(0
+		/*game->getSelectedAdapterIndex()*/));
 	displayListbox->setSelected(game->getSelectedDisplayIndex());
 
-
 	displayLabel->setText(displayListbox->getSelected()->toString());
+
 
 	// Selected adapter display mode list
 	displayModeListbox =
 		GameManager::guiFactory->createListBox(Vector2(475, 100), 175, 8, true);
 	populateDisplayModeList(
-		game->getDisplayModeList(game->getSelectedAdapterIndex()));
+		game->getDisplayModeList(0 /*game->getSelectedAdapterIndex()*/));
 	displayModeListbox->setSelected(game->getSelectedDisplayModeIndex());
 	guiControls.push_back(displayModeListbox);
 
@@ -421,9 +426,9 @@ void DisplayModeItem::setText() {
 	//mode << "Format: " << displayModeList[i].Format;
 	if (isEnumerated) {
 		wss << listPosition << ": ";
-		wostringstream ws;
-		ws << "listPosition: " << listPosition << "\n";
-		OutputDebugString(ws.str().c_str());
+		//wostringstream ws;
+		//ws << "listPosition: " << listPosition << "\n";
+		//OutputDebugString(ws.str().c_str());
 	}
 	wss << width << " x " << height;
 	textLabel->setText(wss.str());

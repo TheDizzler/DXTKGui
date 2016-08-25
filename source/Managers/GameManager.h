@@ -30,9 +30,9 @@ public:
 	void exit();
 
 	
-	vector<ComPtr<IDXGIAdapter> > getAdapterList();
+	vector<ComPtr<IDXGIAdapter1> > getAdapterList();
 	vector<ComPtr<IDXGIOutput> > getDisplayListFor(size_t displayIndex);
-	vector<ComPtr<IDXGIOutput> > getDisplayListFor(ComPtr<IDXGIAdapter> adapter);
+	vector<ComPtr<IDXGIOutput> > getDisplayListFor(ComPtr<IDXGIAdapter1> adapter);
 	vector<DXGI_MODE_DESC> getDisplayModeList(size_t displayIndex);
 	vector<DXGI_MODE_DESC> getDisplayModeList(ComPtr<IDXGIOutput> display);
 
@@ -48,7 +48,7 @@ public:
 
 private:
 
-	Screen* currentScreen;
+	Screen* currentScreen = 0;
 	Screen* lastScreen = 0;
 	unique_ptr<MenuManager> menuScreen;
 

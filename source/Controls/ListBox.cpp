@@ -17,7 +17,9 @@ ListBox::~ListBox() {
 
 	for (ListItem* listItem : listItems)
 		delete listItem;
+	listItems.clear();
 
+	delete emptyListItem;
 }
 
 
@@ -38,6 +40,11 @@ void ListBox::initialize(shared_ptr<FontSet> fnt,
 	frame.reset(new RectangleFrame(pixel));
 
 	isEnumerated = enumerateList;
+
+	emptyListItem = new EmptyListItem();
+	emptyListItem->initialize(width - scrollBar->getWidth(), itemHeight,
+		font, pixel, listItems.size(), isEnumerated);
+	emptyListItem->setText();
 }
 
 
@@ -148,6 +155,9 @@ void ListBox::drawSelected(SpriteBatch* batch, const Vector2& selectedPosition) 
 
 void ListBox::setSelected(size_t newIndex) {
 
+	if (listItems.size() <= 0)
+		return;
+
 	selectedIndex = newIndex;
 	if (!multiSelect) {
 		for (ListItem* unselect : listItems) {
@@ -158,11 +168,14 @@ void ListBox::setSelected(size_t newIndex) {
 }
 
 
-ListItem * ListBox::getSelected() {
+ListItem* ListBox::getSelected() {
+	if (listItems.size() <= 0)
+		//throw EmptyListException();
+		return emptyListItem;
 	return listItems[selectedIndex];
 }
 
-ListItem * ListBox::getItem(size_t index) {
+ListItem* ListBox::getItem(size_t index) {
 	return listItems[index];
 }
 

@@ -9,11 +9,12 @@ GraphicsEngine::GraphicsEngine() {
 
 
 GraphicsEngine::~GraphicsEngine() {
+	adapters.clear();
+	displays.clear();
+	displayModeList.clear();
+	if (swapChain.Get() != NULL)
+		swapChain->SetFullscreenState(false, NULL);
 
-	//delete[] displayModeList;
-
-	//if (swapChain)
-	swapChain->SetFullscreenState(false, NULL);
 }
 
 
@@ -37,6 +38,11 @@ bool GraphicsEngine::initD3D(HWND hwnd) {
 
 	initializeViewport();
 
+
+
+	// create SpriteBatch
+	batch.reset(new SpriteBatch(deviceContext.Get()));
+
 	return true;
 
 }
@@ -44,21 +50,19 @@ bool GraphicsEngine::initD3D(HWND hwnd) {
 
 bool GraphicsEngine::getDisplayAdapters() {
 
-	ComPtr<IDXGIFactory2> factory;
-	ComPtr<IDXGIAdapter> adapter;
-	ComPtr<IDXGIOutput> adapterOutput;
 
+	ComPtr<IDXGIFactory1> factory;
 	// Create a DirectX graphics interface factory.
-	if (Globals::reportError(CreateDXGIFactory(__uuidof(IDXGIFactory2),
+	if (Globals::reportError(CreateDXGIFactory1(__uuidof(IDXGIFactory),
 		(void**) factory.GetAddressOf()))) {
 		MessageBox(NULL, L"Cannot create DXGI factory.", L"ERROR", MB_OK);
 		return false;
 	}
 
-
+	ComPtr<IDXGIAdapter1> adapter;
 	int i = 0;
 	// get all adapters (gfx cards)
-	while (factory->EnumAdapters(i++, &adapter) != DXGI_ERROR_NOT_FOUND) {
+	while (factory->EnumAdapters1(i++, adapter.GetAddressOf()) != DXGI_ERROR_NOT_FOUND) {
 		adapters.push_back(adapter);
 		/*DXGI_ADAPTER_DESC desc;
 		ZeroMemory(&desc, sizeof(DXGI_ADAPTER_DESC));
@@ -69,21 +73,35 @@ bool GraphicsEngine::getDisplayAdapters() {
 
 
 	int size = i - 1;
-	i = 0;
-	adapter = adapters[0];
 
 	for (int j = 0; j < size; ++j) {
-		while (adapter->EnumOutputs(i++, &adapterOutput) != DXGI_ERROR_NOT_FOUND) {
+		adapter = adapters[j];
+		i = 0;
+
+		DXGI_ADAPTER_DESC1 adapterDesc;
+		ZeroMemory(&adapterDesc, sizeof(DXGI_ADAPTER_DESC1));
+		adapter->GetDesc1(&adapterDesc);
+		ComPtr<IDXGIOutput> adapterOutput;
+
+		while (adapter->EnumOutputs(i++, adapterOutput.GetAddressOf())
+			!= DXGI_ERROR_NOT_FOUND) {
 
 			displays.push_back(adapterOutput);
 
-			/*DXGI_OUTPUT_DESC desc;
+			DXGI_OUTPUT_DESC desc;
 			ZeroMemory(&desc, sizeof(DXGI_OUTPUT_DESC));
 			adapterOutput->GetDesc(&desc);
-			MessageBox(0, desc.DeviceName, L"Device detected", MB_OK);*/
+
+			wostringstream ws;
+			ws << "Adapter: " << adapterDesc.Description << "\n";
+			ws << "Display: " << desc.DeviceName << "\n";
+			ws << "AttachedToDesktop: " << desc.AttachedToDesktop << "\n";
+			//ws << "Monitor: " << desc.Monitor << "\n" << "\n";
+			OutputDebugString(ws.str().c_str());
+			//MessageBox(0, desc.DeviceName, L"Device detected", MB_OK);
 		}
-		i = 0;
-		adapter = adapters[j];
+
+
 	}
 
 	// set defaults
@@ -99,8 +117,9 @@ bool GraphicsEngine::initializeAdapter(HWND hwnd, int adapterIndex) {
 	selectedAdapterIndex = adapterIndex;
 
 	/*unsigned int numerator = 0, denominator = 1;*/
-	DXGI_RATIONAL refreshRate = {0, 1};
-	selectedAdapter = adapters[adapterIndex].Get();
+	//DXGI_RATIONAL refreshRate = {0, 1};
+
+	selectedAdapter = adapters[selectedAdapterIndex];
 
 	if (!populateDisplayModeList(selectedDisplay))
 		return false;
@@ -150,44 +169,30 @@ bool GraphicsEngine::initializeAdapter(HWND hwnd, int adapterIndex) {
 		return false;
 	}
 
-	ID3D11Texture2D* backBufferPtr;
-	if (Globals::reportError(swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-		(LPVOID*) &backBufferPtr))) {
-		MessageBox(hwnd, L"Could not get pointer to back buffer.", L"ERROR", MB_OK);
-		return false;
-	}
-
-	if (Globals::reportError(device->CreateRenderTargetView(backBufferPtr,
-		NULL, &renderTargetView))) {
-		MessageBox(hwnd, L"Could not create render target view.", L"ERROR", MB_OK);
-		return false;
-	}
-	backBufferPtr->Release();
-
-
+	//featureLevel
 
 	return true;
 }
 
 bool GraphicsEngine::initializeRenderTarget() {
 
-	/** **** Create our Render Target **** **/
-	ID3D11Texture2D* backBufferTexture = 0;
-	if (FAILED(swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-		(void**) &backBufferTexture)))
-
+	///** **** Create our Render Target **** **/
+	ID3D11Texture2D* backBufferPtr;
+	if (Globals::reportError(swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+		(LPVOID*) &backBufferPtr))) {
+		MessageBox(0, L"Could not get pointer to back buffer.", L"ERROR", MB_OK);
 		return false;
+	}
 
-
-	if (FAILED(device->CreateRenderTargetView(backBufferTexture,
-		nullptr, renderTargetView.GetAddressOf())))
-
+	if (Globals::reportError(device->CreateRenderTargetView(backBufferPtr,
+		NULL, renderTargetView.GetAddressOf()))) {
+		MessageBox(0, L"Could not create render target view.", L"ERROR", MB_OK);
 		return false;
+	}
 
 	deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), nullptr);
 
-	backBufferTexture->Release();
-
+	backBufferPtr->Release();
 	return true;
 }
 
@@ -206,12 +211,12 @@ void GraphicsEngine::initializeViewport() {
 
 	deviceContext->RSSetViewports(1, &viewport);
 
-	batch.reset(new SpriteBatch(deviceContext.Get()));
 }
 
 
 bool GraphicsEngine::populateDisplayModeList(ComPtr<IDXGIOutput> display) {
 
+	UINT numModes = 0;
 	// Find total modes that fit the DXGI_FORMAT_R8G8B8A8_UNORM display format
 	if (Globals::reportError(display->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM,
 		DXGI_ENUM_MODES_INTERLACED, &numModes, NULL))) {
@@ -259,54 +264,7 @@ void GraphicsEngine::setDisplayMode(size_t selectedIndex) {
 }
 
 
-vector<wstring> GraphicsEngine::getDisplayModeDescriptions() {
-
-	vector<wstring> displayModeDescriptions;
-
-	UINT lastWidth = 0;
-	UINT lastHeight = 0;
-	int i = 0;
-	for (i; i < numModes; i++) {
-
-		UINT width = displayModeList[i].Width;
-		UINT height = displayModeList[i].Height;
-
-		if (width == lastWidth && height == lastHeight)
-			continue;
-		wostringstream mode;
-		//mode << "Format: " << displayModeList[i].Format;
-		mode << width
-			<< " x " << height;
-		/*mode << "   Refresh Rate: "
-			<< displayModeList[i].RefreshRate.Numerator
-			/ displayModeList[i].RefreshRate.Denominator;*/
-
-		lastWidth = width;
-		lastHeight = height;
-
-		displayModeDescriptions.push_back(mode.str());
-		/** Send info to ConfigScreen. **/
-		//SendMessage(displayModesCombo, CB_ADDSTRING, 0, (LPARAM) mode.str().c_str());
-	}
-
-	return displayModeDescriptions;
-}
-
-vector<wstring> GraphicsEngine::getAdapterListDescriptions() {
-
-	vector<wstring> list;
-	for each (ComPtr<IDXGIAdapter> adap in adapters) {
-
-		DXGI_ADAPTER_DESC desc;
-		ZeroMemory(&desc, sizeof(DXGI_ADAPTER_DESC));
-		adap->GetDesc(&desc);
-		list.push_back(desc.Description);
-
-	}
-	return list;
-}
-
-vector<ComPtr<IDXGIAdapter>> GraphicsEngine::getAdapterList() {
+vector<ComPtr<IDXGIAdapter1>> GraphicsEngine::getAdapterList() {
 	return adapters;
 }
 
@@ -315,7 +273,7 @@ vector<ComPtr<IDXGIOutput>> GraphicsEngine::getDisplayListFor(size_t adapterInde
 }
 
 vector<ComPtr<IDXGIOutput>> GraphicsEngine::getDisplayListFor(
-	ComPtr<IDXGIAdapter> adapter) {
+	ComPtr<IDXGIAdapter1> adapter) {
 
 	vector<ComPtr<IDXGIOutput>> outputs;
 	ComPtr<IDXGIOutput> adapterOutput;
@@ -330,38 +288,6 @@ vector<ComPtr<IDXGIOutput>> GraphicsEngine::getDisplayListFor(
 }
 
 
-
-vector<wstring> GraphicsEngine::getDisplayModeListDescriptions(size_t adapterOutputIndex) {
-
-
-	ComPtr<IDXGIOutput> display = displays[selectedDisplayIndex];
-	// Find total modes that fit the DXGI_FORMAT_R8G8B8A8_UNORM display format
-	if (Globals::reportError(
-		display->GetDisplayModeList(
-			DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL))) {
-		MessageBox(NULL, L"Error enumerating display modes.", L"ERROR", MB_OK);
-		vector<wstring> list;
-		list.push_back(L"ERROR enumerating display modes");
-		return list;
-	}
-
-	//displayModeList = new DXGI_MODE_DESC[numModes];
-	//vector<DXGI_MODE_DESC> displayModeList;
-	displayModeList.clear();
-	displayModeList.resize(numModes);
-	if (Globals::reportError(display->GetDisplayModeList(
-		DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED,
-		&numModes, &displayModeList[0]))) {
-
-		MessageBox(NULL, L"Error getting display mode list.", L"ERROR", MB_OK);
-		vector<wstring> list;
-		list.push_back(L"ERROR getting display mode list");
-		return list;
-	}
-	return getDisplayModeDescriptions();
-}
-
-/* Deprecate? */
 vector<DXGI_MODE_DESC> GraphicsEngine::getDisplayModeList(size_t displayIndex) {
 	return getDisplayModeList(displays[displayIndex]);
 }
@@ -382,7 +308,8 @@ vector<DXGI_MODE_DESC> GraphicsEngine::getDisplayModeList(
 	}
 
 	vector<DXGI_MODE_DESC> modeList;
-	modeList.resize(numModes);
+	modeList.resize(totalModes);
+
 	if (Globals::reportError(
 		display->GetDisplayModeList(
 			DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED,
@@ -397,20 +324,6 @@ vector<DXGI_MODE_DESC> GraphicsEngine::getDisplayModeList(
 }
 
 
-vector<wstring> GraphicsEngine::getDisplayList() {
-
-	vector<wstring> list;
-	for each (ComPtr<IDXGIOutput> adap in displays) {
-
-		DXGI_OUTPUT_DESC desc;
-		ZeroMemory(&desc, sizeof(DXGI_OUTPUT_DESC));
-		adap->GetDesc(&desc);
-		list.push_back(desc.DeviceName);
-
-	}
-	return list;
-}
-
 size_t GraphicsEngine::getSelectedAdapterIndex() {
 	return selectedAdapterIndex;
 }
@@ -422,3 +335,95 @@ size_t GraphicsEngine::getSelectedDisplayIndex() {
 size_t GraphicsEngine::getSelectedDisplayModeIndex() {
 	return selectedDisplayModeIndex;
 }
+
+
+//vector<wstring> GraphicsEngine::getDisplayModeDescriptions() {
+//
+//	vector<wstring> displayModeDescriptions;
+//
+//	UINT lastWidth = 0;
+//	UINT lastHeight = 0;
+//	int i = 0;
+//	for (i; i < numModes; i++) {
+//
+//		UINT width = displayModeList[i].Width;
+//		UINT height = displayModeList[i].Height;
+//
+//		if (width == lastWidth && height == lastHeight)
+//			continue;
+//		wostringstream mode;
+//		//mode << "Format: " << displayModeList[i].Format;
+//		mode << width
+//			<< " x " << height;
+//		/*mode << "   Refresh Rate: "
+//		<< displayModeList[i].RefreshRate.Numerator
+//		/ displayModeList[i].RefreshRate.Denominator;*/
+//
+//		lastWidth = width;
+//		lastHeight = height;
+//
+//		displayModeDescriptions.push_back(mode.str());
+//		/** Send info to ConfigScreen. **/
+//		//SendMessage(displayModesCombo, CB_ADDSTRING, 0, (LPARAM) mode.str().c_str());
+//	}
+//
+//	return displayModeDescriptions;
+//}
+//
+//
+//vector<wstring> GraphicsEngine::getDisplayList() {
+//
+//	vector<wstring> list;
+//	for each (ComPtr<IDXGIOutput> adap in displays) {
+//
+//		DXGI_OUTPUT_DESC desc;
+//		ZeroMemory(&desc, sizeof(DXGI_OUTPUT_DESC));
+//		adap->GetDesc(&desc);
+//		list.push_back(desc.DeviceName);
+//
+//	}
+//	return list;
+//}
+
+//vector<wstring> GraphicsEngine::getAdapterListDescriptions() {
+//
+//	vector<wstring> list;
+//	for each (ComPtr<IDXGIAdapter> adap in adapters) {
+//
+//		DXGI_ADAPTER_DESC desc;
+//		ZeroMemory(&desc, sizeof(DXGI_ADAPTER_DESC));
+//		adap->GetDesc(&desc);
+//		list.push_back(desc.Description);
+//
+//	}
+//	return list;
+//}
+//
+//vector<wstring> GraphicsEngine::getDisplayModeListDescriptions(size_t adapterOutputIndex) {
+//
+//	ComPtr<IDXGIOutput> display = displays[selectedDisplayIndex];
+//	// Find total modes that fit the DXGI_FORMAT_R8G8B8A8_UNORM display format
+//	if (Globals::reportError(
+//		display->GetDisplayModeList(
+//			DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL))) {
+//		MessageBox(NULL, L"Error enumerating display modes.", L"ERROR", MB_OK);
+//		vector<wstring> list;
+//		list.push_back(L"ERROR enumerating display modes");
+//		return list;
+//	}
+//
+//	//displayModeList = new DXGI_MODE_DESC[numModes];
+//	//vector<DXGI_MODE_DESC> displayModeList;
+//	displayModeList.clear();
+//	displayModeList.resize(numModes);
+//	if (Globals::reportError(display->GetDisplayModeList(
+//		DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED,
+//		&numModes, &displayModeList[0]))) {
+//
+//		MessageBox(NULL, L"Error getting display mode list.", L"ERROR", MB_OK);
+//		vector<wstring> list;
+//		list.push_back(L"ERROR getting display mode list");
+//		return list;
+//	}
+//	return getDisplayModeDescriptions();
+//}

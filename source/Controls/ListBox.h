@@ -11,7 +11,9 @@ using namespace std;
 class ListBox;
 interface OnClickInterface {
 public:
-	virtual void onClick(ListBox* listbox, int selectedItem) = 0;
+	/** listbox: The ListBox this OnClickInterface is attached to.
+		selectedItemIndex: index of item in ListBox.*/
+	virtual void onClick(ListBox* listbox, int selectedItemIndex) = 0;
 };
 
 typedef void (OnClickInterface::*OnClickFunction) (ListBox*, int);
@@ -63,6 +65,13 @@ protected:
 	size_t listPosition = 0;
 };
 
+class EmptyListItem : public ListItem {
+public:
+	virtual void setText() override {
+
+		textLabel->setText("Empty...");
+	}
+};
 
 class Scrubber : public RectangleSprite {
 public:
@@ -148,6 +157,10 @@ private:
 
 };
 
+class EmptyListException : public exception {
+
+};
+
 /** A simple control to display various (text) items. */
 class ListBox : public GUIControl {
 public:
@@ -228,5 +241,5 @@ private:
 
 	int frameThickness = 2;
 
-
+	EmptyListItem* emptyListItem;
 };

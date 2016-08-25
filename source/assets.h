@@ -6,7 +6,7 @@
 #include <comdef.h>
 #include <algorithm> 
 #include <cctype>
-
+//#include <pugixml.hpp>
 
 using namespace Microsoft::WRL;
 
@@ -14,7 +14,7 @@ using namespace Microsoft::WRL;
 namespace Assets {
 
 	const static char* assetManifestFile = "assets/AssetManifest.xml";
-	const static wchar_t* defaultFontFile = L"assets/Fonts/Arial.spritefont";
+	const static char* defaultFontFile = "assets/Fonts/Arial.spritefont";
 
 
 	inline wchar_t* convertCharStarToWCharT(const char* text) {

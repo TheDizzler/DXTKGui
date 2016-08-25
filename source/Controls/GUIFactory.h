@@ -56,7 +56,7 @@ private:
 	bool getGUIAssetsFromXML(ComPtr<ID3D11Device> device);
 	xml_node guiAssetsNode;
 
-	const wchar_t* defaultFontFile;
+	const char_t* defaultFontFile;
 
 	map<string, const char_t*> fontMap;
 	map<string, unique_ptr<GraphicsAsset> > assetMap;

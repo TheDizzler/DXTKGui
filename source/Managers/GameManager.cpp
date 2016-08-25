@@ -85,7 +85,7 @@ void GameManager::exit() {
 }
 
 
-vector<ComPtr<IDXGIAdapter>> GameManager::getAdapterList() {
+vector<ComPtr<IDXGIAdapter1>> GameManager::getAdapterList() {
 	return gameEngine->getAdapterList();
 }
 
@@ -94,7 +94,7 @@ vector<ComPtr<IDXGIOutput>> GameManager::getDisplayListFor(size_t displayIndex) 
 }
 
 vector<ComPtr<IDXGIOutput>> GameManager::getDisplayListFor(
-	ComPtr<IDXGIAdapter> adapter) {
+	ComPtr<IDXGIAdapter1> adapter) {
 	return gameEngine->getDisplayListFor(adapter);
 }
 

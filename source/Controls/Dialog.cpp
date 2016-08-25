@@ -6,14 +6,8 @@ Dialog::Dialog() {
 }
 
 Dialog::~Dialog() {
-	/*for (Button* button : buttons)
-		delete button;
-
-	for (TextLabel* label : labels)
-		delete label;*/
-
-	/*for (GUIControl* control : controls)
-		delete control;*/
+	
+	controls.clear();
 }
 
 #include "../Managers/GameManager.h"
