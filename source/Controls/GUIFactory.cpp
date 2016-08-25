@@ -138,10 +138,11 @@ Button* GUIFactory::createButton(const Vector2& position, const Vector2& size,
 }
 
 ListBox* GUIFactory::createListBox(const Vector2& position,
-	const int width, const int maxItemsShown, const char_t* fontName) {
+	const int width, const int maxItemsShown, bool enumerateList,
+	const char_t* fontName) {
 
 	ListBox* listbox = new ListBox(position, width, maxItemsShown);
-	listbox->initialize(getFont(fontName), whitePixel);
+	listbox->initialize(getFont(fontName), whitePixel, enumerateList);
 	return listbox;
 }
 

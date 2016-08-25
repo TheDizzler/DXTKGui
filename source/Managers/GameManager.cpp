@@ -81,27 +81,29 @@ void GameManager::pause() {
 
 #include "../Engine/GameEngine.h"
 void GameManager::exit() {
-
-
-	//dialogs.push_back(exitDialog.get());
-
 	gameEngine->exit();
 }
 
-vector<wstring> GameManager::getAdapterListDescriptions() {
-	return gameEngine->getAdapterListDescriptions();
-}
 
 vector<ComPtr<IDXGIAdapter>> GameManager::getAdapterList() {
 	return gameEngine->getAdapterList();
 }
 
-vector<wstring> GameManager::getDisplayModeListDescriptions(size_t adapterIndex) {
-	return gameEngine->getDisplayModeListDescriptions(adapterIndex);
+vector<ComPtr<IDXGIOutput>> GameManager::getDisplayListFor(size_t displayIndex) {
+	return gameEngine->getDisplayListFor(displayIndex);
 }
 
-vector<DXGI_MODE_DESC> GameManager::getDisplayModeList(size_t adapterIndex) {
-	return gameEngine->getDisplayModeList(adapterIndex);
+vector<ComPtr<IDXGIOutput>> GameManager::getDisplayListFor(
+	ComPtr<IDXGIAdapter> adapter) {
+	return gameEngine->getDisplayListFor(adapter);
+}
+
+vector<DXGI_MODE_DESC> GameManager::getDisplayModeList(size_t displayIndex) {
+	return gameEngine->getDisplayModeList(displayIndex);
+}
+
+vector<DXGI_MODE_DESC> GameManager::getDisplayModeList(ComPtr<IDXGIOutput> display) {
+	return gameEngine->getDisplayModeList(display);
 }
 
 
@@ -109,12 +111,21 @@ size_t GameManager::getSelectedAdapterIndex() {
 	return gameEngine->getSelectedAdapterIndex();
 }
 
-size_t GameManager::getSelectedDisplayMode() {
+size_t GameManager::getSelectedDisplayIndex() {
+	return gameEngine->getSelectedDisplayIndex();
+}
+
+size_t GameManager::getSelectedDisplayModeIndex() {
 	return gameEngine->getSelectedDisplayModeIndex();
 }
 
 
 
 
-
+//vector<wstring> GameManager::getAdapterListDescriptions() {
+//	return gameEngine->getAdapterListDescriptions();
+//}
+//vector<wstring> GameManager::getDisplayModeListDescriptions(size_t adapterIndex) {
+//	return gameEngine->getDisplayModeListDescriptions(adapterIndex);
+//}
 

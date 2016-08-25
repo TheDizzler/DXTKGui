@@ -22,7 +22,7 @@ ListBox::~ListBox() {
 
 
 void ListBox::initialize(shared_ptr<FontSet> fnt,
-	ComPtr<ID3D11ShaderResourceView> whitePixel) {
+	ComPtr<ID3D11ShaderResourceView> whitePixel, bool enumerateList) {
 
 	font = fnt;
 	pixel = whitePixel;
@@ -37,6 +37,7 @@ void ListBox::initialize(shared_ptr<FontSet> fnt,
 
 	frame.reset(new RectangleFrame(pixel));
 
+	isEnumerated = enumerateList;
 }
 
 
@@ -45,7 +46,7 @@ void ListBox::addItems(vector<ListItem* > items) {
 
 	for (ListItem* item : items) {
 		item->initialize(width - scrollBar->getWidth(), itemHeight,
-			font, pixel);
+			font, pixel, listItems.size(), isEnumerated);
 		listItems.push_back(item);
 	}
 	items.clear();
@@ -66,10 +67,14 @@ void ListBox::addItems(vector<ListItem* > items) {
 }
 
 
+void ListBox::clear() {
+	listItems.clear();
+}
+
+
 
 void ListBox::update(double deltaTime, MouseController* mouse) {
 
-	//bool changesMade = false;
 	for (ListItem* item : listItems) {
 		if (item->update(deltaTime, mouse)) {
 			if (!multiSelect) {
@@ -112,7 +117,6 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 		pos.y += itemHeight;
 	}
 
-	//return changesMade;
 }
 
 
@@ -156,6 +160,10 @@ void ListBox::setSelected(size_t newIndex) {
 
 ListItem * ListBox::getSelected() {
 	return listItems[selectedIndex];
+}
+
+ListItem * ListBox::getItem(size_t index) {
+	return listItems[index];
 }
 
 // do nothing for now
@@ -216,7 +224,8 @@ ListItem::~ListItem() {
 }
 
 void ListItem::initialize(const int width, const int height,
-	shared_ptr<FontSet> fnt, ComPtr<ID3D11ShaderResourceView> pixelTexture) {
+	shared_ptr<FontSet> fnt, ComPtr<ID3D11ShaderResourceView> pixelTexture,
+	size_t listPos, bool enumerateList) {
 
 	itemRect.left = 0;
 	itemRect.top = 0;
@@ -231,6 +240,8 @@ void ListItem::initialize(const int width, const int height,
 
 	textLabel.reset(new TextLabel(fnt));
 
+	isEnumerated = enumerateList;
+	listPosition = listPos;
 	setText();
 }
 

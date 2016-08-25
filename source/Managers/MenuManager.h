@@ -21,14 +21,29 @@ protected:
 
 };
 
+class DisplayItem : public ListItem {
+public:
+	ComPtr<IDXGIOutput> adapterOutput;
+	
+protected:
+	virtual void setText();
+};
+
 class AdapterItem : public ListItem {
 public:
-	IDXGIAdapter* adapter;
+	ComPtr<IDXGIAdapter> adapter;
 
 protected:
 	virtual void setText();
 
 };
+
+class OnClickAdapterList : public OnClickInterface {
+public:
+	virtual void onClick(ListBox* listbox, int selectedIndex) override;
+	ConfigScreen* config;
+};
+
 
 class MenuManager : public Screen {
 public:
@@ -82,13 +97,9 @@ protected:
 
 };
 
-class OnClickTest : public OnClickInterface {
-public:
-	virtual void onClick(ListItem* selectedItem) override;
-	ConfigScreen* config;
-};
 
 class ConfigScreen : public MenuScreen {
+	friend class OnClickAdapterList;
 public:
 	ConfigScreen(MenuManager* manager);
 	~ConfigScreen();
@@ -96,16 +107,23 @@ public:
 	// Inherited via MenuScreen
 	virtual bool initialize(ComPtr<ID3D11Device> device,
 		MouseController* mouse) override;
-	void testMe();
+	
 	virtual void update(double deltaTime,
 		KeyboardController* keys, MouseController * mouse) override;
 	virtual void draw(SpriteBatch * batch) override;
 
 private:
 
-	
+	void populateDisplayList(vector<ComPtr<IDXGIOutput> > displays);
+	void populateDisplayModeList(vector<DXGI_MODE_DESC> displayModes);
 	TextLabel* adapterLabel;
+	TextLabel* displayLabel;
 	TextLabel* displayModeLabel;
+
+	ListBox* adapterListbox;
+	ListBox* displayListbox;
+	ListBox* displayModeListbox;
+
 };
 
 class MainScreen : public MenuScreen {

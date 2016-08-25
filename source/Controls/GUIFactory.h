@@ -38,7 +38,8 @@ public:
 		const int frameThickness = 2);
 
 	ListBox* createListBox(const Vector2& position, const int width,
-		const int maxItemsShown = 7, const char_t* fontName = "Default Font");
+		const int maxItemsShown = 7, bool enumerateList = false,
+		const char_t* fontName = "Default Font");
 
 
 	Dialog* createDialog(const char_t* fontName = "Default Font");

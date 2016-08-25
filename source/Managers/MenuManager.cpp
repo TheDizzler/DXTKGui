@@ -105,7 +105,6 @@ void MenuScreen::pause() {
 /** **** MainMenuScreen **** **/
 MainScreen::MainScreen(MenuManager* mngr) : MenuScreen(mngr) {
 
-	//menuFont = game->guiFactory->getFont("Arial");
 }
 
 MainScreen::~MainScreen() {
@@ -174,8 +173,6 @@ void MainScreen::update(double deltaTime,
 	ws << "Mouse: " << mouse->getPosition().x << ", " << mouse->getPosition().y;
 	mouseLabel->setText(ws);
 
-
-
 	if (keys->keyDown[KeyboardController::ESC] && !escLastStateDown) {
 		if (exitDialog->isOpen)
 			exitDialog->close();
@@ -227,7 +224,6 @@ void MainScreen::draw(SpriteBatch* batch) {
 
 	if (exitDialog->isOpen)
 		exitDialog->draw(batch);
-
 }
 
 
@@ -242,7 +238,6 @@ void MainScreen::confirmExit() {
 /** **** ConfigScreen **** **/
 ConfigScreen::ConfigScreen(MenuManager* mngr) : MenuScreen(mngr) {
 
-	//menuFont = game->guiFactory->getFont("BlackCloak");
 }
 
 ConfigScreen::~ConfigScreen() {
@@ -257,52 +252,53 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	adapterLabel->setHoverable(true);
 	guiControls.push_back(adapterLabel);
 
+	displayLabel = GameManager::guiFactory->createTextLabel(Vector2(50, 300));
+	guiControls.push_back(displayLabel);
+
 	displayModeLabel =
 		GameManager::guiFactory->createTextLabel(Vector2(475, 50), L"Test2");
 	guiControls.push_back(displayModeLabel);
 
 
-	ListBox* listbox =
-		GameManager::guiFactory->createListBox(Vector2(50, 100), 400);
-
+	// create listbox of gfx cards
+	adapterListbox =
+		GameManager::guiFactory->createListBox(Vector2(50, 100), 400, 4, true);
+	guiControls.push_back(adapterListbox);
 	vector<ListItem*> adapterItems;
 	for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
 		AdapterItem* item = new AdapterItem();
-		item->adapter = adap.Get();
+		item->adapter = adap;
 		adapterItems.push_back(item);
 	}
 
-	listbox->addItems(adapterItems);
-	listbox->setSelected(game->getSelectedAdapterIndex());
+	adapterListbox->addItems(adapterItems);
+	adapterListbox->setSelected(game->getSelectedAdapterIndex());
 
-	OnClickTest* onClickTest = new OnClickTest();
-	onClickTest->config = this;
-	listbox->setOnClickFunction(onClickTest);
+	OnClickAdapterList* onClickAdapterList = new OnClickAdapterList();
+	onClickAdapterList->config = this;
+	adapterListbox->setOnClickFunction(onClickAdapterList);
 
-	guiControls.push_back(listbox);
-
-
-
-	adapterLabel->setText(listbox->getSelected()->toString());
+	adapterLabel->setText(adapterListbox->getSelected()->toString());
 
 
+	// create listbox of monitors available to selected gfx card
+	displayListbox = GameManager::guiFactory->createListBox(Vector2(50, 350), 400, 4, true);
+	guiControls.push_back(displayListbox);
+	populateDisplayList(game->getDisplayListFor(game->getSelectedAdapterIndex()));
+	displayListbox->setSelected(game->getSelectedDisplayIndex());
+
+
+	displayLabel->setText(displayListbox->getSelected()->toString());
 
 	// Selected adapter display mode list
-	listbox =
-		GameManager::guiFactory->createListBox(Vector2(475, 100), 175);
+	displayModeListbox =
+		GameManager::guiFactory->createListBox(Vector2(475, 100), 175, 8, true);
+	populateDisplayModeList(
+		game->getDisplayModeList(game->getSelectedAdapterIndex()));
+	displayModeListbox->setSelected(game->getSelectedDisplayModeIndex());
+	guiControls.push_back(displayModeListbox);
 
-	vector<ListItem*> displayModeItems;
-	for (DXGI_MODE_DESC mode
-		: game->getDisplayModeList(game->getSelectedAdapterIndex())) {
-		DisplayModeItem* item = new DisplayModeItem();
-		item->modeDesc = mode;
-		displayModeItems.push_back(item);
-	}
-	listbox->addItems(displayModeItems);
-	listbox->setSelected(game->getSelectedDisplayMode());
-	guiControls.push_back(listbox);
-
-	displayModeLabel->setText(listbox->getSelected()->toString());
+	displayModeLabel->setText(displayModeListbox->getSelected()->toString());
 
 
 	ImageButton* button = (ImageButton*) GameManager::guiFactory->
@@ -325,10 +321,6 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 
 
 	return true;
-}
-
-void ConfigScreen::testMe() {
-	adapterLabel->setText(L"Test Successful!!");
 }
 
 
@@ -355,10 +347,7 @@ void ConfigScreen::update(double deltaTime, KeyboardController* keys,
 					break;
 				case GUIControl::SELECTION_CHANGED:
 					ListBox* listbox = (ListBox*) control;
-					//const wchar_t* text = listbox->getSelected()->toString();
-					//adapterLabel->setText(text);
 					listbox->triggerOnClick();
-					
 					break;
 			}
 		}
@@ -368,11 +357,34 @@ void ConfigScreen::update(double deltaTime, KeyboardController* keys,
 
 void ConfigScreen::draw(SpriteBatch* batch) {
 
-
 	for (GUIControl* control : guiControls)
 		control->draw(batch);
 }
 
+void ConfigScreen::populateDisplayList(vector<ComPtr<IDXGIOutput>> displays) {
+
+	displayListbox->clear();
+	vector<ListItem*> adapterOuts;
+	for (ComPtr<IDXGIOutput> adap : displays) {
+
+		DisplayItem* item = new DisplayItem();
+		item->adapterOutput = adap;
+		adapterOuts.push_back(item);
+	}
+	displayListbox->addItems(adapterOuts);
+}
+
+void ConfigScreen::populateDisplayModeList(vector<DXGI_MODE_DESC> displayModes) {
+
+	displayModeListbox->clear();
+	vector<ListItem*> displayModeItems;
+	for (DXGI_MODE_DESC mode : displayModes) {
+		DisplayModeItem* item = new DisplayModeItem();
+		item->modeDesc = mode;
+		displayModeItems.push_back(item);
+	}
+	displayModeListbox->addItems(displayModeItems);
+}
 
 
 void AdapterItem::setText() {
@@ -380,26 +392,58 @@ void AdapterItem::setText() {
 	DXGI_ADAPTER_DESC desc;
 	ZeroMemory(&desc, sizeof(DXGI_ADAPTER_DESC));
 	adapter->GetDesc(&desc);
-	textLabel->setText(desc.Description);
+	wostringstream wss;
+	if (isEnumerated) {
+		wss << listPosition << ": ";
+	}
+	wss << desc.Description;
+	textLabel->setText(wss);
 }
 
-static int num = 0;
+void DisplayItem::setText() {
+
+	DXGI_OUTPUT_DESC desc;
+	adapterOutput->GetDesc(&desc);
+	wostringstream wss;
+	if (isEnumerated) {
+		wss << listPosition << ": ";
+	}
+	wss << desc.DeviceName;
+	textLabel->setText(wss);
+}
+
 void DisplayModeItem::setText() {
 
 	UINT width = modeDesc.Width;
 	UINT height = modeDesc.Height;
 
-	wostringstream mode;
+	wostringstream wss;
 	//mode << "Format: " << displayModeList[i].Format;
-	mode << num++ << ": " << width << " x " << height;
-
-	textLabel->setText(mode.str());
+	if (isEnumerated) {
+		wss << listPosition << ": ";
+		wostringstream ws;
+		ws << "listPosition: " << listPosition << "\n";
+		OutputDebugString(ws.str().c_str());
+	}
+	wss << width << " x " << height;
+	textLabel->setText(wss.str());
 
 }
 
-void OnClickTest::onClick(ListItem* selectedItem) {
 
-	wostringstream ws;
+void OnClickAdapterList::onClick(ListBox* listbox, int selectedIndex) {
+
+	AdapterItem* selectedItem = (AdapterItem*) listbox->getItem(selectedIndex);
+	/*wostringstream ws;
 	ws << selectedItem->toString() << "\n";
-	OutputDebugString(ws.str().c_str());
+	OutputDebugString(ws.str().c_str());*/
+
+	vector<ComPtr<IDXGIOutput> > displays
+		= config->game->getDisplayListFor(selectedItem->adapter);
+	config->populateDisplayList(displays);
+
+	config->populateDisplayModeList(
+		config->game->getDisplayModeList(config->game->getSelectedAdapterIndex()));
 }
+
+

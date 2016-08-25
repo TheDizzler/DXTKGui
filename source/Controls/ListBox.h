@@ -8,13 +8,13 @@
 
 using namespace std;
 
-class ListItem;
+class ListBox;
 interface OnClickInterface {
 public:
-	virtual void onClick(ListItem* selectedItem) = 0;
+	virtual void onClick(ListBox* listbox, int selectedItem) = 0;
 };
 
-typedef void (OnClickInterface::*OnClickFunction) (ListItem*);
+typedef void (OnClickInterface::*OnClickFunction) (ListBox*, int);
 
 
 class ListItem {
@@ -24,7 +24,8 @@ public:
 	~ListItem();
 
 	void initialize(const int width, const int height,
-		shared_ptr<FontSet> fnt, ComPtr<ID3D11ShaderResourceView> pixelTexture);
+		shared_ptr<FontSet> fnt, ComPtr<ID3D11ShaderResourceView> pixelTexture,
+		size_t listPosition = 0, bool enumerateList = false);
 
 
 	const wchar_t* toString();
@@ -40,7 +41,6 @@ public:
 protected:
 
 	virtual void setText() = 0;
-
 	//unique_ptr<T> item;
 	unique_ptr<TextLabel> textLabel;
 
@@ -59,6 +59,8 @@ protected:
 
 	ComPtr<ID3D11ShaderResourceView> pixel;
 
+	bool isEnumerated;
+	size_t listPosition = 0;
 };
 
 
@@ -152,12 +154,10 @@ public:
 	ListBox(const Vector2& position, const int width, const int maxItemsShown = 7);
 	~ListBox();
 
-	//bool initialize(ComPtr<ID3D11Device> device, const wchar_t* fontFile, ID3D11ShaderResourceView* whitePixel);
 	void initialize(shared_ptr<FontSet> font,
-		ComPtr<ID3D11ShaderResourceView> whitePixel);
+		ComPtr<ID3D11ShaderResourceView> whitePixel, bool enumerateList = false);
 	void addItems(vector<ListItem*> items);
-	/*virtual void addItem(unique_ptr<GUIControl> control) override ;
-	virtual void addItems(vector<unique_ptr<GUIControl> > items) override*/;
+	void clear();
 
 	/** Returns true if selection changed. */
 	virtual void update(double deltaTime, MouseController * mouse) override;
@@ -168,6 +168,7 @@ public:
 
 	void setSelected(size_t newIndex);
 	ListItem* getSelected();
+	ListItem* getItem(size_t index);
 
 	virtual void setText(wstring text) /*override*/;
 	virtual XMVECTOR XM_CALLCONV measureString() const /*override*/;
@@ -197,7 +198,7 @@ public:
 
 	void triggerOnClick() {
 		if (onClickI != NULL)
-			(onClickI->*onClickFunction)(listItems[selectedIndex]);
+			(onClickI->*onClickFunction)(this, selectedIndex);
 	}
 
 
@@ -209,6 +210,7 @@ private:
 	/* Always smaller or equal to maxDisplayItems. */
 	size_t itemsToDisplay = 0;
 
+	boolean isEnumerated = false;
 
 	shared_ptr<FontSet> font;
 	vector<ListItem*> listItems;

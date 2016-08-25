@@ -29,13 +29,20 @@ public:
 	void pause();
 	void exit();
 
-	vector<wstring> getAdapterListDescriptions();
+	
 	vector<ComPtr<IDXGIAdapter> > getAdapterList();
-	vector<wstring> getDisplayModeListDescriptions(size_t adapterIndex);
-	vector<DXGI_MODE_DESC> getDisplayModeList(size_t adapterIndex);
-	size_t getSelectedAdapterIndex();
-	size_t getSelectedDisplayMode();
+	vector<ComPtr<IDXGIOutput> > getDisplayListFor(size_t displayIndex);
+	vector<ComPtr<IDXGIOutput> > getDisplayListFor(ComPtr<IDXGIAdapter> adapter);
+	vector<DXGI_MODE_DESC> getDisplayModeList(size_t displayIndex);
+	vector<DXGI_MODE_DESC> getDisplayModeList(ComPtr<IDXGIOutput> display);
 
+	size_t getSelectedAdapterIndex();
+	size_t getSelectedDisplayIndex();
+	size_t getSelectedDisplayModeIndex();
+
+
+	//vector<wstring> getAdapterListDescriptions();
+	//vector<wstring> getDisplayModeListDescriptions(size_t adapterIndex);
 
 	static unique_ptr<GUIFactory> guiFactory;
 
