@@ -2,18 +2,18 @@
 #pragma comment (lib, "D3D11.lib")
 #pragma comment(lib, "DXGI.lib")
 
-#include <d3d11.h>
+#include <d3d11_1.h>
 #include <dxgi1_2.h>
 
 
-#include <wrl.h>
-#include <Windows.h>
-#include <memory>
-#include <vector>
+//#include <wrl.h>
+//#include <Windows.h>
+//#include <memory>
+//#include <vector>
 #include <sstream>
 
 #include "SpriteBatch.h"
-#include "../globals.h"
+
 
 
 using namespace DirectX;
@@ -32,9 +32,9 @@ public:
 	virtual void render(double time) = 0;
 
 
-	vector<ComPtr<IDXGIAdapter1> > getAdapterList();
+	vector<ComPtr<IDXGIAdapter> > getAdapterList();
 	vector<ComPtr<IDXGIOutput> > getDisplayListFor(size_t adapterIndex);
-	vector<ComPtr<IDXGIOutput> > getDisplayListFor(ComPtr<IDXGIAdapter1> adapter);
+	vector<ComPtr<IDXGIOutput> > getDisplayListFor(ComPtr<IDXGIAdapter> adapter);
 	vector<DXGI_MODE_DESC> getDisplayModeList(size_t displayIndex);
 	vector<DXGI_MODE_DESC> getDisplayModeList(ComPtr<IDXGIOutput> display);
 
@@ -53,7 +53,7 @@ protected:
 	unique_ptr<SpriteBatch> batch;
 
 	/* Adapter currently being used. */
-	ComPtr<IDXGIAdapter1> selectedAdapter;
+	ComPtr<IDXGIAdapter> selectedAdapter;
 	/* Monitor being used. */
 	ComPtr<IDXGIOutput> selectedDisplay;
 	/* Display Mode being used. */
@@ -80,7 +80,7 @@ protected:
 	D3D_FEATURE_LEVEL featureLevel;
 	D3D11_VIEWPORT viewport;
 	/* List of all gfx cards on this machine. */
-	vector<ComPtr<IDXGIAdapter1> > adapters;
+	vector<ComPtr<IDXGIAdapter> > adapters;
 	/* List of all monitors available with this adapter. */
 	vector<ComPtr<IDXGIOutput> > displays;
 	vector<DXGI_MODE_DESC> displayModeList; // all possible display modes with this monitor/video card 

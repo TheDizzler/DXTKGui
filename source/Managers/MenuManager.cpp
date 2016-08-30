@@ -267,7 +267,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 		GameManager::guiFactory->createListBox(Vector2(50, 100), 400, 4, true);
 	guiControls.push_back(adapterListbox);
 	vector<ListItem*> adapterItems;
-	for (ComPtr<IDXGIAdapter1> adap : game->getAdapterList()) {
+	for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
 		AdapterItem* item = new AdapterItem();
 		item->adapter = adap;
 		adapterItems.push_back(item);
@@ -289,7 +289,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	// because only the one adapter has displays on my laptop
 	// this has to be grab the first (and only) display.
 	populateDisplayList(game->getDisplayListFor(0
-		/*game->getSelectedAdapterIndex()*/));
+	/*game->getSelectedAdapterIndex()*/));
 	displayListbox->setSelected(game->getSelectedDisplayIndex());
 
 	displayLabel->setText(displayListbox->getSelected()->toString());
@@ -439,16 +439,16 @@ void DisplayModeItem::setText() {
 void OnClickAdapterList::onClick(ListBox* listbox, int selectedIndex) {
 
 	AdapterItem* selectedItem = (AdapterItem*) listbox->getItem(selectedIndex);
-	/*wostringstream ws;
-	ws << selectedItem->toString() << "\n";
-	OutputDebugString(ws.str().c_str());*/
 
 	vector<ComPtr<IDXGIOutput> > displays
 		= config->game->getDisplayListFor(selectedItem->adapter);
 	config->populateDisplayList(displays);
 
 	config->populateDisplayModeList(
-		config->game->getDisplayModeList(config->game->getSelectedAdapterIndex()));
+		config->game->getDisplayModeList(
+			config->game->getSelectedAdapterIndex()));
+
+	config->adapterLabel->setText(listbox->getSelected()->toString());
 }
 
 

@@ -31,7 +31,7 @@ protected:
 
 class AdapterItem : public ListItem {
 public:
-	ComPtr<IDXGIAdapter1> adapter;
+	ComPtr<IDXGIAdapter> adapter;
 
 protected:
 	virtual void setText();

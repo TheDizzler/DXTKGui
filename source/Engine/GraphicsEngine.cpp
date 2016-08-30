@@ -59,10 +59,10 @@ bool GraphicsEngine::getDisplayAdapters() {
 		return false;
 	}
 
-	ComPtr<IDXGIAdapter1> adapter;
+	ComPtr<IDXGIAdapter> adapter;
 	int i = 0;
 	// get all adapters (gfx cards)
-	while (factory->EnumAdapters1(i++, adapter.GetAddressOf()) != DXGI_ERROR_NOT_FOUND) {
+	while (factory->EnumAdapters(i++, adapter.GetAddressOf()) != DXGI_ERROR_NOT_FOUND) {
 		adapters.push_back(adapter);
 		/*DXGI_ADAPTER_DESC desc;
 		ZeroMemory(&desc, sizeof(DXGI_ADAPTER_DESC));
@@ -78,9 +78,9 @@ bool GraphicsEngine::getDisplayAdapters() {
 		adapter = adapters[j];
 		i = 0;
 
-		DXGI_ADAPTER_DESC1 adapterDesc;
-		ZeroMemory(&adapterDesc, sizeof(DXGI_ADAPTER_DESC1));
-		adapter->GetDesc1(&adapterDesc);
+		DXGI_ADAPTER_DESC adapterDesc;
+		ZeroMemory(&adapterDesc, sizeof(DXGI_ADAPTER_DESC));
+		adapter->GetDesc(&adapterDesc);
 		ComPtr<IDXGIOutput> adapterOutput;
 
 		while (adapter->EnumOutputs(i++, adapterOutput.GetAddressOf())
@@ -127,7 +127,7 @@ bool GraphicsEngine::initializeAdapter(HWND hwnd, int adapterIndex) {
 	/** **** Create SWAP CHAIN **** **/
 	setDisplayMode(selectedDisplayModeIndex);
 
-
+	
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 	ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
 
@@ -165,11 +165,49 @@ bool GraphicsEngine::initializeAdapter(HWND hwnd, int adapterIndex) {
 		swapChain.GetAddressOf(), device.GetAddressOf(), &featureLevel,
 		deviceContext.GetAddressOf()))) {
 
-		MessageBox(hwnd, L"Error creating Device and Swap Chain.", L"ERROR", MB_OK);
+			MessageBox(hwnd, L"Error creating Device and Swap Chain.", L"ERROR", MB_OK);
 		return false;
 	}
 
-	//featureLevel
+	// Define temporary pointers to a device and a device context
+	//ComPtr<ID3D11Device> dev11;
+	//ComPtr<ID3D11DeviceContext> devcon11;
+
+	//if (Globals::reportError(D3D11CreateDevice(
+	//	nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr,
+	//	0, nullptr, 0,
+	//	D3D11_SDK_VERSION, dev11.GetAddressOf(), nullptr,
+	//	devcon11.GetAddressOf()))) {
+	//	MessageBox(hwnd, L"Error creating Device.", L"ERROR", MB_OK);
+	//	return false;
+	//}
+
+	//// Convert the pointers from the DirectX 11 versions to the DirectX 11.1 versions
+	//dev11.As(&device);
+	//devcon11.As(&deviceContext);
+
+	//// convert our ID3D11Device1 into an IDXGIDevice1
+	//ComPtr<IDXGIDevice1> dxgiDevice;
+	//device.As(&dxgiDevice);
+
+	//// use IDXGIDevice1 interface to get access to the adapter
+	//ComPtr<IDXGIAdapter> dxgiAdapter;
+	//dxgiDevice->GetAdapter(&dxgiAdapter);
+
+	//// use IDXGIAdapter interface to get access to the factory
+	//ComPtr<IDXGIFactory2> dxgiFactory;
+	//dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), &dxgiFactory);
+
+	//// obtain the DXGI factory
+
+	//// set up the swap chain description
+	//DXGI_SWAP_CHAIN_DESC1 scd = {0};
+	//scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	//scd.BufferCount = 2;
+	//scd.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	//scd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+	//scd.SampleDesc.Count = 1;
+
 
 	return true;
 }
@@ -264,7 +302,7 @@ void GraphicsEngine::setDisplayMode(size_t selectedIndex) {
 }
 
 
-vector<ComPtr<IDXGIAdapter1>> GraphicsEngine::getAdapterList() {
+vector<ComPtr<IDXGIAdapter>> GraphicsEngine::getAdapterList() {
 	return adapters;
 }
 
@@ -273,7 +311,7 @@ vector<ComPtr<IDXGIOutput>> GraphicsEngine::getDisplayListFor(size_t adapterInde
 }
 
 vector<ComPtr<IDXGIOutput>> GraphicsEngine::getDisplayListFor(
-	ComPtr<IDXGIAdapter1> adapter) {
+	ComPtr<IDXGIAdapter> adapter) {
 
 	vector<ComPtr<IDXGIOutput>> outputs;
 	ComPtr<IDXGIOutput> adapterOutput;

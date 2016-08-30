@@ -1,14 +1,6 @@
 #pragma once
+#include "pch.h"
 
-
-/* Global variables and includes */
-#include <wrl.h>
-#include <comdef.h>
-#include <algorithm> 
-#include <cctype>
-//#include <pugixml.hpp>
-
-using namespace Microsoft::WRL;
 
 
 namespace Assets {

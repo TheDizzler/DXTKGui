@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "MenuManager.h"
 #include "../Controls/GUIFactory.h"
 
@@ -30,9 +29,9 @@ public:
 	void exit();
 
 	
-	vector<ComPtr<IDXGIAdapter1> > getAdapterList();
+	vector<ComPtr<IDXGIAdapter> > getAdapterList();
 	vector<ComPtr<IDXGIOutput> > getDisplayListFor(size_t displayIndex);
-	vector<ComPtr<IDXGIOutput> > getDisplayListFor(ComPtr<IDXGIAdapter1> adapter);
+	vector<ComPtr<IDXGIOutput> > getDisplayListFor(ComPtr<IDXGIAdapter> adapter);
 	vector<DXGI_MODE_DESC> getDisplayModeList(size_t displayIndex);
 	vector<DXGI_MODE_DESC> getDisplayModeList(ComPtr<IDXGIOutput> display);
 

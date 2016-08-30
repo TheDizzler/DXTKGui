@@ -113,7 +113,7 @@ bool initWindow(HINSTANCE hInstance, int showWnd, int width, int height, bool wi
 	wc.hInstance = hInstance;					// instance of current app
 	wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);		// title bar icon
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);	// mo' mouse cursors http://msdn.microsoft.com/en-us/library/ms648391(VS.85).aspx
-	wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
+	wc.hbrBackground = (HBRUSH) (COLOR_WINDOW);
 	wc.lpszMenuName = NULL;
 	wc.lpszClassName = wndClassName;
 	wc.hIconSm = LoadIcon(NULL, IDI_WINLOGO);	// taskbar icon
@@ -126,12 +126,16 @@ bool initWindow(HINSTANCE hInstance, int showWnd, int width, int height, bool wi
 
 	int posX, posY;
 	posX = posY = 0;
+	int windowX, windowY;
+	windowX = windowY = 0;
 
 	if (Globals::FULL_SCREEN) {
 
 		// Determine the resolution of the clients desktop screen.
 		Globals::WINDOW_WIDTH = GetSystemMetrics(SM_CXSCREEN);
 		Globals::WINDOW_HEIGHT = GetSystemMetrics(SM_CYSCREEN);
+		windowX = Globals::WINDOW_WIDTH;
+		windowY = Globals::WINDOW_HEIGHT;
 
 		DEVMODE dmScreenSettings;
 		memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
@@ -145,20 +149,27 @@ bool initWindow(HINSTANCE hInstance, int showWnd, int width, int height, bool wi
 		// Set the position of the window to the top left corner.
 
 	} else {
-		// If windowed then set it to global default resolution
-		// and place the window in the middle of the screen.
+	// Make client dimensions WINDOW_WIDTHxWINDOW_HEIGHT
+	// (as opposed to window dimensions
+		RECT winRect = {0, 0, Globals::WINDOW_WIDTH, Globals::WINDOW_HEIGHT};
+		AdjustWindowRect(&winRect, WS_OVERLAPPEDWINDOW, FALSE);
+		windowX = winRect.right - winRect.left;
+		windowY = winRect.bottom - winRect.top;
+			// If windowed then set it to global default resolution
+			// and place the window in the middle of the screen.
 		posX = (GetSystemMetrics(SM_CXSCREEN) - Globals::WINDOW_WIDTH) / 2;
 		posY = (GetSystemMetrics(SM_CYSCREEN) - Globals::WINDOW_HEIGHT) / 2;
+
 	}
 
-	DWORD windowStyle = (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+	DWORD windowStyle = (WS_OVERLAPPEDWINDOW /*| WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX*/);
 	hwnd = CreateWindowEx(
 		NULL,					// extended style, check em out here https://msdn.microsoft.com/en-us/library/61fe4bte(v=vs.140).aspx
 		wndClassName,
 		wndClassName,			// title bar text
 		windowStyle,			// window style, mo' styles http://msdn.microsoft.com/zh-cn/library/czada357.aspx
 		posX, posY,				// top left of window
-		Globals::WINDOW_WIDTH, Globals::WINDOW_HEIGHT,
+		windowX, windowY,
 		NULL,					// handle to parent window
 		NULL,					// handle to a menu
 		hInstance,				// instance of current program

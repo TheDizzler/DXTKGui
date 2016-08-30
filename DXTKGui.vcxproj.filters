@@ -96,6 +96,9 @@
     <ClCompile Include="Source\BaseGraphics\PrimitiveShapes.cpp">
       <Filter>Source Files\Engine\BaseGfx</Filter>
     </ClCompile>
+    <ClCompile Include="source\pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\GameEngine.h">
@@ -163,6 +166,9 @@
     </ClInclude>
     <ClInclude Include="Source\BaseGraphics\PrimitiveShapes.h">
       <Filter>Header Files\Engine\BaseGfx</Filter>
+    </ClInclude>
+    <ClInclude Include="source\pch.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
