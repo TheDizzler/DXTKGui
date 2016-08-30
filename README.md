@@ -12,8 +12,8 @@ This is still a massive mess....
 
 
 ##3rd party utilities used:
->- DirectXTK - https://blogs.msdn.microsoft.com/chuckw/2012/03/02/directxtk/
->- PugiXML - http://pugixml.org/
+>- DirectXTK (https://blogs.msdn.microsoft.com/chuckw/2012/03/02/directxtk/)
+>- PugiXML (http://pugixml.org/) - 
 
 
 ##DONE:
@@ -24,7 +24,7 @@ This is still a massive mess....
 
 ##TODO:
 >- Dialog Box - with custom image; make draggable
->- List Box - allow scroll button; auto-size to content(maybe)
+>- List Box - allow mouse scroll button; auto-size to content(maybe), multi-select
 >- Combo Box
 >- Check Boxes
 >- Radio Buttons
