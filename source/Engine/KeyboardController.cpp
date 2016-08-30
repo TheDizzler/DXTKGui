@@ -6,7 +6,7 @@ KeyboardController::KeyboardController() {
 KeyboardController::~KeyboardController() {
 }
 
-#include <sstream>
+
 void KeyboardController::getInput(RAWKEYBOARD* rawKey) {
 
 	getLastInput();

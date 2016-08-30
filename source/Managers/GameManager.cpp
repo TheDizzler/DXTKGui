@@ -9,6 +9,7 @@ GameManager::GameManager(GameEngine* gmngn) {
 GameManager::~GameManager() {
 }
 
+#include "../assets.h"
 bool GameManager::initializeGame(ComPtr<ID3D11Device> dvc, MouseController* ms) {
 
 	device = dvc;

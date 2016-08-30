@@ -1,10 +1,5 @@
 #pragma once
 
-
-/* Global variables and includes */
-#include <comdef.h>
-
-
 namespace Globals {
 
 	static int WINDOW_WIDTH = 800;	// in pixels

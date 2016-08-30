@@ -8,6 +8,8 @@
 #include <comdef.h>
 #include <algorithm> 
 #include <cctype>
+#include <sstream>
+
 
 #include "globals.h"
 //#include "assets.h"

@@ -12,8 +12,6 @@ GUIFactory::~GUIFactory() {
 }
 
 
-#include "../globals.h"
-#include "DDSTextureLoader.h"
 bool GUIFactory::initialize(ComPtr<ID3D11Device> dev) {
 
 	device = dev;
@@ -27,6 +25,7 @@ bool GUIFactory::initialize(ComPtr<ID3D11Device> dev) {
 	return true;
 }
 
+#include "../assets.h"
 unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 
 	if (fontMap.find(fontName) == fontMap.end()) {
@@ -153,7 +152,7 @@ Dialog* GUIFactory::createDialog(const char_t* fontName) {
 	return dialog;
 }
 
-
+#include "DDSTextureLoader.h"
 bool GUIFactory::getGUIAssetsFromXML(ComPtr<ID3D11Device> device) {
 
 	xml_node fonts = guiAssetsNode.child("spritefonts");

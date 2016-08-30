@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <pugixml.hpp>
 #include "../Engine/MouseController.h"
 #include "../BaseGraphics/FontSet.h"

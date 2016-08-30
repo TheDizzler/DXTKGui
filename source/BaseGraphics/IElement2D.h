@@ -1,9 +1,9 @@
 #pragma once
 
-#include <d3d11.h>
+#include <d3d11_1.h>
 #include <SimpleMath.h>
 #include "SpriteBatch.h"
-#include "../assets.h"
+
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;

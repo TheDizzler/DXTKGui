@@ -7,7 +7,7 @@ GraphicsAsset::GraphicsAsset() {
 GraphicsAsset::~GraphicsAsset() {
 }
 
-#include "../globals.h"
+#include "../assets.h"
 bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const wchar_t* textureFile) {
 	
 	if (Globals::reportError(CreateDDSTextureFromFile(device.Get(), textureFile,

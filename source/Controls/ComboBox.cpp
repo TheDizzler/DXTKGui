@@ -14,7 +14,7 @@ ComboBox::ComboBox(const Vector2& pos, const int len) {
 ComboBox::~ComboBox() {
 }
 
-#include "../assets.h"
+//#include "../assets.h"
 bool ComboBox::initialize(ComPtr<ID3D11Device> device, const wchar_t* fontFile) {
 
 	//listBox->initialize(device, fontFile);

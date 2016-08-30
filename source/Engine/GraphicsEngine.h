@@ -1,24 +1,16 @@
+#include "../pch.h"
 #pragma once
 #pragma comment (lib, "D3D11.lib")
-#pragma comment(lib, "DXGI.lib")
+#pragma comment (lib, "DXGI.lib")
 
 #include <d3d11_1.h>
 #include <dxgi1_2.h>
 
-
-//#include <wrl.h>
-//#include <Windows.h>
-//#include <memory>
-//#include <vector>
-#include <sstream>
-
 #include "SpriteBatch.h"
 
-
-
-using namespace DirectX;
 using namespace std;
-using namespace Microsoft::WRL;
+using namespace DirectX;
+
 
 
 class GraphicsEngine {
@@ -58,11 +50,11 @@ protected:
 	ComPtr<IDXGIOutput> selectedDisplay;
 	/* Display Mode being used. */
 	DXGI_MODE_DESC selectedDisplayMode;
-	size_t selectedAdapterIndex = 1;
+	size_t selectedAdapterIndex = 0;
 	size_t selectedDisplayIndex = 0;
 	size_t selectedDisplayModeIndex = 0;
 	size_t lastDisplayModeIndex = 0;
-	
+
 
 
 
@@ -84,7 +76,7 @@ protected:
 	/* List of all monitors available with this adapter. */
 	vector<ComPtr<IDXGIOutput> > displays;
 	vector<DXGI_MODE_DESC> displayModeList; // all possible display modes with this monitor/video card 
-	
+
 
 
 	bool getDisplayAdapters();
@@ -93,6 +85,9 @@ protected:
 	void initializeViewport();
 	bool populateDisplayModeList(ComPtr<IDXGIOutput> adapterOut);
 	void setDisplayMode(size_t selectedIndex);
+
+
+	bool verifyAdapter();
 
 };
 
