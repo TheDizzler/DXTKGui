@@ -241,7 +241,14 @@ bool GraphicsEngine::populateDisplayModeList(ComPtr<IDXGIOutput> display) {
 
 			selectedDisplayModeIndex = i;
 			selectedDisplayMode = displayModeList[selectedDisplayModeIndex];
-
+			wostringstream ws;
+			ws << "Format: " << selectedDisplayMode.Format << "\n";
+			ws << "Width: " << selectedDisplayMode.Width << "\n";
+			ws << "Height: " << selectedDisplayMode.Height << "\n";
+			ws << "RefreshRate: " << selectedDisplayMode.RefreshRate.Numerator << "/"
+			<< selectedDisplayMode.RefreshRate.Denominator << "\n";
+			ws << "Scaling: " << selectedDisplayMode.Scaling << "\n";
+			OutputDebugString(ws.str().c_str());
 			break;
 		}
 	}
@@ -253,9 +260,6 @@ bool GraphicsEngine::populateDisplayModeList(ComPtr<IDXGIOutput> display) {
 void GraphicsEngine::setDisplayMode(size_t selectedIndex) {
 
 	lastDisplayModeIndex = selectedDisplayModeIndex;
-		//ZeroMemory(&lastDisplayMode, sizeof(DXGI_MODE_DESC));
-		//lastDisplayMode = selectedDisplayMode;
-	//ZeroMemory(&selectedDisplayMode, sizeof(DXGI_MODE_DESC));
 	selectedDisplayModeIndex = selectedIndex;
 	selectedDisplayMode = displayModeList[selectedDisplayModeIndex];
 	if (Globals::vsync_enabled != 1) {
@@ -304,6 +308,10 @@ bool GraphicsEngine::verifyAdapter() {
 
 vector<ComPtr<IDXGIAdapter>> GraphicsEngine::getAdapterList() {
 	return adapters;
+}
+
+vector<ComPtr<IDXGIOutput>> GraphicsEngine::getDisplayList() {
+	return displays;
 }
 
 vector<ComPtr<IDXGIOutput>> GraphicsEngine::getDisplayListFor(size_t adapterIndex) {

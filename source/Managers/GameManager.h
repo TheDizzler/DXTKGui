@@ -31,6 +31,7 @@ public:
 
 	
 	vector<ComPtr<IDXGIAdapter> > getAdapterList();
+	vector<ComPtr<IDXGIOutput> > getDisplayList();
 	vector<ComPtr<IDXGIOutput> > getDisplayListFor(size_t displayIndex);
 	vector<ComPtr<IDXGIOutput> > getDisplayListFor(ComPtr<IDXGIAdapter> adapter);
 	vector<DXGI_MODE_DESC> getDisplayModeList(size_t displayIndex);

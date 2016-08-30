@@ -440,13 +440,13 @@ void OnClickAdapterList::onClick(ListBox* listbox, int selectedIndex) {
 
 	AdapterItem* selectedItem = (AdapterItem*) listbox->getItem(selectedIndex);
 
-	vector<ComPtr<IDXGIOutput> > displays
-		= config->game->getDisplayListFor(selectedItem->adapter);
-	config->populateDisplayList(displays);
+	//vector<ComPtr<IDXGIOutput> > displays
+		//= config->game->getDisplayListFor(selectedItem->adapter);
+	config->populateDisplayList(config->game->getDisplayList());
 
 	config->populateDisplayModeList(
-		config->game->getDisplayModeList(
-			config->game->getSelectedAdapterIndex()));
+		config->game->getDisplayModeList(0
+			/*config->game->getSelectedAdapterIndex()*/));
 
 	config->adapterLabel->setText(listbox->getSelected()->toString());
 }

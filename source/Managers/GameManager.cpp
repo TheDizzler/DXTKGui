@@ -90,6 +90,10 @@ vector<ComPtr<IDXGIAdapter>> GameManager::getAdapterList() {
 	return gameEngine->getAdapterList();
 }
 
+vector<ComPtr<IDXGIOutput>> GameManager::getDisplayList() {
+	return gameEngine->getDisplayList();
+}
+
 vector<ComPtr<IDXGIOutput>> GameManager::getDisplayListFor(size_t displayIndex) {
 	return gameEngine->getDisplayListFor(displayIndex);
 }

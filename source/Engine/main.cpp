@@ -22,7 +22,7 @@ void startTimer();
 double getTime();
 double getFrameTime();
 
-bool initWindow(HINSTANCE hInstance, int showWnd, int width, int height, bool windowed);
+bool initWindow(HINSTANCE hInstance, int showWnd);
 LRESULT CALLBACK wndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
@@ -44,7 +44,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	gameEngine = new GameEngine();
 
-	if (!initWindow(hInstance, nShowCmd, Globals::WINDOW_WIDTH, Globals::WINDOW_HEIGHT, true)) {
+	if (!initWindow(hInstance, nShowCmd)) {
 		MessageBox(0, TEXT("Window Initialization - Failed"), L"Error", MB_OK);
 		releaseResources();
 		return 0;
@@ -100,9 +100,14 @@ int messageLoop() {
 
 }
 
+int Globals::WINDOW_WIDTH = 800;
+int Globals::WINDOW_HEIGHT = 600;
+int Globals::vsync_enabled = 1;
+bool Globals::FULL_SCREEN = false;
 
-bool initWindow(HINSTANCE hInstance, int showWnd, int width, int height, bool windowed) {
+bool initWindow(HINSTANCE hInstance, int showWnd) {
 
+	
 	WNDCLASSEX wc; // created new extended windows class
 
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -113,7 +118,7 @@ bool initWindow(HINSTANCE hInstance, int showWnd, int width, int height, bool wi
 	wc.hInstance = hInstance;					// instance of current app
 	wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);		// title bar icon
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);	// mo' mouse cursors http://msdn.microsoft.com/en-us/library/ms648391(VS.85).aspx
-	wc.hbrBackground = (HBRUSH) (COLOR_WINDOW);
+	wc.hbrBackground = 0/*(HBRUSH) (COLOR_WINDOW)*/;
 	wc.lpszMenuName = NULL;
 	wc.lpszClassName = wndClassName;
 	wc.hIconSm = LoadIcon(NULL, IDI_WINLOGO);	// taskbar icon
@@ -132,10 +137,12 @@ bool initWindow(HINSTANCE hInstance, int showWnd, int width, int height, bool wi
 	if (Globals::FULL_SCREEN) {
 
 		// Determine the resolution of the clients desktop screen.
-		Globals::WINDOW_WIDTH = GetSystemMetrics(SM_CXSCREEN);
-		Globals::WINDOW_HEIGHT = GetSystemMetrics(SM_CYSCREEN);
-		windowX = Globals::WINDOW_WIDTH;
-		windowY = Globals::WINDOW_HEIGHT;
+		windowX = GetSystemMetrics(SM_CXSCREEN);
+		windowY = GetSystemMetrics(SM_CYSCREEN);
+		//windowX = Globals::WINDOW_WIDTH;
+		//windowY = Globals::WINDOW_HEIGHT;
+		Globals::WINDOW_WIDTH = windowX;
+		Globals::WINDOW_HEIGHT = windowY;
 
 		DEVMODE dmScreenSettings;
 		memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));

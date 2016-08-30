@@ -2,13 +2,14 @@
 
 namespace Globals {
 
-	static int WINDOW_WIDTH = 800;	// in pixels
-	static int WINDOW_HEIGHT = 600;	// in pixels
+	extern int WINDOW_WIDTH;	// in pixels
+	extern int WINDOW_HEIGHT;	// in pixels
+
 
 	/**	0 = Present as fast as possible.
 		1 = Lock to screen refresh rate. */
-	static int vsync_enabled = 1;
-	static bool FULL_SCREEN = false;
+	extern int vsync_enabled;
+	extern bool FULL_SCREEN;
 
 
 	inline bool reportError(HRESULT hr) {
