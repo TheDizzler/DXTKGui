@@ -18,6 +18,7 @@ This is still a massive mess....
 
 ##DONE:
 >- Primitve Shapes - filled rectangle; un-filled rectangle; line
+>- Text Labels - normal and selectable
 >- Button - text and image
 >- Dialog Box - text
 
