@@ -115,10 +115,6 @@ bool GraphicsEngine::getDisplayAdapters() {
 bool GraphicsEngine::initializeAdapter(HWND hwnd, int adapterIndex) {
 
 	selectedAdapterIndex = adapterIndex;
-
-	/*unsigned int numerator = 0, denominator = 1;*/
-	//DXGI_RATIONAL refreshRate = {0, 1};
-
 	selectedAdapter = adapters[selectedAdapterIndex];
 
 	if (!populateDisplayModeList(selectedDisplay))
@@ -131,7 +127,7 @@ bool GraphicsEngine::initializeAdapter(HWND hwnd, int adapterIndex) {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
 
-	swapChainDesc.BufferCount = 1; // Back buffer count
+	swapChainDesc.BufferCount = bufferCount; // Back buffer count
 	swapChainDesc.BufferDesc = selectedDisplayMode;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.OutputWindow = hwnd;
@@ -141,7 +137,7 @@ bool GraphicsEngine::initializeAdapter(HWND hwnd, int adapterIndex) {
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	swapChainDesc.Windowed = !Globals::FULL_SCREEN;
 	// Use Alt-Enter to switch between full screen and windowed mode.;
-	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+	swapChainDesc.Flags = swapChainFlags;
 
 	UINT createDeviceFlags = 0;
 #ifdef _DEBUG
@@ -246,7 +242,7 @@ bool GraphicsEngine::populateDisplayModeList(ComPtr<IDXGIOutput> display) {
 			ws << "Width: " << selectedDisplayMode.Width << "\n";
 			ws << "Height: " << selectedDisplayMode.Height << "\n";
 			ws << "RefreshRate: " << selectedDisplayMode.RefreshRate.Numerator << "/"
-			<< selectedDisplayMode.RefreshRate.Denominator << "\n";
+				<< selectedDisplayMode.RefreshRate.Denominator << "\n";
 			ws << "Scaling: " << selectedDisplayMode.Scaling << "\n";
 			OutputDebugString(ws.str().c_str());
 			break;
@@ -268,43 +264,6 @@ void GraphicsEngine::setDisplayMode(size_t selectedIndex) {
 	}
 
 }
-
-bool GraphicsEngine::verifyAdapter() {
-
-	IDXGIDevice* dxgiDev;
-	if (Globals::reportError(
-		device.Get()->QueryInterface(
-			__uuidof(IDXGIDevice), (void **) &dxgiDev))) {
-		MessageBox(0, L"Error querying device interface.",
-			L"ERROR", MB_OK);
-		return false;
-	}
-	IDXGIAdapter* dxgiAdapter;
-	if (Globals::reportError(dxgiDev->GetAdapter(&dxgiAdapter))) {
-		MessageBox(0, L"Error getting idxgi adapter from dxgi device.",
-			L"ERROR", MB_OK);
-		return false;
-	}
-
-	IDXGIFactory* factory;
-	if (Globals::reportError(
-		dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**) &factory))) {
-		MessageBox(0, L"Error getting factory from idxgi adapter.",
-			L"ERROR", MB_OK);
-		return false;
-
-	}
-
-	DXGI_ADAPTER_DESC adapterDesc;
-	ZeroMemory(&adapterDesc, sizeof(DXGI_ADAPTER_DESC));
-	dxgiAdapter->GetDesc(&adapterDesc);
-	wostringstream ws;
-	ws << "Adapter: " << adapterDesc.Description << "\n";
-	OutputDebugString(ws.str().c_str());
-
-	dxgiDev->Release();
-}
-
 
 vector<ComPtr<IDXGIAdapter>> GraphicsEngine::getAdapterList() {
 	return adapters;
@@ -370,6 +329,50 @@ vector<DXGI_MODE_DESC> GraphicsEngine::getDisplayModeList(
 }
 
 
+bool GraphicsEngine::changeDisplayMode(size_t newDisplayModeIndex) {
+
+	selectedDisplayModeIndex = newDisplayModeIndex;
+	DXGI_MODE_DESC newDisplayMode = displayModeList[selectedDisplayModeIndex];
+
+	Globals::WINDOW_WIDTH = newDisplayMode.Width;
+	Globals::WINDOW_HEIGHT = newDisplayMode.Height;
+
+	// release all references to back buffers
+	renderTargetView.Get()->Release();
+
+	// resize target
+	if (Globals::reportError(swapChain->ResizeTarget(&newDisplayMode))) {
+		MessageBox(0, L"Failed to resize swapchain target",
+			L"Display Mode Change Error", MB_OK);
+		return false;
+	}
+
+	//resize backbuffers
+	if (Globals::reportError(swapChain->ResizeBuffers(bufferCount,
+		newDisplayMode.Width, newDisplayMode.Height,
+		newDisplayMode.Format, swapChainFlags))) {
+
+		MessageBox(0, L"Failed to resize swapchain buffers",
+			L"Display Mode Change Error", MB_OK);
+		return false;
+	}
+
+	// destroy and recreate depth/stencil buffer if used
+
+	// re-construct rendertarget
+	initializeRenderTarget();
+	// re-construct the viewport
+	initializeViewport();
+
+	return true;
+}
+
+void GraphicsEngine::setDisplayMode(DXGI_MODE_DESC displayMode) {
+
+
+}
+
+
 size_t GraphicsEngine::getSelectedAdapterIndex() {
 	return selectedAdapterIndex;
 }
@@ -381,3 +384,44 @@ size_t GraphicsEngine::getSelectedDisplayIndex() {
 size_t GraphicsEngine::getSelectedDisplayModeIndex() {
 	return selectedDisplayModeIndex;
 }
+
+
+/** A debug function to make sure we're using the correct graphics adapter. */
+bool GraphicsEngine::verifyAdapter() {
+
+	IDXGIDevice* dxgiDev;
+	if (Globals::reportError(
+		device.Get()->QueryInterface(
+			__uuidof(IDXGIDevice), (void **) &dxgiDev))) {
+		MessageBox(0, L"Error querying device interface.",
+			L"ERROR", MB_OK);
+		return false;
+	}
+	IDXGIAdapter* dxgiAdapter;
+	if (Globals::reportError(dxgiDev->GetAdapter(&dxgiAdapter))) {
+		MessageBox(0, L"Error getting idxgi adapter from dxgi device.",
+			L"ERROR", MB_OK);
+		return false;
+	}
+
+	IDXGIFactory* factory;
+	if (Globals::reportError(
+		dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**) &factory))) {
+		MessageBox(0, L"Error getting factory from idxgi adapter.",
+			L"ERROR", MB_OK);
+		return false;
+
+	}
+
+	DXGI_ADAPTER_DESC adapterDesc;
+	ZeroMemory(&adapterDesc, sizeof(DXGI_ADAPTER_DESC));
+	dxgiAdapter->GetDesc(&adapterDesc);
+	wostringstream ws;
+	ws << "Adapter: " << adapterDesc.Description << "\n";
+	OutputDebugString(ws.str().c_str());
+
+	dxgiDev->Release();
+	dxgiAdapter->Release();
+	factory->Release();
+}
+

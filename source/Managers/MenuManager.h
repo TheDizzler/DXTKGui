@@ -44,6 +44,12 @@ public:
 	ConfigScreen* config;
 };
 
+class OnClickDisplayModeList : public OnClickInterface {
+public:
+	virtual void onClick(ListBox* listbox, int selectedIndex) override;
+	ConfigScreen* config;
+
+};
 
 class MenuManager : public Screen {
 public:
@@ -100,6 +106,7 @@ protected:
 
 class ConfigScreen : public MenuScreen {
 	friend class OnClickAdapterList;
+	friend class OnClickDisplayModeList;
 public:
 	ConfigScreen(MenuManager* manager);
 	~ConfigScreen();

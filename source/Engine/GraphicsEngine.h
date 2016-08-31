@@ -31,11 +31,8 @@ public:
 	vector<DXGI_MODE_DESC> getDisplayModeList(size_t displayIndex);
 	vector<DXGI_MODE_DESC> getDisplayModeList(ComPtr<IDXGIOutput> display);
 
-
-	/*vector<wstring> getAdapterListDescriptions();
-	vector<wstring> getDisplayList();
-	vector<wstring> getDisplayModeDescriptions();
-	vector<wstring> getDisplayModeListDescriptions(size_t adapterOutputIndex);*/
+	void setDisplayMode(DXGI_MODE_DESC displayMode);
+	bool changeDisplayMode(size_t newDisplayModeIndex);
 
 
 	size_t getSelectedAdapterIndex();
@@ -56,8 +53,8 @@ protected:
 	size_t selectedDisplayModeIndex = 0;
 	size_t lastDisplayModeIndex = 0;
 
-
-
+	UINT bufferCount = 1;
+	UINT swapChainFlags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	//unsigned int numModes = 0;
 	/* Changes backbuffer to front buffer. */
@@ -87,7 +84,7 @@ protected:
 	bool populateDisplayModeList(ComPtr<IDXGIOutput> adapterOut);
 	void setDisplayMode(size_t selectedIndex);
 
-
+	/** A debug function to make sure we're using the correct graphics adapter. */
 	bool verifyAdapter();
 
 };

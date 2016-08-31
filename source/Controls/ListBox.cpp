@@ -170,7 +170,6 @@ void ListBox::setSelected(size_t newIndex) {
 
 ListItem* ListBox::getSelected() {
 	if (listItems.size() <= 0)
-		//throw EmptyListException();
 		return emptyListItem;
 	return listItems[selectedIndex];
 }

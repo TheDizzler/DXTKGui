@@ -303,6 +303,10 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	displayModeListbox->setSelected(game->getSelectedDisplayModeIndex());
 	guiControls.push_back(displayModeListbox);
 
+	OnClickDisplayModeList* onClickDisplayMode = new OnClickDisplayModeList();
+	onClickDisplayMode->config = this;
+	displayModeListbox->setOnClickFunction(onClickDisplayMode);
+
 	displayModeLabel->setText(displayModeListbox->getSelected()->toString());
 
 
@@ -446,9 +450,16 @@ void OnClickAdapterList::onClick(ListBox* listbox, int selectedIndex) {
 
 	config->populateDisplayModeList(
 		config->game->getDisplayModeList(0
-			/*config->game->getSelectedAdapterIndex()*/));
+		/*config->game->getSelectedAdapterIndex()*/));
 
 	config->adapterLabel->setText(listbox->getSelected()->toString());
 }
 
+void OnClickDisplayModeList::onClick(ListBox* listbox, int selectedIndex) {
 
+	//DisplayModeItem* displayMode = (DisplayModeItem*) listbox->getItem(selectedIndex);
+	//config->game->setDisplayModeList(displayMode->modeDesc);
+	if (!config->game->setDisplayMode(selectedIndex)) {
+		// change back to previous setting
+	}
+}

@@ -108,7 +108,7 @@ bool Globals::FULL_SCREEN = false;
 bool initWindow(HINSTANCE hInstance, int showWnd) {
 
 	
-	WNDCLASSEX wc; // created new extended windows class
+	WNDCLASSEX wc;
 
 	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.style = CS_HREDRAW | CS_VREDRAW;			// mo' styles http://msdn.microsoft.com/en-us/library/ms633574(VS.85).aspx#class_styles
@@ -139,8 +139,6 @@ bool initWindow(HINSTANCE hInstance, int showWnd) {
 		// Determine the resolution of the clients desktop screen.
 		windowX = GetSystemMetrics(SM_CXSCREEN);
 		windowY = GetSystemMetrics(SM_CYSCREEN);
-		//windowX = Globals::WINDOW_WIDTH;
-		//windowY = Globals::WINDOW_HEIGHT;
 		Globals::WINDOW_WIDTH = windowX;
 		Globals::WINDOW_HEIGHT = windowY;
 
@@ -169,7 +167,7 @@ bool initWindow(HINSTANCE hInstance, int showWnd) {
 
 	}
 
-	DWORD windowStyle = 0/*(WS_OVERLAPPEDWINDOW | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX)*/;
+	DWORD windowStyle = (WS_OVERLAPPEDWINDOW | /*WS_CAPTION | WS_SYSMENU | */WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
 	hwnd = CreateWindowEx(
 		NULL,					// extended style, check em out here https://msdn.microsoft.com/en-us/library/61fe4bte(v=vs.140).aspx
 		wndClassName,
