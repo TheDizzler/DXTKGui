@@ -1,3 +1,4 @@
+#include "../pch.h"
 #pragma once
 
 //#include <vector>
@@ -80,10 +81,10 @@ public:
 
 	void setDimensions(const Vector2& startPosition,
 		const Vector2& size, const int scrollBarHeight);
-	//void setSize(const Vector2& size);
-	//void setScrubberHeight(double newHeight);
+	
 	virtual void update(double deltaTime, MouseController* mouse);
-	//virtual void draw(SpriteBatch* batch);
+	
+	void setPosition(float newPositionPercentage);
 
 	void scroll(double increment);
 
@@ -124,7 +125,7 @@ public:
 	void update(double deltaTime, MouseController* mouse);
 	void draw(SpriteBatch* batch);
 
-	//void setScrollBar(int totalListHeight);
+	void setPosition(float newPositionPercentage);
 
 
 	int getWidth();
@@ -172,12 +173,10 @@ public:
 	void addItems(vector<ListItem*> items);
 	void clear();
 
-	/** Returns true if selection changed. */
 	virtual void update(double deltaTime, MouseController * mouse) override;
 	void draw(SpriteBatch* batch);
-	//void drawFrame(SpriteBatch* batch);
 
-	void drawSelected(SpriteBatch* batch, const Vector2& selectedPosition);
+	//void drawSelected(SpriteBatch* batch, const Vector2& selectedPosition);
 
 	void setSelected(size_t newIndex);
 	ListItem* getSelected();
@@ -205,6 +204,8 @@ public:
 	OnClickFunction onClickFunction;
 	OnClickInterface* onClickI = NULL;
 	void setOnClickFunction(OnClickInterface* iOnC) {
+		if (onClickI != NULL)
+			delete onClickI;
 		onClickFunction = &OnClickInterface::onClick;
 		onClickI = iOnC;
 	}

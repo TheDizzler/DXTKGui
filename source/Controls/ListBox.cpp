@@ -75,6 +75,9 @@ void ListBox::addItems(vector<ListItem* > items) {
 
 
 void ListBox::clear() {
+	firstItemToDisplay = 0;
+	for (ListItem* listItem : listItems)
+		delete listItem;
 	listItems.clear();
 }
 
@@ -93,7 +96,7 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 					listItems[i]->isSelected = false;
 				}
 			}
-			//changesMade = true;
+
 		/*	wostringstream ws;
 			ws << item->toString() << "\n";
 			OutputDebugString(ws.str().c_str());*/
@@ -110,9 +113,6 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 		/*wostringstream ws;
 		ws << "\n" << "%: " << scrollBar->percentScroll;
 		OutputDebugString(ws.str().c_str());*/
-
-		/*if (firstItemToDisplay > listItems.size() - maxDisplayItems)
-			firstItemToDisplay = listItems.size() - maxDisplayItems;*/
 	}
 
 	Vector2 pos = firstItemPos;
@@ -147,12 +147,12 @@ void ListBox::draw(SpriteBatch* batch) {
 }
 
 
-void ListBox::drawSelected(SpriteBatch* batch, const Vector2& selectedPosition) {
+//void ListBox::drawSelected(SpriteBatch* batch, const Vector2& selectedPosition) {
+//
+//	font->draw(batch, listItems[selectedIndex]->toString(), selectedPosition);
+//}
 
-	font->draw(batch, listItems[selectedIndex]->toString(), selectedPosition);
-}
-
-
+#include <cmath>
 void ListBox::setSelected(size_t newIndex) {
 
 	if (listItems.size() <= 0)
@@ -165,6 +165,17 @@ void ListBox::setSelected(size_t newIndex) {
 		}
 	}
 	listItems[selectedIndex]->isSelected = true;
+
+	// Adjust starting position of list to place the selected in view
+	// should only be relevant when the list is setup with an item selected.
+	if (abs((float) firstItemToDisplay - selectedIndex) > maxDisplayItems) {
+
+		if (listItems.size() - selectedIndex <maxDisplayItems)
+			selectedIndex = listItems.size() - maxDisplayItems;
+
+	}
+	scrollBar->setPosition(selectedIndex / (float) (listItems.size() - maxDisplayItems));
+
 }
 
 
@@ -434,7 +445,6 @@ void ScrollBar::update(double deltaTime, MouseController* mouse) {
 		firstClickTimer += deltaTime;
 		if (firstClickTimer >= autoScrollStartDelay) {
 			// start autoscrolling
-			//OutputDebugString(L"Go gogogog!");
 			scrubber->scroll(percentForOneItem);
 			firstClickTimer = autoScrollDelay;
 		}
@@ -474,6 +484,12 @@ void ScrollBar::draw(SpriteBatch * batch) {
 	// draw scrubber
 	scrubber->draw(batch);
 
+}
+
+void ScrollBar::setPosition(float newPositionPercentage) {
+
+	percentScroll = newPositionPercentage;
+	scrubber->setPosition(newPositionPercentage);
 }
 
 
@@ -601,6 +617,14 @@ void Scrubber::update(double deltaTime, MouseController* mouse) {
 	else
 		tint = normalColor;
 }
+
+
+void Scrubber::setPosition(float newPositionPercentage) {
+
+	percentAt = newPositionPercentage;
+	position.y = (minMaxDifference * percentAt) + minPosition.y;
+}
+
 
 void Scrubber::scroll(double increment) {
 

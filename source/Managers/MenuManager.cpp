@@ -461,5 +461,8 @@ void OnClickDisplayModeList::onClick(ListBox* listbox, int selectedIndex) {
 	//config->game->setDisplayModeList(displayMode->modeDesc);
 	if (!config->game->setDisplayMode(selectedIndex)) {
 		// change back to previous setting
+	} else {
+		// reconstruct display
+
 	}
 }
