@@ -6,6 +6,7 @@
 #include "../Controls/Dialog.h"
 #include "../Controls/ListBox.h"
 #include "../Controls/Button.h"
+#include "../Controls/CheckBox.h"
 
 
 class MenuScreen;

@@ -150,6 +150,7 @@
     <ClCompile Include="Source\BaseGraphics\PrimitiveShapes.cpp" />
     <ClCompile Include="Source\BaseGraphics\Sprite.cpp" />
     <ClCompile Include="Source\Controls\Button.cpp" />
+    <ClCompile Include="source\Controls\CheckBox.cpp" />
     <ClCompile Include="Source\Controls\ComboBox.cpp" />
     <ClCompile Include="Source\Controls\Dialog.cpp" />
     <ClCompile Include="source\Controls\GUIControl.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="Source\BaseGraphics\PrimitiveShapes.h" />
     <ClInclude Include="Source\BaseGraphics\Sprite.h" />
     <ClInclude Include="Source\Controls\Button.h" />
+    <ClInclude Include="source\Controls\CheckBox.h" />
     <ClInclude Include="Source\Controls\ComboBox.h" />
     <ClInclude Include="Source\Controls\Dialog.h" />
     <ClInclude Include="source\Controls\GUIControl.h" />

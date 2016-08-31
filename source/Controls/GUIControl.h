@@ -36,7 +36,7 @@ public:
 	virtual const float getAlpha() const override;
 	virtual const int getWidth() const = 0;
 	virtual const int getHeight() const = 0;
-
+	bool contains(const Vector2& point);
 
 	virtual bool clicked() = 0;
 	virtual bool selected() = 0;

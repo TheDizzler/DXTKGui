@@ -38,6 +38,13 @@ const float GUIControl::getAlpha() const {
 	return alpha;
 }
 
+bool GUIControl::contains(const Vector2& point) {
+
+	return hitArea->contains(point);
+}
+
+
+
 
 void GUIControl::setOrigin(const Vector2 & org) {
 	origin = org;

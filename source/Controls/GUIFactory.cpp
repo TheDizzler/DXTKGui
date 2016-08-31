@@ -93,6 +93,23 @@ TextLabel* GUIFactory::createTextLabel(const Vector2& position,
 }
 
 
+Button* GUIFactory::createButton(const char_t* fontName) {
+
+	Button* button = new Button(whitePixel, getFont(fontName));
+	return button;
+}
+
+
+Button* GUIFactory::createButton(const Vector2& position, const Vector2& size,
+	wstring text, const char_t* fontName, const int frameThickness) {
+
+	Button* button = new Button(whitePixel, getFont(fontName));
+	button->setDimensions(position, size, frameThickness);
+	button->setText(text);
+	return button;
+}
+
+
 Button* GUIFactory::createImageButton(const char_t* upImageName,
 	const char_t* downImageName, const char_t* fontName) {
 
@@ -112,28 +129,19 @@ Button* GUIFactory::createImageButton(const char_t* upImageName,
 
 	ImageButton* button = new ImageButton(getSpriteFromAsset(upImageName),
 		getSpriteFromAsset(downImageName), getFont(fontName));
-	/*button->load(getFont(fontName),
-		getSpriteFromAsset(upImageName),
-		getSpriteFromAsset(downImageName));*/
 
 	return button;
 }
 
 
-Button* GUIFactory::createButton(const char_t* fontName) {
+CheckBox* GUIFactory::createCheckBox(const Vector2& position,
+	wstring text, const char_t* fontName) {
 
-	Button* button = new Button(whitePixel, getFont(fontName));
-	return button;
-}
-
-
-Button* GUIFactory::createButton(const Vector2& position, const Vector2& size,
-	wstring text, const char_t* fontName, const int frameThickness) {
-
-	Button* button = new Button(whitePixel, getFont(fontName));
-	button->setDimensions(position, size, frameThickness);
-	button->setText(text);
-	return button;
+	CheckBox* check = new CheckBox(getSpriteFromAsset("CheckBox Unchecked"),
+		getSpriteFromAsset("CheckBox Checked"), getFont(fontName));
+	check->setText(text);
+	check->setPosition(position);
+	return check;
 }
 
 ListBox* GUIFactory::createListBox(const Vector2& position,

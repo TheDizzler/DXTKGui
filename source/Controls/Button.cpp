@@ -239,8 +239,6 @@ void ImageButton::draw(SpriteBatch* batch) {
 void ImageButton::setPosition(const Vector2& pos) {
 
 	position = pos;
-	//position.x -= getWidth() / 2;
-	//position.y -= getHeight() / 2;
 	Button::setPosition(position);
 	normalSprite->setPosition(position);
 	pressedSprite->setPosition(position);

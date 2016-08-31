@@ -310,13 +310,21 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	displayModeLabel->setText(displayModeListbox->getSelected()->toString());
 
 
+	// Set up CheckBox for full-screen toggle
+	CheckBox* check = GameManager::guiFactory->createCheckBox(
+		Vector2(50, 450), L"Full Screen");
+
+	guiControls.push_back(check);
+
+
+	// Create Apply and Cancel Buttons
 	ImageButton* button = (ImageButton*) GameManager::guiFactory->
 		createImageButton("Button Up", "Button Down");
 	button->action = Button::ClickAction::CANCEL;
 	button->setText(L"Back");
 	button->setPosition(
 		Vector2(Globals::WINDOW_WIDTH / 2 - button->getWidth(),
-			Globals::WINDOW_HEIGHT - button->getHeight()));
+			Globals::WINDOW_HEIGHT - button->getHeight() - 25));
 	guiControls.push_back(button);
 
 	button = (ImageButton*) GameManager::guiFactory->
@@ -324,8 +332,8 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	button->action = Button::ClickAction::OK;
 	button->setText(L"Apply");
 	button->setPosition(
-		Vector2(Globals::WINDOW_WIDTH / 2 /*+ button->getWidth()*/,
-			Globals::WINDOW_HEIGHT - button->getHeight()));
+		Vector2(Globals::WINDOW_WIDTH / 2,
+			Globals::WINDOW_HEIGHT - button->getHeight() - 25));
 	guiControls.push_back(button);
 
 

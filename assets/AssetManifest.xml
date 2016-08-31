@@ -16,6 +16,9 @@
 		<sprite name="Button Up" file="assets/gui/button up (256x64).dds" />
 		<sprite name="Button Down" file="assets/gui/button down (256x64).dds" />
 
+		<sprite name="CheckBox Unchecked" file="assets/gui/CheckBox Unchecked.dds" />
+		<sprite name="CheckBox Checked" file="assets/gui/CheckBox Checked.dds" />
+
 		<!-- Excessive buttons are excessive -->
 		<sprite name="Combo Button Closed" file="assets/gui/ComboButtonClosed.dds" />
 		<sprite name="Combo Button Pressed Closed"

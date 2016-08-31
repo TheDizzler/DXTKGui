@@ -16,9 +16,6 @@ public:
 	Button(ComPtr<ID3D11ShaderResourceView> pixelTexture, unique_ptr<FontSet> font);
 	~Button();
 
-	/*void load(unique_ptr<FontSet> font,
-		ComPtr<ID3D11ShaderResourceView> pixelTexture);*/
-
 	/* position is topleft of button. */
 	void setDimensions(const Vector2& position, const Vector2& size,
 		const int frameThickness = 2);
@@ -84,9 +81,6 @@ public:
 		unique_ptr<Sprite> downButtonSprite, unique_ptr<FontSet> font);
 	~ImageButton();
 
-	//void load(unique_ptr<FontSet> font, unique_ptr<Sprite> upButtonSprite,
-		//unique_ptr<Sprite> downButtonSprite);
-
 
 	virtual void draw(SpriteBatch* batch) override;
 
@@ -100,5 +94,6 @@ protected:
 private:
 	unique_ptr<Sprite> normalSprite;
 	unique_ptr<Sprite> pressedSprite;
+	/* The sprite used in draw(). */
 	Sprite* drawSprite;
 };

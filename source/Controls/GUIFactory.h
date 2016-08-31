@@ -6,6 +6,7 @@
 #include "ComboBox.h"
 #include "../BaseGraphics/GraphicsAsset.h"
 #include "Dialog.h"
+#include "CheckBox.h"
 
 
 using namespace pugi;
@@ -29,14 +30,21 @@ public:
 	TextLabel* createTextLabel(const Vector2& position,
 		wstring text, const char_t* fontName = "Default Font");
 
-	Button* createImageButton(const char_t* upImage, const char_t* downImage,
-		const char_t* fontName = "Default Font");
-
-
+	/** Creates a button with no set text or position. */
 	Button* createButton(const char_t* fontName = "Default Font");
 	Button* createButton(const Vector2& position, const Vector2& size,
 		wstring text = L"", const char_t* fontName = "Default Font",
 		const int frameThickness = 2);
+
+	Button* createImageButton(const char_t* upImage, const char_t* downImage,
+		const char_t* fontName = "Default Font");
+
+	/** Created a checkbox using default images. */
+	CheckBox* createCheckBox(const Vector2& position, wstring text = L"",
+		const char_t* fontName = "Default Font");
+	CheckBox* createCheckBox(const Vector2& position,
+		const char_t* uncheckedImage, const char_t* checkedImage,
+		wstring text = L"", const char_t* fontName = "Default Font");
 
 	ListBox* createListBox(const Vector2& position, const int width,
 		const int maxItemsShown = 7, bool enumerateList = false,

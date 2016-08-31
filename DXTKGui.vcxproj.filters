@@ -99,6 +99,9 @@
     <ClCompile Include="source\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\Controls\CheckBox.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\GameEngine.h">
@@ -169,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="source\pch.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Controls\CheckBox.h">
+      <Filter>Header Files\Controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
