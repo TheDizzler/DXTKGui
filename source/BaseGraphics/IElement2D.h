@@ -9,7 +9,7 @@ using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
 
-class IElement2D {
+interface IElement2D {
 public:
 
 	virtual const Vector2& getPosition() const = 0;

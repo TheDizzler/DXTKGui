@@ -5,6 +5,7 @@
 
 class CheckBox : public GUIControl {
 public:
+
 	CheckBox(unique_ptr<Sprite> uncheckedSprite,
 		unique_ptr<Sprite> checkedSprite, unique_ptr<FontSet> font);
 	~CheckBox();
@@ -28,15 +29,42 @@ public:
 	virtual bool selected() override;
 	virtual bool hovering() override;
 
-	/** Colors for text on button. */
+	/** Colors for text beside checkbox. */
 	Color normalColorText = Color(Vector3(0, 0, 0));
 	Color hoverColorText = Color(Vector3(.5, .75, 1));
 	//Color selectedColorText = Color(Vector3(0, .5, 1));
+
+	void setChecked(bool checked);
+
+	class OnClickListener {
+	public:
+	/** checkbox: The CheckBox this OnClickListener is attached to.
+		isChecked: whether box is checked or no*/
+		virtual void onClick(CheckBox* checkbox, bool isChecked) = 0;
+	};
+
+	typedef void (OnClickListener::*OnClickFunction) (CheckBox*, bool);
+
+	void setOnClickListener(OnClickListener* iOnC) {
+		if (onClickListener != NULL)
+			delete onClickListener;
+		onClickFunction = &OnClickListener::onClick;
+		onClickListener = iOnC;
+	}
+
+	void triggerOnClick() {
+		if (onClickListener != NULL)
+			(onClickListener->*onClickFunction)(this, isClicked);
+	}
+
 private:
 
-	virtual void setToUncheckedState();
-	virtual void setToHoverState();
-	virtual void setToCheckedState();
+	OnClickFunction onClickFunction;
+	OnClickListener* onClickListener = NULL;
+	
+
+	
+
 
 	/** Helper function to center text in check sprite. */
 	void centerText();

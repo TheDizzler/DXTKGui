@@ -29,17 +29,24 @@ bool MouseController::loadMouseIcon(GUIFactory* guiFactory,
 	return true;
 }
 
-
+int i = 0;
 void MouseController::getRawInput(RAWMOUSE* raw) {
 
-	getLastRawInput();
+	saveLastRawInput();
 
 	bool bDown = raw->usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN;
 	bool bUp = raw->usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP;
-	if (bDown && !bUp)
+	if (bDown && !bUp) {
 		currentButtons.leftButtonDown = true;
-	else if (bUp)
+		/*wostringstream ws;
+		ws << "Down!\n";
+		OutputDebugString(ws.str().c_str());*/
+	} else if (bUp) {
 		currentButtons.leftButtonDown = false;
+		/*wostringstream ws;
+		ws << "Up!\n";
+		OutputDebugString(ws.str().c_str());*/
+	}
 
 	bDown = raw->usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN;
 	bUp = raw->usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_UP;
@@ -51,20 +58,33 @@ void MouseController::getRawInput(RAWMOUSE* raw) {
 	bDown = raw->usButtonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN;
 	bUp = raw->usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP;
 	if (bDown && !bUp)
-		currentButtons.midButtonDown = true;
+		currentButtons.rightButtonDown = true;
 	else if (bUp)
-		currentButtons.midButtonDown = false;
+		currentButtons.rightButtonDown = false;
 
 	POINT cursorPos;
 	GetCursorPos(&cursorPos);
 	ScreenToClient(hwnd, &cursorPos);
 	setPosition(Vector2(cursorPos.x, cursorPos.y));
 
+	isPressed = !lastButtons.leftButtonDown && currentButtons.leftButtonDown;
+
+	if (lastButtons.leftButtonDown && !currentButtons.leftButtonDown) {
+		/*wostringstream ws;
+		ws << "Clicked! " << ++i << "\n";
+		OutputDebugString(ws.str().c_str());*/
+		isClicked = true;
+	} else {
+		isClicked = false;
+
+	}
 }
 
-void MouseController::getLastRawInput() {
+
+void MouseController::saveLastRawInput() {
 
 	lastButtons = currentButtons;
+
 }
 
 bool MouseController::leftButtonDown() {
@@ -89,5 +109,24 @@ bool MouseController::midButtonLastDown() {
 
 bool MouseController::rightButtonLastDown() {
 	return lastButtons.rightButtonDown;
+}
+
+
+bool MouseController::clicked() {
+
+	if (isClicked) {
+		isClicked = false;
+		return true;
+	}
+	return false;
+}
+
+bool MouseController::pressed() {
+
+	if (isPressed) {
+		isPressed = false;
+		return true;
+	}
+	return false;
 }
 

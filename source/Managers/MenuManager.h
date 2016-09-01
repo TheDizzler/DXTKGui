@@ -25,7 +25,7 @@ protected:
 class DisplayItem : public ListItem {
 public:
 	ComPtr<IDXGIOutput> adapterOutput;
-	
+
 protected:
 	virtual void setText();
 };
@@ -39,17 +39,29 @@ protected:
 
 };
 
-class OnClickAdapterList : public OnClickInterface {
+class OnClickListenerAdapterList : public ListBox::OnClickListener {
 public:
 	virtual void onClick(ListBox* listbox, int selectedIndex) override;
 	ConfigScreen* config;
 };
 
-class OnClickDisplayModeList : public OnClickInterface {
+class OnClickListenerDisplayModeList : public ListBox::OnClickListener {
 public:
 	virtual void onClick(ListBox* listbox, int selectedIndex) override;
 	ConfigScreen* config;
 
+};
+
+class OnClickListenerFullScreenCheckBox : public CheckBox::OnClickListener {
+public:
+	virtual void onClick(CheckBox* checkbox, bool isChecked) override;
+	ConfigScreen* config;
+};
+
+class OnClickListenerSettingsButton : public Button::OnClickListener {
+public:
+	virtual void onClick(Button* button) override;
+	MainScreen* main;
 };
 
 class MenuManager : public Screen {
@@ -84,12 +96,13 @@ private:
 
 /** This class is abstract. */
 interface MenuScreen : public Screen {
+friend class OnClickListenerSettingsButton;
 public:
 
 	MenuScreen(MenuManager* manager);
 	~MenuScreen();
 
-	// Inherited via Screen
+
 	virtual void setGameManager(GameManager* game) override;
 
 	virtual void pause() override;
@@ -106,8 +119,9 @@ protected:
 
 
 class ConfigScreen : public MenuScreen {
-	friend class OnClickAdapterList;
-	friend class OnClickDisplayModeList;
+	friend class OnClickListenerAdapterList;
+	friend class OnClickListenerDisplayModeList;
+	friend class OnClickListenerFullScreenCheckBox;
 public:
 	ConfigScreen(MenuManager* manager);
 	~ConfigScreen();
@@ -115,7 +129,7 @@ public:
 	// Inherited via MenuScreen
 	virtual bool initialize(ComPtr<ID3D11Device> device,
 		MouseController* mouse) override;
-	
+
 	virtual void update(double deltaTime,
 		KeyboardController* keys, MouseController * mouse) override;
 	virtual void draw(SpriteBatch * batch) override;

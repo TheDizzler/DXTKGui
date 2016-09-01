@@ -12,21 +12,27 @@ This is still a massive mess....
 
 
 ##3rd party utilities used:
->- DirectXTK - https://blogs.msdn.microsoft.com/chuckw/2012/03/02/directxtk/
->- PugiXML - http://pugixml.org/
+>- DirectXTK (https://blogs.msdn.microsoft.com/chuckw/2012/03/02/directxtk/)
+>- PugiXML (http://pugixml.org/) - 
 
 
 ##DONE:
 >- Primitve Shapes - filled rectangle; un-filled rectangle; line
+>- Text Labels - normal and clickable
 >- Button - text and image
 >- Dialog Box - no image loading yet
+>- Check Box - with onClickListener
 >- ListBox - with onClickListener
 
 ##TODO:
 >- Dialog Box - with custom image; make draggable
->- List Box - allow scroll button; auto-size to content(maybe)
+>- List Box - allow mouse scroll button; auto-size to content(maybe), multi-select
 >- Combo Box
->- Primitive Shapes - if I feel they might be useful
+>- Buttons with onClickListeners?
+>- Radio Buttons
+>- Slider
+>- Scrollbar that can be slapped on to anything
+>- More Primitive Shapes - if I feel they might be useful
 >- Other stuff I can't think of at the moment
 >- Some kind of document to explain what's going on under the hood and how to use it effectivily....
 

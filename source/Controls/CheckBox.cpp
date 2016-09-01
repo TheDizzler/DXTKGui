@@ -17,6 +17,9 @@ CheckBox::CheckBox(unique_ptr<Sprite> unchkdSprite,
 }
 
 CheckBox::~CheckBox() {
+
+	if (onClickListener != NULL)
+		delete onClickListener;
 }
 
 void CheckBox::draw(SpriteBatch* batch) {
@@ -33,12 +36,14 @@ void CheckBox::update(double deltaTime, MouseController* mouse) {
 		label->setTint(hoverColorText);
 	} else {
 		label->setTint(normalColorText);
+		isHover = false;
 	}
 
-	if (isHover && !mouse->leftButtonLastDown() && mouse->leftButtonDown()) {
-
-		isClicked = !isClicked;
-		
+	if (isHover) {
+		if (mouse->pressed()) {
+			isClicked = !isClicked;
+			triggerOnClick();
+		}
 	}
 
 	if (isClicked)
@@ -55,7 +60,6 @@ void CheckBox::setFont(const pugi::char_t* font) {
 
 
 void CheckBox::setText(wstring text) {
-
 	label->setText(text);
 	centerText();
 }
@@ -71,6 +75,10 @@ void CheckBox::setPosition(const Vector2& pos) {
 	centerText();
 }
 
+
+void CheckBox::setChecked(bool checked)  {
+	isClicked = checked;
+}
 
 void CheckBox::centerText() {
 
@@ -117,13 +125,4 @@ bool CheckBox::selected() {
 
 bool CheckBox::hovering() {
 	return isHover;
-}
-
-void CheckBox::setToUncheckedState() {
-}
-
-void CheckBox::setToHoverState() {
-}
-
-void CheckBox::setToCheckedState() {
 }

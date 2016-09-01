@@ -1,23 +1,11 @@
 #include "../pch.h"
 #pragma once
 
-//#include <vector>
-
 #include "TextLabel.h"
 #include "Button.h"
 #include "../BaseGraphics/PrimitiveShapes.h"
 
 using namespace std;
-
-class ListBox;
-interface OnClickInterface {
-public:
-	/** listbox: The ListBox this OnClickInterface is attached to.
-		selectedItemIndex: index of item in ListBox.*/
-	virtual void onClick(ListBox* listbox, int selectedItemIndex) = 0;
-};
-
-typedef void (OnClickInterface::*OnClickFunction) (ListBox*, int);
 
 
 class ListItem {
@@ -81,9 +69,9 @@ public:
 
 	void setDimensions(const Vector2& startPosition,
 		const Vector2& size, const int scrollBarHeight);
-	
+
 	virtual void update(double deltaTime, MouseController* mouse);
-	
+
 	void setPosition(float newPositionPercentage);
 
 	void scroll(double increment);
@@ -158,9 +146,6 @@ private:
 
 };
 
-class EmptyListException : public exception {
-
-};
 
 /** A simple control to display various (text) items. */
 class ListBox : public GUIControl {
@@ -182,8 +167,8 @@ public:
 	ListItem* getSelected();
 	ListItem* getItem(size_t index);
 
-	virtual void setText(wstring text) /*override*/;
-	virtual XMVECTOR XM_CALLCONV measureString() const /*override*/;
+	virtual void setText(wstring text);
+	virtual XMVECTOR XM_CALLCONV measureString() const;
 
 	bool multiSelect = false;
 	bool alwaysShowScrollBar = false;
@@ -201,18 +186,26 @@ public:
 	virtual bool selected() override;
 	virtual bool hovering() override;
 
-	OnClickFunction onClickFunction;
-	OnClickInterface* onClickI = NULL;
-	void setOnClickFunction(OnClickInterface* iOnC) {
-		if (onClickI != NULL)
-			delete onClickI;
-		onClickFunction = &OnClickInterface::onClick;
-		onClickI = iOnC;
+	class OnClickListener {
+	public:
+		/** listbox: The ListBox this OnClickListener is attached to.
+		selectedItemIndex: index of item in ListBox.*/
+		virtual void onClick(ListBox* listbox, int selectedItemIndex) = 0;
+	};
+
+	typedef void (OnClickListener::*OnClickFunction) (ListBox*, int);
+
+	
+	void setOnClickListener(OnClickListener* iOnC) {
+		if (onClickListener != NULL)
+			delete onClickListener;
+		onClickFunction = &OnClickListener::onClick;
+		onClickListener = iOnC;
 	}
 
 	void triggerOnClick() {
-		if (onClickI != NULL)
-			(onClickI->*onClickFunction)(this, selectedIndex);
+		if (onClickListener != NULL)
+			(onClickListener->*onClickFunction)(this, selectedIndex);
 	}
 
 
@@ -243,4 +236,7 @@ private:
 	int frameThickness = 2;
 
 	EmptyListItem* emptyListItem;
+
+	OnClickFunction onClickFunction;
+	OnClickListener* onClickListener = NULL;
 };

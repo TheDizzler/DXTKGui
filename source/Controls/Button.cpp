@@ -54,13 +54,14 @@ void Button::update(double deltaTime, MouseController* mouse) {
 
 	if (isSelected && !mouse->leftButtonDown()) {
 		isClicked = true;
+		triggerOnClick();
 		setToUnpressedState();
 	} else {
 		isClicked = false;
 		if (!isHover) {
 			isSelected = false;
 			setToUnpressedState();
-		} else if (!mouse->leftButtonLastDown() && mouse->leftButtonDown()) {
+		} else if (mouse->pressed()) {
 			isSelected = true;
 			setToSelectedState();
 		}

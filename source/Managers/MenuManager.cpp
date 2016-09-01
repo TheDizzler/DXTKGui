@@ -65,8 +65,7 @@ void MenuManager::pause() {
 
 void MenuManager::openMainMenu() {
 
-	//currentScreen = mainScreen.get();
-	// switch screens at next frame
+	// switch screens at next frame so draw() doesn't freak out
 	switchTo = mainScreen.get();
 }
 
@@ -129,6 +128,9 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 	buttonpos.y += 150;
 	button = GameManager::guiFactory->createButton(buttonpos, size, L"Settings");
 	button->action = GUIControl::SETTINGS;
+	OnClickListenerSettingsButton* settingsListener = new OnClickListenerSettingsButton();
+	settingsListener->main = this;
+	button->setOnClickListener(settingsListener);
 	guiControls.push_back(button);
 
 	buttonpos.y += 150;
@@ -208,10 +210,10 @@ void MainScreen::update(double deltaTime,
 					case GUIControl::PLAY:
 						test->setText("Play!");
 						break;
-					case GUIControl::SETTINGS:
-						menuManager->openConfigMenu();
-						//test->setText("Settings!!");
-						break;
+					//case GUIControl::SETTINGS:
+					//	menuManager->openConfigMenu();
+					//	//test->setText("Settings!!");
+					//	break;
 				}
 			}
 		}
@@ -276,9 +278,9 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	adapterListbox->addItems(adapterItems);
 	adapterListbox->setSelected(game->getSelectedAdapterIndex());
 
-	OnClickAdapterList* onClickAdapterList = new OnClickAdapterList();
+	OnClickListenerAdapterList* onClickAdapterList = new OnClickListenerAdapterList();
 	onClickAdapterList->config = this;
-	adapterListbox->setOnClickFunction(onClickAdapterList);
+	adapterListbox->setOnClickListener(onClickAdapterList);
 
 	adapterLabel->setText(adapterListbox->getSelected()->toString());
 
@@ -303,9 +305,9 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	displayModeListbox->setSelected(game->getSelectedDisplayModeIndex());
 	guiControls.push_back(displayModeListbox);
 
-	OnClickDisplayModeList* onClickDisplayMode = new OnClickDisplayModeList();
+	OnClickListenerDisplayModeList* onClickDisplayMode = new OnClickListenerDisplayModeList();
 	onClickDisplayMode->config = this;
-	displayModeListbox->setOnClickFunction(onClickDisplayMode);
+	displayModeListbox->setOnClickListener(onClickDisplayMode);
 
 	displayModeLabel->setText(displayModeListbox->getSelected()->toString());
 
@@ -313,7 +315,9 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	// Set up CheckBox for full-screen toggle
 	CheckBox* check = GameManager::guiFactory->createCheckBox(
 		Vector2(50, 450), L"Full Screen");
-
+	OnClickListenerFullScreenCheckBox* onClickFullScreen = new OnClickListenerFullScreenCheckBox();
+	onClickFullScreen->config = this;
+	check->setOnClickListener(onClickFullScreen);
 	guiControls.push_back(check);
 
 
@@ -361,10 +365,6 @@ void ConfigScreen::update(double deltaTime, KeyboardController* keys,
 				case GUIControl::CONFIRM:
 					// update graphics engine
 
-					break;
-				case GUIControl::SELECTION_CHANGED:
-					ListBox* listbox = (ListBox*) control;
-					listbox->triggerOnClick();
 					break;
 			}
 		}
@@ -448,14 +448,11 @@ void DisplayModeItem::setText() {
 }
 
 
-void OnClickAdapterList::onClick(ListBox* listbox, int selectedIndex) {
+void OnClickListenerAdapterList::onClick(ListBox* listbox, int selectedIndex) {
 
 	AdapterItem* selectedItem = (AdapterItem*) listbox->getItem(selectedIndex);
 
-	//vector<ComPtr<IDXGIOutput> > displays
-		//= config->game->getDisplayListFor(selectedItem->adapter);
 	config->populateDisplayList(config->game->getDisplayList());
-
 	config->populateDisplayModeList(
 		config->game->getDisplayModeList(0
 		/*config->game->getSelectedAdapterIndex()*/));
@@ -463,7 +460,7 @@ void OnClickAdapterList::onClick(ListBox* listbox, int selectedIndex) {
 	config->adapterLabel->setText(listbox->getSelected()->toString());
 }
 
-void OnClickDisplayModeList::onClick(ListBox* listbox, int selectedIndex) {
+void OnClickListenerDisplayModeList::onClick(ListBox* listbox, int selectedIndex) {
 
 	//DisplayModeItem* displayMode = (DisplayModeItem*) listbox->getItem(selectedIndex);
 	//config->game->setDisplayModeList(displayMode->modeDesc);
@@ -473,4 +470,18 @@ void OnClickDisplayModeList::onClick(ListBox* listbox, int selectedIndex) {
 		// reconstruct display
 
 	}
+
+	config->displayModeLabel->setText(listbox->getItem(selectedIndex)->toString());
+}
+
+void OnClickListenerFullScreenCheckBox::onClick(CheckBox* checkbox, bool isChecked) {
+
+	wostringstream wss;
+	wss << "CheckBox is checked: " << isChecked;
+	config->displayModeLabel->setText(wss);
+}
+
+void OnClickListenerSettingsButton::onClick(Button* button) {
+
+	main->menuManager->openConfigMenu();
 }

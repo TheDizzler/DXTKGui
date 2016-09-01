@@ -52,7 +52,32 @@ public:
 	virtual bool selected() override;
 	virtual bool hovering() override;
 
+	class OnClickListener {
+	public:
+		/** checkbox: The CheckBox this OnClickListener is attached to.
+		isChecked: whether box is checked or no*/
+		virtual void onClick(Button* button) = 0;
+	};
+
+	typedef void (OnClickListener::*OnClickFunction) (Button*);
+
+	void setOnClickListener(OnClickListener* iOnC) {
+		if (onClickListener != NULL)
+			delete onClickListener;
+		onClickFunction = &OnClickListener::onClick;
+		onClickListener = iOnC;
+	}
+
+	void triggerOnClick() {
+		if (onClickListener != NULL)
+			(onClickListener->*onClickFunction)(this);
+	}
+
 protected:
+
+	OnClickFunction onClickFunction;
+	OnClickListener* onClickListener = NULL;
+
 
 	void positionText();
 

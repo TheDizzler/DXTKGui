@@ -14,6 +14,10 @@ public:
 };
 
 class GUIFactory;
+/** A mouse controller that gets rawinput from WM_INPUT in the windows
+		message pump. Because the message pump doesn't send mouse rawinput
+		when there is no mouse action, the current and last button states
+		will freeze in that state. */
 class MouseController : public Sprite {
 public:
 
@@ -31,7 +35,7 @@ public:
 	/** RawInput should be used for moving cameras, etc.
 		If only using mouse as a cursor, use GetCursorPos(). */
 	void getRawInput(RAWMOUSE* rawMouse);
-	void getLastRawInput();
+	
 
 
 	bool leftButtonDown();
@@ -42,8 +46,14 @@ public:
 	bool midButtonLastDown();
 	bool rightButtonLastDown();
 
+	bool clicked();
+	bool pressed();
+
 private:
 
 	HWND hwnd;
+	void saveLastRawInput();
 
+	bool isClicked = false;
+	bool isPressed = false;
 };

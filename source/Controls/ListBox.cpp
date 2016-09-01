@@ -12,8 +12,8 @@ ListBox::ListBox(const Vector2& pos, const int len, const int maxItemsShown) {
 
 ListBox::~ListBox() {
 
-	if (onClickI != NULL)
-		delete onClickI;
+	if (onClickListener != NULL)
+		delete onClickListener;
 
 	for (ListItem* listItem : listItems)
 		delete listItem;
@@ -82,7 +82,6 @@ void ListBox::clear() {
 }
 
 
-
 void ListBox::update(double deltaTime, MouseController* mouse) {
 
 	for (ListItem* item : listItems) {
@@ -97,10 +96,8 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 				}
 			}
 
-		/*	wostringstream ws;
-			ws << item->toString() << "\n";
-			OutputDebugString(ws.str().c_str());*/
 			isClicked = true;
+			triggerOnClick();
 		}
 	}
 
