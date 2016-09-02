@@ -111,12 +111,16 @@ vector<DXGI_MODE_DESC> GameManager::getDisplayModeList(ComPtr<IDXGIOutput> displ
 	return gameEngine->getDisplayModeList(display);
 }
 
-void GameManager::setDisplayMode(DXGI_MODE_DESC displayMode) {
-	gameEngine->setDisplayMode(displayMode);
-}
+//void GameManager::setDisplayMode(DXGI_MODE_DESC displayMode) {
+//	gameEngine->setDisplayMode(displayMode);
+//}
 
 bool GameManager::setDisplayMode(size_t displayModeIndex) {
 	return gameEngine->changeDisplayMode(displayModeIndex);
+}
+
+bool GameManager::setFullScreen(bool isFullScreen) {
+	return gameEngine->setFullScreen(isFullScreen);
 }
 
 

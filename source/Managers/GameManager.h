@@ -37,8 +37,9 @@ public:
 	vector<DXGI_MODE_DESC> getDisplayModeList(size_t displayIndex);
 	vector<DXGI_MODE_DESC> getDisplayModeList(ComPtr<IDXGIOutput> display);
 
-	void setDisplayMode(DXGI_MODE_DESC displayMode);
+	//void setDisplayMode(DXGI_MODE_DESC displayMode);
 	bool setDisplayMode(size_t displayModeIndex);
+	bool setFullScreen(bool isFullScreen);
 
 	size_t getSelectedAdapterIndex();
 	size_t getSelectedDisplayIndex();

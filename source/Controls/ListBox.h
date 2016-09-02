@@ -18,7 +18,9 @@ public:
 		shared_ptr<FontSet> fnt, ComPtr<ID3D11ShaderResourceView> pixelTexture,
 		size_t listPosition = 0, bool enumerateList = false);
 
+	void setWidth(int newWidth);
 
+	Vector2 measureString() const;
 	const wchar_t* toString();
 
 	/** Returns true if item selected. */
@@ -26,6 +28,7 @@ public:
 	void updatePosition(const Vector2& position);
 	virtual void draw(SpriteBatch* batch);
 
+	
 
 	bool isSelected = false;
 
@@ -72,7 +75,7 @@ public:
 
 	virtual void update(double deltaTime, MouseController* mouse);
 
-	void setPosition(float newPositionPercentage);
+	void setScrollPosition(float newPositionPercentage);
 
 	void scroll(double increment);
 
@@ -113,9 +116,9 @@ public:
 	void update(double deltaTime, MouseController* mouse);
 	void draw(SpriteBatch* batch);
 
-	void setPosition(float newPositionPercentage);
-
-
+	void setScrollPosition(float newPositionPercentage);
+	void setPosition(const Vector2 newPosition);
+	
 	int getWidth();
 
 	double percentScroll = 0;
@@ -195,7 +198,7 @@ public:
 
 	typedef void (OnClickListener::*OnClickFunction) (ListBox*, int);
 
-	
+
 	void setOnClickListener(OnClickListener* iOnC) {
 		if (onClickListener != NULL)
 			delete onClickListener;
@@ -225,6 +228,7 @@ private:
 
 	size_t itemHeight = 32;
 	Vector2 firstItemPos;
+	int longestLabelLength = 0;
 
 	unique_ptr<ScrollBar> scrollBar;
 	unique_ptr<RectangleFrame> frame;
@@ -239,4 +243,6 @@ private:
 
 	OnClickFunction onClickFunction;
 	OnClickListener* onClickListener = NULL;
+
+	void setWidth(int newWidth);
 };

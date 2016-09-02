@@ -150,12 +150,12 @@ bool initWindow(HINSTANCE hInstance, int showWnd) {
 		dmScreenSettings.dmBitsPerPel = 32;
 		dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 		ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN);
-
+		
 		// Set the position of the window to the top left corner.
 
 	} else {
 	// Make client dimensions WINDOW_WIDTHxWINDOW_HEIGHT
-	// (as opposed to window dimensions
+	// (as opposed to window dimensions)
 		RECT winRect = {0, 0, Globals::WINDOW_WIDTH, Globals::WINDOW_HEIGHT};
 		AdjustWindowRect(&winRect, WS_OVERLAPPEDWINDOW, FALSE);
 		windowX = winRect.right - winRect.left;
@@ -233,6 +233,7 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_KILLFOCUS:
 
 			gameEngine->pause();
+			OutputDebugString(L"Lost Focus");
 			return 0;
 
 

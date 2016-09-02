@@ -31,9 +31,9 @@ public:
 	vector<DXGI_MODE_DESC> getDisplayModeList(size_t displayIndex);
 	vector<DXGI_MODE_DESC> getDisplayModeList(ComPtr<IDXGIOutput> display);
 
-	void setDisplayMode(DXGI_MODE_DESC displayMode);
+	//void setDisplayMode(DXGI_MODE_DESC displayMode);
 	bool changeDisplayMode(size_t newDisplayModeIndex);
-
+	bool setFullScreen(bool isFullScreen);
 
 	size_t getSelectedAdapterIndex();
 	size_t getSelectedDisplayIndex();
@@ -75,7 +75,7 @@ protected:
 	vector<ComPtr<IDXGIOutput> > displays;
 	vector<DXGI_MODE_DESC> displayModeList; // all possible display modes with this monitor/video card 
 
-
+	bool resizeSwapChain();
 
 	bool getDisplayAdapters();
 	bool initializeAdapter(HWND hwnd, int adapterIndex);

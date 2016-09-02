@@ -332,16 +332,44 @@ vector<DXGI_MODE_DESC> GraphicsEngine::getDisplayModeList(
 bool GraphicsEngine::changeDisplayMode(size_t newDisplayModeIndex) {
 
 	selectedDisplayModeIndex = newDisplayModeIndex;
-	DXGI_MODE_DESC newDisplayMode = displayModeList[selectedDisplayModeIndex];
+	//DXGI_MODE_DESC newDisplayMode = displayModeList[selectedDisplayModeIndex];
 
-	Globals::WINDOW_WIDTH = newDisplayMode.Width;
-	Globals::WINDOW_HEIGHT = newDisplayMode.Height;
+	Globals::WINDOW_WIDTH = displayModeList[selectedDisplayModeIndex].Width;
+	Globals::WINDOW_HEIGHT = displayModeList[selectedDisplayModeIndex].Height;
+
+	if (!resizeSwapChain())
+		return false;
+	
+
+	return true;
+}
+
+bool GraphicsEngine::setFullScreen(bool isFullScreen) {
+
+
+	Globals::FULL_SCREEN = isFullScreen;
+	
+	if (isFullScreen) {
+		
+		swapChain->SetFullscreenState(true, selectedDisplay.Get());
+	} else {
+
+		swapChain->SetFullscreenState(false, NULL);
+	}
+	if (!resizeSwapChain())
+		return false;
+
+	return true;
+}
+
+
+bool GraphicsEngine::resizeSwapChain() {
 
 	// release all references to back buffers
 	renderTargetView.Get()->Release();
 
 	// resize target
-	if (Globals::reportError(swapChain->ResizeTarget(&newDisplayMode))) {
+	if (Globals::reportError(swapChain->ResizeTarget(&displayModeList[selectedDisplayModeIndex]))) {
 		MessageBox(0, L"Failed to resize swapchain target",
 			L"Display Mode Change Error", MB_OK);
 		return false;
@@ -349,8 +377,9 @@ bool GraphicsEngine::changeDisplayMode(size_t newDisplayModeIndex) {
 
 	//resize backbuffers
 	if (Globals::reportError(swapChain->ResizeBuffers(bufferCount,
-		newDisplayMode.Width, newDisplayMode.Height,
-		newDisplayMode.Format, swapChainFlags))) {
+		displayModeList[selectedDisplayModeIndex].Width,
+		displayModeList[selectedDisplayModeIndex].Height,
+		displayModeList[selectedDisplayModeIndex].Format, swapChainFlags))) {
 
 		MessageBox(0, L"Failed to resize swapchain buffers",
 			L"Display Mode Change Error", MB_OK);
@@ -365,11 +394,6 @@ bool GraphicsEngine::changeDisplayMode(size_t newDisplayModeIndex) {
 	initializeViewport();
 
 	return true;
-}
-
-void GraphicsEngine::setDisplayMode(DXGI_MODE_DESC displayMode) {
-
-
 }
 
 

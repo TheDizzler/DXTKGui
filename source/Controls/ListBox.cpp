@@ -55,8 +55,17 @@ void ListBox::addItems(vector<ListItem* > items) {
 		item->initialize(width - scrollBar->getWidth(), itemHeight,
 			font, pixel, listItems.size(), isEnumerated);
 		listItems.push_back(item);
+		if (item->measureString().x + scrollBar->getWidth() > longestLabelLength)
+			longestLabelLength = item->measureString().x;
 	}
 	items.clear();
+
+	if (longestLabelLength > width) {
+		setWidth(longestLabelLength + scrollBar->getWidth());
+		for (ListItem* item : listItems)
+			item->setWidth(width - scrollBar->getWidth());
+
+	}
 
 	itemsToDisplay = maxDisplayItems;
 	if (listItems.size() < itemsToDisplay)
@@ -73,6 +82,12 @@ void ListBox::addItems(vector<ListItem* > items) {
 	frame->setDimensions(position, Vector2(frameWidth, frameHeight), frameThickness);
 }
 
+
+void ListBox::setWidth(int newWidth) {
+
+	width = newWidth;
+	scrollBar->setPosition(Vector2(position.x + width, position.y));
+}
 
 void ListBox::clear() {
 	firstItemToDisplay = 0;
@@ -144,11 +159,6 @@ void ListBox::draw(SpriteBatch* batch) {
 }
 
 
-//void ListBox::drawSelected(SpriteBatch* batch, const Vector2& selectedPosition) {
-//
-//	font->draw(batch, listItems[selectedIndex]->toString(), selectedPosition);
-//}
-
 #include <cmath>
 void ListBox::setSelected(size_t newIndex) {
 
@@ -167,11 +177,11 @@ void ListBox::setSelected(size_t newIndex) {
 	// should only be relevant when the list is setup with an item selected.
 	if (abs((float) firstItemToDisplay - selectedIndex) > maxDisplayItems) {
 
-		if (listItems.size() - selectedIndex <maxDisplayItems)
+		if (listItems.size() - selectedIndex < maxDisplayItems)
 			selectedIndex = listItems.size() - maxDisplayItems;
 
 	}
-	scrollBar->setPosition(selectedIndex / (float) (listItems.size() - maxDisplayItems));
+	scrollBar->setScrollPosition(selectedIndex / (float) (listItems.size() - maxDisplayItems));
 
 }
 
@@ -209,11 +219,17 @@ const Vector2& ListBox::getPosition() const {
 }
 
 const int ListBox::getWidth() const {
-	return 0;
+	return width;
 }
+
 const int ListBox::getHeight() const {
-	return 0;
+
+	int numItems = listItems.size() > maxDisplayItems ? maxDisplayItems : listItems.size();
+	int height = numItems * itemHeight;
+	return height;
 }
+
+
 bool ListBox::clicked() {
 
 	if (isClicked) {
@@ -230,6 +246,7 @@ bool ListBox::selected() {
 bool ListBox::hovering() {
 	return false;
 }
+
 /** **** ListBox END **** **/
 
 
@@ -263,6 +280,19 @@ void ListItem::initialize(const int width, const int height,
 	isEnumerated = enumerateList;
 	listPosition = listPos;
 	setText();
+}
+
+void ListItem::setWidth(int newWidth) {
+
+	itemRect.right = newWidth;
+	hitArea->size.x = newWidth;
+}
+
+Vector2 ListItem::measureString() const {
+	Vector2 size = textLabel->measureString();
+	size.x += textMarginX * 2;
+	size.y += textMarginY * 2;
+	return size;
 }
 
 const wchar_t* ListItem::toString() {
@@ -390,7 +420,24 @@ bool ScrollBar::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 	return true;
 }
 
+void ScrollBar::setPosition(const Vector2 newPosition) {
 
+	scrollBarDownButton->setPosition(
+		Vector2(newPosition.x - scrollBarDownButton->getWidth(),
+			newPosition.y + maxHeight - scrollBarDownButton->getHeight()));
+
+	scrollBarUpButton->setPosition(
+		Vector2(newPosition.x - scrollBarUpButton->getWidth(),
+			newPosition.y));
+
+	scrollBarPosition =
+		Vector2(newPosition.x - scrollBarUpButton->getWidth(),
+			newPosition.y + scrollBarUpButton->getHeight());
+
+	Vector2 scrubberPos = scrubber->getPosition();
+	scrubberPos.x = newPosition.x;
+	scrubber->setPosition(scrubberPos);
+}
 
 void ScrollBar::setScrollBar(int totalItems, int itemHeight, int maxDisplayItems) {
 
@@ -483,11 +530,13 @@ void ScrollBar::draw(SpriteBatch * batch) {
 
 }
 
-void ScrollBar::setPosition(float newPositionPercentage) {
+void ScrollBar::setScrollPosition(float newPositionPercentage) {
 
 	percentScroll = newPositionPercentage;
-	scrubber->setPosition(newPositionPercentage);
+	scrubber->setScrollPosition(newPositionPercentage);
 }
+
+
 
 
 
@@ -616,10 +665,12 @@ void Scrubber::update(double deltaTime, MouseController* mouse) {
 }
 
 
-void Scrubber::setPosition(float newPositionPercentage) {
+void Scrubber::setScrollPosition(float newPositionPercentage) {
 
 	percentAt = newPositionPercentage;
 	position.y = (minMaxDifference * percentAt) + minPosition.y;
+	hitArea->position = Vector2(position.x, position.y);
+	hitArea->size = Vector2(width*scale.x, height*scale.y);
 }
 
 

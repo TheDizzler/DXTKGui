@@ -247,26 +247,21 @@ ConfigScreen::ConfigScreen(MenuManager* mngr) : MenuScreen(mngr) {
 ConfigScreen::~ConfigScreen() {
 }
 
-
+int MARGIN = 10;
 bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
+	Vector2 controlPos = Vector2(50, 50);
 	// Labels for displaying selected info
 	adapterLabel =
-		GameManager::guiFactory->createTextLabel(Vector2(50, 50), L"Test");
+		GameManager::guiFactory->createTextLabel(controlPos, L"Test");
 	adapterLabel->setHoverable(true);
 	guiControls.push_back(adapterLabel);
 
-	displayLabel = GameManager::guiFactory->createTextLabel(Vector2(50, 300));
-	guiControls.push_back(displayLabel);
-
-	displayModeLabel =
-		GameManager::guiFactory->createTextLabel(Vector2(475, 50), L"Test2");
-	guiControls.push_back(displayModeLabel);
-
+	controlPos.y += adapterLabel->getHeight() + MARGIN;
 
 	// create listbox of gfx cards
 	adapterListbox =
-		GameManager::guiFactory->createListBox(Vector2(50, 100), 400, 4, true);
+		GameManager::guiFactory->createListBox(controlPos, 400, 4, true);
 	guiControls.push_back(adapterListbox);
 	vector<ListItem*> adapterItems;
 	for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
@@ -274,7 +269,6 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 		item->adapter = adap;
 		adapterItems.push_back(item);
 	}
-
 	adapterListbox->addItems(adapterItems);
 	adapterListbox->setSelected(game->getSelectedAdapterIndex());
 
@@ -284,9 +278,15 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 
 	adapterLabel->setText(adapterListbox->getSelected()->toString());
 
+	
+	controlPos.y += adapterListbox->getHeight() + MARGIN*2;
+	displayLabel = GameManager::guiFactory->createTextLabel(controlPos, L"A");
+	guiControls.push_back(displayLabel);
+
+	controlPos.y += displayLabel->getHeight() + MARGIN;
 
 	// create listbox of monitors available to selected gfx card
-	displayListbox = GameManager::guiFactory->createListBox(Vector2(50, 350), 400, 4, true);
+	displayListbox = GameManager::guiFactory->createListBox(controlPos, 400, 4, true);
 	guiControls.push_back(displayListbox);
 	// because only the one adapter has displays on my laptop
 	// this has to be grab the first (and only) display.
@@ -296,10 +296,17 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 
 	displayLabel->setText(displayListbox->getSelected()->toString());
 
+	// setup label for Display Mode
+	controlPos.x += displayListbox->getWidth() + MARGIN*2;
+	controlPos.y = 50;
+	displayModeLabel =
+		GameManager::guiFactory->createTextLabel(controlPos, L"Test2");
+	guiControls.push_back(displayModeLabel);
 
 	// Selected adapter display mode list
+	controlPos.y += displayModeLabel->getHeight() + MARGIN;
 	displayModeListbox =
-		GameManager::guiFactory->createListBox(Vector2(475, 100), 175, 8, true);
+		GameManager::guiFactory->createListBox(controlPos, 75, 8, true);
 	populateDisplayModeList(
 		game->getDisplayModeList(0 /*game->getSelectedAdapterIndex()*/));
 	displayModeListbox->setSelected(game->getSelectedDisplayModeIndex());
@@ -317,6 +324,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 		Vector2(50, 450), L"Full Screen");
 	OnClickListenerFullScreenCheckBox* onClickFullScreen = new OnClickListenerFullScreenCheckBox();
 	onClickFullScreen->config = this;
+	check->setChecked(Globals::FULL_SCREEN);
 	check->setOnClickListener(onClickFullScreen);
 	guiControls.push_back(check);
 
@@ -435,14 +443,12 @@ void DisplayModeItem::setText() {
 	UINT height = modeDesc.Height;
 
 	wostringstream wss;
-	//mode << "Format: " << displayModeList[i].Format;
 	if (isEnumerated) {
 		wss << listPosition << ": ";
-		//wostringstream ws;
-		//ws << "listPosition: " << listPosition << "\n";
-		//OutputDebugString(ws.str().c_str());
 	}
 	wss << width << " x " << height;
+	wss << " Fill: " << ((modeDesc.Scaling == 0) ? L"Yes" : L"No");
+
 	textLabel->setText(wss.str());
 
 }
@@ -476,9 +482,14 @@ void OnClickListenerDisplayModeList::onClick(ListBox* listbox, int selectedIndex
 
 void OnClickListenerFullScreenCheckBox::onClick(CheckBox* checkbox, bool isChecked) {
 
-	wostringstream wss;
+	/*wostringstream wss;
 	wss << "CheckBox is checked: " << isChecked;
-	config->displayModeLabel->setText(wss);
+	config->displayModeLabel->setText(wss);*/
+	if (!config->game->setFullScreen(isChecked)) {
+		// revert to old settings
+	} else {
+		// reconstruct display
+	}
 }
 
 void OnClickListenerSettingsButton::onClick(Button* button) {
