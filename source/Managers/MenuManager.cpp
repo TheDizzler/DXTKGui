@@ -448,7 +448,6 @@ void DisplayModeItem::setText() {
 	}
 	wss << width << " x " << height;
 	wss << " Fill: " << ((modeDesc.Scaling == 0) ? L"Yes" : L"No");
-
 	textLabel->setText(wss.str());
 
 }
@@ -457,7 +456,7 @@ void DisplayModeItem::setText() {
 void OnClickListenerAdapterList::onClick(ListBox* listbox, int selectedIndex) {
 
 	AdapterItem* selectedItem = (AdapterItem*) listbox->getItem(selectedIndex);
-
+	config->game->setAdapter(selectedIndex);
 	config->populateDisplayList(config->game->getDisplayList());
 	config->populateDisplayModeList(
 		config->game->getDisplayModeList(0

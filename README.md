@@ -13,7 +13,7 @@ This is still a massive mess....
 
 ##3rd party utilities used:
 >- DirectXTK (https://blogs.msdn.microsoft.com/chuckw/2012/03/02/directxtk/)
->- PugiXML (http://pugixml.org/) - 
+>- PugiXML (http://pugixml.org/)
 
 
 ##DONE:
@@ -25,7 +25,7 @@ This is still a massive mess....
 >- ListBox - with onClickListener; auto-size to content
 
 ##TODO:
->- Dialog Box - with custom image; make draggable
+>- Dialog Box - with custom image; make draggable; ues generic onClickListeners for buttons
 >- List Box - allow mouse scroll button; multi-select
 >- Combo Box
 >- Radio Buttons

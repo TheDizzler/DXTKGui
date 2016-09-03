@@ -1,5 +1,9 @@
 #include "../pch.h"
 #pragma once
+#define MyMessageBox(a, b, c, d) \
+	if (swapChain.Get() != NULL) \
+		swapChain->SetFullscreenState(false, NULL); \
+	MessageBox(a, b, c, d)
 #pragma comment (lib, "D3D11.lib")
 #pragma comment (lib, "DXGI.lib")
 
@@ -31,7 +35,7 @@ public:
 	vector<DXGI_MODE_DESC> getDisplayModeList(size_t displayIndex);
 	vector<DXGI_MODE_DESC> getDisplayModeList(ComPtr<IDXGIOutput> display);
 
-	//void setDisplayMode(DXGI_MODE_DESC displayMode);
+	bool setAdapter(size_t adapterIndex);
 	bool changeDisplayMode(size_t newDisplayModeIndex);
 	bool setFullScreen(bool isFullScreen);
 
@@ -39,7 +43,7 @@ public:
 	size_t getSelectedDisplayIndex();
 	size_t getSelectedDisplayModeIndex();
 protected:
-
+	HWND hwnd;
 	unique_ptr<SpriteBatch> batch;
 
 	/* Adapter currently being used. */
@@ -54,6 +58,7 @@ protected:
 	size_t lastDisplayModeIndex = 0;
 
 	UINT bufferCount = 1;
+	// Use Alt-Enter to switch between full screen and windowed mode.;
 	UINT swapChainFlags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	//unsigned int numModes = 0;
@@ -71,6 +76,10 @@ protected:
 	D3D11_VIEWPORT viewport;
 	/* List of all gfx cards on this machine. */
 	vector<ComPtr<IDXGIAdapter> > adapters;
+	vector<ComPtr<ID3D11DeviceContext> > deviceContexts;
+	vector<ComPtr<IDXGISwapChain> > swapChains; 
+	vector<ComPtr<ID3D11Device> > devices;
+	vector<ComPtr<ID3D11RenderTargetView> > renderTargetViews;
 	/* List of all monitors available with this adapter. */
 	vector<ComPtr<IDXGIOutput> > displays;
 	vector<DXGI_MODE_DESC> displayModeList; // all possible display modes with this monitor/video card 
@@ -78,14 +87,14 @@ protected:
 	bool resizeSwapChain();
 
 	bool getDisplayAdapters();
-	bool initializeAdapter(HWND hwnd, int adapterIndex);
+	bool initializeAdapter(int adapterIndex);
 	bool initializeRenderTarget();
 	void initializeViewport();
 	bool populateDisplayModeList(ComPtr<IDXGIOutput> adapterOut);
 	void setDisplayMode(size_t selectedIndex);
 
 	/** A debug function to make sure we're using the correct graphics adapter. */
-	bool verifyAdapter();
+	bool verifyAdapter(ComPtr<ID3D11Device> deviceCheck);
 
 };
 

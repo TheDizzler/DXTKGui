@@ -1,5 +1,6 @@
 #pragma once
 
+
 namespace Globals {
 
 	extern int WINDOW_WIDTH;	// in pixels

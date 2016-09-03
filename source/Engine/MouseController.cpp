@@ -38,14 +38,8 @@ void MouseController::getRawInput(RAWMOUSE* raw) {
 	bool bUp = raw->usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP;
 	if (bDown && !bUp) {
 		currentButtons.leftButtonDown = true;
-		/*wostringstream ws;
-		ws << "Down!\n";
-		OutputDebugString(ws.str().c_str());*/
 	} else if (bUp) {
 		currentButtons.leftButtonDown = false;
-		/*wostringstream ws;
-		ws << "Up!\n";
-		OutputDebugString(ws.str().c_str());*/
 	}
 
 	bDown = raw->usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN;

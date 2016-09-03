@@ -103,11 +103,11 @@ int messageLoop() {
 int Globals::WINDOW_WIDTH = 800;
 int Globals::WINDOW_HEIGHT = 600;
 int Globals::vsync_enabled = 1;
-bool Globals::FULL_SCREEN = false;
+bool Globals::FULL_SCREEN = true;
 
 bool initWindow(HINSTANCE hInstance, int showWnd) {
 
-	
+
 	WNDCLASSEX wc;
 
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -134,38 +134,38 @@ bool initWindow(HINSTANCE hInstance, int showWnd) {
 	int windowX, windowY;
 	windowX = windowY = 0;
 
-	if (Globals::FULL_SCREEN) {
+	//if (Globals::FULL_SCREEN) {
 
-		// Determine the resolution of the clients desktop screen.
-		windowX = GetSystemMetrics(SM_CXSCREEN);
-		windowY = GetSystemMetrics(SM_CYSCREEN);
-		Globals::WINDOW_WIDTH = windowX;
-		Globals::WINDOW_HEIGHT = windowY;
+	//	// Determine the resolution of the clients desktop screen.
+	//	windowX = GetSystemMetrics(SM_CXSCREEN);
+	//	windowY = GetSystemMetrics(SM_CYSCREEN);
+	//	Globals::WINDOW_WIDTH = windowX;
+	//	Globals::WINDOW_HEIGHT = windowY;
 
-		DEVMODE dmScreenSettings;
-		memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
-		dmScreenSettings.dmSize = sizeof(dmScreenSettings);
-		dmScreenSettings.dmPelsWidth = (unsigned long) Globals::WINDOW_WIDTH;
-		dmScreenSettings.dmPelsHeight = (unsigned long) Globals::WINDOW_HEIGHT;
-		dmScreenSettings.dmBitsPerPel = 32;
-		dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-		ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN);
-		
-		// Set the position of the window to the top left corner.
+	//	DEVMODE dmScreenSettings;
+	//	memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));
+	//	dmScreenSettings.dmSize = sizeof(dmScreenSettings);
+	//	dmScreenSettings.dmPelsWidth = (unsigned long) Globals::WINDOW_WIDTH;
+	//	dmScreenSettings.dmPelsHeight = (unsigned long) Globals::WINDOW_HEIGHT;
+	//	dmScreenSettings.dmBitsPerPel = 32;
+	//	dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+	//	ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN);
+	//	
+	//	// Set the position of the window to the top left corner.
 
-	} else {
+	//} else {
 	// Make client dimensions WINDOW_WIDTHxWINDOW_HEIGHT
 	// (as opposed to window dimensions)
-		RECT winRect = {0, 0, Globals::WINDOW_WIDTH, Globals::WINDOW_HEIGHT};
-		AdjustWindowRect(&winRect, WS_OVERLAPPEDWINDOW, FALSE);
-		windowX = winRect.right - winRect.left;
-		windowY = winRect.bottom - winRect.top;
-			// If windowed then set it to global default resolution
-			// and place the window in the middle of the screen.
-		posX = (GetSystemMetrics(SM_CXSCREEN) - Globals::WINDOW_WIDTH) / 2;
-		posY = (GetSystemMetrics(SM_CYSCREEN) - Globals::WINDOW_HEIGHT) / 2;
+	RECT winRect = {0, 0, Globals::WINDOW_WIDTH, Globals::WINDOW_HEIGHT};
+	AdjustWindowRect(&winRect, WS_OVERLAPPEDWINDOW, FALSE);
+	windowX = winRect.right - winRect.left;
+	windowY = winRect.bottom - winRect.top;
+		// If windowed then set it to global default resolution
+		// and place the window in the middle of the screen.
+	posX = (GetSystemMetrics(SM_CXSCREEN) - Globals::WINDOW_WIDTH) / 2;
+	posY = (GetSystemMetrics(SM_CYSCREEN) - Globals::WINDOW_HEIGHT) / 2;
 
-	}
+//}
 
 	DWORD windowStyle = (WS_OVERLAPPEDWINDOW | /*WS_CAPTION | WS_SYSMENU | */WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
 	hwnd = CreateWindowEx(
@@ -233,9 +233,14 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_KILLFOCUS:
 
 			gameEngine->pause();
-			OutputDebugString(L"Lost Focus");
+			OutputDebugString(L"Lost Focus ");
+			//gameEngine->setFullScreen(false);
 			return 0;
 
+		case WM_ACTIVATE:
+			OutputDebugString(L"Got Focus ");
+			gameEngine->setFullScreen(Globals::FULL_SCREEN);
+			return 0;
 
 		case WM_DESTROY:	// top right x button pressed
 

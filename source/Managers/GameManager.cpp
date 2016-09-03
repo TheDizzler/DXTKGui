@@ -115,6 +115,10 @@ vector<DXGI_MODE_DESC> GameManager::getDisplayModeList(ComPtr<IDXGIOutput> displ
 //	gameEngine->setDisplayMode(displayMode);
 //}
 
+bool GameManager::setAdapter(size_t adapterIndex) {
+	return gameEngine->setAdapter(adapterIndex);
+}
+
 bool GameManager::setDisplayMode(size_t displayModeIndex) {
 	return gameEngine->changeDisplayMode(displayModeIndex);
 }
