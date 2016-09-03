@@ -231,10 +231,8 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 
 		case WM_KILLFOCUS:
-
 			gameEngine->pause();
 			OutputDebugString(L"Lost Focus ");
-			//gameEngine->setFullScreen(false);
 			return 0;
 
 		case WM_ACTIVATE:
@@ -243,7 +241,6 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			return 0;
 
 		case WM_DESTROY:	// top right x button pressed
-
 			PostQuitMessage(0);
 			return 0;
 
