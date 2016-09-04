@@ -75,12 +75,14 @@ public:
 
 	virtual void update(double deltaTime, MouseController* mouse);
 
-	void setScrollPosition(float newPositionPercentage);
+	void setScrollPositionByCoord(int newCoordinatePosition);
+	void setScrollPositionByPercent(float newPositionPercentage);
 
 	void scroll(double increment);
 
+	bool hovering();
 	bool pressed();
-
+	
 
 	Color normalColor = Color((Vector3(1, 1, 0)));
 	Color hoverColor = Color((Vector3(.5, .75, 1)));;
@@ -105,7 +107,7 @@ private:
 };
 
 
-class ScrollBar {
+class ScrollBar : public GUIControl {
 public:
 	ScrollBar(Vector2 position);
 	~ScrollBar();
@@ -116,16 +118,31 @@ public:
 	void update(double deltaTime, MouseController* mouse);
 	void draw(SpriteBatch* batch);
 
-	void setScrollPosition(float newPositionPercentage);
+	void setScrollPositionByPercent(float newPositionPercentage);
 	void setPosition(const Vector2 newPosition);
 	
-	int getWidth();
+	virtual const Vector2& getPosition() const override;
+	virtual const int getWidth() const override;
+	virtual const int getHeight() const override;
 
 	double percentScroll = 0;
+	
+	/* Unused in ScrollBar. */
+	virtual void setFont(const pugi::char_t * font = "Default Font") override;
+	/* Unused in ScrollBar. */
+	virtual void setText(wstring text) override;
+	/* Unused in ScrollBar. */
+	virtual XMVECTOR XM_CALLCONV measureString() const override;
+
+
+	virtual bool clicked() override;
+	virtual bool selected() override;
+	virtual bool hovering() override;
+
 private:
 
 	/* Position of entire scrollbar area. */
-	Vector2 position;
+	//Vector2 position;
 
 	RECT scrollBarRect;
 	/* Position of bar part of scroll bar (minus buttons) */

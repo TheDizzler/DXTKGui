@@ -25,7 +25,7 @@ This is still a massive mess....
 >- ListBox - with onClickListener; auto-size to content
 
 ##TODO:
->- Dialog Box - with custom image; make draggable; ues generic onClickListeners for buttons
+>- Dialog Box - with custom image; make draggable; use generic onClickListeners for buttons if none are set by user; transition effects	
 >- List Box - allow mouse scroll button; multi-select
 >- Combo Box
 >- Radio Buttons

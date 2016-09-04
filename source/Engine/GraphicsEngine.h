@@ -1,9 +1,9 @@
 #include "../pch.h"
 #pragma once
-#define MyMessageBox(a, b, c, d) \
-	if (swapChain.Get() != NULL) \
-		swapChain->SetFullscreenState(false, NULL); \
-	MessageBox(a, b, c, d)
+//#define MyMessageBox(a, b, c, d) \
+//	if (swapChain.Get() != NULL) \
+//		swapChain->SetFullscreenState(false, NULL); \
+//	MessageBox(a, b, c, d)
 #pragma comment (lib, "D3D11.lib")
 #pragma comment (lib, "DXGI.lib")
 
@@ -45,7 +45,7 @@ public:
 protected:
 	HWND hwnd;
 	unique_ptr<SpriteBatch> batch;
-
+	//SpriteBatch* batch;
 	/* Adapter currently being used. */
 	ComPtr<IDXGIAdapter> selectedAdapter;
 	/* Monitor being used. */
@@ -80,6 +80,7 @@ protected:
 	vector<ComPtr<IDXGISwapChain> > swapChains; 
 	vector<ComPtr<ID3D11Device> > devices;
 	vector<ComPtr<ID3D11RenderTargetView> > renderTargetViews;
+	//vector<unique_ptr<SpriteBatch> > batches;
 	/* List of all monitors available with this adapter. */
 	vector<ComPtr<IDXGIOutput> > displays;
 	vector<DXGI_MODE_DESC> displayModeList; // all possible display modes with this monitor/video card 

@@ -103,7 +103,7 @@ int messageLoop() {
 int Globals::WINDOW_WIDTH = 800;
 int Globals::WINDOW_HEIGHT = 600;
 int Globals::vsync_enabled = 1;
-bool Globals::FULL_SCREEN = true;
+bool Globals::FULL_SCREEN = false;
 
 bool initWindow(HINSTANCE hInstance, int showWnd) {
 

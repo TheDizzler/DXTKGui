@@ -181,7 +181,7 @@ void ListBox::setSelected(size_t newIndex) {
 			selectedIndex = listItems.size() - maxDisplayItems;
 
 	}
-	scrollBar->setScrollPosition(selectedIndex / (float) (listItems.size() - maxDisplayItems));
+	scrollBar->setScrollPositionByPercent(selectedIndex / (float) (listItems.size() - maxDisplayItems));
 
 }
 
@@ -396,7 +396,7 @@ bool ScrollBar::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 
 	scrollBarUpButton->action = Button::UP;
 
-
+	// use this for HitArea
 	scrollBarPosition =
 		Vector2(position.x - scrollBarUpButton->getWidth(),
 			position.y + scrollBarUpButton->getHeight());
@@ -405,6 +405,10 @@ bool ScrollBar::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 	scrollBarRect.bottom = maxHeight
 		- scrollBarUpButton->getHeight() * 2;
 	scrollBarRect.right = scrollBarUpButton->getWidth();
+
+	hitArea.reset(new HitArea(
+		Vector2::Zero, Vector2(scrollBarRect.right, scrollBarRect.bottom)));
+
 
 	pixel = pixelTexture;
 
@@ -422,6 +426,8 @@ bool ScrollBar::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 
 void ScrollBar::setPosition(const Vector2 newPosition) {
 
+	position = newPosition;
+
 	scrollBarDownButton->setPosition(
 		Vector2(newPosition.x - scrollBarDownButton->getWidth(),
 			newPosition.y + maxHeight - scrollBarDownButton->getHeight()));
@@ -437,6 +443,8 @@ void ScrollBar::setPosition(const Vector2 newPosition) {
 	Vector2 scrubberPos = scrubber->getPosition();
 	scrubberPos.x = newPosition.x;
 	scrubber->setPosition(scrubberPos);
+
+	hitArea->position = scrollBarPosition;
 }
 
 void ScrollBar::setScrollBar(int totalItems, int itemHeight, int maxDisplayItems) {
@@ -476,8 +484,27 @@ void ScrollBar::setScrollBar(int totalItems, int itemHeight, int maxDisplayItems
 
 void ScrollBar::update(double deltaTime, MouseController* mouse) {
 
-	// update scrubber
+	isHover = hitArea->contains(mouse->getPosition());
+		// update scrubber
 	scrubber->update(deltaTime, mouse);
+
+	if (!scrubber->hovering() && isHover
+		&& mouse->leftButtonDown()) {
+
+		if (firstClickTimer == 0) {
+			bool up = mouse->getPosition().y > scrubber->getPosition().y;
+			scrubber->scroll(percentForOneItem * (up ? 5 : -5));
+		}
+
+		firstClickTimer += deltaTime;
+		if (firstClickTimer >= autoScrollStartDelay) {
+			// start autoscrolling
+			bool up = mouse->getPosition().y > scrubber->getPosition().y;
+			scrubber->scroll(percentForOneItem* (up ? 5 : -5));
+			firstClickTimer = autoScrollDelay;
+		}
+		//scrubber->setScrollPositionByCoord(mouse->getPosition().y);
+	}
 
 	scrollBarDownButton->update(deltaTime, mouse);
 	scrollBarUpButton->update(deltaTime, mouse);
@@ -508,7 +535,8 @@ void ScrollBar::update(double deltaTime, MouseController* mouse) {
 	if (scrollBarDownButton->clicked()
 		|| scrollBarUpButton->clicked()
 		|| !(scrollBarDownButton->hovering()
-			|| scrollBarUpButton->hovering()))
+			|| scrollBarUpButton->hovering()
+			|| isHover))
 		firstClickTimer = 0;
 
 	percentScroll = scrubber->percentAt;
@@ -530,18 +558,44 @@ void ScrollBar::draw(SpriteBatch * batch) {
 
 }
 
-void ScrollBar::setScrollPosition(float newPositionPercentage) {
+void ScrollBar::setScrollPositionByPercent(float newPositionPercentage) {
 
 	percentScroll = newPositionPercentage;
-	scrubber->setScrollPosition(newPositionPercentage);
+	scrubber->setScrollPositionByPercent(newPositionPercentage);
 }
 
 
-
-
-
-int ScrollBar::getWidth() {
+const Vector2& ScrollBar::getPosition() const {
+	return position;
+}
+const int ScrollBar::getWidth() const {
 	return scrollBarDownButton->getWidth();
+}
+const int ScrollBar::getHeight() const {
+	return maxHeight;
+}
+
+bool ScrollBar::clicked() {
+	return isClicked;
+}
+
+bool ScrollBar::selected() {
+	return isSelected;
+}
+
+bool ScrollBar::hovering() {
+	return isHover;
+}
+
+/* Unused in ScrollBar. */
+void ScrollBar::setFont(const pugi::char_t* font) {
+}
+/* Unused in ScrollBar. */
+void ScrollBar::setText(wstring text) {
+}
+/* Unused in ScrollBar. */
+XMVECTOR XM_CALLCONV ScrollBar::measureString() const {
+	return Vector2();
 }
 /** **** ScrollBar END **** **/
 
@@ -584,41 +638,6 @@ void Scrubber::setDimensions(const Vector2& startPos, const Vector2& size,
 }
 
 
-//void Scrubber::setSize(const Vector2& size) {
-//
-//	width = size.x;
-//	height = size.y;
-//
-//	sourceRect.left = 0;
-//	sourceRect.top = 0;
-//	sourceRect.bottom = height;
-//	sourceRect.right = width;
-//
-//	maxPosition = minPosition;
-//	maxPosition.y += scrollBarHeight - height;
-//
-//	hitArea.reset(new HitArea(minPosition,
-//		Vector2(width*scale.x, height*scale.y)));
-//
-//	minMaxDifference = maxPosition.y - minPosition.y;
-//}
-
-
-//void Scrubber::setScrubberHeight(double newHeight) {
-//
-//	height = newHeight;
-//
-//	sourceRect.bottom = newHeight;
-//
-//	maxPosition.y += scrollBarHeight - newHeight;
-//
-//	hitArea.reset(new HitArea(minPosition,
-//		Vector2(width*scale.x, newHeight*scale.y)));
-//
-//	minMaxDifference = maxPosition.y - minPosition.y;
-//
-//}
-
 void Scrubber::update(double deltaTime, MouseController* mouse) {
 
 	isHover = hitArea->contains(mouse->getPosition());
@@ -634,29 +653,7 @@ void Scrubber::update(double deltaTime, MouseController* mouse) {
 		tint = selectedColor;
 		if (minMaxDifference == 0)
 			return;
-		position.y = mouse->getPosition().y - pressedPosition;
-
-		if (position.y < minPosition.y)
-			position.y = minPosition.y;
-		else if (position.y > maxPosition.y)
-			position.y = maxPosition.y;
-
-		//hitArea->position = Vector2(position.x, position.y);
-		hitArea->position.y = position.y;
-
-		double distanceBetweenPosAndMax = maxPosition.y - position.y;
-		/*if (minMaxDifference == 0)
-			percentAt = 0;
-		else*/
-		percentAt = (minMaxDifference - distanceBetweenPosAndMax)
-			/ (minMaxDifference);
-
-		/*wostringstream ws;
-		ws << "percentAt: " << percentAt;
-		ws << " distanceBetweenPosAndMax: " << distanceBetweenPosAndMax;
-		ws << " position.y: " << position.y;
-		ws << " maxPosition.y: " << maxPosition.y << "\n";
-		OutputDebugString(ws.str().c_str());*/
+		setScrollPositionByCoord(mouse->getPosition().y - pressedPosition);
 
 	} else if (isHover)
 		tint = hoverColor;
@@ -665,7 +662,31 @@ void Scrubber::update(double deltaTime, MouseController* mouse) {
 }
 
 
-void Scrubber::setScrollPosition(float newPositionPercentage) {
+void Scrubber::setScrollPositionByCoord(int newCoordinatePosition) {
+
+	position.y = newCoordinatePosition;
+
+	if (position.y < minPosition.y)
+		position.y = minPosition.y;
+	else if (position.y > maxPosition.y)
+		position.y = maxPosition.y;
+
+	hitArea->position.y = position.y;
+
+	double distanceBetweenPosAndMax = maxPosition.y - position.y;
+
+	percentAt = (minMaxDifference - distanceBetweenPosAndMax)
+		/ (minMaxDifference);
+
+	/*wostringstream ws;
+	ws << "percentAt: " << percentAt;
+	ws << " distanceBetweenPosAndMax: " << distanceBetweenPosAndMax;
+	ws << " position.y: " << position.y;
+	ws << " maxPosition.y: " << maxPosition.y << "\n";
+	OutputDebugString(ws.str().c_str());*/
+}
+
+void Scrubber::setScrollPositionByPercent(float newPositionPercentage) {
 
 	percentAt = newPositionPercentage;
 	position.y = (minMaxDifference * percentAt) + minPosition.y;
@@ -684,19 +705,14 @@ void Scrubber::scroll(double increment) {
 
 	position.y = (minMaxDifference * percentAt) + minPosition.y;
 	hitArea->position.y = position.y;
-
-	//wostringstream ws;
-	//ws << "percentAt: " << percentAt;
-	//ws << " increment: " << increment << "\n";
-	//OutputDebugString(ws.str().c_str());
 }
 
 
+bool Scrubber::hovering() {
+	return isHover;
+}
+
 bool Scrubber::pressed() {
-	/*if (isPressed) {
-		isPressed = false;
-		return true;
-	}*/
 	return isPressed;
 }
 /** **** Scrubber END **** **/
