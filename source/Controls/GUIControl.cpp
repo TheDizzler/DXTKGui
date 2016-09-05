@@ -5,10 +5,14 @@ void GUIControl::setFactory(GUIFactory* factory) {
 	guiFactory = factory;
 }
 
+void GUIControl::moveBy(const Vector2& moveVector) {
+
+	setPosition(position + moveVector);
+}
+
 void GUIControl::setPosition(const Vector2& pos) {
 	position = pos;
-	hitArea->position = Vector2(position.x /*- getWidth()*scale.x / 2*/,
-		position.y/* - getHeight()*scale.y / 2*/);
+	hitArea->position = Vector2(position.x, position.y);
 	hitArea->size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
 }
 

@@ -1,8 +1,8 @@
 #include "Dialog.h"
 
 
-Dialog::Dialog() {
-
+Dialog::Dialog(bool canMove) {
+	movable = canMove;
 }
 
 Dialog::~Dialog() {
@@ -87,7 +87,7 @@ void Dialog::calculateTitlePos() {
 			//newPos.y -= titleTextMargin;
 		}
 
-
+		//setTitleAreaDimensions(newSize);
 		setDimensions(newPos, newSize);
 		// not sure if this is necessary, but it was a fun excersize :O
 	}
@@ -126,6 +126,12 @@ void Dialog::setText(wstring text) {
 
 	controls[DialogText]->setText(text);
 	calculateDialogTextPos();
+}
+
+void Dialog::setTitleAreaDimensions(const Vector2& newSize) {
+
+	titleFrameSize = newSize;
+	titleSprite->setDimensions(titleFramePosition, titleFrameSize);
 }
 
 void Dialog::setConfirmButton(unique_ptr<Button> okButton,
@@ -208,7 +214,7 @@ void Dialog::setCancelOnClickListener(Button::OnClickListener* iOnClickListener)
 	if (controls[ButtonCancel].get() == NULL) {
 		setCancelButton(L"OK");
 	}
-	
+
 	((Button*) controls[ButtonCancel].get())->setOnClickListener(iOnClickListener);
 }
 
@@ -254,6 +260,31 @@ void Dialog::update(double deltaTime, MouseController* mouse) {
 
 	result = NONE;
 
+	if (movable) {
+		if ((isHover = titleSprite->getHitArea()->contains(mouse->getPosition()))) {
+
+			if (mouse->pressed()) {
+
+				pressedPosition = mouse->getPosition() - position;
+
+				wostringstream ws;
+				ws << mouse->getPosition().x << "," << mouse->getPosition().y << "\n";
+				ws << pressedPosition.x << "," << pressedPosition.y << "\n";
+				OutputDebugString(ws.str().c_str());
+
+				isSelected = true;
+			}
+
+		}
+
+		if (isSelected) {
+			setPosition(mouse->getPosition() - pressedPosition);
+		}
+
+		if (!mouse->leftButtonDown())
+			isSelected = false;
+
+	}
 	for (auto const& control : controls) {
 		if (control == NULL)
 			continue;
@@ -337,11 +368,11 @@ const Vector2& Dialog::getPosition() const {
 }
 
 const int Dialog::getWidth() const {
-	return hitArea->size.x;
+	return size.x;
 }
 
 const int Dialog::getHeight() const {
-	return hitArea->size.y;
+	return size.y;
 }
 
 bool Dialog::clicked() {
@@ -374,18 +405,41 @@ int Dialog::getMaxButtonHeight() {
 	return maxHeight;
 }
 
-/** Used for dragging dialog around, if draggable set. */
-void Dialog::setPosition(const Vector2& position) {
+void Dialog::setPosition(const Vector2& newPosition) {
 
+	Vector2 moveBy = newPosition - position;
+	GUIControl::setPosition(newPosition);
+	frame->moveBy(moveBy);
+	bgSprite->moveBy(moveBy);
+	titleSprite->moveBy(moveBy);
+	buttonFrameSprite->moveBy(moveBy);
 
+	for (auto const& control : controls) {
+		if (control == NULL)
+			continue;
+		control->moveBy(moveBy);
+	}
 }
 
-//void OnClickListenerConfirmButton::onClick(Button* button) {
-//
-//
-//}
+/** Used for dragging dialog around, if draggable set. */
+void Dialog::movePosition(const Vector2& moveBy) {
 
-void OnClickListenerCancelButton::onClick(Button * button) {
+
+	frame->moveBy(moveBy);
+	bgSprite->moveBy(moveBy);
+	titleSprite->moveBy(moveBy);
+	buttonFrameSprite->moveBy(moveBy);
+
+	for (auto const& control : controls) {
+		if (control == NULL)
+			continue;
+		control->moveBy(moveBy);
+	}
+	GUIControl::moveBy(moveBy);
+}
+
+
+void Dialog::OnClickListenerCancelButton::onClick(Button* button) {
 
 	dialog->close();
 }

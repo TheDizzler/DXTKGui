@@ -27,6 +27,7 @@ public:
 
 	virtual void setScale(const Vector2& scl);
 
+	virtual void moveBy(const Vector2& moveVector);
 	virtual void setPosition(const Vector2& position) override;
 	virtual void setOrigin(const Vector2& origin) override;
 	virtual void setRotation(const float rotation) override;

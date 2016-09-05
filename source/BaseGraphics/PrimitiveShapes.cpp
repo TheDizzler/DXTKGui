@@ -21,8 +21,6 @@ void RectangleSprite::setDimensions(const Vector2& pos, const Vector2& size) {
 
 	width = size.x;
 	height = size.y;
-	//origin = Vector2(width / 2.0f, height / 2.0f);
-
 
 	sourceRect.left = 0;
 	sourceRect.top = 0;
@@ -32,6 +30,12 @@ void RectangleSprite::setDimensions(const Vector2& pos, const Vector2& size) {
 	hitArea.reset(new HitArea(
 		Vector2(position.x /*- width*scale.x / 2*/, position.y/* - height*scale.y / 2*/),
 		Vector2(width*scale.x, height*scale.y)));
+}
+
+void RectangleSprite::moveBy(const Vector2& moveVector) {
+
+	position += moveVector;
+	hitArea->position = position;
 }
 
 
@@ -60,8 +64,7 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 
 	frameThickness = frmThcknss;
 	Vector2 position = pos;
-	/*position.x -= size.x / 2;
-	position.y -= size.y / 2;*/
+
 
 	// upper horizontal frame
 	frameHorizontal.left = 0;
@@ -91,6 +94,22 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	// frame sticks out passed rectangle area; (-frameThickness) pulls it back in
 
 
+}
+
+void RectangleFrame::setPosition(const Vector2& newPosition) {
+
+	frameTopPos = newPosition;
+	frameBottomPos = newPosition;
+	frameLeftPos = newPosition;
+	frameRightPos = newPosition;
+}
+
+void RectangleFrame::moveBy(const Vector2& moveVector) {
+
+	frameTopPos += moveVector;
+	frameBottomPos += moveVector;
+	frameLeftPos += moveVector;
+	frameRightPos += moveVector;
 }
 
 void RectangleFrame::setTint(const Color& color) {

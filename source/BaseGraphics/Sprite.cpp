@@ -123,11 +123,6 @@ const int Sprite::getHeight() const {
 	return height;
 }
 
-//void Sprite::setHitArea(const HitArea* hitarea) {
-//
-//	hitArea = new HitArea(Vector2(position.x - width / 2, position.y - height / 2),
-//		Vector2(hitarea->size.x - 2, hitarea->size.y - 2));
-//}
 
 void Sprite::setDimensions(Sprite* baseSprite) {
 
@@ -145,6 +140,12 @@ void Sprite::setPosition(const Vector2& pos) {
 	hitArea->position = Vector2(position.x - width*scale.x / 2,
 		position.y - height*scale.y / 2);
 	hitArea->size = Vector2(width*scale.x, height*scale.y);
+}
+
+
+void Sprite::moveBy(const Vector2& moveVector) {
+
+	setPosition(position + moveVector);
 }
 
 

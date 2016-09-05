@@ -23,24 +23,29 @@ bool Input::initRawInput(HWND hwnd) {
 	rid[1].usUsage = 0x02; // mouse
 	rid[1].dwFlags = /*RIDEV_CAPTUREMOUSE|*/ RIDEV_INPUTSINK;
 	rid[1].hwndTarget = hwnd;
-	
+
 	if (!RegisterRawInputDevices(rid, 2, sizeof(RAWINPUTDEVICE)))
 		return false;
 
 	keys.reset(new KeyboardController());
 	mouse.reset(new MouseController(hwnd));
-	
+
 
 	return true;
 }
 
 void Input::setRawInput(RAWINPUT* raw) {
 
-	if (raw->header.dwType == RIM_TYPEKEYBOARD)
+	if (raw->header.dwType == RIM_TYPEKEYBOARD) {
+		//rawKeys = &raw->data.keyboard;
 		keys->getInput(&raw->data.keyboard);
+	}
+		
 
-	if (raw->header.dwType == RIM_TYPEMOUSE)
-		mouse->getRawInput(&raw->data.mouse);
+	if (raw->header.dwType == RIM_TYPEMOUSE) {
+		//rawMouse = &raw->data.mouse;
+			mouse->getRawInput(&raw->data.mouse);
+	}
 }
 
 

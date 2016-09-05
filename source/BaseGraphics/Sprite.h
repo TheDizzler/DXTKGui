@@ -54,7 +54,7 @@ public:
 	virtual const int getHeight() const override;
 	virtual const RECT getRect() const;
 
-	//virtual void setHitArea(const HitArea* hitarea);
+	virtual void moveBy(const Vector2& moveVector);
 	virtual void setDimensions(Sprite* baseSprite);
 	virtual void setPosition(const Vector2& position) override;
 	virtual void setOrigin(const Vector2& origin) override;

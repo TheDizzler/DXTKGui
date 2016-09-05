@@ -25,7 +25,7 @@
 class Dialog : public GUIControlBox {
 public:
 
-	Dialog();
+	Dialog(bool movable);
 	~Dialog();
 
 	void initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
@@ -37,6 +37,9 @@ public:
 	void setTitle(wstring text, const Vector2& scale = Vector2(1.5, 1.5),
 		const pugi::char_t* font = "Default Font");
 	virtual void setText(wstring text) override;
+
+	/* Works in the y dimension. x dimension gets uppity. */
+	void setTitleAreaDimensions(const Vector2& newSize);
 
 	/** Adds pre-created button to dialog as confirm button.
 		Note: user must initalize everything except for position. */
@@ -114,8 +117,9 @@ private:
 	bool calculateButtonPosition(Vector2& buttonPos);
 	int getMaxButtonHeight();
 
+	virtual void setPosition(const Vector2& newPosition) override;
 	/** Used for dragging dialog around, if draggable set. */
-	void setPosition(const Vector2& position);
+	void movePosition(const Vector2& moveVector);
 
 	unique_ptr<RectangleSprite> bgSprite;
 	unique_ptr<RectangleFrame> frame;
@@ -123,6 +127,22 @@ private:
 	unique_ptr<RectangleSprite> buttonFrameSprite;
 
 	Vector2 standardButtonSize = Vector2(150, 35);
+
+	Vector2 pressedPosition;
+	bool movable = false;
+
+	/** Generice OnClick for Cancel Button. */
+	class OnClickListenerCancelButton : public Button::OnClickListener {
+	public:
+
+		OnClickListenerCancelButton(Dialog* dlg) : dialog(dlg) {
+		}
+
+		virtual void onClick(Button * button) override;
+
+	private:
+		Dialog* dialog;
+	};
 };
 
 
@@ -135,14 +155,3 @@ private:
 //	Dialog* dialog;
 //};
 
-class OnClickListenerCancelButton : public Button::OnClickListener {
-public:
-
-	OnClickListenerCancelButton(Dialog* dlg) : dialog(dlg) {
-	}
-
-	virtual void onClick(Button * button) override;
-
-private:
-	Dialog* dialog;
-};

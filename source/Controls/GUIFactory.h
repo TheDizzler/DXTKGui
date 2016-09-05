@@ -51,7 +51,7 @@ public:
 		const char_t* fontName = "Default Font");
 
 
-	Dialog* createDialog(const char_t* fontName = "Default Font");
+	Dialog* createDialog(bool movable = false, const char_t* fontName = "Default Font");
 
 
 private:

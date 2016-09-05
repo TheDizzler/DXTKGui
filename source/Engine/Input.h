@@ -29,5 +29,7 @@ protected:
 	std::unique_ptr<KeyboardController> keys;
 	std::unique_ptr<MouseController> mouse;
 
+	RAWKEYBOARD* rawKeys;
+	RAWMOUSE* rawMouse;
 };
 

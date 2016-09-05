@@ -1,4 +1,4 @@
-# DXTKGui v0.2b
+# DXTKGui v0.24b
 
 A GUI Framework for DirectX ToolKit.
 This developed out of one part not being able to find any existing frameworks and one part me procrastinating on developing the game I'm working on. I had some hacky GUI features (button, dialog box, listbox) and I was bothered by how inflexible and cumbersome they were. So I started this project to make an extensible and re-usable GUI framework (re-usable in my game engines anyway).
@@ -20,17 +20,19 @@ This is still a massive mess....
 >- Primitve Shapes - filled rectangle; un-filled rectangle; line
 >- Text Labels - normal and clickable
 >- Button - text and image
->- Dialog Box - no image loading yet
+>- Dialog Box - draggable and non-draggable; no image loading yet;
 >- Check Box - with onClickListener
 >- ListBox - with onClickListener; auto-size to content
 
 ##TODO:
->- Dialog Box - with custom image; make draggable; use generic onClickListeners for buttons if none are set by user; transition effects	
+>- Dialog Box - with custom image; transition effects	
 >- List Box - allow mouse scroll button; multi-select
 >- Combo Box
 >- Radio Buttons
 >- Slider
 >- Scrollbar that can be slapped on to anything
+>- add triggers for sfx
+>- screen transition effects
 >- More Primitive Shapes - if I feel they might be useful
 >- Other stuff I can't think of at the moment
 >- Some kind of document to explain what's going on under the hood and how to use it effectivily....

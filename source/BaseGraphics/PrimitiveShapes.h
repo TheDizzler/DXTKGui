@@ -2,7 +2,9 @@
 
 #include "Sprite.h"
 
-/** For drawing a primitive, filled rectangle. */
+/** For drawing a primitive, filled rectangle. 
+	Unlike other sprites, the origin of a Rectangle Sprite is the top left
+	corner (0, 0) to be consistent with GUIControls. */
 class RectangleSprite : public Sprite {
 public:
 	RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel);
@@ -12,7 +14,7 @@ public:
 
 	/* position is top left corner. */
 	void setDimensions(const Vector2& position, const Vector2& size);
-
+	virtual void moveBy(const Vector2& moveVector);
 };
 
 /** A primitive, non-filled rectangle. */
@@ -26,6 +28,9 @@ public:
 	void setDimensions(const Vector2& position, const Vector2& size,
 		int frameThickness);
 
+	void setPosition(const Vector2& newPosition);
+	void moveBy(const Vector2& moveVector);
+
 	void setTint(const Color& color);
 
 	void draw(SpriteBatch* batch);
@@ -35,6 +40,7 @@ public:
 
 private:
 	ComPtr<ID3D11ShaderResourceView> pixel;
+
 
 	RECT frameHorizontal;
 	RECT frameVertical;
@@ -48,7 +54,8 @@ private:
 };
 
 
-/** A primitive live. */
+/** A primitive live.
+	This has not been tested.*/
 class Line {
 public:
 	Line(ComPtr<ID3D11ShaderResourceView> whitePixel);

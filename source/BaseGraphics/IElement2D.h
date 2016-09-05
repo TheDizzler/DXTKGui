@@ -22,6 +22,7 @@ public:
 	virtual const int getWidth() const = 0;
 	virtual const int getHeight() const =0 ;
 
+	virtual void moveBy(const Vector2& moveVector) = 0;
 	virtual void setPosition(const Vector2& position) = 0;
 	virtual void setOrigin(const Vector2& origin) = 0;
 	virtual void setScale(const Vector2& scale) = 0;

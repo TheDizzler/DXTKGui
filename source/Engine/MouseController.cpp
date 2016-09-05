@@ -30,8 +30,12 @@ bool MouseController::loadMouseIcon(GUIFactory* guiFactory,
 }
 
 int i = 0;
-void MouseController::getRawInput(RAWMOUSE* raw) {
+void MouseController::getRawInput(RAWMOUSE* rawMouse) {
 
+	raw = rawMouse;
+	/*wostringstream ws;
+	ws << "MoveBy: " << raw->lLastX << ", " << raw->lLastY << "\n";
+	OutputDebugString(ws.str().c_str());*/
 	saveLastRawInput();
 
 	bool bDown = raw->usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN;
@@ -64,14 +68,18 @@ void MouseController::getRawInput(RAWMOUSE* raw) {
 	isPressed = !lastButtons.leftButtonDown && currentButtons.leftButtonDown;
 
 	if (lastButtons.leftButtonDown && !currentButtons.leftButtonDown) {
-		/*wostringstream ws;
-		ws << "Clicked! " << ++i << "\n";
-		OutputDebugString(ws.str().c_str());*/
 		isClicked = true;
 	} else {
 		isClicked = false;
 
 	}
+}
+
+const Vector2 MouseController::getMovement() const {
+	wostringstream ws;
+	ws << "MoveBy: " << raw->lLastX << ", " << raw->lLastY << "\n";
+	OutputDebugString(ws.str().c_str());
+	return Vector2(raw->lLastX, raw->lLastY);
 }
 
 
@@ -82,6 +90,7 @@ void MouseController::saveLastRawInput() {
 }
 
 bool MouseController::leftButtonDown() {
+
 	return currentButtons.leftButtonDown;
 }
 

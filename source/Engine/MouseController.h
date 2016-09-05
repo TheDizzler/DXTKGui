@@ -36,7 +36,9 @@ public:
 		If only using mouse as a cursor, use GetCursorPos(). */
 	void getRawInput(RAWMOUSE* rawMouse);
 	
-
+	/* Dangerous! If no mouse action is sent to windows message pump
+		(WM_INPUT) then the same RAWMOUSE info gets recycled. */
+	const Vector2 getMovement() const;
 
 	bool leftButtonDown();
 	bool midButtonDown();
@@ -52,6 +54,8 @@ public:
 private:
 
 	HWND hwnd;
+	RAWMOUSE* raw;
+
 	void saveLastRawInput();
 
 	bool isClicked = false;

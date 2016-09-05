@@ -182,9 +182,9 @@ ListBox* GUIFactory::createListBox(const Vector2& position,
 	return listbox;
 }
 
-Dialog* GUIFactory::createDialog(const char_t* fontName) {
+Dialog* GUIFactory::createDialog(bool movable, const char_t* fontName) {
 
-	Dialog* dialog = new Dialog();
+	Dialog* dialog = new Dialog(movable);
 	dialog->setFactory(this);
 	dialog->initialize(whitePixel, fontName);
 	return dialog;

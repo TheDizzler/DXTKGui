@@ -149,7 +149,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 	guiControls.push_back(mouseLabel);
 
 	{
-		exitDialog.reset(GameManager::guiFactory->createDialog("Arial"));
+		exitDialog.reset(GameManager::guiFactory->createDialog(true));
 		Vector2 dialogPos, dialogSize;
 		dialogSize = Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2);
 		dialogPos = dialogSize;
@@ -158,6 +158,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		exitDialog->setDimensions(dialogPos, dialogSize);
 		exitDialog->setTint(Color(0, 120, 207));
 		exitDialog->setTitle(L"Exit Test?");
+		//exitDialog->setTitleAreaDimensions(Vector2(0, 150));
 		exitDialog->setText(L"Really Quit The Test Project?");
 		unique_ptr<Button> quitButton;
 		quitButton.reset(GameManager::guiFactory->createButton());
@@ -194,29 +195,9 @@ void MainScreen::update(double deltaTime,
 
 	if (exitDialog->isOpen) {
 		exitDialog->update(deltaTime, mouse);
-		/*switch (exitDialog->getResult()) {
-			case GUIControl::CONFIRM:
-				game->exit();
-				break;
-			case GUIControl::CANCEL:
-				exitDialog->close();
-				break;
-		}*/
-
 	} else {
 		for (GUIControl* control : guiControls) {
 			control->update(deltaTime, mouse);
-			//if (control->clicked()) {
-			//	switch (control->action) {
-			//		case GUIControl::EXIT:
-			//			confirmExit();
-			//			//test->setText("Exit!");
-			//			break;
-			//		case GUIControl::PLAY:
-			//			test->setText("Play!");
-			//			break;
-			//	}
-			//}
 		}
 	}
 }
