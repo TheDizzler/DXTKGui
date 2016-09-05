@@ -30,7 +30,7 @@ This is still a massive mess....
 >- Combo Box
 >- Radio Buttons
 >- Slider
->- Scrollbar that can be slapped on to anything; allow scrollbar move to position clicked
+>- Scrollbar that can be slapped on to anything
 >- More Primitive Shapes - if I feel they might be useful
 >- Other stuff I can't think of at the moment
 >- Some kind of document to explain what's going on under the hood and how to use it effectivily....

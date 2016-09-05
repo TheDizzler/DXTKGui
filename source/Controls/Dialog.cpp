@@ -6,18 +6,13 @@ Dialog::Dialog() {
 }
 
 Dialog::~Dialog() {
-	
+
 	controls.clear();
 }
 
 #include "../Managers/GameManager.h"
 void Dialog::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 	const pugi::char_t* font) {
-
-	/*if (!Sprite::load(device, Assets::uglyDialogBox))
-		return false;
-
-	setScale(Vector2(3, 1.5));*/
 
 
 	frame.reset(new RectangleFrame(pixelTexture));
@@ -133,31 +128,42 @@ void Dialog::setText(wstring text) {
 	calculateDialogTextPos();
 }
 
-void Dialog::setConfirmButton(unique_ptr<Button> okButton) {
+void Dialog::setConfirmButton(unique_ptr<Button> okButton,
+	bool autoPosition, bool autoSize) {
 
-	okButtonPosition.x = position.x + buttonMargin;
-	if (calculateButtonPosition(okButtonPosition))
-		okButtonPosition.y -= okButton->getHeight() / 2;
-	okButton->setPosition(okButtonPosition);
+	if (autoPosition) {
+		okButtonPosition.x = position.x + buttonMargin;
+		if (calculateButtonPosition(okButtonPosition))
+			okButtonPosition.y -= okButton->getHeight() / 2;
+	} else {
+		okButtonPosition = okButton->getPosition();
+	}
+
+	if (autoSize) {
+		okButton->setDimensions(okButtonPosition, standardButtonSize, 3);
+	} else {
+
+		okButton->setPosition(okButtonPosition);
+	}
+
 	controls[ButtonOK].release();
 	controls[ButtonOK] = move(okButton);
-
 }
 
-void Dialog::setConfirmButton(wstring text, const pugi::char_t* font) {
-
-	unique_ptr<Button> okButton;
-	okButton.reset(GameManager::guiFactory->createButton(font));
-	okButton->setDimensions(okButtonPosition, standardButtonSize, 3);
-	controls[ButtonOK].release();
-	controls[ButtonOK] = move(okButton);
-	controls[ButtonOK]->action = ClickAction::OK;
-	controls[ButtonOK]->setText(text);
-	okButtonPosition.x = position.x + buttonMargin;
-	if (calculateButtonPosition(okButtonPosition))
-		okButtonPosition.y -= controls[ButtonOK]->getHeight() / 2;
-	controls[ButtonOK]->setPosition(okButtonPosition);
-}
+//void Dialog::setConfirmButton(wstring text, const pugi::char_t* font) {
+//
+//	unique_ptr<Button> okButton;
+//	okButton.reset(GameManager::guiFactory->createButton(font));
+//	okButton->setDimensions(okButtonPosition, standardButtonSize, 3);
+//	okButton->setOnClickListener(new OnClickListenerConfirmButton(this));
+//	controls[ButtonOK].release();
+//	controls[ButtonOK] = move(okButton);
+//	controls[ButtonOK]->setText(text);
+//	okButtonPosition.x = position.x + buttonMargin;
+//	if (calculateButtonPosition(okButtonPosition))
+//		okButtonPosition.y -= controls[ButtonOK]->getHeight() / 2;
+//	controls[ButtonOK]->setPosition(okButtonPosition);
+//}
 
 void Dialog::setCancelButton(unique_ptr<Button> cancelButton) {
 
@@ -175,6 +181,7 @@ void Dialog::setCancelButton(wstring text, const pugi::char_t * font) {
 	unique_ptr<Button> cancelButton;
 	cancelButton.reset(GameManager::guiFactory->createButton(font));
 	cancelButton->setDimensions(cancelButtonPosition, standardButtonSize, 3);
+	cancelButton->setOnClickListener(new OnClickListenerCancelButton(this));
 	controls[ButtonCancel].release();
 	controls[ButtonCancel] = move(cancelButton);
 	controls[ButtonCancel]->action = ClickAction::CANCEL;
@@ -220,9 +227,10 @@ bool Dialog::calculateButtonPosition(Vector2& buttonPos) {
 }
 
 
-
-
 void Dialog::update(double deltaTime, MouseController* mouse) {
+
+	if (!isOpen)
+		return;
 
 	result = NONE;
 
@@ -230,7 +238,7 @@ void Dialog::update(double deltaTime, MouseController* mouse) {
 		if (control == NULL)
 			continue;
 		control->update(deltaTime, mouse);
-		if (control->clicked()) {
+		/*if (control->clicked()) {
 			switch (control->action) {
 				case GUIControl::OK:
 					result = CONFIRM;
@@ -239,12 +247,15 @@ void Dialog::update(double deltaTime, MouseController* mouse) {
 					result = ClickAction::CANCEL;
 					break;
 			}
-		}
+		}*/
 	}
 }
 
 
 void Dialog::draw(SpriteBatch* batch) {
+
+	if (!isOpen)
+		return;
 
 	bgSprite->draw(batch);
 	titleSprite->draw(batch);
@@ -349,3 +360,12 @@ void Dialog::setPosition(const Vector2& position) {
 
 }
 
+//void OnClickListenerConfirmButton::onClick(Button* button) {
+//
+//
+//}
+
+void OnClickListenerCancelButton::onClick(Button * button) {
+
+	dialog->close();
+}

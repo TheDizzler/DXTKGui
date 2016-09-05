@@ -9,6 +9,7 @@ using namespace std;
 
 interface GUIControl : public IElement2D {
 public:
+	/* Deprecating */
 	enum ClickAction {
 		EXIT, PLAY, SETTINGS, CANCEL, OK, UP, DOWN, NONE, CONFIRM,
 		NEUTRAL, SELECTION_CHANGED
@@ -42,6 +43,7 @@ public:
 	virtual bool selected() = 0;
 	virtual bool hovering() = 0;
 
+	/* Deprecating this method of control. Use ActionListeners instead. */
 	ClickAction action;
 
 

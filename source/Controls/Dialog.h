@@ -1,7 +1,8 @@
+#include "../pch.h"
 #pragma once
 
-#include "../BaseGraphics/PrimitiveShapes.h"
 #include "Button.h"
+
 
 
 
@@ -37,12 +38,16 @@ public:
 	void setTitle(wstring text, const Vector2& scale = Vector2(1.5, 1.5),
 		const pugi::char_t* font = "Default Font");
 	virtual void setText(wstring text) override;
+
 	/** Adds pre-created button to dialog as confirm button.
 		Note: user must initalize everything except for position. */
-	void setConfirmButton(unique_ptr<Button> okButton);
-	void setConfirmButton(wstring text, const pugi::char_t* font = "Default Font");
+	void setConfirmButton(unique_ptr<Button> okButton,
+		bool autoPosition = true, bool autoSize = true);
+
+	//void setConfirmButton(wstring text, const pugi::char_t* font = "Default Font");
 
 	void setCancelButton(unique_ptr<Button> cancelButton);
+	/* Creates a cancel button to dialog that just closes the dialog. */
 	void setCancelButton(wstring text, const pugi::char_t* font = "Default Font");
 
 	virtual void update(double deltaTime, MouseController* mouse);
@@ -67,6 +72,7 @@ public:
 
 	void open();
 	void close();
+	/* Deprecating. Use ActionListeners instead. */
 	ClickAction getResult();
 
 	bool isOpen = false;
@@ -79,6 +85,7 @@ private:
 
 	vector<unique_ptr<GUIControl> > controls;
 
+	/* Deprecating. Use ActionListeners instead. */
 	ClickAction result = NONE;
 
 	Vector2 size;
@@ -109,4 +116,26 @@ private:
 	unique_ptr<RectangleSprite> buttonFrameSprite;
 
 	Vector2 standardButtonSize = Vector2(150, 35);
+};
+
+
+//class OnClickListenerConfirmButton : public Button::OnClickListener {
+//public:
+//	OnClickListenerConfirmButton(Dialog* dlg) : dialog(dlg) {
+//	}
+//	virtual void onClick(Button * button) override;
+//private:
+//	Dialog* dialog;
+//};
+
+class OnClickListenerCancelButton : public Button::OnClickListener {
+public:
+
+	OnClickListenerCancelButton(Dialog* dlg) : dialog(dlg) {
+	}
+
+	virtual void onClick(Button * button) override;
+
+private:
+	Dialog* dialog;
 };

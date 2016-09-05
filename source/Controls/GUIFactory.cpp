@@ -144,6 +144,18 @@ CheckBox* GUIFactory::createCheckBox(const Vector2& position,
 	return check;
 }
 
+CheckBox* GUIFactory::createCheckBox(const Vector2& position,
+	const char_t* uncheckedImage, const char_t* checkedImage,
+	wstring text, const char_t* fontName) {
+
+	CheckBox* check = new CheckBox(getSpriteFromAsset(uncheckedImage),
+		getSpriteFromAsset(checkedImage), getFont(fontName));
+	check->setText(text);
+	check->setPosition(position);
+	return check;
+
+}
+
 ListBox* GUIFactory::createListBox(const Vector2& position,
 	const int width, const int maxItemsShown, bool enumerateList,
 	const char_t* fontName) {

@@ -41,28 +41,59 @@ protected:
 
 class OnClickListenerAdapterList : public ListBox::OnClickListener {
 public:
+	OnClickListenerAdapterList(ConfigScreen* screen) : config(screen) {
+	}
 	virtual void onClick(ListBox* listbox, int selectedIndex) override;
+private:
 	ConfigScreen* config;
 };
 
 class OnClickListenerDisplayModeList : public ListBox::OnClickListener {
 public:
+	OnClickListenerDisplayModeList(ConfigScreen* screen) : config(screen) {
+	}
 	virtual void onClick(ListBox* listbox, int selectedIndex) override;
+private:
 	ConfigScreen* config;
 
 };
 
 class OnClickListenerFullScreenCheckBox : public CheckBox::OnClickListener {
 public:
+	OnClickListenerFullScreenCheckBox(ConfigScreen* screen) : config(screen) {
+	}
 	virtual void onClick(CheckBox* checkbox, bool isChecked) override;
+private:
 	ConfigScreen* config;
 };
 
 class OnClickListenerSettingsButton : public Button::OnClickListener {
 public:
+	OnClickListenerSettingsButton(MainScreen* screen) : main(screen) {
+	}
 	virtual void onClick(Button* button) override;
+private:
 	MainScreen* main;
 };
+
+class OnClickListenerQuitButton : public Button::OnClickListener {
+public:
+	OnClickListenerQuitButton(MainScreen* screen) : main(screen) {
+	}
+	virtual void onClick(Button * button) override;
+private:
+	MainScreen* main;
+};
+
+class OnClickListenerExitButton : public Button::OnClickListener {
+public:
+	OnClickListenerExitButton(MainScreen* screen) : main(screen) {
+	}
+	virtual void onClick(Button* button) override;
+private:
+	MainScreen* main;
+};
+
 
 class MenuManager : public Screen {
 public:
@@ -96,7 +127,7 @@ private:
 
 /** This class is abstract. */
 interface MenuScreen : public Screen {
-friend class OnClickListenerSettingsButton;
+	friend class OnClickListenerSettingsButton;
 public:
 
 	MenuScreen(MenuManager* manager);
@@ -149,6 +180,7 @@ private:
 };
 
 class MainScreen : public MenuScreen {
+	friend class OnClickListenerExitButton;
 public:
 	MainScreen(MenuManager* manager);
 	~MainScreen();
@@ -160,12 +192,13 @@ public:
 		MouseController* mouse) override;
 	virtual void draw(SpriteBatch * batch) override;
 
+	void confirmExit();
 private:
 	unique_ptr<Dialog> exitDialog;
 	TextLabel* test;
 	TextLabel* mouseLabel;
 
-	void confirmExit();
+
 
 
 };

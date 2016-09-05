@@ -156,6 +156,7 @@
     <ClCompile Include="source\Controls\GUIControl.cpp" />
     <ClCompile Include="source\Controls\GUIFactory.cpp" />
     <ClCompile Include="Source\Controls\ListBox.cpp" />
+    <ClCompile Include="source\Controls\ScrollBar.cpp" />
     <ClCompile Include="Source\Controls\TextLabel.cpp" />
     <ClCompile Include="Source\Engine\GameEngine.cpp" />
     <ClCompile Include="Source\Engine\GraphicsEngine.cpp" />

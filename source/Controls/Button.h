@@ -69,8 +69,10 @@ public:
 	}
 
 	void triggerOnClick() {
-		if (onClickListener != NULL)
+		if (onClickListener != NULL) {
+			isClicked = isSelected = false;
 			(onClickListener->*onClickFunction)(this);
+		}
 	}
 
 protected:

@@ -119,7 +119,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 	button = GameManager::guiFactory->createImageButton("Button Up", "Button Down");
 	Vector2 buttonpos = Vector2((Globals::WINDOW_WIDTH - button->getWidth()) / 2,
 		Globals::WINDOW_HEIGHT / 3 - button->getHeight() / 2);
-	button->action = GUIControl::PLAY;
+	//button->action = GUIControl::PLAY;
 	button->setText(L"Play");
 	button->setPosition(buttonpos);
 	guiControls.push_back(button);
@@ -127,16 +127,16 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 	Vector2 size = Vector2(button->getWidth(), button->getHeight());
 	buttonpos.y += 150;
 	button = GameManager::guiFactory->createButton(buttonpos, size, L"Settings");
-	button->action = GUIControl::SETTINGS;
-	OnClickListenerSettingsButton* settingsListener = new OnClickListenerSettingsButton();
-	settingsListener->main = this;
+	//button->action = GUIControl::SETTINGS;
+	OnClickListenerSettingsButton* settingsListener = new OnClickListenerSettingsButton(this);
 	button->setOnClickListener(settingsListener);
 	guiControls.push_back(button);
 
 	buttonpos.y += 150;
 	button = GameManager::guiFactory->createImageButton(
 		"Button Up", "Button Down");
-	button->action = GUIControl::EXIT;
+	//button->action = GUIControl::EXIT;
+	button->setOnClickListener(new OnClickListenerExitButton(this));
 	button->setText(L"Exit");
 	button->setPosition(buttonpos);
 	guiControls.push_back(button);
@@ -159,8 +159,13 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		exitDialog->setTint(Color(0, 120, 207));
 		exitDialog->setTitle(L"Exit Test?");
 		exitDialog->setText(L"Really Quit The Test Project?");
+		unique_ptr<Button> quitButton;
+		quitButton.reset(GameManager::guiFactory->createButton());
+		//quitButton->setDimensions(okButtonPosition, standardButtonSize, 3);
+		quitButton->setOnClickListener(new OnClickListenerQuitButton(this));
+		quitButton->setText(L"Quit");
+		exitDialog->setConfirmButton(move(quitButton));
 
-		exitDialog->setConfirmButton(L"Quit");
 		exitDialog->setCancelButton(L"Keep Testing!");
 	}
 
@@ -169,13 +174,15 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 	return true;
 }
 
-
+int countDialog = 0;
 void MainScreen::update(double deltaTime,
 	KeyboardController* keys, MouseController* mouse) {
 
 	wostringstream ws;
 	ws << "Mouse: " << mouse->getPosition().x << ", " << mouse->getPosition().y;
 	mouseLabel->setText(ws);
+
+
 
 	if (keys->keyDown[KeyboardController::ESC] && !escLastStateDown) {
 		if (exitDialog->isOpen)
@@ -189,33 +196,29 @@ void MainScreen::update(double deltaTime,
 
 	if (exitDialog->isOpen) {
 		exitDialog->update(deltaTime, mouse);
-		switch (exitDialog->getResult()) {
+		/*switch (exitDialog->getResult()) {
 			case GUIControl::CONFIRM:
 				game->exit();
 				break;
 			case GUIControl::CANCEL:
 				exitDialog->close();
 				break;
-		}
+		}*/
 
 	} else {
 		for (GUIControl* control : guiControls) {
 			control->update(deltaTime, mouse);
-			if (control->clicked()) {
-				switch (control->action) {
-					case GUIControl::EXIT:
-						confirmExit();
-						//test->setText("Exit!");
-						break;
-					case GUIControl::PLAY:
-						test->setText("Play!");
-						break;
-					//case GUIControl::SETTINGS:
-					//	menuManager->openConfigMenu();
-					//	//test->setText("Settings!!");
-					//	break;
-				}
-			}
+			//if (control->clicked()) {
+			//	switch (control->action) {
+			//		case GUIControl::EXIT:
+			//			confirmExit();
+			//			//test->setText("Exit!");
+			//			break;
+			//		case GUIControl::PLAY:
+			//			test->setText("Play!");
+			//			break;
+			//	}
+			//}
 		}
 	}
 }
@@ -226,8 +229,7 @@ void MainScreen::draw(SpriteBatch* batch) {
 	for (GUIControl* control : guiControls)
 		control->draw(batch);
 
-	if (exitDialog->isOpen)
-		exitDialog->draw(batch);
+	exitDialog->draw(batch);
 }
 
 
@@ -272,14 +274,13 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	adapterListbox->addItems(adapterItems);
 	adapterListbox->setSelected(game->getSelectedAdapterIndex());
 
-	OnClickListenerAdapterList* onClickAdapterList = new OnClickListenerAdapterList();
-	onClickAdapterList->config = this;
+	OnClickListenerAdapterList* onClickAdapterList = new OnClickListenerAdapterList(this);
 	adapterListbox->setOnClickListener(onClickAdapterList);
 
 	adapterLabel->setText(adapterListbox->getSelected()->toString());
 
-	
-	controlPos.y += adapterListbox->getHeight() + MARGIN*2;
+
+	controlPos.y += adapterListbox->getHeight() + MARGIN * 2;
 	displayLabel = GameManager::guiFactory->createTextLabel(controlPos, L"A");
 	guiControls.push_back(displayLabel);
 
@@ -297,7 +298,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	displayLabel->setText(displayListbox->getSelected()->toString());
 
 	// setup label for Display Mode
-	controlPos.x += displayListbox->getWidth() + MARGIN*2;
+	controlPos.x += displayListbox->getWidth() + MARGIN * 2;
 	controlPos.y = 50;
 	displayModeLabel =
 		GameManager::guiFactory->createTextLabel(controlPos, L"Test2");
@@ -312,8 +313,8 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	displayModeListbox->setSelected(game->getSelectedDisplayModeIndex());
 	guiControls.push_back(displayModeListbox);
 
-	OnClickListenerDisplayModeList* onClickDisplayMode = new OnClickListenerDisplayModeList();
-	onClickDisplayMode->config = this;
+	OnClickListenerDisplayModeList* onClickDisplayMode =
+		new OnClickListenerDisplayModeList(this);
 	displayModeListbox->setOnClickListener(onClickDisplayMode);
 
 	displayModeLabel->setText(displayModeListbox->getSelected()->toString());
@@ -322,8 +323,8 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	// Set up CheckBox for full-screen toggle
 	CheckBox* check = GameManager::guiFactory->createCheckBox(
 		Vector2(50, 450), L"Full Screen");
-	OnClickListenerFullScreenCheckBox* onClickFullScreen = new OnClickListenerFullScreenCheckBox();
-	onClickFullScreen->config = this;
+	OnClickListenerFullScreenCheckBox* onClickFullScreen
+		= new OnClickListenerFullScreenCheckBox(this);
 	check->setChecked(Globals::FULL_SCREEN);
 	check->setOnClickListener(onClickFullScreen);
 	guiControls.push_back(check);
@@ -494,4 +495,12 @@ void OnClickListenerFullScreenCheckBox::onClick(CheckBox* checkbox, bool isCheck
 void OnClickListenerSettingsButton::onClick(Button* button) {
 
 	main->menuManager->openConfigMenu();
+}
+
+void OnClickListenerQuitButton::onClick(Button* button) {
+	main->confirmExit();
+}
+
+void OnClickListenerExitButton::onClick(Button* button) {
+	main->exitDialog->open();
 }
