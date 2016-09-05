@@ -161,11 +161,9 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		exitDialog->setText(L"Really Quit The Test Project?");
 		unique_ptr<Button> quitButton;
 		quitButton.reset(GameManager::guiFactory->createButton());
-		//quitButton->setDimensions(okButtonPosition, standardButtonSize, 3);
 		quitButton->setOnClickListener(new OnClickListenerQuitButton(this));
 		quitButton->setText(L"Quit");
 		exitDialog->setConfirmButton(move(quitButton));
-
 		exitDialog->setCancelButton(L"Keep Testing!");
 	}
 

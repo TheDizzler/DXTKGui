@@ -10,14 +10,14 @@ ScrollBar::ScrollBar(Vector2 pos) {
 ScrollBar::~ScrollBar() {
 }
 
-#include "../Managers/GameManager.h"
+#include "../Controls/GUIFactory.h"
 bool ScrollBar::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 	size_t maxHght) {
 
 	maxHeight = maxHght;
 
 	scrollBarDownButton.reset((ImageButton*)
-		GameManager::guiFactory->createImageButton("ScrollBar Down",
+		guiFactory->createImageButton("ScrollBar Down",
 			"ScrollBar Down Pressed"));
 	scrollBarDownButton->setPosition(
 		Vector2(position.x - scrollBarDownButton->getWidth(),
@@ -28,7 +28,7 @@ bool ScrollBar::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 
 
 	scrollBarUpButton.reset((ImageButton*)
-		GameManager::guiFactory->createImageButton("ScrollBar Up",
+		guiFactory->createImageButton("ScrollBar Up",
 			"ScrollBar Up Pressed"));
 	scrollBarUpButton->setPosition(
 		Vector2(position.x - scrollBarUpButton->getWidth(),

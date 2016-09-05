@@ -53,9 +53,9 @@ void CheckBox::update(double deltaTime, MouseController* mouse) {
 
 }
 
-#include "../Managers/GameManager.h"
+#include "../Controls/GUIFactory.h"
 void CheckBox::setFont(const pugi::char_t* font) {
-	label->setFont(GameManager::guiFactory->getFont(font));
+	label->setFont(guiFactory->getFont(font));
 }
 
 

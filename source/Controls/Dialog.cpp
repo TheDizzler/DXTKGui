@@ -10,7 +10,7 @@ Dialog::~Dialog() {
 	controls.clear();
 }
 
-#include "../Managers/GameManager.h"
+#include "../Controls/GUIFactory.h"
 void Dialog::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 	const pugi::char_t* font) {
 
@@ -28,7 +28,7 @@ void Dialog::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 	unique_ptr<GUIControl> titleText;
 
 	unique_ptr<GUIControl> dialogText;
-	dialogText.reset(new TextLabel(GameManager::guiFactory->getFont(font)));
+	dialogText.reset(new TextLabel(guiFactory->getFont(font)));
 	dialogText->setTint(Color(0, 0, 0));
 	controls[DialogText] = move(dialogText);
 
@@ -101,7 +101,7 @@ void Dialog::calculateTitlePos() {
 void Dialog::setTitle(wstring text, const Vector2& scale, const pugi::char_t* font) {
 
 	controls[TitleText].release();
-	controls[TitleText].reset(new TextLabel(GameManager::guiFactory->getFont(font)));
+	controls[TitleText].reset(new TextLabel(guiFactory->getFont(font)));
 	controls[TitleText]->setText(text);
 	controls[TitleText]->setScale(scale);
 	controls[TitleText]->setTint(Color(0, 0, 0));
@@ -150,20 +150,30 @@ void Dialog::setConfirmButton(unique_ptr<Button> okButton,
 	controls[ButtonOK] = move(okButton);
 }
 
-//void Dialog::setConfirmButton(wstring text, const pugi::char_t* font) {
-//
-//	unique_ptr<Button> okButton;
-//	okButton.reset(GameManager::guiFactory->createButton(font));
-//	okButton->setDimensions(okButtonPosition, standardButtonSize, 3);
-//	okButton->setOnClickListener(new OnClickListenerConfirmButton(this));
-//	controls[ButtonOK].release();
-//	controls[ButtonOK] = move(okButton);
-//	controls[ButtonOK]->setText(text);
-//	okButtonPosition.x = position.x + buttonMargin;
-//	if (calculateButtonPosition(okButtonPosition))
-//		okButtonPosition.y -= controls[ButtonOK]->getHeight() / 2;
-//	controls[ButtonOK]->setPosition(okButtonPosition);
-//}
+
+void Dialog::setConfirmButton(wstring text, const pugi::char_t* font) {
+
+	unique_ptr<Button> okButton;
+	okButton.reset(guiFactory->createButton(font));
+	okButton->setDimensions(okButtonPosition, standardButtonSize, 3);
+
+	controls[ButtonOK].release();
+	controls[ButtonOK] = move(okButton);
+	controls[ButtonOK]->setText(text);
+	okButtonPosition.x = position.x + buttonMargin;
+	if (calculateButtonPosition(okButtonPosition))
+		okButtonPosition.y -= controls[ButtonOK]->getHeight() / 2;
+	controls[ButtonOK]->setPosition(okButtonPosition);
+}
+
+void Dialog::setConfirmOnClickListener(Button::OnClickListener* iOnClickListener) {
+
+	if (controls[ButtonOK].get() == NULL) {
+		setConfirmButton(L"OK");
+	}
+
+	((Button*) controls[ButtonOK].get())->setOnClickListener(iOnClickListener);
+}
 
 void Dialog::setCancelButton(unique_ptr<Button> cancelButton) {
 
@@ -179,7 +189,7 @@ void Dialog::setCancelButton(unique_ptr<Button> cancelButton) {
 void Dialog::setCancelButton(wstring text, const pugi::char_t * font) {
 
 	unique_ptr<Button> cancelButton;
-	cancelButton.reset(GameManager::guiFactory->createButton(font));
+	cancelButton.reset(guiFactory->createButton(font));
 	cancelButton->setDimensions(cancelButtonPosition, standardButtonSize, 3);
 	cancelButton->setOnClickListener(new OnClickListenerCancelButton(this));
 	controls[ButtonCancel].release();
@@ -192,6 +202,16 @@ void Dialog::setCancelButton(wstring text, const pugi::char_t * font) {
 		cancelButtonPosition.y -= controls[ButtonCancel]->getHeight() / 2;
 	controls[ButtonCancel]->setPosition(cancelButtonPosition);
 }
+
+void Dialog::setCancelOnClickListener(Button::OnClickListener* iOnClickListener) {
+
+	if (controls[ButtonCancel].get() == NULL) {
+		setCancelButton(L"OK");
+	}
+	
+	((Button*) controls[ButtonCancel].get())->setOnClickListener(iOnClickListener);
+}
+
 
 bool Dialog::calculateButtonPosition(Vector2& buttonPos) {
 

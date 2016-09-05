@@ -1,7 +1,8 @@
 #include "ListBox.h"
 
 
-ListBox::ListBox(const Vector2& pos, const int len, const int maxItemsShown) {
+ListBox::ListBox(const Vector2& pos,
+	const int len, const int maxItemsShown) {
 
 	position = pos;
 	width = len;
@@ -32,10 +33,12 @@ void ListBox::initialize(shared_ptr<FontSet> fnt,
 	firstItemPos = Vector2(position.x, position.y);
 
 	scrollBar.reset(new ScrollBar(Vector2(position.x + width, position.y)));
+	scrollBar->setFactory(guiFactory);
 	if (!scrollBar->initialize(pixel, itemHeight * maxDisplayItems)) {
 		MessageBox(NULL, L"Failed to create ScrollBar",
 			L"GUI initialization ERROR", MB_OK);
 	}
+	
 
 	frame.reset(new RectangleFrame(pixel));
 
@@ -206,11 +209,10 @@ XMVECTOR XM_CALLCONV ListBox::measureString() const {
 	return XMVECTOR();
 }
 
-
-#include "../Managers/GameManager.h"
+#include "../Controls/GUIFactory.h"
 void ListBox::setFont(const pugi::char_t* fontName) {
 
-	font = GameManager::guiFactory->getFont(fontName);
+	font = guiFactory->getFont(fontName);
 }
 
 

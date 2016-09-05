@@ -1,4 +1,3 @@
-#include "../pch.h"
 #pragma once
 
 #include "Button.h"
@@ -23,7 +22,7 @@
 
 /** A pop-up Dialog Box. Title area and button area
 	automatically adjust to size of their components. */
-class Dialog : GUIControlBox {
+class Dialog : public GUIControlBox {
 public:
 
 	Dialog();
@@ -43,17 +42,25 @@ public:
 		Note: user must initalize everything except for position. */
 	void setConfirmButton(unique_ptr<Button> okButton,
 		bool autoPosition = true, bool autoSize = true);
-
-	//void setConfirmButton(wstring text, const pugi::char_t* font = "Default Font");
+	/** Creates a Button that does nothing until OnClickListener is set. */
+	void setConfirmButton(wstring text, const pugi::char_t* font = "Default Font");
+	/** Sets the listener to the confirm button. Will create the confirm button if one
+		has not already beeen created for it. */
+	void setConfirmOnClickListener(Button::OnClickListener* iOnClickListener);
 
 	void setCancelButton(unique_ptr<Button> cancelButton);
 	/* Creates a cancel button to dialog that just closes the dialog. */
 	void setCancelButton(wstring text, const pugi::char_t* font = "Default Font");
+	/** Sets the listener to the cancel button. Will create the cancel button if one
+	has not already beeen created for it. */
+	void setCancelOnClickListener(Button::OnClickListener* iOnClickListener);
 
 	virtual void update(double deltaTime, MouseController* mouse);
 	virtual void draw(SpriteBatch* batch);
 
+	/* Add other GUIControls to dialog. Not Implemented Yet. */
 	virtual void addItem(unique_ptr<GUIControl> control) override;
+	/* Add other GUIControls to dialog. Not Implemented Yet. */
 	virtual void addItems(vector<unique_ptr<GUIControl>> controls) override;
 
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;

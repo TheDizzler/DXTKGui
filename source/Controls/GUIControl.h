@@ -3,12 +3,16 @@
 #include <pugixml.hpp>
 #include "../Engine/MouseController.h"
 #include "../BaseGraphics/FontSet.h"
+
 using namespace std;
 
 
 
 interface GUIControl : public IElement2D {
 public:
+
+	void setFactory(GUIFactory* factory);
+
 	/* Deprecating */
 	enum ClickAction {
 		EXIT, PLAY, SETTINGS, CANCEL, OK, UP, DOWN, NONE, CONFIRM,
@@ -65,7 +69,7 @@ protected:
 	bool isClicked = false;
 
 
-
+	GUIFactory* guiFactory;
 
 
 };
@@ -74,6 +78,6 @@ protected:
 interface GUIControlBox : public GUIControl {
 public:
 	virtual void addItem(unique_ptr<GUIControl> control) = 0;
-	virtual void addItems(std::vector<unique_ptr<GUIControl> > controls) = 0;
+	virtual void addItems(vector<unique_ptr<GUIControl> > controls) = 0;
 
 };

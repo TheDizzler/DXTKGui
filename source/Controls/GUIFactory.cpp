@@ -88,7 +88,7 @@ TextLabel* GUIFactory::createTextLabel(const Vector2& position,
 	wstring text, const char_t* fontName) {
 
 	TextLabel* label = new TextLabel(position, text, getFont(fontName));
-
+	label->setFactory(this);
 	return label;
 }
 
@@ -96,6 +96,7 @@ TextLabel* GUIFactory::createTextLabel(const Vector2& position,
 Button* GUIFactory::createButton(const char_t* fontName) {
 
 	Button* button = new Button(whitePixel, getFont(fontName));
+	button->setFactory(this);
 	return button;
 }
 
@@ -104,6 +105,7 @@ Button* GUIFactory::createButton(const Vector2& position, const Vector2& size,
 	wstring text, const char_t* fontName, const int frameThickness) {
 
 	Button* button = new Button(whitePixel, getFont(fontName));
+	button->setFactory(this);
 	button->setDimensions(position, size, frameThickness);
 	button->setText(text);
 	return button;
@@ -119,7 +121,7 @@ Button* GUIFactory::createImageButton(const char_t* upImageName,
 
 		wostringstream ws;
 		ws << "Could not find button image files: ";
-		ws << upImageName << " and " << downImageName;
+		ws << upImageName << " and/or " << downImageName;
 		ws << "\nCreating non-image button instead." << "\n";
 		OutputDebugString(ws.str().c_str());
 
@@ -129,7 +131,7 @@ Button* GUIFactory::createImageButton(const char_t* upImageName,
 
 	ImageButton* button = new ImageButton(getSpriteFromAsset(upImageName),
 		getSpriteFromAsset(downImageName), getFont(fontName));
-
+	button->setFactory(this);
 	return button;
 }
 
@@ -139,6 +141,7 @@ CheckBox* GUIFactory::createCheckBox(const Vector2& position,
 
 	CheckBox* check = new CheckBox(getSpriteFromAsset("CheckBox Unchecked"),
 		getSpriteFromAsset("CheckBox Checked"), getFont(fontName));
+	check->setFactory(this);
 	check->setText(text);
 	check->setPosition(position);
 	return check;
@@ -148,8 +151,21 @@ CheckBox* GUIFactory::createCheckBox(const Vector2& position,
 	const char_t* uncheckedImage, const char_t* checkedImage,
 	wstring text, const char_t* fontName) {
 
+	if (assetMap.find(uncheckedImage) == assetMap.end()
+		|| assetMap.find(checkedImage) == assetMap.end()) {
+
+		wostringstream ws;
+		ws << "Could not find button image files: ";
+		ws << uncheckedImage << " and/or " << checkedImage;
+		ws << "\nCreating non-image button instead." << "\n";
+		OutputDebugString(ws.str().c_str());
+
+		return createCheckBox(position, text, fontName);
+	}
+
 	CheckBox* check = new CheckBox(getSpriteFromAsset(uncheckedImage),
 		getSpriteFromAsset(checkedImage), getFont(fontName));
+	check->setFactory(this);
 	check->setText(text);
 	check->setPosition(position);
 	return check;
@@ -161,6 +177,7 @@ ListBox* GUIFactory::createListBox(const Vector2& position,
 	const char_t* fontName) {
 
 	ListBox* listbox = new ListBox(position, width, maxItemsShown);
+	listbox->setFactory(this);
 	listbox->initialize(getFont(fontName), whitePixel, enumerateList);
 	return listbox;
 }
@@ -168,6 +185,7 @@ ListBox* GUIFactory::createListBox(const Vector2& position,
 Dialog* GUIFactory::createDialog(const char_t* fontName) {
 
 	Dialog* dialog = new Dialog();
+	dialog->setFactory(this);
 	dialog->initialize(whitePixel, fontName);
 	return dialog;
 }

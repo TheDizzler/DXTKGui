@@ -97,10 +97,10 @@ void TextLabel::setToSelectedState() {
 	font->setTint(selectedColorText);
 }
 
-#include "../Managers/GameManager.h"
+#include "../Controls/GUIFactory.h"
 void TextLabel::setFont(const pugi::char_t* fontName) {
 
-	font = GameManager::guiFactory->getFont(fontName);
+	font = guiFactory->getFont(fontName);
 }
 
 void TextLabel::setFont(shared_ptr<FontSet> newFont) {

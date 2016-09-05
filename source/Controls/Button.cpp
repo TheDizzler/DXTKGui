@@ -2,7 +2,7 @@
 
 
 Button::Button(ComPtr<ID3D11ShaderResourceView> pixelTexture,
-	unique_ptr<FontSet> font) {
+	unique_ptr<FontSet> font){
 
 	frame.reset(new RectangleFrame(pixelTexture));
 	rectSprite.reset(new RectangleSprite(pixelTexture));
@@ -14,6 +14,8 @@ Button::Button(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 
 
 Button::~Button() {
+	if (onClickListener != NULL)
+		delete onClickListener;
 }
 
 
@@ -201,10 +203,10 @@ bool Button::hovering() {
 	return isHover;
 }
 
-#include "../Managers/GameManager.h"
+#include "../Controls/GUIFactory.h"
 void Button::setFont(const pugi::char_t* font) {
 
-	buttonLabel->setFont(GameManager::guiFactory->getFont(font));
+	buttonLabel->setFont(guiFactory->getFont(font));
 }
 
 

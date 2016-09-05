@@ -1,11 +1,18 @@
 #include "GUIControl.h"
 
+void GUIControl::setFactory(GUIFactory* factory) {
+
+	guiFactory = factory;
+}
+
 void GUIControl::setPosition(const Vector2& pos) {
 	position = pos;
 	hitArea->position = Vector2(position.x /*- getWidth()*scale.x / 2*/,
 		position.y/* - getHeight()*scale.y / 2*/);
 	hitArea->size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
 }
+
+
 
 void GUIControl::setScale(const Vector2& scl) {
 	scale = scl;
