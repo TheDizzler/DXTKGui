@@ -1,7 +1,9 @@
-# DXTKGui v0.28b
+# DXTKGui v0.29b
 
 A GUI Framework for DirectX ToolKit.
 This developed out of one part not being able to find any existing frameworks and one part me procrastinating on developing the game I'm working on. I had some hacky GUI features (button, dialog box, listbox) and I was bothered by how inflexible and cumbersome they were. So I started this project to make an extensible and re-usable GUI framework (re-usable in my game engines anyway).
+
+This tool kit requires DirectXTK, or a SpriteBatch that works identically to the DirectXTK SpriteBatch. It also requires the mouse controller from my engine (does not take keyboard input. Yet, if ever). I wil probably make a mouse interface class so that the required mouse functions can be implemented in your (probably better) mouse controller.
 
 ### The primary goal of this project was to have GUI controls at my fingertips with minimal hassle. This was never meant to be a professional looking, visually appealing framework, although I am trying to allow every control to have custom, imported graphics.
 
@@ -25,12 +27,12 @@ This is still a massive mess....
 >- ListBox - with onClickListener; auto-size to content
 
 ##TODO:
->- Dialog Box - with custom image; transition effects	
->- List Box -  multi-select
 >- Combo Box
+>- Dialog Box - with custom image; transition effects
+>- Scrollbar - that can be slapped on to anything
+>- List Box - multi-select
 >- Radio Buttons
 >- Slider
->- Scrollbar - that can be slapped on to anything
 >- add triggers for sfx
 >- screen transition effects
 >- More Primitive Shapes - if I feel they might be useful
