@@ -117,7 +117,7 @@ private:
 	bool calculateButtonPosition(Vector2& buttonPos);
 	int getMaxButtonHeight();
 
-	virtual void setPosition(const Vector2& newPosition) override;
+	void setPosition(Vector2& newPosition);
 	/** Used for dragging dialog around, if draggable set. */
 	void movePosition(const Vector2& moveVector);
 

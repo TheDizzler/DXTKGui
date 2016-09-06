@@ -405,8 +405,16 @@ int Dialog::getMaxButtonHeight() {
 	return maxHeight;
 }
 
-void Dialog::setPosition(const Vector2& newPosition) {
+void Dialog::setPosition(Vector2& newPosition) {
 
+	if (newPosition.x < 0)
+		newPosition.x = 0;
+	if (newPosition.y < 0)
+		newPosition.y = 0;
+	if (newPosition.x + size.x > Globals::WINDOW_WIDTH)
+		newPosition.x = Globals::WINDOW_WIDTH - size.x;
+	if (newPosition.y + size.y > Globals::WINDOW_HEIGHT)
+		newPosition.y = Globals::WINDOW_HEIGHT - size.y;
 	Vector2 moveBy = newPosition - position;
 	GUIControl::setPosition(newPosition);
 	frame->moveBy(moveBy);
