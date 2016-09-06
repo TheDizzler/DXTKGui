@@ -87,6 +87,7 @@ void ScrollBar::setPosition(const Vector2 newPosition) {
 	hitArea->position = scrollBarPosition;
 }
 
+
 void ScrollBar::setScrollBar(int totalItems, int itemHeight, int maxDisplayItems) {
 
 	percentForOneItem = (double) 1 / (totalItems - maxDisplayItems);
@@ -197,18 +198,22 @@ void ScrollBar::draw(SpriteBatch * batch) {
 }
 
 void ScrollBar::setScrollPositionByPercent(float newPositionPercentage) {
-
 	percentScroll = newPositionPercentage;
 	scrubber->setScrollPositionByPercent(newPositionPercentage);
 }
 
+void ScrollBar::scrollByIncrement(int scrollIncrement) {
+	scrubber->scroll(scrollIncrement * percentForOneItem);
+}
 
 const Vector2& ScrollBar::getPosition() const {
 	return position;
 }
+
 const int ScrollBar::getWidth() const {
 	return scrollBarDownButton->getWidth();
 }
+
 const int ScrollBar::getHeight() const {
 	return maxHeight;
 }

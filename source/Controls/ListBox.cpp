@@ -38,7 +38,7 @@ void ListBox::initialize(shared_ptr<FontSet> fnt,
 		MessageBox(NULL, L"Failed to create ScrollBar",
 			L"GUI initialization ERROR", MB_OK);
 	}
-	
+
 
 	frame.reset(new RectangleFrame(pixel));
 
@@ -102,6 +102,13 @@ void ListBox::clear() {
 
 void ListBox::update(double deltaTime, MouseController* mouse) {
 
+	if (itemsToDisplay == maxDisplayItems || alwaysShowScrollBar) {
+		scrollBar->scrollByIncrement(-mouse->getWheelDelta());
+		scrollBar->update(deltaTime, mouse);
+		firstItemToDisplay = (scrollBar->percentScroll)
+			* (listItems.size() - maxDisplayItems);
+	}
+
 	for (ListItem* item : listItems) {
 		if (item->update(deltaTime, mouse)) {
 			if (!multiSelect) {
@@ -120,15 +127,7 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 	}
 
 
-	if (itemsToDisplay == maxDisplayItems || alwaysShowScrollBar) {
-		scrollBar->update(deltaTime, mouse);
-		firstItemToDisplay = (scrollBar->percentScroll)
-			* (listItems.size() - maxDisplayItems);
 
-		/*wostringstream ws;
-		ws << "\n" << "%: " << scrollBar->percentScroll;
-		OutputDebugString(ws.str().c_str());*/
-	}
 
 	Vector2 pos = firstItemPos;
 
@@ -176,15 +175,16 @@ void ListBox::setSelected(size_t newIndex) {
 	}
 	listItems[selectedIndex]->isSelected = true;
 
-	// Adjust starting position of list to place the selected in view
-	// should only be relevant when the list is setup with an item selected.
+	// Adjust starting position of list to place the selected item into view.
+	// Should only be relevant when the list is setup with an item selected.
 	if (abs((float) firstItemToDisplay - selectedIndex) > maxDisplayItems) {
 
 		if (listItems.size() - selectedIndex < maxDisplayItems)
 			selectedIndex = listItems.size() - maxDisplayItems;
 
 	}
-	scrollBar->setScrollPositionByPercent(selectedIndex / (float) (listItems.size() - maxDisplayItems));
+	scrollBar->setScrollPositionByPercent(
+		selectedIndex / (float) (listItems.size() - maxDisplayItems));
 
 }
 

@@ -1,10 +1,5 @@
 #pragma once
 
-//#pragma comment (lib, "dinput8.lib")
-
-//#include <dinput.h>
-//#include <DirectXMath.h>
-//#include <GamePad.h>
 
 #include "MouseController.h"
 #include "KeyboardController.h"

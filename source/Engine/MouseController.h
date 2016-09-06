@@ -23,6 +23,7 @@ public:
 
 	MouseButton currentButtons;
 	MouseButton lastButtons;
+	
 
 	MouseController(HWND hwnd);
 	~MouseController();
@@ -40,6 +41,7 @@ public:
 		(WM_INPUT) then the same RAWMOUSE info gets recycled. */
 	const Vector2 getMovement() const;
 
+	const short getWheelDelta();
 	bool leftButtonDown();
 	bool midButtonDown();
 	bool rightButtonDown();
@@ -57,6 +59,8 @@ private:
 	RAWMOUSE* raw;
 
 	void saveLastRawInput();
+
+	short mouseWheelDelta = 0;
 
 	bool isClicked = false;
 	bool isPressed = false;

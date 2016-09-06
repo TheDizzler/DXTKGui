@@ -60,6 +60,8 @@ public:
 
 	void setScrollPositionByPercent(float newPositionPercentage);
 	void setPosition(const Vector2 newPosition);
+	/** Call this from parent control on mouse scroll. */
+	void scrollByIncrement(int scrollIncrement);
 
 	virtual const Vector2& getPosition() const override;
 	virtual const int getWidth() const override;

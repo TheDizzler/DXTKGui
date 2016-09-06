@@ -38,26 +38,30 @@ void MouseController::getRawInput(RAWMOUSE* rawMouse) {
 	OutputDebugString(ws.str().c_str());*/
 	saveLastRawInput();
 
-	bool bDown = raw->usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN;
-	bool bUp = raw->usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP;
-	if (bDown && !bUp) {
+	const USHORT buttonFlags = raw->usButtonFlags;
+
+	if (buttonFlags & RI_MOUSE_WHEEL) {
+		mouseWheelDelta = (short) raw->usButtonData;
+		/*wostringstream ws;
+		ws << "mouseWheel: " << mouseWheel << "\n";
+		OutputDebugString(ws.str().c_str());*/
+	}
+
+
+	if (buttonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) {
 		currentButtons.leftButtonDown = true;
-	} else if (bUp) {
+	} else if (buttonFlags & RI_MOUSE_LEFT_BUTTON_UP) {
 		currentButtons.leftButtonDown = false;
 	}
 
-	bDown = raw->usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN;
-	bUp = raw->usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_UP;
-	if (bDown && !bUp)
+	if (buttonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN)
 		currentButtons.midButtonDown = true;
-	else if (bUp)
+	else if (buttonFlags & RI_MOUSE_MIDDLE_BUTTON_UP)
 		currentButtons.midButtonDown = false;
 
-	bDown = raw->usButtonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN;
-	bUp = raw->usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP;
-	if (bDown && !bUp)
+	if (buttonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN)
 		currentButtons.rightButtonDown = true;
-	else if (bUp)
+	else if (buttonFlags & RI_MOUSE_RIGHT_BUTTON_UP)
 		currentButtons.rightButtonDown = false;
 
 	POINT cursorPos;
@@ -87,6 +91,13 @@ void MouseController::saveLastRawInput() {
 
 	lastButtons = currentButtons;
 
+}
+
+const short MouseController::getWheelDelta() {
+
+	short delta = mouseWheelDelta / WHEEL_DELTA;
+	mouseWheelDelta = 0;
+	return delta;
 }
 
 bool MouseController::leftButtonDown() {
