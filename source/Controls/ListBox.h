@@ -24,7 +24,7 @@ public:
 	void updatePosition(const Vector2& position);
 	virtual void draw(SpriteBatch* batch);
 
-	
+
 
 	bool isSelected = false;
 
@@ -64,25 +64,31 @@ public:
 
 /** A simple control to display various (text) items. */
 class ListBox : public GUIControl {
+	//friend class ComboBox;
 public:
 	ListBox(const Vector2& position, const int width, const int maxItemsShown = 7);
 	~ListBox();
 
 	void initialize(shared_ptr<FontSet> font,
 		ComPtr<ID3D11ShaderResourceView> whitePixel, bool enumerateList = false);
+
+	/* Note: this function has not been tested much....not at all really...*/
+	void addItem(ListItem* item);
 	void addItems(vector<ListItem*> items);
 	void clear();
 
 	virtual void update(double deltaTime, MouseController * mouse) override;
 	void draw(SpriteBatch* batch);
 
-	//void drawSelected(SpriteBatch* batch, const Vector2& selectedPosition);
 
 	void setSelected(size_t newIndex);
+	const int getSelectedIndex() const;
 	ListItem* getSelected();
 	ListItem* getItem(size_t index);
 
+	/* Not used in ListBox. */
 	virtual void setText(wstring text);
+	/* Not used in ListBox. */
 	virtual XMVECTOR XM_CALLCONV measureString() const;
 
 	bool multiSelect = false;
@@ -157,4 +163,5 @@ private:
 	OnClickListener* onClickListener = NULL;
 
 	void setWidth(int newWidth);
+	void resizeBox();
 };

@@ -111,10 +111,35 @@ Button* GUIFactory::createButton(const Vector2& position, const Vector2& size,
 	return button;
 }
 
+/* Creates an image button with only one image. */
+Button* GUIFactory::createOneImageButton(const char_t* buttonImage, const char_t* fontName) {
+
+	if (assetMap.find(buttonImage) == assetMap.end()) {
+
+		wostringstream ws;
+		ws << "Could not find button image file ";
+		ws << buttonImage;
+		ws << "\nCreating non-image button instead." << "\n";
+		OutputDebugString(ws.str().c_str());
+
+		Button* button = createButton(fontName);
+		button->setDimensions(Vector2::Zero, Vector2(80, 68));
+		button->setText(L"No Image!");
+		return button;
+
+	}
+
+	ImageButton* button = new ImageButton(getSpriteFromAsset(buttonImage),
+		getFont(fontName));
+	button->setFactory(this);
+	return button;
+}
 
 Button* GUIFactory::createImageButton(const char_t* upImageName,
 	const char_t* downImageName, const char_t* fontName) {
 
+	if (downImageName == NULL)
+		return createOneImageButton(upImageName, fontName);
 
 	if (assetMap.find(upImageName) == assetMap.end()
 		|| assetMap.find(downImageName) == assetMap.end()) {
@@ -125,13 +150,24 @@ Button* GUIFactory::createImageButton(const char_t* upImageName,
 		ws << "\nCreating non-image button instead." << "\n";
 		OutputDebugString(ws.str().c_str());
 
-		return createButton(fontName);
+		Button* button = createButton(fontName);
+		button->setDimensions(Vector2::Zero, Vector2(80, 68));
+		button->setText(L"No Image!");
+		return button;
 	}
 
 
 	ImageButton* button = new ImageButton(getSpriteFromAsset(upImageName),
 		getSpriteFromAsset(downImageName), getFont(fontName));
 	button->setFactory(this);
+	return button;
+}
+
+Button* GUIFactory::createImageButton(const Vector2& position,
+	const char_t* upImage, const char_t* downImage, const char_t* fontName) {
+
+	ImageButton* button = (ImageButton*) createImageButton(upImage, downImage, fontName);
+	button->setPosition(position);
 	return button;
 }
 
@@ -180,6 +216,16 @@ ListBox* GUIFactory::createListBox(const Vector2& position,
 	listbox->setFactory(this);
 	listbox->initialize(getFont(fontName), whitePixel, enumerateList);
 	return listbox;
+}
+
+ComboBox* GUIFactory::createComboBox(const Vector2& position,
+	const int width, const int maxItemsShown,
+	bool enumerateList, const char_t* fontName) {
+
+	ComboBox* combobox = new ComboBox(position, width, maxItemsShown);
+	combobox->setFactory(this);
+	combobox->initialize(getFont(fontName), whitePixel, enumerateList);
+	return combobox;
 }
 
 Dialog* GUIFactory::createDialog(bool movable, const char_t* fontName) {

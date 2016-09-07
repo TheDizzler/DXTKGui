@@ -4,7 +4,7 @@
 
 #include "Screen.h"
 #include "../Controls/Dialog.h"
-#include "../Controls/ListBox.h"
+#include "../Controls/ComboBox.h"
 #include "../Controls/Button.h"
 #include "../Controls/CheckBox.h"
 
@@ -48,11 +48,11 @@ private:
 	ConfigScreen* config;
 };
 
-class OnClickListenerDisplayModeList : public ListBox::OnClickListener {
+class OnClickListenerDisplayModeList : public ComboBox::OnClickListener {
 public:
 	OnClickListenerDisplayModeList(ConfigScreen* screen) : config(screen) {
 	}
-	virtual void onClick(ListBox* listbox, int selectedIndex) override;
+	virtual void onClick(ComboBox* combobox, int selectedIndex) override;
 private:
 	ConfigScreen* config;
 
@@ -171,11 +171,11 @@ private:
 	void populateDisplayModeList(vector<DXGI_MODE_DESC> displayModes);
 	TextLabel* adapterLabel;
 	TextLabel* displayLabel;
-	TextLabel* displayModeLabel;
+	//TextLabel* displayModeLabel;
 
 	ListBox* adapterListbox;
 	ListBox* displayListbox;
-	ListBox* displayModeListbox;
+	ComboBox* displayModeCombobox;
 
 };
 

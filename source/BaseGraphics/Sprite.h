@@ -49,6 +49,7 @@ public:
 	virtual const Vector2& getScale() const override;
 	virtual const float getRotation() const override;
 	virtual const Color& getTint() const override;
+	/* No alpha implementation. */
 	virtual const float getAlpha() const override;
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
@@ -61,6 +62,7 @@ public:
 	virtual void setScale(const Vector2& scale) override;
 	virtual void setRotation(const float rotation) override;
 	virtual void setTint(const Color& color) override;
+	/* No alpha implementation. */
 	virtual void setAlpha(const float alpha) override;
 
 	virtual void update(double deltaTime);

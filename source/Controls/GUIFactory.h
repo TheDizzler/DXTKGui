@@ -36,7 +36,11 @@ public:
 		wstring text = L"", const char_t* fontName = "Default Font",
 		const int frameThickness = 2);
 
-	Button* createImageButton(const char_t* upImage, const char_t* downImage,
+	
+	Button* createImageButton(const char_t* upImage, const char_t* downImage = NULL,
+		const char_t* fontName = "Default Font");
+	Button* createImageButton(const Vector2& position,
+		const char_t* upImage, const char_t* downImage,
 		const char_t* fontName = "Default Font");
 
 	/** Created a checkbox using default images. */
@@ -50,6 +54,9 @@ public:
 		const int maxItemsShown = 7, bool enumerateList = false,
 		const char_t* fontName = "Default Font");
 
+	ComboBox* createComboBox(const Vector2& position, const int width,
+		const int maxItemsShown = 7, bool enumerateList = false,
+		const char_t* fontName = "Default Font");
 
 	Dialog* createDialog(bool movable = false, const char_t* fontName = "Default Font");
 
@@ -61,6 +68,9 @@ private:
 		This is used for solid color backgrounds and area fills. */
 	ComPtr<ID3D11ShaderResourceView> whitePixel;
 
+	/* Creates an image button with only one image. */
+	Button* createOneImageButton(const char_t* buttonImage,
+		const char_t* fontName = "Default Font");
 
 	bool getGUIAssetsFromXML(ComPtr<ID3D11Device> device);
 	xml_node guiAssetsNode;

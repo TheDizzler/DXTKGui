@@ -75,7 +75,8 @@ protected:
 
 };
 
-/** A GUI control that can hold other GUI controls. */
+/** A GUI control that can hold other GUI controls.
+		Not actually implemented.... */
 interface GUIControlBox : public GUIControl {
 public:
 	virtual void addItem(unique_ptr<GUIControl> control) = 0;

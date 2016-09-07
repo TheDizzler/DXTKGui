@@ -25,11 +25,12 @@ This is still a massive mess....
 >- Dialog Box - draggable and non-draggable; no image loading yet;
 >- Check Box - with onClickListener
 >- ListBox - with onClickListener; auto-size to content
+>- Combo Box
 
 ##TODO:
->- Combo Box
->- Dialog Box - with custom image; transition effects
->- Scrollbar - that can be slapped on to anything
+>- Combo Box - allow custom button
+>- Dialog Box - allow custom bg image; transition effects
+>- Scrollbar - that can be slapped on to anything; allow custom sprites
 >- List Box - multi-select
 >- Radio Buttons
 >- Slider

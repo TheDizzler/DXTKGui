@@ -51,6 +51,15 @@ void ListBox::initialize(shared_ptr<FontSet> fnt,
 }
 
 
+void ListBox::addItem(ListItem* item) {
+
+	listItems.push_back(item);
+	if (item->measureString().x >  +scrollBar->getWidth() > longestLabelLength)
+		longestLabelLength = item->measureString().x;
+
+	resizeBox();
+}
+
 /** Adds a vector of ListItems to listbox and clears the vector parameter.*/
 void ListBox::addItems(vector<ListItem* > items) {
 
@@ -63,11 +72,17 @@ void ListBox::addItems(vector<ListItem* > items) {
 	}
 	items.clear();
 
+	resizeBox();
+	
+}
+
+
+void ListBox::resizeBox() {
+
 	if (longestLabelLength > width) {
 		setWidth(longestLabelLength + scrollBar->getWidth());
 		for (ListItem* item : listItems)
 			item->setWidth(width - scrollBar->getWidth());
-
 	}
 
 	itemsToDisplay = maxDisplayItems;
@@ -84,7 +99,6 @@ void ListBox::addItems(vector<ListItem* > items) {
 	int frameHeight = itemHeight * itemsToDisplay;
 	frame->setDimensions(position, Vector2(frameWidth, frameHeight), frameThickness);
 }
-
 
 void ListBox::setWidth(int newWidth) {
 
@@ -188,6 +202,10 @@ void ListBox::setSelected(size_t newIndex) {
 
 }
 
+const int ListBox::getSelectedIndex() const {
+	return selectedIndex;
+}
+
 
 ListItem* ListBox::getSelected() {
 	if (listItems.size() <= 0)
@@ -221,7 +239,7 @@ const Vector2& ListBox::getPosition() const {
 }
 
 const int ListBox::getWidth() const {
-	return width;
+	return frame->getWidth();
 }
 
 const int ListBox::getHeight() const {

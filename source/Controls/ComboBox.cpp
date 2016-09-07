@@ -1,100 +1,155 @@
 #include "ComboBox.h"
 
 
-ComboBox::ComboBox(const Vector2& pos, const int len) {
+ComboBox::ComboBox(const Vector2& pos, const int len, const int maxItemsShown) {
 
 	position = pos;
 	width = len;
-	selectedDisplayPosition = Vector2(position.x + textMarginX, position.y + textMarginY);
-	listBox.reset(new ListBox(
-		Vector2(position.x, position.y + textMarginY), width));
+
+	maxDisplayItems = maxItemsShown;
+
 }
 
 
 ComboBox::~ComboBox() {
 }
 
-//#include "../assets.h"
-bool ComboBox::initialize(ComPtr<ID3D11Device> device, const wchar_t* fontFile) {
-
-	//listBox->initialize(device, fontFile);
-
-	   /*buttonSprite.reset(new Sprite());
-	   if (!buttonSprite->load(device, Assets::comboButton)) {
-	   MessageBox(0, L"Le Error", L"Error loading Combo button dds file!", MB_OK);
-	   return false;
-	   }
-	   buttonSprite->setRotation(XM_PI);
-	   buttonSprite->setPosition(
-	   Vector2(position.x + width - buttonSprite->getWidth(), position.y));*/
-
-	//buttonClosed.reset(new ImageButton());
-	//if (!buttonClosed->load(device,
-	//	Assets::comboButtonClosedFile, Assets::comboButtonPressedClosedFile))
-	//	return false;
-	//button->action = ButtonAction::CANCEL_BUTTON;
-	//button->setText("Keep Playing!");
-	/*buttonClosed->setPosition(
-		Vector2(position.x + width - buttonClosed->getWidth(), position.y));*/
+#include "../Controls/GUIFactory.h"
+bool ComboBox::initialize(shared_ptr<FontSet> fnt,
+	ComPtr<ID3D11ShaderResourceView> whitePixel, bool enumerateList) {
 
 
-	/*buttonOpen.reset(new ImageButton());
-	if (!buttonOpen->load(device,
-		Assets::comboButtonOpenFile, Assets::comboButtonPressedOpenFile))
-		return false;*/
-	//button->action = ButtonAction::CANCEL_BUTTON;
-	//button->setText("Keep Playing!");
-	//buttonOpen->setPosition(
-	//	Vector2(position.x + width - buttonOpen->getWidth(), position.y));
+	frame.reset(new RectangleFrame(whitePixel));
 
-	//button = buttonClosed.get();
+	comboListButton.reset((ImageButton*) guiFactory->createImageButton("Combo Button Closed"));
+	//comboListButton->setRotation(XM_PI);
+	comboListButton->setPosition(
+		Vector2(position.x + width - comboListButton->getWidth(), position.y));
+	comboListButton->setOnClickListener(new ShowListBoxListener(this));
+	frame->setDimensions(position, Vector2(width, comboListButton->getHeight()));
+
+	listBox.reset(guiFactory->createListBox(
+		Vector2(position.x, position.y + frame->getHeight()), width, maxDisplayItems));
+	listBox->setOnClickListener(new ListBoxListener(this));
+
+	selectedLabel.reset(guiFactory->createTextLabel(
+		Vector2(position.x + textMarginX, position.y + textMarginY)));
 
 	return true;
 }
 
 void ComboBox::update(double deltaTime, MouseController* mouse) {
 
-	//button->update(deltaTime, mouse);
-	//if (button->clicked()) {
-	//	if (isOpen)
-	//		button = buttonClosed.get();
-	//	else
-	//		button = buttonOpen.get();
-	//	isOpen != isOpen;
+	selectedLabel->update(deltaTime, mouse);
+	comboListButton->update(deltaTime, mouse);
 
-	//}
 
-	//if (isOpen) {
-	//	// display and check for hover
-	//	listBox->update(deltaTime, mouse);
-	//}
+	if (isOpen) {
+		listBox->update(deltaTime, mouse);
+	}
 
 }
 
 void ComboBox::draw(SpriteBatch* batch) {
 
-	//if (isOpen) {
-	//	listBox->draw(batch);
-	//}
+	if (isOpen) {
+		listBox->draw(batch);
+	}
 
-	//// draw the basic box, selected item and button
-	//listBox->drawSelected(batch, selectedDisplayPosition);
-	//button->draw(batch);
+	selectedLabel->draw(batch);
+	comboListButton->draw(batch);
+	frame->draw(batch);
 }
 
-//void ComboBox::addItems(vector<wstring> items) {
-//
-//	listBox->addItems(items);
-//}
 
 void ComboBox::open() {
-
-	/*isOpen = true;
-	button = buttonOpen.get();*/
+	isOpen = !isOpen;
 }
 
 void ComboBox::close() {
+	isOpen = false;
+}
 
-	/*isOpen = true;
-	button = buttonClosed.get();*/
+void ComboBox::resizeBox() {
+
+	comboListButton->setPosition(
+		Vector2(position.x + width - comboListButton->getWidth(), position.y));
+	comboListButton->setOnClickListener(new ShowListBoxListener(this));
+	frame->setDimensions(position, Vector2(width, comboListButton->getHeight()));
+}
+
+void ComboBox::setFont(const pugi::char_t * font) {
+}
+
+void ComboBox::setSelected(size_t newIndex) {
+	listBox->setSelected(newIndex);
+	selectedLabel->setText(listBox->getSelected()->toString());
+}
+
+ListItem* ComboBox::getSelected() {
+	return listBox->getSelected();
+}
+
+ListItem* ComboBox::getItem(size_t index) {
+	return listBox->getItem(index);
+}
+
+//void ComboBox::setOnClickListener(ListBox::OnClickListener* iOnC) {
+//	listBox->setOnClickListener(iOnC);
+//}
+
+void ComboBox::setText(wstring text) {
+}
+
+XMVECTOR XM_CALLCONV ComboBox::measureString() const {
+	return Vector2();
+}
+
+const Vector2 & ComboBox::getPosition() const {
+	return position;
+}
+
+const int ComboBox::getWidth() const {
+	return width;
+}
+
+const int ComboBox::getHeight() const {
+	return hitArea->size.y;
+}
+
+bool ComboBox::clicked() {
+	return isClicked;
+}
+
+bool ComboBox::selected() {
+	return isSelected;
+}
+
+bool ComboBox::hovering() {
+	return isHover;
+}
+
+void ComboBox::addItem(ListItem* item) {
+	listBox->addItem(item);
+	// may have to do some resizing here
+	width = listBox->getWidth();
+	resizeBox();
+}
+
+void ComboBox::addItems(vector<ListItem*> items) {
+	listBox->addItems(items);
+	width = listBox->getWidth();
+	resizeBox();
+}
+
+void ComboBox::clear() {
+	listBox->clear();
+}
+
+void ComboBox::ShowListBoxListener::onClick(Button * button) {
+	comboBox->open();
+}
+
+void ComboBox::ListBoxListener::onClick(ListBox* listbox, int selectedItemIndex) {
+	comboBox->triggerOnClick();
 }

@@ -59,7 +59,7 @@ public:
 		virtual void onClick(Button* button) = 0;
 	};
 
-	typedef void (OnClickListener::*OnClickFunction) (Button*);
+	
 
 	void setOnClickListener(OnClickListener* iOnC) {
 		if (onClickListener != NULL)
@@ -76,7 +76,7 @@ public:
 	}
 
 protected:
-
+	typedef void (OnClickListener::*OnClickFunction) (Button*);
 	OnClickFunction onClickFunction;
 	OnClickListener* onClickListener = NULL;
 
@@ -104,6 +104,8 @@ protected:
 	and an Unpressed image (upButton). */
 class ImageButton : public Button {
 public:
+	ImageButton(unique_ptr<Sprite> buttonSprite,
+		 unique_ptr<FontSet> font);
 	ImageButton(unique_ptr<Sprite> upButtonSprite,
 		unique_ptr<Sprite> downButtonSprite, unique_ptr<FontSet> font);
 	~ImageButton();

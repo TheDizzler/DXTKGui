@@ -121,27 +121,75 @@ void RectangleFrame::draw(SpriteBatch* batch) {
 
 	// draw top horizontal bar
 	batch->Draw(pixel.Get(), frameTopPos, &frameHorizontal,
-		tint, 0.0f, Vector2(0, 0), Vector2(1, 1),
+		tint, rotation, origin, scale,
 		SpriteEffects_None, 0.0f);
 
 	// draw bottom horizontal bar
 	batch->Draw(pixel.Get(), frameBottomPos, &frameHorizontal,
-		tint, 0.0f, Vector2(0, 0), Vector2(1, 1),
+		tint, rotation, origin, scale,
 		SpriteEffects_None, 0.0f);
 
 	// draw left vertical bar
 	batch->Draw(pixel.Get(), frameLeftPos, &frameVertical,
-		tint, 0.0f, Vector2(0, 0), Vector2(1, 1),
+		tint, rotation, origin, scale,
 		SpriteEffects_None, 0.0f);
 
 	// draw right vertical bar
 	batch->Draw(pixel.Get(), frameRightPos, &frameVertical,
-		tint, 0.0f, Vector2(0, 0), Vector2(1, 1),
+		tint, rotation, origin, scale,
 		SpriteEffects_None, 0.0f);
 }
 
-int RectangleFrame::getThickness() {
+const Vector2 & RectangleFrame::getPosition() const {
+	return frameTopPos;
+}
+
+const int RectangleFrame::getWidth() const {
+	return frameHorizontal.right;
+}
+
+const int RectangleFrame::getHeight() const {
+	return frameVertical.bottom;
+}
+
+const int RectangleFrame::getThickness() const {
 	return frameThickness;
+}
+
+const Vector2 & RectangleFrame::getOrigin() const {
+	return origin;
+}
+
+const Vector2 & RectangleFrame::getScale() const {
+	return scale;
+}
+
+const float RectangleFrame::getRotation() const {
+	return rotation;
+}
+
+const Color & RectangleFrame::getTint() const {
+	return tint;
+}
+
+const float RectangleFrame::getAlpha() const {
+	return 0.0f;
+}
+
+void RectangleFrame::setOrigin(const Vector2& orgn) {
+origin = orgn;
+}
+
+void RectangleFrame::setScale(const Vector2& scl) {
+scale = scl;
+}
+
+void RectangleFrame::setRotation(const float rot) {
+rotation = rot;
+}
+
+void RectangleFrame::setAlpha(const float alpha) {
+
 }
 
 

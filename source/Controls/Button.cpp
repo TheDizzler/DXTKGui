@@ -2,7 +2,7 @@
 
 
 Button::Button(ComPtr<ID3D11ShaderResourceView> pixelTexture,
-	unique_ptr<FontSet> font){
+	unique_ptr<FontSet> font) {
 
 	frame.reset(new RectangleFrame(pixelTexture));
 	rectSprite.reset(new RectangleSprite(pixelTexture));
@@ -10,6 +10,8 @@ Button::Button(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 	buttonLabel.reset(new TextLabel(Vector2(0, 0), L"", move(font)));
 
 	position = Vector2(-1, -1);
+
+	setToUnpressedState();
 }
 
 
@@ -212,6 +214,19 @@ void Button::setFont(const pugi::char_t* font) {
 
 
 
+ImageButton::ImageButton(unique_ptr<Sprite> buttonSprite,
+	unique_ptr<FontSet> font) : Button(NULL, move(font)) {
+
+	// a rough guesstimate
+	setTextOffset(Vector2(0, -5), Vector2(0, 0));
+
+	normalSprite = move(buttonSprite);
+	normalSprite->setOrigin(Vector2(0, 0));
+	Vector2 size = Vector2(normalSprite->getWidth(), normalSprite->getHeight());
+
+	hitArea.reset(new HitArea(Vector2::Zero, size));
+}
+
 /** **** ImageButton **** **/
 ImageButton::ImageButton(unique_ptr<Sprite> upButtonSprite,
 	unique_ptr<Sprite> downButtonSprite, unique_ptr<FontSet> font)
@@ -227,6 +242,7 @@ ImageButton::ImageButton(unique_ptr<Sprite> upButtonSprite,
 	Vector2 size = Vector2(normalSprite->getWidth(), normalSprite->getHeight());
 
 	hitArea.reset(new HitArea(Vector2::Zero, size));
+
 }
 
 ImageButton::~ImageButton() {
@@ -244,7 +260,8 @@ void ImageButton::setPosition(const Vector2& pos) {
 	position = pos;
 	Button::setPosition(position);
 	normalSprite->setPosition(position);
-	pressedSprite->setPosition(position);
+	if (pressedSprite != NULL)
+		pressedSprite->setPosition(position);
 
 }
 
@@ -252,7 +269,8 @@ void ImageButton::setScale(const Vector2& scl) {
 
 	Button::setScale(scl);
 	normalSprite->setScale(scale);
-	pressedSprite->setScale(scale);
+	if (pressedSprite != NULL)
+		pressedSprite->setScale(scale);
 }
 
 
@@ -276,5 +294,8 @@ void ImageButton::setToSelectedState() {
 
 	Vector2 pos = buttonLabel->getPosition();
 	buttonLabel->setPosition(pressedTextPosition);
-	drawSprite = pressedSprite.get();
+	if (pressedSprite.get() != NULL)
+		drawSprite = pressedSprite.get();
+	else
+		normalSprite->setTint(selectedColor);
 }

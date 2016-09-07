@@ -18,7 +18,7 @@ public:
 };
 
 /** A primitive, non-filled rectangle. */
-class RectangleFrame {
+class RectangleFrame : public IElement2D {
 public:
 	RectangleFrame(ComPtr<ID3D11ShaderResourceView> pixel);
 	RectangleFrame(ComPtr<ID3D11ShaderResourceView> pixel,
@@ -26,7 +26,7 @@ public:
 	~RectangleFrame();
 
 	void setDimensions(const Vector2& position, const Vector2& size,
-		int frameThickness);
+		int frameThickness = 2);
 
 	void setPosition(const Vector2& newPosition);
 	void moveBy(const Vector2& moveVector);
@@ -35,8 +35,22 @@ public:
 
 	void draw(SpriteBatch* batch);
 
+	const Vector2& getPosition() const;
+	const int getWidth() const;
+	const int getHeight() const;
+	const int getThickness() const;
 
-	int getThickness();
+	virtual const Vector2& getOrigin() const override;
+	virtual const Vector2& getScale() const override;
+	virtual const float getRotation() const override;
+	virtual const Color& getTint() const override;
+	/* No alpha implementation. */
+	virtual const float getAlpha() const override;
+	virtual void setOrigin(const Vector2& origin) override;
+	virtual void setScale(const Vector2& scale) override;
+	virtual void setRotation(const float rotation) override;
+	/* No alpha implementation. */
+	virtual void setAlpha(const float alpha) override;
 
 private:
 	ComPtr<ID3D11ShaderResourceView> pixel;
@@ -49,8 +63,13 @@ private:
 	Vector2 frameRightPos;
 	Vector2 frameBottomPos;
 
+	Vector2 origin = Vector2(0, 0);
+	Vector2 scale = Vector2(1, 1);
+	float rotation = 0.0f;
 	Color tint;
 	int frameThickness;
+
+	
 };
 
 

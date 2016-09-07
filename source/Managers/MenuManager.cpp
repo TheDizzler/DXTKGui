@@ -279,24 +279,22 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	// setup label for Display Mode
 	controlPos.x += displayListbox->getWidth() + MARGIN * 2;
 	controlPos.y = 50;
-	displayModeLabel =
+	/*displayModeLabel =
 		GameManager::guiFactory->createTextLabel(controlPos, L"Test2");
-	guiControls.push_back(displayModeLabel);
+	guiControls.push_back(displayModeLabel);*/
 
 	// Selected adapter display mode list
-	controlPos.y += displayModeLabel->getHeight() + MARGIN;
-	displayModeListbox =
-		GameManager::guiFactory->createListBox(controlPos, 75, 8, true);
+	//controlPos.y += displayModeLabel->getHeight() + MARGIN;
+	displayModeCombobox =
+		GameManager::guiFactory->createComboBox(controlPos, 75, 8, true);
 	populateDisplayModeList(
 		game->getDisplayModeList(0 /*game->getSelectedAdapterIndex()*/));
-	displayModeListbox->setSelected(game->getSelectedDisplayModeIndex());
-	guiControls.push_back(displayModeListbox);
+	displayModeCombobox->setSelected(game->getSelectedDisplayModeIndex());
+	guiControls.push_back(displayModeCombobox);
 
 	OnClickListenerDisplayModeList* onClickDisplayMode =
 		new OnClickListenerDisplayModeList(this);
-	displayModeListbox->setOnClickListener(onClickDisplayMode);
-
-	displayModeLabel->setText(displayModeListbox->getSelected()->toString());
+	displayModeCombobox->setOnClickListener(onClickDisplayMode);
 
 
 	// Set up CheckBox for full-screen toggle
@@ -381,14 +379,14 @@ void ConfigScreen::populateDisplayList(vector<ComPtr<IDXGIOutput>> displays) {
 
 void ConfigScreen::populateDisplayModeList(vector<DXGI_MODE_DESC> displayModes) {
 
-	displayModeListbox->clear();
+	displayModeCombobox->clear();
 	vector<ListItem*> displayModeItems;
 	for (DXGI_MODE_DESC mode : displayModes) {
 		DisplayModeItem* item = new DisplayModeItem();
 		item->modeDesc = mode;
 		displayModeItems.push_back(item);
 	}
-	displayModeListbox->addItems(displayModeItems);
+	displayModeCombobox->addItems(displayModeItems);
 }
 
 
@@ -445,10 +443,8 @@ void OnClickListenerAdapterList::onClick(ListBox* listbox, int selectedIndex) {
 	config->adapterLabel->setText(listbox->getSelected()->toString());
 }
 
-void OnClickListenerDisplayModeList::onClick(ListBox* listbox, int selectedIndex) {
+void OnClickListenerDisplayModeList::onClick(ComboBox* combobox, int selectedIndex) {
 
-	//DisplayModeItem* displayMode = (DisplayModeItem*) listbox->getItem(selectedIndex);
-	//config->game->setDisplayModeList(displayMode->modeDesc);
 	if (!config->game->setDisplayMode(selectedIndex)) {
 		// change back to previous setting
 	} else {
@@ -456,7 +452,6 @@ void OnClickListenerDisplayModeList::onClick(ListBox* listbox, int selectedIndex
 
 	}
 
-	config->displayModeLabel->setText(listbox->getItem(selectedIndex)->toString());
 }
 
 void OnClickListenerFullScreenCheckBox::onClick(CheckBox* checkbox, bool isChecked) {

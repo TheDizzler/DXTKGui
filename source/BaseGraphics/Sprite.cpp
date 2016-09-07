@@ -70,28 +70,21 @@ ComPtr<ID3D11ShaderResourceView> Sprite::getTexture() {
 	return texture;
 }
 
-//ComPtr<ID3D11Resource> Sprite::getResource() {
-//	return resource;
-//}
-
 
 const HitArea* Sprite::getHitArea() const {
 	return hitArea.get();
 }
 
 const Vector2& Sprite::getPosition() const {
-
 	return position;
 }
 
 
 const Vector2& Sprite::getOrigin() const {
-
 	return origin;
 }
 
 const Vector2& Sprite::getScale() const {
-
 	return scale;
 }
 
@@ -101,13 +94,11 @@ const float Sprite::getRotation() const {
 
 
 const Color& Sprite::getTint() const {
-
 	return tint;
 }
 
 
 const float Sprite::getAlpha() const {
-
 	return alpha;
 }
 
@@ -142,18 +133,13 @@ void Sprite::setPosition(const Vector2& pos) {
 	hitArea->size = Vector2(width*scale.x, height*scale.y);
 }
 
-
 void Sprite::moveBy(const Vector2& moveVector) {
-
 	setPosition(position + moveVector);
 }
 
-
 void Sprite::setOrigin(const Vector2& orgn) {
-
 	origin = orgn;
 }
-
 
 void Sprite::setScale(const Vector2& scl) {
 
@@ -161,21 +147,15 @@ void Sprite::setScale(const Vector2& scl) {
 	setPosition(position);
 }
 
-
 void Sprite::setRotation(const float rot) {
-
 	rotation = rot;
 }
 
-
 void Sprite::setTint(const Color& colr) {
-
 	tint = colr;
 }
 
-
 void Sprite::setAlpha(const float alph) {
-
 	alpha = alph;
 }
 
