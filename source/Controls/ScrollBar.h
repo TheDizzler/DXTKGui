@@ -46,13 +46,25 @@ private:
 	double minMaxDifference;
 };
 
+class ScrollBarTrack : public RectangleSprite {
 
+
+};
+
+/** Do not use this classes HitArea - it is NULL. */
 class ScrollBar : public GUIControl {
 public:
 	ScrollBar(Vector2 position);
 	~ScrollBar();
 
-	bool initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture, size_t maxHeight);
+	/* ImageButton* must be a button, Sprite* can be RectangleSprite */
+	//bool initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture, size_t maxHeight,
+		//ImageButton* scrollBarButton, Sprite* scrollBar, Sprite* scrubber);
+	/* scrollBarButtons[0] = Up Button
+		scrollBarButtons[1] = Down Button */
+	bool initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture, size_t maxHeight,
+		ImageButton* scrollBarButtons[2] = NULL, Sprite* scrollBar = NULL, 
+		Sprite* scrubber = NULL);
 	void setScrollBar(int totalItems, int itemHeight, int maxDisplayItems);
 
 	void update(double deltaTime, MouseController* mouse);
@@ -86,9 +98,7 @@ private:
 	/* Position of entire scrollbar area. */
 	//Vector2 position;
 
-	RECT scrollBarRect;
-	/* Position of bar part of scroll bar (minus buttons) */
-	Vector2 scrollBarPosition;
+	unique_ptr<RectangleSprite> scrollBarTrack;
 	unique_ptr<Scrubber> scrubber;
 
 	int maxHeight;

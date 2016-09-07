@@ -9,7 +9,7 @@ using namespace std;
 
 
 /** A visual and logical representation of a button.
-Provides no actions on click; that must be handled else where.*/
+		Now with ActionListeners!.*/
 class Button : public GUIControl {
 public:
 
@@ -59,7 +59,7 @@ public:
 		virtual void onClick(Button* button) = 0;
 	};
 
-	
+
 
 	void setOnClickListener(OnClickListener* iOnC) {
 		if (onClickListener != NULL)
@@ -100,12 +100,13 @@ protected:
 };
 
 
-/** A button created with dds files. Requires a Pressed button image (downButton)
-	and an Unpressed image (upButton). */
+/** A button created with dds files. Requires only an Unpressed image (upButton). 
+	Pressed button image (downButton) is optional. Defaults to tinting image 
+	with Button::selectedColor if no downButton is used. */
 class ImageButton : public Button {
 public:
 	ImageButton(unique_ptr<Sprite> buttonSprite,
-		 unique_ptr<FontSet> font);
+		unique_ptr<FontSet> font);
 	ImageButton(unique_ptr<Sprite> upButtonSprite,
 		unique_ptr<Sprite> downButtonSprite, unique_ptr<FontSet> font);
 	~ImageButton();
@@ -115,6 +116,9 @@ public:
 
 	virtual void setPosition(const Vector2& position) override;
 	virtual void setScale(const Vector2 & scale) override;
+	/** Remember: Rotation is around the origin!
+		This is really hacky and should probably not be used! */
+	virtual void setRotation(const float rotation) override;
 
 protected:
 	virtual void setToUnpressedState() override;

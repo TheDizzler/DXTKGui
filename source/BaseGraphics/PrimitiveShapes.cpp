@@ -9,15 +9,26 @@ RectangleSprite::RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel)
 RectangleSprite::RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel,
 	const Vector2& pos, const Vector2 & size) : Sprite(pos) {
 
+	texture = pixel;
 	setDimensions(pos, size);
 }
 
 RectangleSprite::~RectangleSprite() {
 }
 
+const Vector2 RectangleSprite::getSize() const {
+	return Vector2(width, height);
+}
+
+
 void RectangleSprite::setDimensions(const Vector2& pos, const Vector2& size) {
 
 	position = pos;
+
+	setSize(size);
+}
+
+void RectangleSprite::setSize(const Vector2& size) {
 
 	width = size.x;
 	height = size.y;
@@ -28,7 +39,7 @@ void RectangleSprite::setDimensions(const Vector2& pos, const Vector2& size) {
 	sourceRect.right = width;
 
 	hitArea.reset(new HitArea(
-		Vector2(position.x /*- width*scale.x / 2*/, position.y/* - height*scale.y / 2*/),
+		Vector2(position.x, position.y),
 		Vector2(width*scale.x, height*scale.y)));
 }
 

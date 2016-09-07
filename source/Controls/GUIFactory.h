@@ -36,7 +36,7 @@ public:
 		wstring text = L"", const char_t* fontName = "Default Font",
 		const int frameThickness = 2);
 
-	
+
 	Button* createImageButton(const char_t* upImage, const char_t* downImage = NULL,
 		const char_t* fontName = "Default Font");
 	Button* createImageButton(const Vector2& position,
@@ -61,6 +61,9 @@ public:
 	Dialog* createDialog(bool movable = false, const char_t* fontName = "Default Font");
 
 	ScrollBar* createScrollBar(const Vector2& position, size_t maxHeight);
+	ScrollBar* createScrollBar(const Vector2& position, size_t maxHeight,
+		const char_t* scrollButtonImage, const char_t* scrollBarImage,
+		const char_t* scrubberImage);
 
 private:
 

@@ -245,13 +245,17 @@ ImageButton::ImageButton(unique_ptr<Sprite> upButtonSprite,
 
 }
 
+
 ImageButton::~ImageButton() {
 }
 
 
 void ImageButton::draw(SpriteBatch* batch) {
 
-	drawSprite->draw(batch);
+	//drawSprite->draw(batch);
+	batch->Draw(drawSprite->getTexture().Get(), position, &drawSprite->getRect(),
+		drawSprite->getTint(), rotation, origin, scale, 
+		SpriteEffects_None, layerDepth);
 	buttonLabel->draw(batch);
 }
 
@@ -271,6 +275,21 @@ void ImageButton::setScale(const Vector2& scl) {
 	normalSprite->setScale(scale);
 	if (pressedSprite != NULL)
 		pressedSprite->setScale(scale);
+}
+
+/* This is really hacky and should probably not be used!
+	Note: this is being used.... (by ComboBox open/close function)*/
+void ImageButton::setRotation(const float rot) {
+
+	rotation = rot;
+	//normalSprite->setRotation(rotation);
+	if (rotation == 0)
+		position = (Vector2(position.x - getWidth(), position.y - getHeight()));
+	else if (rotation == XM_PI)
+		position = (Vector2(position.x + getWidth(), position.y + getHeight()));
+	
+	//if (pressedSprite != NULL)
+		//pressedSprite->setRotation(rotation);
 }
 
 

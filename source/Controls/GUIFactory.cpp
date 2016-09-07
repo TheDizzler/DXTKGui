@@ -138,15 +138,21 @@ Button* GUIFactory::createOneImageButton(const char_t* buttonImage, const char_t
 Button* GUIFactory::createImageButton(const char_t* upImageName,
 	const char_t* downImageName, const char_t* fontName) {
 
-	if (downImageName == NULL)
-		return createOneImageButton(upImageName, fontName);
-
-	if (assetMap.find(upImageName) == assetMap.end()
-		|| assetMap.find(downImageName) == assetMap.end()) {
+	if (downImageName == NULL || assetMap.find(downImageName) == assetMap.end()) {
 
 		wostringstream ws;
-		ws << "Could not find button image files: ";
-		ws << upImageName << " and/or " << downImageName;
+		ws << "Could not find downImageName file ";
+		ws << "in createImageButton()";
+		ws << "\nCreating one image button instead." << "\n";
+		OutputDebugString(ws.str().c_str());
+		return createOneImageButton(upImageName, fontName);
+	}
+
+	if (assetMap.find(upImageName) == assetMap.end()) {
+
+		wostringstream ws;
+		ws << "Could not find upImageName image file: ";
+		ws << upImageName;
 		ws << "\nCreating non-image button instead." << "\n";
 		OutputDebugString(ws.str().c_str());
 
@@ -193,7 +199,7 @@ CheckBox* GUIFactory::createCheckBox(const Vector2& position,
 		wostringstream ws;
 		ws << "Could not find button image files: ";
 		ws << uncheckedImage << " and/or " << checkedImage;
-		ws << "\nCreating non-image button instead." << "\n";
+		ws << "\nCreating default checkbox instead." << "\n";
 		OutputDebugString(ws.str().c_str());
 
 		return createCheckBox(position, text, fontName);
@@ -212,13 +218,42 @@ ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t maxHeight
 
 	ScrollBar* scrollBar = new ScrollBar(position);
 	scrollBar->setFactory(this);
-	if (!scrollBar->initialize(whitePixel, maxHeight)) {
+	ImageButton* buttons[2] = {NULL, NULL};
+	buttons[0] = (ImageButton*) createImageButton("ScrollBar Up Custom");
+	buttons[1] = (ImageButton*) createImageButton("ScrollBar Up Custom");
+	if (!scrollBar->initialize(whitePixel, maxHeight, buttons)) {
 		MessageBox(NULL, L"Failed to create ScrollBar",
 			L"GUI initialization ERROR", MB_OK);
 	}
 
 	return scrollBar;
 }
+
+//ScrollBar* GUIFactory::createScrollBar(const Vector2 & position, size_t maxHeight,
+//	const char_t* scrollButtonImage, const char_t* scrollBarImage,
+//	const char_t* scrubberImage) {
+//
+//	ImageButton* upButton;
+//	if (assetMap.find(scrollButtonImage) == assetMap.end()) {
+//		wostringstream ws;
+//		ws << "Could not find scroll button image file: ";
+//		ws << scrollButtonImage;
+//		ws << "\nUsing default." << "\n";
+//		OutputDebugString(ws.str().c_str());
+//		scrollButtonImage = "ScrollBar Up";
+//	}
+//	if (assetMap.find(scrollBarImage) == assetMap.end()) {
+//
+//		wostringstream ws;
+//		ws << "Could not find scroll bar image file: ";
+//		ws << scrollBarImage;
+//		ws << "\nUsing default." << "\n";
+//		OutputDebugString(ws.str().c_str());
+//		scrollBarImage = 
+//	}
+//
+//	return scrollBar;
+//}
 
 ListBox* GUIFactory::createListBox(const Vector2& position,
 	const int width, const int itemHeight, const int maxItemsShown,

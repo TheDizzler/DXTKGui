@@ -21,14 +21,13 @@
 
 		<!-- Excessive buttons are excessive -->
 		<sprite name="Combo Button Closed" file="assets/gui/ComboButtonClosed.dds" />
-		<sprite name="Combo Button Pressed Closed"
-			file="assets/gui/ComboButtonPressedClosed.dds" />
 		<sprite name="Combo Button Opened" file="assets/gui/ComboButtonOpen.dds" />
-		<sprite name="Combo Button Pressed Opened" file="assets/gui/ComboButtonPressedOpen.dds" />
 		<sprite name="ScrollBar Up" file="assets/gui/ScrollBarUp.dds" />
 		<sprite name="ScrollBar Up Pressed" file="assets/gui/ScrollBarUpPressed.dds" />
 		<sprite name="ScrollBar Down" file="assets/gui/ScrollBarDown.dds" />
 		<sprite name="ScrollBar Down Pressed" file="assets/gui/ScrollBarDownPressed.dds" />
+		<sprite name="ScrollBar Up Custom" file="assets/gui/ScrollBarUpCustom.dds" />
+
 
 		<sprite name="Ugly Dialog" file="assets/gui/dialog pink (200x200).dds" />
 	</gui>

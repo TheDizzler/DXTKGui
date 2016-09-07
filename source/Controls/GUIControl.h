@@ -30,6 +30,7 @@ public:
 	virtual void moveBy(const Vector2& moveVector);
 	virtual void setPosition(const Vector2& position) override;
 	virtual void setOrigin(const Vector2& origin) override;
+	/** Remember: Rotation is around the origin! */
 	virtual void setRotation(const float rotation) override;
 	virtual void setTint(const Color& color) override;
 	virtual void setAlpha(const float alpha) override;

@@ -12,8 +12,10 @@ public:
 		const Vector2& position, const Vector2& size);
 	~RectangleSprite();
 
+	const Vector2 getSize() const;
 	/* position is top left corner. */
 	void setDimensions(const Vector2& position, const Vector2& size);
+	void setSize(const Vector2& size);
 	virtual void moveBy(const Vector2& moveVector);
 };
 

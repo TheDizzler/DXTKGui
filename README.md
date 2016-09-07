@@ -28,7 +28,7 @@ This is still a massive mess....
 >- Combo Box
 
 ##TODO:
->- Combo Box - allow custom button
+>- Combo Box - allow custom button; allow opening of list by clicking item label
 >- Dialog Box - allow custom bg image; transition effects
 >- Scrollbar - that can be slapped on to anything; allow custom sprites
 >- List Box - multi-select;

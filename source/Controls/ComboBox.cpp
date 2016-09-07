@@ -23,7 +23,7 @@ bool ComboBox::initialize(shared_ptr<FontSet> fnt,
 	frame.reset(new RectangleFrame(whitePixel));
 
 	comboListButton.reset((ImageButton*) guiFactory->createImageButton("Combo Button Closed"));
-	//comboListButton->setRotation(XM_PI);
+	
 	comboListButton->setPosition(
 		Vector2(position.x + width - comboListButton->getWidth(), position.y));
 	comboListButton->setOnClickListener(new ShowListBoxListener(this));
@@ -64,10 +64,12 @@ void ComboBox::draw(SpriteBatch* batch) {
 
 void ComboBox::open() {
 	isOpen = !isOpen;
+	comboListButton->setRotation(XM_PI*isOpen);
 }
 
 void ComboBox::close() {
 	isOpen = false;
+	comboListButton->setRotation(0);
 }
 
 void ComboBox::resizeBox() {
