@@ -229,6 +229,7 @@ ConfigScreen::~ConfigScreen() {
 }
 
 int MARGIN = 10;
+int itemHeight = 32;
 bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
 	Vector2 controlPos = Vector2(50, 50);
@@ -242,7 +243,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 
 	// create listbox of gfx cards
 	adapterListbox =
-		GameManager::guiFactory->createListBox(controlPos, 400, 4, true);
+		GameManager::guiFactory->createListBox(controlPos, 400, itemHeight, 4, true);
 	guiControls.push_back(adapterListbox);
 	vector<ListItem*> adapterItems;
 	for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
@@ -266,7 +267,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	controlPos.y += displayLabel->getHeight() + MARGIN;
 
 	// create listbox of monitors available to selected gfx card
-	displayListbox = GameManager::guiFactory->createListBox(controlPos, 400, 4, true);
+	displayListbox = GameManager::guiFactory->createListBox(controlPos, 400, itemHeight, 4, true);
 	guiControls.push_back(displayListbox);
 	// because only the one adapter has displays on my laptop
 	// this has to be grab the first (and only) display.
@@ -286,7 +287,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	// Selected adapter display mode list
 	//controlPos.y += displayModeLabel->getHeight() + MARGIN;
 	displayModeCombobox =
-		GameManager::guiFactory->createComboBox(controlPos, 75, 8, true);
+		GameManager::guiFactory->createComboBox(controlPos, 75, itemHeight, 8, true);
 	populateDisplayModeList(
 		game->getDisplayModeList(0 /*game->getSelectedAdapterIndex()*/));
 	displayModeCombobox->setSelected(game->getSelectedDisplayModeIndex());
@@ -306,6 +307,9 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	check->setOnClickListener(onClickFullScreen);
 	guiControls.push_back(check);
 
+	testLabel = GameManager::guiFactory->createTextLabel(
+		Vector2(250, 450), L"Test Messages here");
+	guiControls.push_back(testLabel);
 
 	// Create Apply and Cancel Buttons
 	ImageButton* button = (ImageButton*) GameManager::guiFactory->
@@ -343,17 +347,17 @@ void ConfigScreen::update(double deltaTime, KeyboardController* keys,
 
 	for (GUIControl* control : guiControls) {
 		control->update(deltaTime, mouse);
-		if (control->clicked()) {
-			switch (control->action) {
-				case GUIControl::CANCEL:
-					menuManager->openMainMenu();
-					break;
-				case GUIControl::CONFIRM:
-					// update graphics engine
+		//if (control->clicked()) {
+		//	switch (control->action) {
+		//		case GUIControl::CANCEL:
+		//			menuManager->openMainMenu();
+		//			break;
+		//		case GUIControl::CONFIRM:
+		//			// update graphics engine
 
-					break;
-			}
-		}
+		//			break;
+		//	}
+		//}
 	}
 
 }
@@ -382,6 +386,8 @@ void ConfigScreen::populateDisplayModeList(vector<DXGI_MODE_DESC> displayModes) 
 	displayModeCombobox->clear();
 	vector<ListItem*> displayModeItems;
 	for (DXGI_MODE_DESC mode : displayModes) {
+		if (!Globals::FULL_SCREEN && mode.Scaling == 0)
+			continue;
 		DisplayModeItem* item = new DisplayModeItem();
 		item->modeDesc = mode;
 		displayModeItems.push_back(item);
@@ -447,9 +453,10 @@ void OnClickListenerDisplayModeList::onClick(ComboBox* combobox, int selectedInd
 
 	if (!config->game->setDisplayMode(selectedIndex)) {
 		// change back to previous setting
+		config->testLabel->setText("Display mode switch failed!");
 	} else {
 		// reconstruct display
-
+		config->testLabel->setText(combobox->getItem(selectedIndex)->toString());
 	}
 
 }
@@ -464,6 +471,7 @@ void OnClickListenerFullScreenCheckBox::onClick(CheckBox* checkbox, bool isCheck
 	} else {
 		// reconstruct display
 	}
+	config->populateDisplayModeList(config->game->getDisplayModeList(0));
 }
 
 void OnClickListenerSettingsButton::onClick(Button* button) {

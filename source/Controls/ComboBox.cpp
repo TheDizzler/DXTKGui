@@ -1,7 +1,8 @@
 #include "ComboBox.h"
 
 
-ComboBox::ComboBox(const Vector2& pos, const int len, const int maxItemsShown) {
+ComboBox::ComboBox(const Vector2& pos, const int len,
+	size_t itemHeight, const int maxItemsShown) {
 
 	position = pos;
 	width = len;
@@ -16,7 +17,7 @@ ComboBox::~ComboBox() {
 
 #include "../Controls/GUIFactory.h"
 bool ComboBox::initialize(shared_ptr<FontSet> fnt,
-	ComPtr<ID3D11ShaderResourceView> whitePixel, bool enumerateList) {
+	ComPtr<ID3D11ShaderResourceView> whitePixel, ListBox* lstBx, bool enumerateList) {
 
 
 	frame.reset(new RectangleFrame(whitePixel));
@@ -28,8 +29,7 @@ bool ComboBox::initialize(shared_ptr<FontSet> fnt,
 	comboListButton->setOnClickListener(new ShowListBoxListener(this));
 	frame->setDimensions(position, Vector2(width, comboListButton->getHeight()));
 
-	listBox.reset(guiFactory->createListBox(
-		Vector2(position.x, position.y + frame->getHeight()), width, maxDisplayItems));
+	listBox.reset(lstBx);
 	listBox->setOnClickListener(new ListBoxListener(this));
 
 	selectedLabel.reset(guiFactory->createTextLabel(

@@ -21,8 +21,7 @@ bool ScrollBar::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
 			"ScrollBar Down Pressed"));
 	scrollBarDownButton->setPosition(
 		Vector2(position.x - scrollBarDownButton->getWidth(),
-			position.y + maxHeight
-			- scrollBarDownButton->getHeight()));
+			position.y + maxHeight - scrollBarDownButton->getHeight()));
 
 	scrollBarDownButton->action = Button::DOWN;
 

@@ -4,11 +4,13 @@
 
 class ComboBox : public GUIControl {
 public:
-	ComboBox(const Vector2& position, const int width, const int maxItemsShown = 7);
+	ComboBox(const Vector2& position, const int width,
+		size_t itemHeight = 32, const int maxItemsShown = 7);
 	~ComboBox();
 
 	virtual bool initialize(shared_ptr<FontSet> font,
-		ComPtr<ID3D11ShaderResourceView> whitePixel, bool enumerateList = false);
+		ComPtr<ID3D11ShaderResourceView> whitePixel, ListBox* listbox,
+		bool enumerateList = false);
 
 	virtual void update(double deltaTime, MouseController* mouse);
 	virtual void draw(SpriteBatch* batch);

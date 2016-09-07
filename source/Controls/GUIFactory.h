@@ -51,15 +51,16 @@ public:
 		wstring text = L"", const char_t* fontName = "Default Font");
 
 	ListBox* createListBox(const Vector2& position, const int width,
-		const int maxItemsShown = 7, bool enumerateList = false,
-		const char_t* fontName = "Default Font");
+		const int itemHeight = 32, const int maxItemsShown = 7,
+		bool enumerateList = false, const char_t* fontName = "Default Font");
 
 	ComboBox* createComboBox(const Vector2& position, const int width,
-		const int maxItemsShown = 7, bool enumerateList = false,
-		const char_t* fontName = "Default Font");
+		const int itemHeight = 32, const int maxItemsShown = 7,
+		bool enumerateList = false, const char_t* fontName = "Default Font");
 
 	Dialog* createDialog(bool movable = false, const char_t* fontName = "Default Font");
 
+	ScrollBar* createScrollBar(const Vector2& position, size_t maxHeight);
 
 private:
 

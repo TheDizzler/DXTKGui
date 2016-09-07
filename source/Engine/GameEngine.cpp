@@ -70,8 +70,6 @@ void GameEngine::render(double deltaTime) {
 	{
 		game->draw(batch.get());
 		mouse->draw(batch.get());
-		/*game->draw(batch);
-		mouse->draw(batch);*/
 	}
 	batch->End();
 

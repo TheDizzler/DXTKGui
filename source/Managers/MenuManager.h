@@ -171,7 +171,7 @@ private:
 	void populateDisplayModeList(vector<DXGI_MODE_DESC> displayModes);
 	TextLabel* adapterLabel;
 	TextLabel* displayLabel;
-	//TextLabel* displayModeLabel;
+	TextLabel* testLabel;
 
 	ListBox* adapterListbox;
 	ListBox* displayListbox;

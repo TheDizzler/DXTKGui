@@ -208,23 +208,46 @@ CheckBox* GUIFactory::createCheckBox(const Vector2& position,
 
 }
 
-ListBox* GUIFactory::createListBox(const Vector2& position,
-	const int width, const int maxItemsShown, bool enumerateList,
-	const char_t* fontName) {
+ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t maxHeight) {
 
-	ListBox* listbox = new ListBox(position, width, maxItemsShown);
+	ScrollBar* scrollBar = new ScrollBar(position);
+	scrollBar->setFactory(this);
+	if (!scrollBar->initialize(whitePixel, maxHeight)) {
+		MessageBox(NULL, L"Failed to create ScrollBar",
+			L"GUI initialization ERROR", MB_OK);
+	}
+
+	return scrollBar;
+}
+
+ListBox* GUIFactory::createListBox(const Vector2& position,
+	const int width, const int itemHeight, const int maxItemsShown,
+	bool enumerateList, const char_t* fontName) {
+
+
+	ListBox* listbox = new ListBox(position, width, itemHeight, maxItemsShown);
 	listbox->setFactory(this);
-	listbox->initialize(getFont(fontName), whitePixel, enumerateList);
+	Vector2 scrollBarPos(position.x + width, position.y);
+	listbox->initialize(getFont(fontName), whitePixel,
+		createScrollBar(scrollBarPos, itemHeight * maxItemsShown), enumerateList);
 	return listbox;
 }
 
+
+
 ComboBox* GUIFactory::createComboBox(const Vector2& position,
-	const int width, const int maxItemsShown,
+	const int width, const int itemHeight, const int maxItemsShown,
 	bool enumerateList, const char_t* fontName) {
 
-	ComboBox* combobox = new ComboBox(position, width, maxItemsShown);
+	ComboBox* combobox = new ComboBox(position, width, itemHeight, maxItemsShown);
 	combobox->setFactory(this);
-	combobox->initialize(getFont(fontName), whitePixel, enumerateList);
+
+	combobox->initialize(getFont(fontName), whitePixel,
+		createListBox(
+			Vector2(position.x, position.y + itemHeight),
+			width, itemHeight, maxItemsShown, enumerateList, fontName),
+		enumerateList);
+
 	return combobox;
 }
 
@@ -235,6 +258,8 @@ Dialog* GUIFactory::createDialog(bool movable, const char_t* fontName) {
 	dialog->initialize(whitePixel, fontName);
 	return dialog;
 }
+
+
 
 #include "DDSTextureLoader.h"
 bool GUIFactory::getGUIAssetsFromXML(ComPtr<ID3D11Device> device) {

@@ -1,14 +1,14 @@
 #include "ListBox.h"
 
 
-ListBox::ListBox(const Vector2& pos,
-	const int len, const int maxItemsShown) {
+ListBox::ListBox(const Vector2& pos, const int len,
+	size_t itmHght, const int maxItemsShown) {
 
 	position = pos;
 	width = len;
 	maxDisplayItems = maxItemsShown;
 	action = SELECTION_CHANGED;
-
+	itemHeight = itmHght;
 }
 
 ListBox::~ListBox() {
@@ -25,20 +25,21 @@ ListBox::~ListBox() {
 
 
 void ListBox::initialize(shared_ptr<FontSet> fnt,
-	ComPtr<ID3D11ShaderResourceView> whitePixel, bool enumerateList) {
+	ComPtr<ID3D11ShaderResourceView> whitePixel,
+	ScrollBar* scrllbr, bool enumerateList) {
 
 	font = fnt;
 	pixel = whitePixel;
 
 	firstItemPos = Vector2(position.x, position.y);
 
-	scrollBar.reset(new ScrollBar(Vector2(position.x + width, position.y)));
+	scrollBar.reset(scrllbr);
+	/*scrollBar.reset(new ScrollBar(Vector2(position.x + width, position.y)));
 	scrollBar->setFactory(guiFactory);
 	if (!scrollBar->initialize(pixel, itemHeight * maxDisplayItems)) {
 		MessageBox(NULL, L"Failed to create ScrollBar",
 			L"GUI initialization ERROR", MB_OK);
-	}
-
+	}*/
 
 	frame.reset(new RectangleFrame(pixel));
 
@@ -54,7 +55,7 @@ void ListBox::initialize(shared_ptr<FontSet> fnt,
 void ListBox::addItem(ListItem* item) {
 
 	listItems.push_back(item);
-	if (item->measureString().x >  +scrollBar->getWidth() > longestLabelLength)
+	if (item->measureString().x > + scrollBar->getWidth() > longestLabelLength)
 		longestLabelLength = item->measureString().x;
 
 	resizeBox();
@@ -73,7 +74,7 @@ void ListBox::addItems(vector<ListItem* > items) {
 	items.clear();
 
 	resizeBox();
-	
+
 }
 
 
@@ -123,11 +124,12 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 			* (listItems.size() - maxDisplayItems);
 	}
 
-	for (ListItem* item : listItems) {
-		if (item->update(deltaTime, mouse)) {
+	for (int j = firstItemToDisplay;
+		j < firstItemToDisplay + itemsToDisplay; ++j) {
+		if (listItems[j]->update(deltaTime, mouse)) {
 			if (!multiSelect) {
 				for (int i = 0; i < listItems.size(); ++i) {
-					if (listItems[i] == item) {
+					if (listItems[i] == listItems[j]) {
 						selectedIndex = i;
 						continue;
 					}
@@ -322,7 +324,7 @@ const wchar_t* ListItem::toString() {
 
 bool ListItem::update(double deltaTime, MouseController* mouse) {
 
-	if ((isHover = hitArea->contains(mouse->getPosition())) == true) {
+	if ((isHover = hitArea->contains(mouse->getPosition()))) {
 
 		if (mouse->leftButtonDown() && !buttonDownLast)
 			buttonDownLast = true;
