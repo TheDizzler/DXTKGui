@@ -376,6 +376,14 @@ bool GraphicsEngine::changeDisplayMode(size_t newDisplayModeIndex) {
 	return true;
 }
 
+bool GraphicsEngine::stopFullScreen() {
+
+	if (swapChain.Get() == NULL)
+		return false;
+
+	swapChain->SetFullscreenState(false, NULL);
+}
+
 bool GraphicsEngine::setFullScreen(bool isFullScreen) {
 
 	if (swapChain.Get() == NULL)

@@ -19,28 +19,27 @@ bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 	barHeight = barHght;
 
 	if (scrollButtons == NULL || scrollButtons[0] == NULL) {
+
 		scrollBarUpButton.reset((ImageButton*)
 			guiFactory->createImageButton("ScrollBar Up",
 				"ScrollBar Up Pressed"));
-		//scrollBarUpButton->action = Button::UP;
+
 	} else {
-
 		scrollBarUpButton.reset(scrollButtons[0]);
-
 	}
 
 	scrollBarUpButton->setPosition(
 		Vector2(position.x - scrollBarUpButton->getWidth(),
 			position.y));
+
 	if (scrollButtons == NULL || scrollButtons[1] == NULL) {
 
 		scrollBarDownButton.reset((ImageButton*)
 			guiFactory->createImageButton("ScrollBar Down",
 				"ScrollBar Down Pressed"));
-		//scrollBarDownButton->action = Button::DOWN;
+
 	} else {
 		scrollBarDownButton.reset(scrollButtons[1]);
-
 	}
 
 	scrollBarDownButton->setPosition(

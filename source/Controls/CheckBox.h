@@ -10,9 +10,8 @@ public:
 		unique_ptr<Sprite> checkedSprite, unique_ptr<FontSet> font);
 	~CheckBox();
 
-
-	virtual void draw(SpriteBatch* batch) override;
 	virtual void update(double deltaTime, MouseController* mouse) override;
+	virtual void draw(SpriteBatch* batch) override;
 
 	/* Should probably changed the way this works. */
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
@@ -29,10 +28,13 @@ public:
 	virtual bool selected() override;
 	virtual bool hovering() override;
 
+	Color normalColor = Color(Vector3(0, 0, 0));
+	Color hoverColor = Color(Vector4(.5, .75, 1, 1));
+
 	/** Colors for text beside checkbox. */
 	Color normalColorText = Color(Vector3(0, 0, 0));
 	Color hoverColorText = Color(Vector3(.5, .75, 1));
-	//Color selectedColorText = Color(Vector3(0, .5, 1));
+
 
 	void setChecked(bool checked);
 
@@ -53,8 +55,13 @@ public:
 	}
 
 	void triggerOnClick() {
-		if (onClickListener != NULL)
+		if (onClickListener != NULL) 
 			(onClickListener->*onClickFunction)(this, isClicked);
+
+		if (isClicked)
+			texture = checkedSprite->getTexture().Get();
+		else
+			texture = uncheckedSprite->getTexture().Get();
 	}
 
 private:
@@ -62,10 +69,7 @@ private:
 	OnClickFunction onClickFunction;
 	OnClickListener* onClickListener = NULL;
 	
-
-	
-
-
+	ID3D11ShaderResourceView* texture;
 	/** Helper function to center text in check sprite. */
 	void centerText();
 
@@ -75,5 +79,5 @@ private:
 	unique_ptr<Sprite> uncheckedSprite;
 	unique_ptr<Sprite> checkedSprite;
 	/* The sprite used in draw(). */
-	Sprite* drawSprite;
+	//Sprite* drawSprite;
 };

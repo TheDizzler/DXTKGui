@@ -14,6 +14,9 @@ CheckBox::CheckBox(unique_ptr<Sprite> unchkdSprite,
 
 	label.reset(new TextLabel(move(font)));
 	label->setText(L"");
+
+	//drawSprite = uncheckedSprite.get();
+	texture = uncheckedSprite->getTexture().Get();
 }
 
 CheckBox::~CheckBox() {
@@ -22,11 +25,6 @@ CheckBox::~CheckBox() {
 		delete onClickListener;
 }
 
-void CheckBox::draw(SpriteBatch* batch) {
-
-	drawSprite->draw(batch);
-	label->draw(batch);
-}
 
 void CheckBox::update(double deltaTime, MouseController* mouse) {
 
@@ -34,8 +32,10 @@ void CheckBox::update(double deltaTime, MouseController* mouse) {
 		|| label->contains(mouse->getPosition())) {
 		isHover = true;
 		label->setTint(hoverColorText);
+		tint = hoverColor; // this won't do anything if the checkbox is black :/
 	} else {
 		label->setTint(normalColorText);
+		tint = normalColor;
 		isHover = false;
 	}
 
@@ -45,13 +45,15 @@ void CheckBox::update(double deltaTime, MouseController* mouse) {
 			triggerOnClick();
 		}
 	}
-
-	if (isClicked)
-		drawSprite = checkedSprite.get();
-	else
-		drawSprite = uncheckedSprite.get();
-
 }
+
+void CheckBox::draw(SpriteBatch* batch) {
+
+	batch->Draw(texture, position, &checkedSprite->getRect(), tint, rotation,
+		origin, scale, SpriteEffects_None, layerDepth);
+	label->draw(batch);
+}
+
 
 #include "../Controls/GUIFactory.h"
 void CheckBox::setFont(const pugi::char_t* font) {
@@ -76,7 +78,7 @@ void CheckBox::setPosition(const Vector2& pos) {
 }
 
 
-void CheckBox::setChecked(bool checked)  {
+void CheckBox::setChecked(bool checked) {
 	isClicked = checked;
 }
 

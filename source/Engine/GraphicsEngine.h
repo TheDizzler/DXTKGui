@@ -38,6 +38,8 @@ public:
 	bool setAdapter(size_t adapterIndex);
 	bool changeDisplayMode(size_t newDisplayModeIndex);
 	bool setFullScreen(bool isFullScreen);
+	/* Call when game loses focus. */
+	bool stopFullScreen();
 
 	size_t getSelectedAdapterIndex();
 	size_t getSelectedDisplayIndex();
