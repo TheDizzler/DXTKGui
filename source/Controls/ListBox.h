@@ -74,6 +74,7 @@ public:
 		GraphicsAsset* pixelAsset, ScrollBar* scrollBar,
 		bool enumerateList = false);
 
+	void setScrollBar(ScrollBarDesc& scrollBarDesc);
 	/* Note: this function has not been tested much....not at all really...*/
 	void addItem(ListItem* item);
 	void addItems(vector<ListItem*> items);
@@ -87,6 +88,7 @@ public:
 	const int getSelectedIndex() const;
 	ListItem* getSelected();
 	ListItem* getItem(size_t index);
+
 
 	/* Not used in ListBox. */
 	virtual void setText(wstring text);

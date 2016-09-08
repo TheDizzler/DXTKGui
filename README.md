@@ -25,13 +25,15 @@ This is still a massive mess....
 >- Dialog Box - draggable and non-draggable; no image loading yet;
 >- Check Box - with onClickListener
 >- ListBox - with onClickListener; auto-size to content
+>- Scrollbar - now with customizable sprites!
 >- Combo Box
+
 
 ##TODO:
 >- Combo Box - allow custom button; allow opening of list by clicking item label
 >- Dialog Box - allow custom bg image; transition effects
->- Scrollbar - that can be slapped on to anything; allow custom sprites
->- List Box - multi-select;
+>- Scrollbar - that can be slapped on to anything
+>- List Box - multi-select; test adding, removing, clearing items live
 >- Radio Buttons
 >- Slider
 >- add triggers for sfx

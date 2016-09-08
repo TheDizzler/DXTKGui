@@ -213,17 +213,44 @@ CheckBox* GUIFactory::createCheckBox(const Vector2& position,
 
 }
 
-ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t maxHeight) {
+ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight) {
 
 	ScrollBar* scrollBar = new ScrollBar(position);
 	scrollBar->setFactory(this);
-	ImageButton* buttons[2] = {NULL, NULL};
-	buttons[0] = (ImageButton*) createImageButton("ScrollBar Up Custom");
-	buttons[1] = (ImageButton*) createImageButton("ScrollBar Up Custom");
 
+	if (!scrollBar->initialize(getAsset("White Pixel"), barHeight)) {
+
+		MessageBox(NULL, L"Failed to create ScrollBar",
+			L"GUI initialization ERROR", MB_OK);
+	}
+
+	return scrollBar;
+}
+
+
+ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight,
+	ScrollBarDesc& scrollBarDesc) {
 	
-	if (!scrollBar->initialize(getAsset("White Pixel"), maxHeight, buttons,
-		getSpriteFromAsset("ScrollBar Track Custom"), getAsset("Scrubber Custom"))) {
+	ScrollBar* scrollBar = new ScrollBar(position);
+	scrollBar->setFactory(this);
+
+	ImageButton* buttons[2] = {NULL, NULL};
+	buttons[0] = (ImageButton*) createImageButton(scrollBarDesc.upButtonImage.c_str(),
+		scrollBarDesc.upPressedButtonImage.c_str());
+
+	if (scrollBarDesc.downButtonImage == "") { // copy the up imagebutton and reverse
+		buttons[1] = (ImageButton*) createImageButton(scrollBarDesc.upButtonImage.c_str(),
+			scrollBarDesc.upPressedButtonImage.c_str());
+		buttons[1]->setRotation(XM_PI);
+	} else {
+		buttons[1] = (ImageButton*) createImageButton(scrollBarDesc.downButtonImage.c_str(),
+			scrollBarDesc.downPressedButtonImage.c_str());
+	}
+	
+	if (!scrollBar->initialize(getAsset("White Pixel"), barHeight, buttons,
+		getSpriteFromAsset(scrollBarDesc.trackImage.c_str()),
+		getAsset(scrollBarDesc.scrubberImage.c_str()))) {
+
 		MessageBox(NULL, L"Failed to create ScrollBar",
 			L"GUI initialization ERROR", MB_OK);
 	}
@@ -267,6 +294,7 @@ ListBox* GUIFactory::createListBox(const Vector2& position,
 	Vector2 scrollBarPos(position.x + width, position.y);
 	listbox->initialize(getFont(fontName), getAsset("White Pixel"),
 		createScrollBar(scrollBarPos, itemHeight * maxItemsShown), enumerateList);
+
 	return listbox;
 }
 

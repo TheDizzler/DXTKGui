@@ -17,7 +17,7 @@ public:
 	virtual void update(double deltaTime, MouseController* mouse);
 
 	void setScrollPositionByCoord(int newCoordinatePosition);
-	void setScrollPositionByPercent(float newPositionPercentage);
+	void setScrollPositionByPercent(double newPositionPercentage);
 
 	void scroll(double increment);
 
@@ -47,7 +47,20 @@ private:
 	double minMaxDifference;
 };
 
-
+struct ScrollBarDesc {
+	/* Default: "ScrollBar Up" */
+	string upButtonImage = "ScrollBar Up";
+	/* Optional */
+	string upPressedButtonImage = "";
+	/* Optional */
+	string downButtonImage = "";
+	/* Optional */
+	string downPressedButtonImage = "";
+	/* Optional */
+	string trackImage = "";
+	/* Optional */
+	string scrubberImage = "";
+};
 
 /** Do not use this classes HitArea - it is NULL. */
 class ScrollBar : public GUIControl {
@@ -57,15 +70,16 @@ public:
 
 	/* scrollBarButtons[0] = Up Button
 		scrollBarButtons[1] = Down Button */
-	bool initialize(GraphicsAsset* const pixelAsset, size_t maxHeight,
-		ImageButton* scrollBarButtons[2] = NULL, unique_ptr<Sprite> scrollBarTrack = NULL, 
+	bool initialize(GraphicsAsset* const pixelAsset, size_t barHeight,
+		ImageButton* scrollBarButtons[2] = NULL, unique_ptr<Sprite> scrollBarTrack = NULL,
 		GraphicsAsset* scrubber = NULL);
+
 	void setScrollBar(int totalItems, int itemHeight, int maxDisplayItems);
 
 	void update(double deltaTime, MouseController* mouse);
 	void draw(SpriteBatch* batch);
 
-	void setScrollPositionByPercent(float newPositionPercentage);
+	void setScrollPositionByPercent(double newPositionPercentage);
 	void setPosition(const Vector2 newPosition);
 	/** Call this from parent control on mouse scroll. */
 	void scrollByIncrement(int scrollIncrement);
@@ -96,7 +110,7 @@ private:
 	unique_ptr<Sprite> scrollBarTrack;
 	unique_ptr<Scrubber> scrubber;
 
-	int maxHeight;
+	int barHeight;
 
 	/* What percent of scroll is equivalent to one item. */
 	double percentForOneItem;

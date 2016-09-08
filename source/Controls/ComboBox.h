@@ -12,6 +12,8 @@ public:
 		GraphicsAsset* pixelAsset, ListBox* listbox,
 		bool enumerateList = false);
 
+	void setScrollBar(ScrollBarDesc& scrollBarDesc);
+
 	virtual void update(double deltaTime, MouseController* mouse);
 	virtual void draw(SpriteBatch* batch);
 

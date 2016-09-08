@@ -27,6 +27,7 @@
 		<sprite name="ScrollBar Down" file="assets/gui/ScrollBarDown.dds" />
 		<sprite name="ScrollBar Down Pressed" file="assets/gui/ScrollBarDownPressed.dds" />
 		<sprite name="ScrollBar Up Custom" file="assets/gui/ScrollBarUpCustom.dds" />
+		<sprite name="ScrollBar Up Pressed Custom" file="assets/gui/ScrollBarUpPressedCustom.dds" />
 		<sprite name="ScrollBar Track Custom" file="assets/gui/ScrollBarTrack.dds" />
 		<sprite name="Scrubber Custom" file="assets/gui/ScrubberCustom.dds" />
 

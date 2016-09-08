@@ -33,14 +33,10 @@ void ListBox::initialize(shared_ptr<FontSet> fnt, GraphicsAsset* pixelAsset,
 	firstItemPos = Vector2(position.x, position.y);
 
 	scrollBar.reset(scrllbr);
-	/*scrollBar.reset(new ScrollBar(Vector2(position.x + width, position.y)));
-	scrollBar->setFactory(guiFactory);
-	if (!scrollBar->initialize(pixel, itemHeight * maxDisplayItems)) {
-		MessageBox(NULL, L"Failed to create ScrollBar",
-			L"GUI initialization ERROR", MB_OK);
-	}*/
 
 	frame.reset(new RectangleFrame(pixelAsset));
+
+	hitArea.reset(new HitArea(position, Vector2(frame->getWidth(), frame->getHeight())));
 
 	isEnumerated = enumerateList;
 
@@ -50,11 +46,20 @@ void ListBox::initialize(shared_ptr<FontSet> fnt, GraphicsAsset* pixelAsset,
 	emptyListItem->setText();
 }
 
+#include "GUIFactory.h"
+void ListBox::setScrollBar(ScrollBarDesc& scrollBarDesc) {
+
+	scrollBar.reset(guiFactory->createScrollBar(
+		Vector2(position.x + width, position.y),
+		itemHeight * maxDisplayItems, scrollBarDesc));
+	scrollBar->setScrollBar(listItems.size(), itemHeight, maxDisplayItems);
+}
+
 
 void ListBox::addItem(ListItem* item) {
 
 	listItems.push_back(item);
-	if (item->measureString().x > + scrollBar->getWidth() > longestLabelLength)
+	if (item->measureString().x > +scrollBar->getWidth() > longestLabelLength)
 		longestLabelLength = item->measureString().x;
 
 	resizeBox();
@@ -97,7 +102,9 @@ void ListBox::resizeBox() {
 		frameWidth = width - scrollBar->getWidth();
 
 	int frameHeight = itemHeight * itemsToDisplay;
-	frame->setDimensions(position, Vector2(frameWidth, frameHeight), frameThickness);
+	Vector2 frameSize = Vector2(frameWidth, frameHeight);
+	frame->setDimensions(position, frameSize, frameThickness);
+	hitArea->size = frameSize;
 }
 
 void ListBox::setWidth(int newWidth) {
@@ -111,16 +118,22 @@ void ListBox::clear() {
 	for (ListItem* listItem : listItems)
 		delete listItem;
 	listItems.clear();
+	resizeBox();
 }
 
 
 void ListBox::update(double deltaTime, MouseController* mouse) {
 
 	if (itemsToDisplay == maxDisplayItems || alwaysShowScrollBar) {
-		scrollBar->scrollByIncrement(-mouse->getWheelDelta());
+
+		if (hitArea->contains(mouse->getPosition()))
+			scrollBar->scrollByIncrement(-mouse->getWheelDelta());
+
 		scrollBar->update(deltaTime, mouse);
-		firstItemToDisplay = (scrollBar->percentScroll)
-			* (listItems.size() - maxDisplayItems);
+
+		double dif = listItems.size() - maxDisplayItems;
+		firstItemToDisplay = round(scrollBar->percentScroll* (double) dif);
+		
 	}
 
 	for (int j = firstItemToDisplay;
@@ -176,7 +189,7 @@ void ListBox::draw(SpriteBatch* batch) {
 }
 
 
-#include <cmath>
+//#include <cmath>
 void ListBox::setSelected(size_t newIndex) {
 
 	if (listItems.size() <= 0)

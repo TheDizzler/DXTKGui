@@ -275,7 +275,8 @@ void ImageButton::setPosition(const Vector2& pos) {
 	normalSprite->setPosition(position);
 	if (pressedSprite != NULL)
 		pressedSprite->setPosition(position);
-
+	if (rotation != 0) // totally hacky!
+		setRotation(rotation); // feel the hackiness!
 }
 
 void ImageButton::setScale(const Vector2& scl) {

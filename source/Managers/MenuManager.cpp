@@ -284,12 +284,22 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 		GameManager::guiFactory->createTextLabel(controlPos, L"Test2");
 	guiControls.push_back(displayModeLabel);*/
 
-	// Selected adapter display mode list
-	//controlPos.y += displayModeLabel->getHeight() + MARGIN;
+	// Setup display mode combobox
+	
+	// custom scrollbar for combo list
+	ScrollBarDesc scrollBarDesc;
+	scrollBarDesc.upButtonImage = "ScrollBar Up Custom";
+	scrollBarDesc.upPressedButtonImage = "ScrollBar Up Pressed Custom";
+	//scroll.downButtonImage = "ScrollBar Down";
+	scrollBarDesc.trackImage = "ScrollBar Track Custom";
+	scrollBarDesc.scrubberImage = "Scrubber Custom";
+
 	displayModeCombobox =
 		GameManager::guiFactory->createComboBox(controlPos, 75, itemHeight, 8, true);
+	
 	populateDisplayModeList(
 		game->getDisplayModeList(0 /*game->getSelectedAdapterIndex()*/));
+	displayModeCombobox->setScrollBar(scrollBarDesc);
 	displayModeCombobox->setSelected(game->getSelectedDisplayModeIndex());
 	guiControls.push_back(displayModeCombobox);
 

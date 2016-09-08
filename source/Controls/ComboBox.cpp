@@ -23,7 +23,7 @@ bool ComboBox::initialize(shared_ptr<FontSet> fnt,
 	frame.reset(new RectangleFrame(pixelAsset));
 
 	comboListButton.reset((ImageButton*) guiFactory->createImageButton("Combo Button Closed"));
-	
+
 	comboListButton->setPosition(
 		Vector2(position.x + width - comboListButton->getWidth(), position.y));
 	comboListButton->setOnClickListener(new ShowListBoxListener(this));
@@ -36,6 +36,10 @@ bool ComboBox::initialize(shared_ptr<FontSet> fnt,
 		Vector2(position.x + textMarginX, position.y + textMarginY)));
 
 	return true;
+}
+
+void ComboBox::setScrollBar(ScrollBarDesc& scrollBarDesc) {
+	listBox->setScrollBar(scrollBarDesc);
 }
 
 void ComboBox::update(double deltaTime, MouseController* mouse) {
@@ -146,6 +150,7 @@ void ComboBox::addItems(vector<ListItem*> items) {
 
 void ComboBox::clear() {
 	listBox->clear();
+	resizeBox();
 }
 
 void ComboBox::ShowListBoxListener::onClick(Button * button) {

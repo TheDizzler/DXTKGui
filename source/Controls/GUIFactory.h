@@ -60,8 +60,10 @@ public:
 
 	Dialog* createDialog(bool movable = false, const char_t* fontName = "Default Font");
 
-	ScrollBar* createScrollBar(const Vector2& position, size_t maxHeight);
-	ScrollBar* createScrollBar(const Vector2& position, size_t maxHeight,
+	ScrollBar* createScrollBar(const Vector2& position, size_t barHeight);
+	ScrollBar* createScrollBar(const Vector2& position, size_t barHeight,
+		ScrollBarDesc& scrollBarDesc);
+	ScrollBar* createScrollBar(const Vector2& position, size_t barHeight,
 		const char_t* scrollButtonImage, const char_t* scrollBarImage,
 		const char_t* scrubberImage);
 
