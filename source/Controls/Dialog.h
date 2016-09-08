@@ -28,7 +28,7 @@ public:
 	Dialog(bool movable);
 	~Dialog();
 
-	void initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
+	void initialize(GraphicsAsset* pixelAsset,
 		const pugi::char_t* font = "Default Font");
 
 	void setDimensions(const Vector2& position, const Vector2& size,

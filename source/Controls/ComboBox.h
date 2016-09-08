@@ -8,8 +8,8 @@ public:
 		size_t itemHeight = 32, const int maxItemsShown = 7);
 	~ComboBox();
 
-	virtual bool initialize(shared_ptr<FontSet> font,
-		ComPtr<ID3D11ShaderResourceView> whitePixel, ListBox* listbox,
+	bool initialize(shared_ptr<FontSet> font,
+		GraphicsAsset* pixelAsset, ListBox* listbox,
 		bool enumerateList = false);
 
 	virtual void update(double deltaTime, MouseController* mouse);

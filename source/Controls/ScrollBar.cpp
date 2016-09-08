@@ -11,70 +11,71 @@ ScrollBar::~ScrollBar() {
 }
 
 #include "../Controls/GUIFactory.h"
-bool ScrollBar::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
-	size_t maxHght, ImageButton* scrollButtons[2], Sprite* scrollBar,
-	Sprite* scrbr) {
+bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
+	size_t maxHght, ImageButton* scrollButtons[2], unique_ptr<Sprite> scrllBrTrck,
+	GraphicsAsset* scrbbr) {
 
-	pixel = pixelTexture;
+	//pixel = pixelAsset->getTexture();
 	maxHeight = maxHght;
 
 	if (scrollButtons == NULL || scrollButtons[0] == NULL) {
 		scrollBarUpButton.reset((ImageButton*)
 			guiFactory->createImageButton("ScrollBar Up",
 				"ScrollBar Up Pressed"));
-		scrollBarUpButton->setPosition(
-			Vector2(position.x - scrollBarUpButton->getWidth(),
-				position.y));
-
 		//scrollBarUpButton->action = Button::UP;
 	} else {
 
 		scrollBarUpButton.reset(scrollButtons[0]);
-		scrollBarUpButton->setPosition(
-			Vector2(position.x - scrollBarUpButton->getWidth(),
-				position.y));
+
 	}
 
+	scrollBarUpButton->setPosition(
+		Vector2(position.x - scrollBarUpButton->getWidth(),
+			position.y));
 	if (scrollButtons == NULL || scrollButtons[1] == NULL) {
 
 		scrollBarDownButton.reset((ImageButton*)
 			guiFactory->createImageButton("ScrollBar Down",
 				"ScrollBar Down Pressed"));
-		scrollBarDownButton->setPosition(
-			Vector2(position.x - scrollBarDownButton->getWidth(),
-				position.y + maxHeight - scrollBarDownButton->getHeight()));
-
 		//scrollBarDownButton->action = Button::DOWN;
 	} else {
 		scrollBarDownButton.reset(scrollButtons[1]);
-		scrollBarDownButton->setPosition(
-			Vector2(position.x - scrollBarDownButton->getWidth(),
-				position.y + maxHeight - scrollBarDownButton->getHeight()));
+
 	}
 
+	scrollBarDownButton->setPosition(
+		Vector2(position.x - scrollBarDownButton->getWidth(),
+			position.y + maxHeight - scrollBarDownButton->getHeight()));
 
 
 	// use this for HitArea
 	Vector2 scrollBarPosition =
 		Vector2(position.x - scrollBarUpButton->getWidth(),
 			position.y + scrollBarUpButton->getHeight());
-
 	Vector2 trackSize = Vector2(scrollBarUpButton->getWidth(),
 		maxHeight - scrollBarUpButton->getHeight() * 2);
 
-
-	scrollBarTrack.reset(new RectangleSprite(pixel, scrollBarPosition,
-		trackSize));
-	scrollBarTrack->setTint(Colors::Gray.v);
-
+	if (scrllBrTrck.get() == NULL) {
+		scrollBarTrack.reset(new RectangleSprite(pixelAsset->getTexture(), scrollBarPosition,
+			trackSize));
+		scrollBarTrack->setTint(Colors::Gray.v);
+	} else {
+		scrollBarTrack = move(scrllBrTrck);
+		scrollBarTrack->setOrigin(Vector2(0, 0));
+		scrollBarTrack->setDimensions(scrollBarPosition, trackSize);
+	}
 
 	Vector2 scrubberStartPos(
 		scrollBarPosition.x,
 		scrollBarPosition.y);
 
-	scrubber.reset(new Scrubber(pixel));
-	scrubber->setDimensions(scrubberStartPos, trackSize, trackSize.y);
+	if (scrbbr == NULL) {
+		scrubber.reset(new Scrubber(pixelAsset, false));
 
+	} else {
+		scrubber.reset(new Scrubber(scrbbr, true));
+	}
+	scrubber->setDimensions(scrubberStartPos, trackSize, trackSize.y);
 	return true;
 }
 
@@ -140,7 +141,7 @@ void ScrollBar::setScrollBar(int totalItems, int itemHeight, int maxDisplayItems
 
 
 	wostringstream ws;
-	ws << "Scruber height: " << scrubber->getHeight() << "\n";
+	ws << "Scrubber height: " << scrubber->getHeight() << "\n";
 	OutputDebugString(ws.str().c_str());
 
 }
@@ -270,9 +271,13 @@ XMVECTOR XM_CALLCONV ScrollBar::measureString() const {
 
 
 /** **** Scrubber **** **/
-Scrubber::Scrubber(ComPtr<ID3D11ShaderResourceView> pixel)
-	: RectangleSprite(pixel) {
+Scrubber::Scrubber(GraphicsAsset* const graphicsAsset, bool isPixel)
+	: RectangleSprite(graphicsAsset) {
+
+	assetIsPixel = isPixel;
+		
 }
+
 
 Scrubber::~Scrubber() {
 }
@@ -280,23 +285,24 @@ Scrubber::~Scrubber() {
 void Scrubber::setDimensions(const Vector2& startPos, const Vector2& size,
 	const int scrllBrHght) {
 
-	width = size.x;
-	height = size.y;
-
 	minPosition = startPos;
+	position = minPosition;
 
 	scrollBarHeight = scrllBrHght;
 
-	maxPosition = startPos;
-	maxPosition.y += scrollBarHeight - height;
-
-	position = minPosition;
-
+	if (!assetIsPixel) {
+		width = size.x;
+		height = size.y;
+	}
 
 	sourceRect.left = 0;
 	sourceRect.top = 0;
 	sourceRect.bottom = height;
 	sourceRect.right = width;
+
+
+	maxPosition = startPos;
+	maxPosition.y += scrollBarHeight - height;
 
 	hitArea.reset(new HitArea(position,
 		Vector2(width*scale.x, height*scale.y)));

@@ -13,7 +13,7 @@ using namespace std;
 class Button : public GUIControl {
 public:
 
-	Button(ComPtr<ID3D11ShaderResourceView> pixelTexture, unique_ptr<FontSet> font);
+	Button(GraphicsAsset* pixelAsset, unique_ptr<FontSet> font);
 	~Button();
 
 	/* position is topleft of button. */

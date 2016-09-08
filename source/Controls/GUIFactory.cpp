@@ -59,7 +59,6 @@ GraphicsAsset* const GUIFactory::getAsset(const char_t* assetName) {
 		ws << "Cannot find asset file: " << assetName << "\n";
 		ws << "Count : " << assetMap.count(assetName) << "\n";
 		OutputDebugString(ws.str().c_str());
-		//MessageBox(0, ws.str().c_str(), L"Fatal Error", MB_OK);
 		return NULL;
 	}
 
@@ -95,7 +94,7 @@ TextLabel* GUIFactory::createTextLabel(const Vector2& position,
 
 Button* GUIFactory::createButton(const char_t* fontName) {
 
-	Button* button = new Button(whitePixel, getFont(fontName));
+	Button* button = new Button(getAsset("White Pixel"), getFont(fontName));
 	button->setFactory(this);
 	return button;
 }
@@ -104,7 +103,7 @@ Button* GUIFactory::createButton(const char_t* fontName) {
 Button* GUIFactory::createButton(const Vector2& position, const Vector2& size,
 	wstring text, const char_t* fontName, const int frameThickness) {
 
-	Button* button = new Button(whitePixel, getFont(fontName));
+	Button* button = new Button(getAsset("White Pixel"), getFont(fontName));
 	button->setFactory(this);
 	button->setDimensions(position, size, frameThickness);
 	button->setText(text);
@@ -221,7 +220,10 @@ ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t maxHeight
 	ImageButton* buttons[2] = {NULL, NULL};
 	buttons[0] = (ImageButton*) createImageButton("ScrollBar Up Custom");
 	buttons[1] = (ImageButton*) createImageButton("ScrollBar Up Custom");
-	if (!scrollBar->initialize(whitePixel, maxHeight, buttons)) {
+
+	
+	if (!scrollBar->initialize(getAsset("White Pixel"), maxHeight, buttons,
+		getSpriteFromAsset("ScrollBar Track Custom"), getAsset("Scrubber Custom"))) {
 		MessageBox(NULL, L"Failed to create ScrollBar",
 			L"GUI initialization ERROR", MB_OK);
 	}
@@ -263,7 +265,7 @@ ListBox* GUIFactory::createListBox(const Vector2& position,
 	ListBox* listbox = new ListBox(position, width, itemHeight, maxItemsShown);
 	listbox->setFactory(this);
 	Vector2 scrollBarPos(position.x + width, position.y);
-	listbox->initialize(getFont(fontName), whitePixel,
+	listbox->initialize(getFont(fontName), getAsset("White Pixel"),
 		createScrollBar(scrollBarPos, itemHeight * maxItemsShown), enumerateList);
 	return listbox;
 }
@@ -277,7 +279,7 @@ ComboBox* GUIFactory::createComboBox(const Vector2& position,
 	ComboBox* combobox = new ComboBox(position, width, itemHeight, maxItemsShown);
 	combobox->setFactory(this);
 
-	combobox->initialize(getFont(fontName), whitePixel,
+	combobox->initialize(getFont(fontName), getAsset("White Pixel"),
 		createListBox(
 			Vector2(position.x, position.y + itemHeight),
 			width, itemHeight, maxItemsShown, enumerateList, fontName),
@@ -290,7 +292,7 @@ Dialog* GUIFactory::createDialog(bool movable, const char_t* fontName) {
 
 	Dialog* dialog = new Dialog(movable);
 	dialog->setFactory(this);
-	dialog->initialize(whitePixel, fontName);
+	dialog->initialize(getAsset("White Pixel"), fontName);
 	return dialog;
 }
 
@@ -329,19 +331,19 @@ bool GUIFactory::getGUIAssetsFromXML(ComPtr<ID3D11Device> device) {
 					L"ERROR", MB_OK);
 				return false;
 			}
-		} else {
-			unique_ptr<GraphicsAsset> guiAsset;
-			guiAsset.reset(new GraphicsAsset());
-			if (!guiAsset->load(device, Assets::convertCharStarToWCharT(file)))
-				return false;
+		} /*else {*/
+		unique_ptr<GraphicsAsset> guiAsset;
+		guiAsset.reset(new GraphicsAsset());
+		if (!guiAsset->load(device, Assets::convertCharStarToWCharT(file)))
+			return false;
 
-			assetMap[check] = move(guiAsset);
-		}
+		assetMap[check] = move(guiAsset);
+	//}
 
-		/*wostringstream ws;
-		ws << "file: " << file << "\n";
-		ws << "name : " << name << "\n";
-		OutputDebugString(ws.str().c_str());*/
+	/*wostringstream ws;
+	ws << "file: " << file << "\n";
+	ws << "name : " << name << "\n";
+	OutputDebugString(ws.str().c_str());*/
 	}
 
 	return true;

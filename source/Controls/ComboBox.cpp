@@ -17,10 +17,10 @@ ComboBox::~ComboBox() {
 
 #include "../Controls/GUIFactory.h"
 bool ComboBox::initialize(shared_ptr<FontSet> fnt,
-	ComPtr<ID3D11ShaderResourceView> whitePixel, ListBox* lstBx, bool enumerateList) {
+	GraphicsAsset* pixelAsset, ListBox* lstBx, bool enumerateList) {
 
 
-	frame.reset(new RectangleFrame(whitePixel));
+	frame.reset(new RectangleFrame(pixelAsset));
 
 	comboListButton.reset((ImageButton*) guiFactory->createImageButton("Combo Button Closed"));
 	

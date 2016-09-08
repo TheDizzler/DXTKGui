@@ -71,7 +71,7 @@ public:
 	~ListBox();
 
 	void initialize(shared_ptr<FontSet> font,
-		ComPtr<ID3D11ShaderResourceView> whitePixel, ScrollBar* scrollBar,
+		GraphicsAsset* pixelAsset, ScrollBar* scrollBar,
 		bool enumerateList = false);
 
 	/* Note: this function has not been tested much....not at all really...*/

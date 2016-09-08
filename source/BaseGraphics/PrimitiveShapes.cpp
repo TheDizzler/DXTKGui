@@ -1,9 +1,10 @@
 #include "PrimitiveShapes.h"
 
-RectangleSprite::RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel)
+RectangleSprite::RectangleSprite(GraphicsAsset* const graphicsAsset)
 	: Sprite() {
 
-	texture = pixel;
+	Sprite::load(graphicsAsset);
+	origin = Vector2(0, 0);
 }
 
 RectangleSprite::RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel,
@@ -21,28 +22,6 @@ const Vector2 RectangleSprite::getSize() const {
 }
 
 
-void RectangleSprite::setDimensions(const Vector2& pos, const Vector2& size) {
-
-	position = pos;
-
-	setSize(size);
-}
-
-void RectangleSprite::setSize(const Vector2& size) {
-
-	width = size.x;
-	height = size.y;
-
-	sourceRect.left = 0;
-	sourceRect.top = 0;
-	sourceRect.bottom = height;
-	sourceRect.right = width;
-
-	hitArea.reset(new HitArea(
-		Vector2(position.x, position.y),
-		Vector2(width*scale.x, height*scale.y)));
-}
-
 void RectangleSprite::moveBy(const Vector2& moveVector) {
 
 	position += moveVector;
@@ -52,9 +31,10 @@ void RectangleSprite::moveBy(const Vector2& moveVector) {
 
 
 
-RectangleFrame::RectangleFrame(ComPtr<ID3D11ShaderResourceView> pxl) {
+RectangleFrame::RectangleFrame(GraphicsAsset* pixelAsset) {
 
-	pixel = pxl;
+	//if (pixelAsset != NULL)
+		pixel = pixelAsset->getTexture();
 }
 
 RectangleFrame::RectangleFrame(ComPtr<ID3D11ShaderResourceView> pxl,
@@ -188,15 +168,15 @@ const float RectangleFrame::getAlpha() const {
 }
 
 void RectangleFrame::setOrigin(const Vector2& orgn) {
-origin = orgn;
+	origin = orgn;
 }
 
 void RectangleFrame::setScale(const Vector2& scl) {
-scale = scl;
+	scale = scl;
 }
 
 void RectangleFrame::setRotation(const float rot) {
-rotation = rot;
+	rotation = rot;
 }
 
 void RectangleFrame::setAlpha(const float alpha) {

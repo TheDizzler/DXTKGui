@@ -7,7 +7,8 @@ using namespace std;
 
 class Scrubber : public RectangleSprite {
 public:
-	Scrubber(ComPtr<ID3D11ShaderResourceView> pixel);
+	/* If using an image file instead of a pixel, set staticImage to true. */
+	Scrubber(GraphicsAsset* const graphicsAsset, bool assetIsPixel = true);
 	~Scrubber();
 
 	void setDimensions(const Vector2& startPosition,
@@ -31,7 +32,7 @@ public:
 	double percentAt = 0;
 
 private:
-
+	bool assetIsPixel;
 	Vector2 minPosition;
 	Vector2 maxPosition;
 
@@ -46,10 +47,7 @@ private:
 	double minMaxDifference;
 };
 
-class ScrollBarTrack : public RectangleSprite {
 
-
-};
 
 /** Do not use this classes HitArea - it is NULL. */
 class ScrollBar : public GUIControl {
@@ -57,14 +55,11 @@ public:
 	ScrollBar(Vector2 position);
 	~ScrollBar();
 
-	/* ImageButton* must be a button, Sprite* can be RectangleSprite */
-	//bool initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture, size_t maxHeight,
-		//ImageButton* scrollBarButton, Sprite* scrollBar, Sprite* scrubber);
 	/* scrollBarButtons[0] = Up Button
 		scrollBarButtons[1] = Down Button */
-	bool initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture, size_t maxHeight,
-		ImageButton* scrollBarButtons[2] = NULL, Sprite* scrollBar = NULL, 
-		Sprite* scrubber = NULL);
+	bool initialize(GraphicsAsset* const pixelAsset, size_t maxHeight,
+		ImageButton* scrollBarButtons[2] = NULL, unique_ptr<Sprite> scrollBarTrack = NULL, 
+		GraphicsAsset* scrubber = NULL);
 	void setScrollBar(int totalItems, int itemHeight, int maxDisplayItems);
 
 	void update(double deltaTime, MouseController* mouse);
@@ -98,7 +93,7 @@ private:
 	/* Position of entire scrollbar area. */
 	//Vector2 position;
 
-	unique_ptr<RectangleSprite> scrollBarTrack;
+	unique_ptr<Sprite> scrollBarTrack;
 	unique_ptr<Scrubber> scrubber;
 
 	int maxHeight;
@@ -114,6 +109,6 @@ private:
 	double autoScrollStartDelay = .25; // time in seconds before scrollbar starts scrolling
 	double autoScrollDelay = autoScrollStartDelay * .75; // time between increments while autoscrolling
 
-	ComPtr<ID3D11ShaderResourceView> pixel;
+	//ComPtr<ID3D11ShaderResourceView> pixel;
 
 };

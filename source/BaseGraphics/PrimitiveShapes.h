@@ -7,22 +7,20 @@
 	corner (0, 0) to be consistent with GUIControls. */
 class RectangleSprite : public Sprite {
 public:
-	RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel);
+	RectangleSprite(GraphicsAsset* const graphicsAsset);
 	RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel,
 		const Vector2& position, const Vector2& size);
 	~RectangleSprite();
 
 	const Vector2 getSize() const;
 	/* position is top left corner. */
-	void setDimensions(const Vector2& position, const Vector2& size);
-	void setSize(const Vector2& size);
 	virtual void moveBy(const Vector2& moveVector);
 };
 
 /** A primitive, non-filled rectangle. */
 class RectangleFrame : public IElement2D {
 public:
-	RectangleFrame(ComPtr<ID3D11ShaderResourceView> pixel);
+	RectangleFrame(GraphicsAsset* pixelAsset);
 	RectangleFrame(ComPtr<ID3D11ShaderResourceView> pixel,
 		const Vector2& pos, const Vector2& size, int frameThickness);
 	~RectangleFrame();

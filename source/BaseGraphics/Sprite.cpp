@@ -46,7 +46,7 @@ void Sprite::load(GraphicsAsset* const graphicsAsset) {
 	sourceRect.right = width;
 
 	hitArea.reset(new HitArea(
-		Vector2(position.x - width / 2, position.y - height / 2),
+		Vector2(position.x - origin.x, position.y - origin.y),
 		Vector2(width, height)));
 
 }
@@ -54,7 +54,7 @@ void Sprite::load(GraphicsAsset* const graphicsAsset) {
 
 void Sprite::update(double deltaTime) {
 
-	hitArea->position = Vector2(position.x - width / 2, position.y - height / 2);
+	hitArea->position = Vector2(position.x - origin.x, position.y - origin.y);
 
 }
 
@@ -70,7 +70,6 @@ ComPtr<ID3D11ShaderResourceView> Sprite::getTexture() {
 	return texture;
 }
 
-
 const HitArea* Sprite::getHitArea() const {
 	return hitArea.get();
 }
@@ -78,7 +77,6 @@ const HitArea* Sprite::getHitArea() const {
 const Vector2& Sprite::getPosition() const {
 	return position;
 }
-
 
 const Vector2& Sprite::getOrigin() const {
 	return origin;
@@ -92,11 +90,9 @@ const float Sprite::getRotation() const {
 	return rotation;
 }
 
-
 const Color& Sprite::getTint() const {
 	return tint;
 }
-
 
 const float Sprite::getAlpha() const {
 	return alpha;
@@ -125,11 +121,32 @@ void Sprite::setDimensions(Sprite* baseSprite) {
 		Vector2(width*scale.x, height*scale.y)));
 }
 
+void Sprite::setDimensions(const Vector2& pos, const Vector2& size) {
+
+	setSize(size);
+	setPosition(pos);
+}
+
+void Sprite::setSize(const Vector2& size) {
+
+	width = size.x;
+	height = size.y;
+
+	sourceRect.left = 0;
+	sourceRect.top = 0;
+	sourceRect.bottom = height;
+	sourceRect.right = width;
+
+	hitArea.reset(new HitArea(
+		Vector2(position.x - origin.x *scale.x, position.y - origin.y*scale.y),
+		Vector2(width*scale.x, height*scale.y)));
+}
+
 void Sprite::setPosition(const Vector2& pos) {
 
 	position = pos;
-	hitArea->position = Vector2(position.x - width*scale.x / 2,
-		position.y - height*scale.y / 2);
+	hitArea->position = Vector2(position.x - origin.x*scale.x,
+		position.y - origin.y*scale.y);
 	hitArea->size = Vector2(width*scale.x, height*scale.y);
 }
 

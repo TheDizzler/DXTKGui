@@ -11,15 +11,15 @@ Dialog::~Dialog() {
 }
 
 #include "../Controls/GUIFactory.h"
-void Dialog::initialize(ComPtr<ID3D11ShaderResourceView> pixelTexture,
+void Dialog::initialize(GraphicsAsset* pixelAsset,
 	const pugi::char_t* font) {
 
-
-	frame.reset(new RectangleFrame(pixelTexture));
-	bgSprite.reset(new RectangleSprite(pixelTexture));
-	titleSprite.reset(new RectangleSprite(pixelTexture));
+	//GraphicsAsset* pixelTexture = guiFactory->getAsset("White Pixel");
+	frame.reset(new RectangleFrame(pixelAsset));
+	bgSprite.reset(new RectangleSprite(pixelAsset));
+	titleSprite.reset(new RectangleSprite(pixelAsset));
 	titleSprite->setTint(Color(128, 128, 128));
-	buttonFrameSprite.reset(new RectangleSprite(pixelTexture));
+	buttonFrameSprite.reset(new RectangleSprite(pixelAsset));
 	buttonFrameSprite->setTint(Color(128, 128, 128));
 	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
 

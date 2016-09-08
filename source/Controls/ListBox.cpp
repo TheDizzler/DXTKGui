@@ -24,12 +24,11 @@ ListBox::~ListBox() {
 }
 
 
-void ListBox::initialize(shared_ptr<FontSet> fnt,
-	ComPtr<ID3D11ShaderResourceView> whitePixel,
+void ListBox::initialize(shared_ptr<FontSet> fnt, GraphicsAsset* pixelAsset,
 	ScrollBar* scrllbr, bool enumerateList) {
 
 	font = fnt;
-	pixel = whitePixel;
+	pixel = pixelAsset->getTexture();
 
 	firstItemPos = Vector2(position.x, position.y);
 
@@ -41,7 +40,7 @@ void ListBox::initialize(shared_ptr<FontSet> fnt,
 			L"GUI initialization ERROR", MB_OK);
 	}*/
 
-	frame.reset(new RectangleFrame(pixel));
+	frame.reset(new RectangleFrame(pixelAsset));
 
 	isEnumerated = enumerateList;
 

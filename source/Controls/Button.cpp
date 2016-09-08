@@ -1,17 +1,22 @@
 #include "Button.h"
 
 
-Button::Button(ComPtr<ID3D11ShaderResourceView> pixelTexture,
+Button::Button(GraphicsAsset* pixelAsset,
 	unique_ptr<FontSet> font) {
 
-	frame.reset(new RectangleFrame(pixelTexture));
-	rectSprite.reset(new RectangleSprite(pixelTexture));
+	if (pixelAsset != NULL) {
+		// this it stop errors when coming from ImageButton
+		frame.reset(new RectangleFrame(pixelAsset));
+		rectSprite.reset(new RectangleSprite(pixelAsset));
+	}
 	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
 	buttonLabel.reset(new TextLabel(Vector2(0, 0), L"", move(font)));
 
 	position = Vector2(-1, -1);
 
-	setToUnpressedState();
+	if (pixelAsset != NULL)
+		setToUnpressedState();	// this always call Button::setToUnpressedState
+								// even if it is an ImageButton
 }
 
 
@@ -225,6 +230,8 @@ ImageButton::ImageButton(unique_ptr<Sprite> buttonSprite,
 	Vector2 size = Vector2(normalSprite->getWidth(), normalSprite->getHeight());
 
 	hitArea.reset(new HitArea(Vector2::Zero, size));
+
+	setToUnpressedState();
 }
 
 /** **** ImageButton **** **/
@@ -254,8 +261,10 @@ void ImageButton::draw(SpriteBatch* batch) {
 
 	//drawSprite->draw(batch);
 	batch->Draw(drawSprite->getTexture().Get(), position, &drawSprite->getRect(),
-		drawSprite->getTint(), rotation, origin, scale, 
+		drawSprite->getTint(), rotation, origin, scale,
 		SpriteEffects_None, layerDepth);
+	// if I'm gonna do it this way, there isn't much point in making them actual images.
+	// might as well just have the textures
 	buttonLabel->draw(batch);
 }
 
@@ -287,7 +296,7 @@ void ImageButton::setRotation(const float rot) {
 		position = (Vector2(position.x - getWidth(), position.y - getHeight()));
 	else if (rotation == XM_PI)
 		position = (Vector2(position.x + getWidth(), position.y + getHeight()));
-	
+
 	//if (pressedSprite != NULL)
 		//pressedSprite->setRotation(rotation);
 }
