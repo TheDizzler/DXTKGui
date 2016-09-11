@@ -231,7 +231,7 @@ ImageButton::ImageButton(unique_ptr<Sprite> buttonSprite,
 	Vector2 size = Vector2(normalSprite->getWidth(), normalSprite->getHeight());
 
 	hitArea.reset(new HitArea(Vector2::Zero, size));
-	
+
 	setToUnpressedState();
 }
 
@@ -261,8 +261,8 @@ ImageButton::~ImageButton() {
 void ImageButton::draw(SpriteBatch* batch) {
 
 	//drawSprite->draw(batch);
-	batch->Draw(texture, position, &normalSprite->getRect(),
-		tint, rotation, origin, scale, SpriteEffects_None, layerDepth);
+	batch->Draw(texture, normalSprite->getPosition(), &normalSprite->getRect(),
+		tint, rotation, normalSprite->getOrigin(), scale, SpriteEffects_None, layerDepth);
 	buttonLabel->draw(batch);
 }
 
@@ -270,11 +270,13 @@ void ImageButton::setPosition(const Vector2& pos) {
 
 	position = pos;
 	Button::setPosition(position);
-	//normalSprite->setPosition(position);
+	Vector2 spritePos = position;
+	spritePos.x += normalSprite->getWidth()/2;
+	spritePos.y += normalSprite->getHeight() / 2;
+	normalSprite->setPosition(spritePos);
 	//if (pressedSprite != NULL)
 		//pressedSprite->setPosition(position);
-	if (rotation != 0) // totally hacky!
-		setRotation(rotation); // feel the hackiness!
+
 }
 
 void ImageButton::setScale(const Vector2& scl) {
@@ -285,16 +287,8 @@ void ImageButton::setScale(const Vector2& scl) {
 		pressedSprite->setScale(scale);
 }
 
-/* This is really hacky and should probably not be used!
-	Note: this is being used.... (by ComboBox open/close function)*/
 void ImageButton::setRotation(const float rot) {
-
 	rotation = rot;
-	if (rotation == 0)
-		position = (Vector2(position.x - getWidth(), position.y - getHeight()));
-	else if (rotation == XM_PI)
-		position = (Vector2(position.x + getWidth(), position.y + getHeight()));
-
 }
 
 

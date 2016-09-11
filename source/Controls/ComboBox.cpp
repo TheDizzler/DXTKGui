@@ -67,8 +67,21 @@ void ComboBox::draw(SpriteBatch* batch) {
 
 
 void ComboBox::open() {
+
 	isOpen = !isOpen;
-	comboListButton->setRotation(XM_PI*isOpen);
+	//float rot = XM_PI*isOpen;
+	//comboListButton->setRotation(rot);
+
+	//Vector2 buttonPos = comboListButton->getPosition();
+
+	//if (rot == 0)
+	//	comboListButton->setPosition(
+	//		Vector2(buttonPos.x - comboListButton->getWidth(),
+	//			buttonPos.y - comboListButton->getHeight()));
+	//else if (rot == XM_PI*isOpen)
+	//	comboListButton->setPosition(
+	//		Vector2(buttonPos.x + comboListButton->getWidth(),
+	//			buttonPos.y + comboListButton->getHeight()));
 }
 
 void ComboBox::close() {

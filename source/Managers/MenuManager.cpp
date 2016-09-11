@@ -299,7 +299,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	
 	populateDisplayModeList(
 		game->getDisplayModeList(0 /*game->getSelectedAdapterIndex()*/));
-	//displayModeCombobox->setScrollBar(scrollBarDesc);
+	displayModeCombobox->setScrollBar(scrollBarDesc);
 	displayModeCombobox->setSelected(game->getSelectedDisplayModeIndex());
 	guiControls.push_back(displayModeCombobox);
 	

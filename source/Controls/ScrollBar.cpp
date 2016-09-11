@@ -93,12 +93,7 @@ void ScrollBar::setPosition(const Vector2 newPosition) {
 
 	scrollBarTrack->setPosition(
 		Vector2(xPos, newPosition.y + scrollBarUpButton->getHeight()));
-	//scrollBarTrack->setSize(
-	wostringstream ws;
-	ws << "\newPosition: " << newPosition.x << ", " << newPosition.y << "\n";
-	ws << "UpButton Height: " << scrollBarUpButton->getHeight() << "\n";
-	ws << "scrollBar Height: " << scrollBarTrack->getHeight() << "\n";
-	OutputDebugString(ws.str().c_str());
+
 
 	Vector2 scrubberPos = scrubber->getPosition();
 	scrubberPos.x = newPosition.x;
@@ -170,6 +165,7 @@ void ScrollBar::update(double deltaTime, MouseController* mouse) {
 
 	scrollBarDownButton->update(deltaTime, mouse);
 	scrollBarUpButton->update(deltaTime, mouse);
+	// change this to actionlisteners, or nah?
 	if (scrollBarDownButton->selected()) {
 		// scroll down
 		if (firstClickTimer == 0) {

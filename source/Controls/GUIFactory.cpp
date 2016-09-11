@@ -242,6 +242,7 @@ ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight
 		buttons[1] = (ImageButton*) createImageButton(scrollBarDesc.upButtonImage.c_str(),
 			scrollBarDesc.upPressedButtonImage.c_str());
 		buttons[1]->setRotation(XM_PI);
+		//buttons[1]->setPosition(
 	} else {
 		buttons[1] = (ImageButton*) createImageButton(scrollBarDesc.downButtonImage.c_str(),
 			scrollBarDesc.downPressedButtonImage.c_str());
