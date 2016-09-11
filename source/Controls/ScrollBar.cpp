@@ -29,8 +29,8 @@ bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 	}
 
 	scrollBarUpButton->setPosition(
-		Vector2(position.x - scrollBarUpButton->getWidth(),
-			position.y));
+		Vector2(position.x - scrollBarUpButton->getWidth(), position.y));
+
 
 	if (scrollButtons == NULL || scrollButtons[1] == NULL) {
 
@@ -55,14 +55,15 @@ bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 		barHeight - scrollBarUpButton->getHeight() * 2);
 
 	if (scrllBrTrck.get() == NULL) {
-		scrollBarTrack.reset(new RectangleSprite(pixelAsset->getTexture(), scrollBarPosition,
-			trackSize));
+		scrollBarTrack.reset(new RectangleSprite(pixelAsset->getTexture(), 
+		scrollBarPosition, trackSize));
 		scrollBarTrack->setTint(Colors::Gray.v);
 	} else {
 		scrollBarTrack = move(scrllBrTrck);
 		scrollBarTrack->setOrigin(Vector2(0, 0));
 		scrollBarTrack->setDimensions(scrollBarPosition, trackSize);
 	}
+
 
 	Vector2 scrubberStartPos(
 		scrollBarPosition.x,
@@ -78,27 +79,32 @@ bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 	return true;
 }
 
-
+/* newPosition.x is position of right side of scrollbar's container. */
 void ScrollBar::setPosition(const Vector2 newPosition) {
 
 	position = newPosition;
 
+	int xPos = newPosition.x - scrollBarUpButton->getWidth();
+	scrollBarUpButton->setPosition(Vector2(xPos, newPosition.y));
+
 	scrollBarDownButton->setPosition(
-		Vector2(newPosition.x - scrollBarDownButton->getWidth(),
-			newPosition.y + barHeight - scrollBarDownButton->getHeight()));
+		Vector2(xPos,
+			newPosition.y + barHeight - scrollBarUpButton->getHeight()));
 
-	scrollBarUpButton->setPosition(
-		Vector2(newPosition.x - scrollBarUpButton->getWidth(),
-			newPosition.y));
-
-	//scrollBarPosition =
 	scrollBarTrack->setPosition(
-		Vector2(newPosition.x - scrollBarUpButton->getWidth(),
-			newPosition.y + scrollBarUpButton->getHeight()));
+		Vector2(xPos, newPosition.y + scrollBarUpButton->getHeight()));
+	//scrollBarTrack->setSize(
+	wostringstream ws;
+	ws << "\newPosition: " << newPosition.x << ", " << newPosition.y << "\n";
+	ws << "UpButton Height: " << scrollBarUpButton->getHeight() << "\n";
+	ws << "scrollBar Height: " << scrollBarTrack->getHeight() << "\n";
+	OutputDebugString(ws.str().c_str());
 
 	Vector2 scrubberPos = scrubber->getPosition();
 	scrubberPos.x = newPosition.x;
 	scrubber->setPosition(scrubberPos);
+
+
 
 	//hitArea->position = scrollBarPosition;
 }
@@ -107,49 +113,40 @@ void ScrollBar::setPosition(const Vector2 newPosition) {
 void ScrollBar::setScrollBar(int totalItems, int itemHeight, int maxDisplayItems) {
 
 	percentForOneItem = (double) 1 / (totalItems - maxDisplayItems);
-	wostringstream ws;
+	/*wostringstream ws;
 	ws << "percentForOneItem: " << percentForOneItem << "\n";
-	OutputDebugString(ws.str().c_str());
+	OutputDebugString(ws.str().c_str());*/
 
 	double percentToShow;
 	if (totalItems < maxDisplayItems) {
 		percentToShow = 1;
 		percentForOneItem = 0;
-		//scrollBarRect.bottom = 
 		scrollBarTrack->setSize(Vector2(scrollBarTrack->getWidth(),
 			(totalItems * itemHeight) - scrollBarUpButton->getHeight() * 2));
 
-		Vector2 newButtonPos = scrollBarDownButton->getPosition();
-		newButtonPos.y =
-			//scrollBarPosition.y + scrollBarRect.bottom
-			scrollBarTrack->getPosition().y + scrollBarTrack->getHeight()
-			+ scrollBarDownButton->getHeight() / 2;
-		scrollBarDownButton->setPosition(newButtonPos);
-
 	} else {
 		percentToShow = percentForOneItem * maxDisplayItems;
-		//scrollBarRect.bottom =
 		scrollBarTrack->setSize(Vector2(scrollBarTrack->getWidth(),
 			barHeight - scrollBarUpButton->getHeight() * 2));
+
+
+		Vector2 newButtonPos = scrollBarDownButton->getPosition();
+		newButtonPos.y =
+			scrollBarTrack->getPosition().y + scrollBarTrack->getHeight();
+		scrollBarDownButton->setPosition(newButtonPos);
 	}
 
-
-
+	
 	scrubber->setDimensions(
-		//Vector2(scrollBarPosition.x, scrollBarPosition.y),
-		//Vector2(scrollBarRect.right, scrollBarRect.bottom * percentToShow),
-		//scrollBarRect.bottom);
 		scrollBarTrack->getPosition(),
 		Vector2(scrollBarTrack->getWidth(), scrollBarTrack->getHeight()* percentToShow),
 		scrollBarTrack->getHeight());
-
 
 }
 
 
 void ScrollBar::update(double deltaTime, MouseController* mouse) {
 
-	//isHover = hitArea->contains(mouse->getPosition());
 	isHover = scrollBarTrack->getHitArea()->contains(mouse->getPosition());
 	// update scrubber
 	scrubber->update(deltaTime, mouse);
@@ -168,15 +165,16 @@ void ScrollBar::update(double deltaTime, MouseController* mouse) {
 			scrubber->scroll(percentForOneItem* (up ? 5 : -5));
 			firstClickTimer = autoScrollDelay;
 		}
-		
+
 	}
 
 	scrollBarDownButton->update(deltaTime, mouse);
 	scrollBarUpButton->update(deltaTime, mouse);
 	if (scrollBarDownButton->selected()) {
 		// scroll down
-		if (firstClickTimer == 0)
+		if (firstClickTimer == 0) {
 			scrubber->scroll(percentForOneItem);
+		}
 
 		firstClickTimer += deltaTime;
 		if (firstClickTimer >= autoScrollStartDelay) {
@@ -184,6 +182,9 @@ void ScrollBar::update(double deltaTime, MouseController* mouse) {
 			scrubber->scroll(percentForOneItem);
 			firstClickTimer = autoScrollDelay;
 		}
+
+
+
 	} else if (scrollBarUpButton->selected()) {
 		// scroll up
 		if (firstClickTimer == 0)
@@ -274,7 +275,7 @@ Scrubber::Scrubber(GraphicsAsset* const graphicsAsset, bool isPixel)
 	: RectangleSprite(graphicsAsset) {
 
 	assetIsPixel = isPixel;
-		
+
 }
 
 
@@ -370,7 +371,7 @@ void Scrubber::setScrollPositionByPercent(double newPositionPercentage) {
 void Scrubber::scroll(double increment) {
 
 	percentAt += increment;
-	if (percentAt < increment/2)
+	if (percentAt < increment / 2)
 		percentAt = 0;
 	else if (percentAt > 1 - increment)
 		percentAt = 1;

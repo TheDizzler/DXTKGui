@@ -20,6 +20,8 @@
 		<sprite name="CheckBox Checked B" file="assets/gui/CheckBox Checked.dds" />
 		<sprite name="CheckBox Unchecked" file="assets/gui/CheckBox Unchecked White.dds" />
 		<sprite name="CheckBox Checked" file="assets/gui/CheckBox Checked White.dds" />
+
+
 		<!-- Excessive buttons are excessive -->
 		<sprite name="Combo Button Closed" file="assets/gui/ComboButtonClosed.dds" />
 		<sprite name="Combo Button Opened" file="assets/gui/ComboButtonOpen.dds" />

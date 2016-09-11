@@ -17,6 +17,7 @@ Button::Button(GraphicsAsset* pixelAsset,
 	if (pixelAsset != NULL)
 		setToUnpressedState();	// this always call Button::setToUnpressedState
 								// even if it is an ImageButton
+
 }
 
 
@@ -226,11 +227,11 @@ ImageButton::ImageButton(unique_ptr<Sprite> buttonSprite,
 	setTextOffset(Vector2(0, -5), Vector2(0, 0));
 
 	normalSprite = move(buttonSprite);
-	normalSprite->setOrigin(Vector2(0, 0));
+	//normalSprite->setOrigin(Vector2(0, 0));
 	Vector2 size = Vector2(normalSprite->getWidth(), normalSprite->getHeight());
 
 	hitArea.reset(new HitArea(Vector2::Zero, size));
-
+	
 	setToUnpressedState();
 }
 
@@ -244,12 +245,12 @@ ImageButton::ImageButton(unique_ptr<Sprite> upButtonSprite,
 
 	normalSprite = move(upButtonSprite);
 	pressedSprite = move(downButtonSprite);
-	normalSprite->setOrigin(Vector2(0, 0));
-	pressedSprite->setOrigin(Vector2(0, 0));
+	//normalSprite->setOrigin(Vector2(0, 0));
+	//pressedSprite->setOrigin(Vector2(0, 0));
 	Vector2 size = Vector2(normalSprite->getWidth(), normalSprite->getHeight());
 
 	hitArea.reset(new HitArea(Vector2::Zero, size));
-
+	setToUnpressedState();
 }
 
 
@@ -260,11 +261,8 @@ ImageButton::~ImageButton() {
 void ImageButton::draw(SpriteBatch* batch) {
 
 	//drawSprite->draw(batch);
-	batch->Draw(drawSprite->getTexture().Get(), position, &drawSprite->getRect(),
-		drawSprite->getTint(), rotation, origin, scale,
-		SpriteEffects_None, layerDepth);
-	// if I'm gonna do it this way, there isn't much point in making them actual images.
-	// might as well just have the textures
+	batch->Draw(texture, position, &normalSprite->getRect(),
+		tint, rotation, origin, scale, SpriteEffects_None, layerDepth);
 	buttonLabel->draw(batch);
 }
 
@@ -272,9 +270,9 @@ void ImageButton::setPosition(const Vector2& pos) {
 
 	position = pos;
 	Button::setPosition(position);
-	normalSprite->setPosition(position);
-	if (pressedSprite != NULL)
-		pressedSprite->setPosition(position);
+	//normalSprite->setPosition(position);
+	//if (pressedSprite != NULL)
+		//pressedSprite->setPosition(position);
 	if (rotation != 0) // totally hacky!
 		setRotation(rotation); // feel the hackiness!
 }
@@ -292,39 +290,34 @@ void ImageButton::setScale(const Vector2& scl) {
 void ImageButton::setRotation(const float rot) {
 
 	rotation = rot;
-	//normalSprite->setRotation(rotation);
 	if (rotation == 0)
 		position = (Vector2(position.x - getWidth(), position.y - getHeight()));
 	else if (rotation == XM_PI)
 		position = (Vector2(position.x + getWidth(), position.y + getHeight()));
 
-	//if (pressedSprite != NULL)
-		//pressedSprite->setRotation(rotation);
 }
 
 
 void ImageButton::setToUnpressedState() {
 
 	buttonLabel->setTint(normalColorText);
-	Vector2 pos = buttonLabel->getPosition();
 	buttonLabel->setPosition(unpressedTextPosition);
-	normalSprite->setTint(normalColor);
-	drawSprite = normalSprite.get();
+	tint = normalColor;
+	texture = normalSprite->getTexture().Get();
 }
 
 void ImageButton::setToHoverState() {
 
 	buttonLabel->setTint(hoverColorText);
-	normalSprite->setTint(hoverColor);
-	drawSprite = normalSprite.get();
+	tint = hoverColor;
+	texture = normalSprite->getTexture().Get();
 }
 
 void ImageButton::setToSelectedState() {
 
-	Vector2 pos = buttonLabel->getPosition();
 	buttonLabel->setPosition(pressedTextPosition);
 	if (pressedSprite.get() != NULL)
-		drawSprite = pressedSprite.get();
+		texture = pressedSprite->getTexture().Get();
 	else
-		normalSprite->setTint(selectedColor);
+		tint = selectedColor;
 }

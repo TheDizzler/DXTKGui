@@ -243,7 +243,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 
 	// create listbox of gfx cards
 	adapterListbox =
-		GameManager::guiFactory->createListBox(controlPos, 400, itemHeight, 4, true);
+		GameManager::guiFactory->createListBox(controlPos, 400, itemHeight);
 	guiControls.push_back(adapterListbox);
 	vector<ListItem*> adapterItems;
 	for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
@@ -267,7 +267,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	controlPos.y += displayLabel->getHeight() + MARGIN;
 
 	// create listbox of monitors available to selected gfx card
-	displayListbox = GameManager::guiFactory->createListBox(controlPos, 400, itemHeight, 4, true);
+	displayListbox = GameManager::guiFactory->createListBox(controlPos, 400, itemHeight);
 	guiControls.push_back(displayListbox);
 	// because only the one adapter has displays on my laptop
 	// this has to be grab the first (and only) display.
@@ -295,14 +295,14 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	scrollBarDesc.scrubberImage = "Scrubber Custom";
 
 	displayModeCombobox =
-		GameManager::guiFactory->createComboBox(controlPos, 75, itemHeight, 8, true);
+		GameManager::guiFactory->createComboBox(controlPos, 75, itemHeight);
 	
 	populateDisplayModeList(
 		game->getDisplayModeList(0 /*game->getSelectedAdapterIndex()*/));
 	//displayModeCombobox->setScrollBar(scrollBarDesc);
 	displayModeCombobox->setSelected(game->getSelectedDisplayModeIndex());
 	guiControls.push_back(displayModeCombobox);
-
+	
 	OnClickListenerDisplayModeList* onClickDisplayMode =
 		new OnClickListenerDisplayModeList(this);
 	displayModeCombobox->setOnClickListener(onClickDisplayMode);
@@ -468,7 +468,7 @@ void OnClickListenerDisplayModeList::onClick(ComboBox* combobox, int selectedInd
 		// reconstruct display
 		config->testLabel->setText(combobox->getItem(selectedIndex)->toString());
 	}
-
+	
 }
 
 void OnClickListenerFullScreenCheckBox::onClick(CheckBox* checkbox, bool isChecked) {

@@ -128,5 +128,6 @@ private:
 	unique_ptr<Sprite> normalSprite;
 	unique_ptr<Sprite> pressedSprite;
 	/* The sprite used in draw(). */
-	Sprite* drawSprite;
+	//Sprite* drawSprite;
+	ID3D11ShaderResourceView* texture;
 };

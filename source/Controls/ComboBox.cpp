@@ -100,10 +100,6 @@ ListItem* ComboBox::getItem(size_t index) {
 	return listBox->getItem(index);
 }
 
-//void ComboBox::setOnClickListener(ListBox::OnClickListener* iOnC) {
-//	listBox->setOnClickListener(iOnC);
-//}
-
 void ComboBox::setText(wstring text) {
 }
 

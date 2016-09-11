@@ -58,7 +58,7 @@ protected:
 	Vector2 position = Vector2::Zero;
 	Vector2 scale = Vector2(1, 1);
 
-	Vector2 origin;
+	Vector2 origin = Vector2(0, 0);
 	Color tint = DirectX::Colors::White.v;
 	float alpha = 1.0f;
 	float rotation = 0.0f;
