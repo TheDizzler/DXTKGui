@@ -150,7 +150,7 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 			}
 
 			isClicked = true;
-			triggerOnClick();
+			onClick();
 		}
 	}
 

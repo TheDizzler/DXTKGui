@@ -128,7 +128,7 @@ public:
 		onClickListener = iOnC;
 	}
 
-	void triggerOnClick() {
+	void onClick() {
 		if (onClickListener != NULL)
 			(onClickListener->*onClickFunction)(this, selectedIndex);
 	}

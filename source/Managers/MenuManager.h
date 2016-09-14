@@ -98,7 +98,7 @@ private:
 class MenuManager : public Screen {
 public:
 	MenuManager();
-	~MenuManager();
+	virtual ~MenuManager();
 
 
 	virtual void setGameManager(GameManager* game);
@@ -131,7 +131,7 @@ interface MenuScreen : public Screen {
 public:
 
 	MenuScreen(MenuManager* manager);
-	~MenuScreen();
+	virtual ~MenuScreen();
 
 
 	virtual void setGameManager(GameManager* game) override;
@@ -142,7 +142,7 @@ protected:
 	GameManager* game;
 	MenuManager* menuManager;
 
-	vector<GUIControl*> guiControls;
+	vector<GUIControl* > guiControls;
 
 	bool escLastStateDown = false;
 
@@ -172,10 +172,12 @@ private:
 	TextLabel* adapterLabel;
 	TextLabel* displayLabel;
 	TextLabel* testLabel;
+	
 
 	ListBox* adapterListbox;
 	ListBox* displayListbox;
 	ComboBox* displayModeCombobox;
+
 
 };
 
@@ -184,7 +186,7 @@ class MainScreen : public MenuScreen {
 public:
 	MainScreen(MenuManager* manager);
 	~MainScreen();
-
+	
 	// Inherited via MenuScreen
 	virtual bool initialize(ComPtr<ID3D11Device> device,
 		MouseController * mouse) override;
@@ -197,8 +199,6 @@ private:
 	unique_ptr<Dialog> exitDialog;
 	TextLabel* test;
 	TextLabel* mouseLabel;
-
-
 
 
 };

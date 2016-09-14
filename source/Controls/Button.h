@@ -14,7 +14,7 @@ class Button : public GUIControl {
 public:
 
 	Button(GraphicsAsset* pixelAsset, unique_ptr<FontSet> font);
-	~Button();
+	virtual ~Button();
 
 	/* position is topleft of button. */
 	void setDimensions(const Vector2& position, const Vector2& size,
@@ -54,11 +54,8 @@ public:
 
 	class OnClickListener {
 	public:
-		/** checkbox: The CheckBox this OnClickListener is attached to.
-		isChecked: whether box is checked or no*/
 		virtual void onClick(Button* button) = 0;
 	};
-
 
 
 	void setOnClickListener(OnClickListener* iOnC) {
@@ -68,10 +65,25 @@ public:
 		onClickListener = iOnC;
 	}
 
-	void triggerOnClick() {
+	void onClick() {
 		if (onClickListener != NULL) {
 			isClicked = isSelected = false;
 			(onClickListener->*onClickFunction)(this);
+		}
+	}
+
+
+	void setOnHoverListener(OnClickListener* iOnC) {
+		if (!onHoverListener != NULL)
+			delete onHoverListener;
+		onHoverFunction = &OnClickListener::onClick;
+		onHoverListener = iOnC;
+
+	}
+
+	void onHover() {
+		if (onHoverListener != NULL) {
+			(onHoverListener->*onHoverFunction)(this);
 		}
 	}
 
@@ -79,7 +91,8 @@ protected:
 	typedef void (OnClickListener::*OnClickFunction) (Button*);
 	OnClickFunction onClickFunction;
 	OnClickListener* onClickListener = NULL;
-
+	OnClickFunction onHoverFunction;
+	OnClickListener* onHoverListener = NULL;
 
 	void positionText();
 
@@ -100,8 +113,8 @@ protected:
 };
 
 
-/** A button created with dds files. Requires only an Unpressed image (upButton). 
-	Pressed button image (downButton) is optional. Defaults to tinting image 
+/** A button created with dds files. Requires only an Unpressed image (upButton).
+	Pressed button image (downButton) is optional. Defaults to tinting image
 	with Button::selectedColor if no downButton is used. */
 class ImageButton : public Button {
 public:

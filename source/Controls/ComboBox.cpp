@@ -34,7 +34,7 @@ bool ComboBox::initialize(shared_ptr<FontSet> fnt,
 
 	selectedLabel.reset(guiFactory->createTextLabel(
 		Vector2(position.x + textMarginX, position.y + textMarginY)));
-
+	selectedLabel->setOnClickListener(new SelectedOnClick(this));
 	return true;
 }
 
@@ -45,6 +45,8 @@ void ComboBox::setScrollBar(ScrollBarDesc& scrollBarDesc) {
 void ComboBox::update(double deltaTime, MouseController* mouse) {
 
 	selectedLabel->update(deltaTime, mouse);
+	if (frame->contains(mouse->getPosition()) && mouse->clicked())
+		selectedLabel->onClick();
 	comboListButton->update(deltaTime, mouse);
 
 
@@ -86,7 +88,7 @@ void ComboBox::open() {
 
 void ComboBox::close() {
 	isOpen = false;
-	comboListButton->setRotation(0);
+	//comboListButton->setRotation(0);
 }
 
 void ComboBox::resizeBox() {
@@ -167,5 +169,6 @@ void ComboBox::ShowListBoxListener::onClick(Button * button) {
 }
 
 void ComboBox::ListBoxListener::onClick(ListBox* listbox, int selectedItemIndex) {
-	comboBox->triggerOnClick();
+	comboBox->onClick();
 }
+

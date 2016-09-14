@@ -84,29 +84,10 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	frameRightPos.x += size.x - frameThickness;
 	// frame sticks out passed rectangle area; (-frameThickness) pulls it back in
 
+	hitArea.reset(new HitArea(pos, size));
 
 }
 
-void RectangleFrame::setPosition(const Vector2& newPosition) {
-
-	frameTopPos = newPosition;
-	frameBottomPos = newPosition;
-	frameLeftPos = newPosition;
-	frameRightPos = newPosition;
-}
-
-void RectangleFrame::moveBy(const Vector2& moveVector) {
-
-	frameTopPos += moveVector;
-	frameBottomPos += moveVector;
-	frameLeftPos += moveVector;
-	frameRightPos += moveVector;
-}
-
-void RectangleFrame::setTint(const Color& color) {
-
-	tint = color;
-}
 
 void RectangleFrame::draw(SpriteBatch* batch) {
 
@@ -131,6 +112,25 @@ void RectangleFrame::draw(SpriteBatch* batch) {
 		SpriteEffects_None, 0.0f);
 }
 
+void RectangleFrame::setPosition(const Vector2& newPosition) {
+	// this doesn't seem right....
+	frameTopPos = newPosition;
+	frameBottomPos = newPosition;
+	frameLeftPos = newPosition;
+	frameRightPos = newPosition;
+	hitArea->position = newPosition;
+}
+
+void RectangleFrame::moveBy(const Vector2& moveVector) {
+
+	frameTopPos += moveVector;
+	frameBottomPos += moveVector;
+	frameLeftPos += moveVector;
+	frameRightPos += moveVector;
+	hitArea->position += moveVector;
+}
+
+
 const Vector2 & RectangleFrame::getPosition() const {
 	return frameTopPos;
 }
@@ -149,6 +149,11 @@ const int RectangleFrame::getThickness() const {
 
 const Vector2 & RectangleFrame::getOrigin() const {
 	return origin;
+}
+
+void RectangleFrame::setTint(const Color& color) {
+
+	tint = color;
 }
 
 const Vector2 & RectangleFrame::getScale() const {
@@ -182,6 +187,13 @@ void RectangleFrame::setRotation(const float rot) {
 void RectangleFrame::setAlpha(const float alpha) {
 
 }
+
+bool RectangleFrame::contains(const Vector2& point) {
+
+	return hitArea->contains(point);
+}
+/** **** END RECTANGLEFRAME ****** **/
+
 
 
 

@@ -30,7 +30,7 @@ This is still a massive mess....
 
 
 ##TODO:
->- Combo Box - allow custom button; allow opening of list by clicking item label
+>- Combo Box - allow custom button
 >- Dialog Box - allow custom bg image; transition effects
 >- Scrollbar - that can be slapped on to anything
 >- List Box - multi-select; test adding, removing, clearing items live
@@ -38,6 +38,7 @@ This is still a massive mess....
 >- Slider
 >- add triggers for sfx
 >- screen transition effects
+>- tooltips?
 >- More Primitive Shapes - if I feel they might be useful
 >- Other stuff I can't think of at the moment
 >- Some kind of document to explain what's going on under the hood and how to use it effectivily....

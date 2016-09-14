@@ -156,15 +156,16 @@ Button* GUIFactory::createImageButton(const char_t* upImageName,
 		OutputDebugString(ws.str().c_str());
 
 		Button* button = createButton(fontName);
-		button->setDimensions(Vector2::Zero, Vector2(80, 68));
+		button->setDimensions(Vector2::Zero, Vector2(80, 68)); // just some random
+																// defaults to be ugly
 		button->setText(L"No Image!");
 		return button;
 	}
 
-
 	ImageButton* button = new ImageButton(getSpriteFromAsset(upImageName),
 		getSpriteFromAsset(downImageName), getFont(fontName));
 	button->setFactory(this);
+
 	return button;
 }
 
@@ -230,7 +231,7 @@ ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight
 
 ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight,
 	ScrollBarDesc& scrollBarDesc) {
-	
+
 	ScrollBar* scrollBar = new ScrollBar(position);
 	scrollBar->setFactory(this);
 
@@ -247,7 +248,7 @@ ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight
 		buttons[1] = (ImageButton*) createImageButton(scrollBarDesc.downButtonImage.c_str(),
 			scrollBarDesc.downPressedButtonImage.c_str());
 	}
-	
+
 	if (!scrollBar->initialize(getAsset("White Pixel"), barHeight, buttons,
 		getSpriteFromAsset(scrollBarDesc.trackImage.c_str()),
 		getAsset(scrollBarDesc.scrubberImage.c_str()))) {

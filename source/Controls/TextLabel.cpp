@@ -24,6 +24,36 @@ TextLabel::~TextLabel() {
 }
 
 
+void TextLabel::update(double deltaTime, MouseController* mouse) {
+
+	if (isHoverable) {
+		if (hitArea->contains(mouse->getPosition())) {
+			isHover = true;
+			if (!isSelected) {
+				onHover();
+				setToHoverState();
+			}
+		} else
+			isHover = false;
+
+		if (isSelected && !mouse->leftButtonDown()) {
+			isClicked = true;
+			onClick();
+			setToUnpressedState();
+		} else {
+			isClicked = false;
+			if (!isHover) {
+				isSelected = false;
+				setToUnpressedState();
+			} else if (mouse->clicked()) {
+				isSelected = true;
+				setToSelectedState();
+			}
+		}
+	}
+}
+
+
 void TextLabel::draw(SpriteBatch* batch) {
 
 	font->draw(batch, label.c_str(), position);
@@ -118,34 +148,6 @@ void TextLabel::setTint(const Color& color) {
 void TextLabel::setScale(const Vector2 & scl) {
 	font->setScale(scl);
 }
-
-
-void TextLabel::update(double deltaTime, MouseController* mouse) {
-
-	if (isHoverable) {
-		if (hitArea->contains(mouse->getPosition())) {
-			isHover = true;
-			if (!isSelected)
-				setToHoverState();
-		} else
-			isHover = false;
-
-		if (isSelected && !mouse->leftButtonDown()) {
-			isClicked = true;
-			setToUnpressedState();
-		} else {
-			isClicked = false;
-			if (!isHover) {
-				isSelected = false;
-				setToUnpressedState();
-			} else if (!mouse->leftButtonLastDown() && mouse->leftButtonDown()) {
-				isSelected = true;
-				setToSelectedState();
-			}
-		}
-	}
-}
-
 
 const Vector2& TextLabel::getPosition() const {
 	return position;

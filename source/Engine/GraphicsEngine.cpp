@@ -9,11 +9,20 @@ GraphicsEngine::GraphicsEngine() {
 
 
 GraphicsEngine::~GraphicsEngine() {
+
+	if (swapChain.Get() != NULL)
+		swapChain->SetFullscreenState(false, NULL);
+
+
+	//deviceContexts.clear();
+	//swapChains.clear();
+	//devices.clear();
+	//renderTargetViews.clear();
+
 	adapters.clear();
 	displays.clear();
 	displayModeList.clear();
-	if (swapChain.Get() != NULL)
-		swapChain->SetFullscreenState(false, NULL);
+	
 
 }
 
@@ -42,7 +51,7 @@ bool GraphicsEngine::initD3D(HWND h) {
 
 	// create SpriteBatch
 	batch.reset(new SpriteBatch(deviceContext.Get()));
-	//batch = new SpriteBatch(deviceContext.Get());
+
 	return true;
 
 }
@@ -71,10 +80,10 @@ bool GraphicsEngine::getDisplayAdapters() {
 
 	}
 
-	deviceContexts.resize(adapters.size());
+	/*deviceContexts.resize(adapters.size());
 	swapChains.resize(adapters.size());
 	devices.resize(adapters.size());
-	renderTargetViews.resize(adapters.size());
+	renderTargetViews.resize(adapters.size());*/
 	//batches.resize(adapters.size());
 
 	int size = i - 1;
@@ -119,10 +128,10 @@ bool GraphicsEngine::initializeAdapter(int adapterIndex) {
 
 	selectedAdapterIndex = adapterIndex;
 	selectedAdapter = adapters[selectedAdapterIndex];
-	device = devices[selectedAdapterIndex];
-	deviceContext = deviceContexts[selectedAdapterIndex];
-	swapChain = swapChains[selectedAdapterIndex];
-	renderTargetView = renderTargetViews[selectedAdapterIndex];
+	//device = devices[selectedAdapterIndex];
+	//deviceContext = deviceContexts[selectedAdapterIndex];
+	//swapChain = swapChains[selectedAdapterIndex];
+	//renderTargetView = renderTargetViews[selectedAdapterIndex];
 	//batch = batches[selectedAdapterIndex].get();
 
 	if (!populateDisplayModeList(selectedDisplay))

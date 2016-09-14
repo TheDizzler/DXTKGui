@@ -57,14 +57,16 @@ void Button::update(double deltaTime, MouseController* mouse) {
 
 	if (hitArea->contains(mouse->getPosition())) {
 		isHover = true;
-		if (!isSelected)
+		if (!isSelected) {
+			onHover();
 			setToHoverState();
+		}
 	} else
 		isHover = false;
 
 	if (isSelected && !mouse->leftButtonDown()) {
 		isClicked = true;
-		triggerOnClick();
+		onClick();
 		setToUnpressedState();
 	} else {
 		isClicked = false;
@@ -271,7 +273,7 @@ void ImageButton::setPosition(const Vector2& pos) {
 	position = pos;
 	Button::setPosition(position);
 	Vector2 spritePos = position;
-	spritePos.x += normalSprite->getWidth()/2;
+	spritePos.x += normalSprite->getWidth() / 2;
 	spritePos.y += normalSprite->getHeight() / 2;
 	normalSprite->setPosition(spritePos);
 	//if (pressedSprite != NULL)

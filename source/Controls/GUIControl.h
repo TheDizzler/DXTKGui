@@ -4,8 +4,6 @@
 #include "../Engine/MouseController.h"
 #include "../BaseGraphics/FontSet.h"
 
-using namespace std;
-
 
 
 interface GUIControl : public IElement2D {

@@ -11,7 +11,7 @@ using namespace DirectX;
 class Input {
 public:
 	Input();
-	~Input();
+	virtual ~Input();
 
 	bool initRawInput(HWND hwnd);
 

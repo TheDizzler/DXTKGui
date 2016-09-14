@@ -42,7 +42,7 @@ void CheckBox::update(double deltaTime, MouseController* mouse) {
 	if (isHover) {
 		if (mouse->pressed()) {
 			isClicked = !isClicked;
-			triggerOnClick();
+			onClick();
 		}
 	}
 }

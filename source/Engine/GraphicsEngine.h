@@ -20,7 +20,7 @@ using namespace DirectX;
 class GraphicsEngine {
 public:
 	GraphicsEngine();
-	~GraphicsEngine();
+	virtual ~GraphicsEngine();
 
 	bool initD3D(HWND hwnd);
 
@@ -78,10 +78,10 @@ protected:
 	D3D11_VIEWPORT viewport;
 	/* List of all gfx cards on this machine. */
 	vector<ComPtr<IDXGIAdapter> > adapters;
-	vector<ComPtr<ID3D11DeviceContext> > deviceContexts;
-	vector<ComPtr<IDXGISwapChain> > swapChains; 
-	vector<ComPtr<ID3D11Device> > devices;
-	vector<ComPtr<ID3D11RenderTargetView> > renderTargetViews;
+	//vector<ComPtr<ID3D11DeviceContext> > deviceContexts;
+	//vector<ComPtr<IDXGISwapChain> > swapChains; 
+	//vector<ComPtr<ID3D11Device> > devices;
+	//vector<ComPtr<ID3D11RenderTargetView> > renderTargetViews;
 	//vector<unique_ptr<SpriteBatch> > batches;
 	/* List of all monitors available with this adapter. */
 	vector<ComPtr<IDXGIOutput> > displays;

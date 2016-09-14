@@ -86,10 +86,14 @@ MenuScreen::MenuScreen(MenuManager* mngr) {
 
 MenuScreen::~MenuScreen() {
 
-	for each (GUIControl* control in guiControls)
+	for (GUIControl* control : guiControls)
 		delete control;
 
 	guiControls.clear();
+
+	wostringstream ws;
+	ws << "\nMenuScreen destroying\n";
+	OutputDebugString(ws.str().c_str());
 
 }
 
@@ -109,7 +113,7 @@ MainScreen::MainScreen(MenuManager* mngr) : MenuScreen(mngr) {
 }
 
 MainScreen::~MainScreen() {
-
+	guiControls.clear();
 }
 
 
@@ -119,18 +123,18 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 	button = GameManager::guiFactory->createImageButton("Button Up", "Button Down");
 	Vector2 buttonpos = Vector2((Globals::WINDOW_WIDTH - button->getWidth()) / 2,
 		Globals::WINDOW_HEIGHT / 3 - button->getHeight() / 2);
-	//button->action = GUIControl::PLAY;
 	button->setText(L"Play");
 	button->setPosition(buttonpos);
+	
+	Vector2 size = Vector2(button->getWidth(), button->getHeight());
 	guiControls.push_back(button);
 
-	Vector2 size = Vector2(button->getWidth(), button->getHeight());
 	buttonpos.y += 150;
 	button = GameManager::guiFactory->createButton(buttonpos, size, L"Settings");
-	//button->action = GUIControl::SETTINGS;
-	OnClickListenerSettingsButton* settingsListener = new OnClickListenerSettingsButton(this);
+	OnClickListenerSettingsButton* settingsListener =
+		new OnClickListenerSettingsButton(this);
 	button->setOnClickListener(settingsListener);
-	guiControls.push_back(button);
+	guiControls.push_back(move(button));
 
 	buttonpos.y += 150;
 	button = GameManager::guiFactory->createImageButton(
@@ -196,16 +200,16 @@ void MainScreen::update(double deltaTime,
 	if (exitDialog->isOpen) {
 		exitDialog->update(deltaTime, mouse);
 	} else {
-		for (GUIControl* control : guiControls) {
+		for (auto const& control : guiControls)
 			control->update(deltaTime, mouse);
-		}
 	}
 }
 
 
+
 void MainScreen::draw(SpriteBatch* batch) {
 
-	for (GUIControl* control : guiControls)
+	for (auto const& control : guiControls)
 		control->draw(batch);
 
 	exitDialog->draw(batch);
@@ -271,8 +275,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	guiControls.push_back(displayListbox);
 	// because only the one adapter has displays on my laptop
 	// this has to be grab the first (and only) display.
-	populateDisplayList(game->getDisplayListFor(0
-	/*game->getSelectedAdapterIndex()*/));
+	populateDisplayList(game->getDisplayListFor(0));
 	displayListbox->setSelected(game->getSelectedDisplayIndex());
 
 	displayLabel->setText(displayListbox->getSelected()->toString());
@@ -280,12 +283,10 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	// setup label for Display Mode
 	controlPos.x += displayListbox->getWidth() + MARGIN * 2;
 	controlPos.y = 50;
-	/*displayModeLabel =
-		GameManager::guiFactory->createTextLabel(controlPos, L"Test2");
-	guiControls.push_back(displayModeLabel);*/
+
 
 	// Setup display mode combobox
-	
+
 	// custom scrollbar for combo list
 	ScrollBarDesc scrollBarDesc;
 	scrollBarDesc.upButtonImage = "ScrollBar Up Custom";
@@ -296,13 +297,13 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 
 	displayModeCombobox =
 		GameManager::guiFactory->createComboBox(controlPos, 75, itemHeight);
-	
+
 	populateDisplayModeList(
-		game->getDisplayModeList(0 /*game->getSelectedAdapterIndex()*/));
+		game->getDisplayModeList(0));
 	displayModeCombobox->setScrollBar(scrollBarDesc);
 	displayModeCombobox->setSelected(game->getSelectedDisplayModeIndex());
 	guiControls.push_back(displayModeCombobox);
-	
+
 	OnClickListenerDisplayModeList* onClickDisplayMode =
 		new OnClickListenerDisplayModeList(this);
 	displayModeCombobox->setOnClickListener(onClickDisplayMode);
@@ -340,7 +341,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 			Globals::WINDOW_HEIGHT - button->getHeight() - 25));
 	guiControls.push_back(button);
 
-
+	
 	return true;
 }
 
@@ -355,7 +356,7 @@ void ConfigScreen::update(double deltaTime, KeyboardController* keys,
 
 	escLastStateDown = keys->keyDown[KeyboardController::ESC];
 
-	for (GUIControl* control : guiControls) {
+	for (auto const& control : guiControls) {
 		control->update(deltaTime, mouse);
 		//if (control->clicked()) {
 		//	switch (control->action) {
@@ -374,7 +375,7 @@ void ConfigScreen::update(double deltaTime, KeyboardController* keys,
 
 void ConfigScreen::draw(SpriteBatch* batch) {
 
-	for (GUIControl* control : guiControls)
+	for (auto const& control : guiControls)
 		control->draw(batch);
 }
 
@@ -468,7 +469,7 @@ void OnClickListenerDisplayModeList::onClick(ComboBox* combobox, int selectedInd
 		// reconstruct display
 		config->testLabel->setText(combobox->getItem(selectedIndex)->toString());
 	}
-	
+
 }
 
 void OnClickListenerFullScreenCheckBox::onClick(CheckBox* checkbox, bool isChecked) {

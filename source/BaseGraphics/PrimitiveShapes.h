@@ -52,6 +52,7 @@ public:
 	/* No alpha implementation. */
 	virtual void setAlpha(const float alpha) override;
 
+	bool contains(const Vector2& point);
 private:
 	ComPtr<ID3D11ShaderResourceView> pixel;
 
@@ -69,11 +70,12 @@ private:
 	Color tint;
 	int frameThickness;
 
+	unique_ptr<HitArea> hitArea;
 	
 };
 
 
-/** A primitive live.
+/** A primitive line.
 	This has not been tested.*/
 class Line {
 public:

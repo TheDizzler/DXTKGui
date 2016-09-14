@@ -2,6 +2,7 @@
 
 #include "ListBox.h"
 
+
 class ComboBox : public GUIControl {
 public:
 	ComboBox(const Vector2& position, const int width,
@@ -63,7 +64,7 @@ public:
 		onClickListener = iOnC;
 	}
 
-	void triggerOnClick() {
+	void onClick() {
 		if (onClickListener != NULL)
 			(onClickListener->*onClickFunction)(this, listBox->getSelectedIndex());
 		selectedLabel->setText(listBox->getSelected()->toString());
@@ -112,4 +113,18 @@ private:
 	private:
 		ComboBox* comboBox;
 	};
+};
+
+
+class SelectedOnClick : public TextLabel::OnClickListener {
+public:
+	SelectedOnClick(ComboBox* combobox) : comboBox(combobox) {
+	}
+
+	virtual void onClick(TextLabel * button) override {
+		comboBox->open();
+
+	}
+private:
+	ComboBox* comboBox;
 };
