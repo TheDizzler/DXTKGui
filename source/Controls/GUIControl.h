@@ -44,7 +44,8 @@ public:
 	bool contains(const Vector2& point);
 
 	virtual bool clicked() = 0;
-	virtual bool selected() = 0;
+	/* Is Mouse Button down over control? */
+	virtual bool pressed() = 0;
 	virtual bool hovering() = 0;
 
 	/* Deprecating this method of control. Use ActionListeners instead. */
@@ -64,7 +65,7 @@ protected:
 
 	bool isHover = false;
 	/** Button is held down over control but has not been released. */
-	bool isSelected = false;
+	bool isPressed = false;
 	/** While still hovering over control, button has been pressed and released. */
 	bool isClicked = false;
 

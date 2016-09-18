@@ -25,7 +25,7 @@ public:
 	virtual const int getHeight() const override;
 
 	virtual bool clicked() override;
-	virtual bool selected() override;
+	virtual bool pressed() override;
 	virtual bool hovering() override;
 
 	Color normalColor = Color(Vector3(0, 0, 0));

@@ -76,9 +76,9 @@ private:
 	MainScreen* main;
 };
 
-class OnClickListenerQuitButton : public Button::OnClickListener {
+class OnClickListenerDialogQuitButton : public Button::OnClickListener {
 public:
-	OnClickListenerQuitButton(MainScreen* screen) : main(screen) {
+	OnClickListenerDialogQuitButton(MainScreen* screen) : main(screen) {
 	}
 	virtual void onClick(Button * button) override;
 private:
@@ -93,6 +93,31 @@ public:
 private:
 	MainScreen* main;
 };
+
+//class OnClickListenerLaunchButton : public AnimatedButton::ButtonActionListener {
+//public:
+//	OnClickListenerLaunchButton(MainScreen* screen) : main(screen) {
+//	}
+//
+//	virtual void onClick(AnimatedButton* button) override {
+//	
+//	
+//	}
+//	virtual void onPress(AnimatedButton* button) override {
+//
+//
+//	}
+//
+//	virtual void onHover(AnimatedButton* button) override {
+//
+//		
+//
+//	}
+//
+//private:
+//	MainScreen* main;
+//
+//};
 
 
 class MenuManager : public Screen {
@@ -172,7 +197,7 @@ private:
 	TextLabel* adapterLabel;
 	TextLabel* displayLabel;
 	TextLabel* testLabel;
-	
+
 
 	ListBox* adapterListbox;
 	ListBox* displayListbox;
@@ -183,10 +208,11 @@ private:
 
 class MainScreen : public MenuScreen {
 	friend class OnClickListenerExitButton;
+	friend class OnClickListenerDialogQuitButton;
 public:
 	MainScreen(MenuManager* manager);
 	~MainScreen();
-	
+
 	// Inherited via MenuScreen
 	virtual bool initialize(ComPtr<ID3D11Device> device,
 		MouseController * mouse) override;

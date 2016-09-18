@@ -9,8 +9,8 @@ public:
 		size_t itemHeight = 32, const int maxItemsShown = 7);
 	~ComboBox();
 
-	bool initialize(shared_ptr<FontSet> font,
-		GraphicsAsset* pixelAsset, ListBox* listbox,
+	bool initialize(shared_ptr<FontSet> font, GraphicsAsset* pixelAsset,
+		ListBox* listbox, const pugi::char_t* buttonAsset = "Combo Button Closed",
 		bool enumerateList = false);
 
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);
@@ -35,7 +35,7 @@ public:
 	virtual const int getHeight() const override;
 
 	virtual bool clicked() override;
-	virtual bool selected() override;
+	virtual bool pressed() override;
 	virtual bool hovering() override;
 
 	void addItem(ListItem* item);
@@ -113,18 +113,18 @@ private:
 	private:
 		ComboBox* comboBox;
 	};
+
+	class SelectedOnClick : public TextLabel::OnClickListener {
+	public:
+		SelectedOnClick(ComboBox* combobox) : comboBox(combobox) {
+		}
+
+		virtual void onClick(TextLabel* button) override {
+			comboBox->open();
+		}
+	private:
+		ComboBox* comboBox;
+	};
 };
 
 
-class SelectedOnClick : public TextLabel::OnClickListener {
-public:
-	SelectedOnClick(ComboBox* combobox) : comboBox(combobox) {
-	}
-
-	virtual void onClick(TextLabel * button) override {
-		comboBox->open();
-
-	}
-private:
-	ComboBox* comboBox;
-};

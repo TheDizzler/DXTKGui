@@ -11,6 +11,7 @@ Input::~Input() {
 	ShowCursor(true);
 }
 
+#include "../Managers/GameManager.h"
 bool Input::initRawInput(HWND hwnd) {
 
 	RAWINPUTDEVICE rid[2];
@@ -21,7 +22,7 @@ bool Input::initRawInput(HWND hwnd) {
 
 	rid[1].usUsagePage = 0x01;
 	rid[1].usUsage = 0x02; // mouse
-	rid[1].dwFlags = /*RIDEV_CAPTUREMOUSE|*/ RIDEV_INPUTSINK;
+	rid[1].dwFlags = 0/*RIDEV_NOLEGACY | RIDEV_CAPTUREMOUSE | RIDEV_INPUTSINK*/;
 	rid[1].hwndTarget = hwnd;
 
 	if (!RegisterRawInputDevices(rid, 2, sizeof(RAWINPUTDEVICE)))
@@ -29,6 +30,8 @@ bool Input::initRawInput(HWND hwnd) {
 
 	keys.reset(new KeyboardController());
 	mouse.reset(new MouseController(hwnd));
+	if (GameManager::guiFactory != NULL)
+		mouse->loadMouseIcon(GameManager::guiFactory.get(), "Mouse Icon");
 
 
 	return true;
@@ -40,11 +43,11 @@ void Input::setRawInput(RAWINPUT* raw) {
 		//rawKeys = &raw->data.keyboard;
 		keys->getInput(&raw->data.keyboard);
 	}
-		
+
 
 	if (raw->header.dwType == RIM_TYPEMOUSE) {
 		//rawMouse = &raw->data.mouse;
-			mouse->getRawInput(&raw->data.mouse);
+		mouse->getRawInput(&raw->data.mouse);
 	}
 }
 

@@ -74,7 +74,7 @@ public:
 	virtual const int getHeight() const override;
 
 	virtual bool clicked() override;
-	virtual bool selected() override;
+	virtual bool pressed() override;
 	virtual bool hovering() override;
 
 	/** Not used in DialogBox */
@@ -131,15 +131,12 @@ private:
 	Vector2 pressedPosition;
 	bool movable = false;
 
-	/** Generice OnClick for Cancel Button. */
+	/** Generic OnClick for Cancel Button. */
 	class OnClickListenerCancelButton : public Button::OnClickListener {
 	public:
-
 		OnClickListenerCancelButton(Dialog* dlg) : dialog(dlg) {
 		}
-
 		virtual void onClick(Button * button) override;
-
 	private:
 		Dialog* dialog;
 	};

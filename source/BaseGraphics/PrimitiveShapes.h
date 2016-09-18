@@ -21,8 +21,8 @@ public:
 class RectangleFrame : public IElement2D {
 public:
 	RectangleFrame(GraphicsAsset* pixelAsset);
-	RectangleFrame(ComPtr<ID3D11ShaderResourceView> pixel,
-		const Vector2& pos, const Vector2& size, int frameThickness);
+	//RectangleFrame(ComPtr<ID3D11ShaderResourceView> pixel,
+		//const Vector2& pos, const Vector2& size, int frameThickness);
 	~RectangleFrame();
 
 	void setDimensions(const Vector2& position, const Vector2& size,

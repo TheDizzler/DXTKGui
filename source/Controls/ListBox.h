@@ -19,14 +19,14 @@ public:
 	Vector2 measureString() const;
 	const wchar_t* toString();
 
-	/** Returns true if item selected. */
+	/** Returns true if item pressed. */
 	bool update(double deltaTime, MouseController* mouse);
 	void updatePosition(const Vector2& position);
 	virtual void draw(SpriteBatch* batch);
 
 
 
-	bool isSelected = false;
+	bool isPressed = false;
 
 protected:
 
@@ -108,7 +108,7 @@ public:
 	virtual const int getHeight() const override;
 
 	virtual bool clicked() override;
-	virtual bool selected() override;
+	virtual bool pressed() override;
 	virtual bool hovering() override;
 
 	class OnClickListener {

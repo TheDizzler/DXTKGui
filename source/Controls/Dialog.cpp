@@ -272,17 +272,17 @@ void Dialog::update(double deltaTime, MouseController* mouse) {
 				ws << pressedPosition.x << "," << pressedPosition.y << "\n";
 				OutputDebugString(ws.str().c_str());
 
-				isSelected = true;
+				isPressed = true;
 			}
 
 		}
 
-		if (isSelected) {
+		if (isPressed) {
 			setPosition(mouse->getPosition() - pressedPosition);
 		}
 
 		if (!mouse->leftButtonDown())
-			isSelected = false;
+			isPressed = false;
 
 	}
 	for (auto const& control : controls) {
@@ -379,8 +379,8 @@ bool Dialog::clicked() {
 	return isClicked;
 }
 
-bool Dialog::selected() {
-	return isSelected;
+bool Dialog::pressed() {
+	return isPressed;
 }
 
 bool Dialog::hovering() {

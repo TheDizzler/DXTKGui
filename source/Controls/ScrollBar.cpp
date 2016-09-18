@@ -166,7 +166,7 @@ void ScrollBar::update(double deltaTime, MouseController* mouse) {
 	scrollBarDownButton->update(deltaTime, mouse);
 	scrollBarUpButton->update(deltaTime, mouse);
 	// change this to actionlisteners, or nah?
-	if (scrollBarDownButton->selected()) {
+	if (scrollBarDownButton->pressed()) {
 		// scroll down
 		if (firstClickTimer == 0) {
 			scrubber->scroll(percentForOneItem);
@@ -181,7 +181,7 @@ void ScrollBar::update(double deltaTime, MouseController* mouse) {
 
 
 
-	} else if (scrollBarUpButton->selected()) {
+	} else if (scrollBarUpButton->pressed()) {
 		// scroll up
 		if (firstClickTimer == 0)
 			scrubber->scroll(-percentForOneItem);
@@ -243,8 +243,8 @@ bool ScrollBar::clicked() {
 	return isClicked;
 }
 
-bool ScrollBar::selected() {
-	return isSelected;
+bool ScrollBar::pressed() {
+	return isPressed;
 }
 
 bool ScrollBar::hovering() {

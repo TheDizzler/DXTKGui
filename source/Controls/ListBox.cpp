@@ -145,7 +145,7 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 						selectedIndex = i;
 						continue;
 					}
-					listItems[i]->isSelected = false;
+					listItems[i]->isPressed = false;
 				}
 			}
 
@@ -198,13 +198,13 @@ void ListBox::setSelected(size_t newIndex) {
 	selectedIndex = newIndex;
 	if (!multiSelect) {
 		for (ListItem* unselect : listItems) {
-			unselect->isSelected = false;
+			unselect->isPressed = false;
 		}
 	}
-	listItems[selectedIndex]->isSelected = true;
+	listItems[selectedIndex]->isPressed = true;
 
-	// Adjust starting position of list to place the selected item into view.
-	// Should only be relevant when the list is setup with an item selected.
+	// Adjust starting position of list to place the pressed item into view.
+	// Should only be relevant when the list is setup with an item pressed.
 	if (abs((float) firstItemToDisplay - selectedIndex) > maxDisplayItems) {
 
 		if (listItems.size() - selectedIndex < maxDisplayItems)
@@ -268,13 +268,13 @@ bool ListBox::clicked() {
 
 	if (isClicked) {
 		//action = ClickAction::NONE;
-		isClicked = isSelected = false;
+		isClicked = isPressed = false;
 		return true;
 	}
 
 	return false;
 }
-bool ListBox::selected() {
+bool ListBox::pressed() {
 	return false;
 }
 bool ListBox::hovering() {
@@ -342,7 +342,7 @@ bool ListItem::update(double deltaTime, MouseController* mouse) {
 			buttonDownLast = true;
 
 		else if (!mouse->leftButtonDown() && buttonDownLast) {
-			isSelected = true;
+			isPressed = true;
 			buttonDownLast = false;
 			return true;
 		}
@@ -367,7 +367,7 @@ void ListItem::updatePosition(const Vector2& pos) {
 
 void ListItem::draw(SpriteBatch* batch) {
 
-	if (isSelected) {// draw selected color bg
+	if (isPressed) {// draw pressed color bg
 
 		batch->Draw(pixel.Get(), itemPosition, &itemRect,
 			::DirectX::Colors::White.v, 0.0f, Vector2(0, 0), Vector2(1, 1),

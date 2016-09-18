@@ -72,15 +72,12 @@ public:
 
 	
 	ComPtr<ID3D11ShaderResourceView> getTexture();
-	//ComPtr<ID3D11Resource> getResource();
-
 
 	bool isAlive = true;
 
 
 protected:
 	ComPtr<ID3D11ShaderResourceView> texture;
-	//ComPtr<ID3D11Resource> resource;
 	
 	RECT sourceRect;
 
@@ -95,7 +92,10 @@ protected:
 	Vector2 position;
 	
 	Vector2 scale;
-	std::unique_ptr<HitArea> hitArea;
+	unique_ptr<HitArea> hitArea;
+
+	// these get cleaned up in it's originating GraphicsAsset
+	//vector<Frame*> animationFrames;
 };
 
 

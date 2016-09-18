@@ -37,15 +37,15 @@ RectangleFrame::RectangleFrame(GraphicsAsset* pixelAsset) {
 		pixel = pixelAsset->getTexture();
 }
 
-RectangleFrame::RectangleFrame(ComPtr<ID3D11ShaderResourceView> pxl,
-	const Vector2& position, const Vector2& size, int frameThickness) {
-
-	pixel = pxl;
-
-	setDimensions(position, size, frameThickness);
-
-	tint = DirectX::Colors::Black.v;
-}
+//RectangleFrame::RectangleFrame(ComPtr<ID3D11ShaderResourceView> pxl,
+//	const Vector2& position, const Vector2& size, int frameThickness) {
+//
+//	pixel = pxl;
+//
+//	setDimensions(position, size, frameThickness);
+//
+//	tint = DirectX::Colors::Black.v;
+//}
 
 RectangleFrame::~RectangleFrame() {
 }

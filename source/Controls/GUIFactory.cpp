@@ -77,6 +77,19 @@ unique_ptr<Sprite> GUIFactory::getSpriteFromAsset(const char_t* assetName) {
 	return sprite;
 }
 
+shared_ptr<Animation> GUIFactory::getAnimation(const char_t* animationName) {
+
+	if (animationMap.find(animationName) == animationMap.end()) {
+		wostringstream ws;
+		ws << "Cannot find asset file: " << animationName << "\n";
+		ws << "Count : " << animationMap.count(animationName) << "\n";
+		OutputDebugString(ws.str().c_str());
+		return NULL;
+	}
+
+	return animationMap[animationName];
+}
+
 
 TextLabel* GUIFactory::createTextLabel(const Vector2& position,
 	const char_t* fontName) {
@@ -177,6 +190,13 @@ Button* GUIFactory::createImageButton(const Vector2& position,
 	return button;
 }
 
+AnimatedButton* GUIFactory::createAnimatedButton(const char_t* animatedButtonName,
+	Vector2 position) {
+
+	AnimatedButton* button = new AnimatedButton(getAnimation(animatedButtonName), position);
+	return button;
+}
+
 
 CheckBox* GUIFactory::createCheckBox(const Vector2& position,
 	wstring text, const char_t* fontName) {
@@ -260,31 +280,6 @@ ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight
 	return scrollBar;
 }
 
-//ScrollBar* GUIFactory::createScrollBar(const Vector2 & position, size_t maxHeight,
-//	const char_t* scrollButtonImage, const char_t* scrollBarImage,
-//	const char_t* scrubberImage) {
-//
-//	ImageButton* upButton;
-//	if (assetMap.find(scrollButtonImage) == assetMap.end()) {
-//		wostringstream ws;
-//		ws << "Could not find scroll button image file: ";
-//		ws << scrollButtonImage;
-//		ws << "\nUsing default." << "\n";
-//		OutputDebugString(ws.str().c_str());
-//		scrollButtonImage = "ScrollBar Up";
-//	}
-//	if (assetMap.find(scrollBarImage) == assetMap.end()) {
-//
-//		wostringstream ws;
-//		ws << "Could not find scroll bar image file: ";
-//		ws << scrollBarImage;
-//		ws << "\nUsing default." << "\n";
-//		OutputDebugString(ws.str().c_str());
-//		scrollBarImage = 
-//	}
-//
-//	return scrollBar;
-//}
 
 ListBox* GUIFactory::createListBox(const Vector2& position,
 	const int width, const int itemHeight, const int maxItemsShown,
@@ -301,10 +296,9 @@ ListBox* GUIFactory::createListBox(const Vector2& position,
 }
 
 
-
 ComboBox* GUIFactory::createComboBox(const Vector2& position,
 	const int width, const int itemHeight, const int maxItemsShown,
-	bool enumerateList, const char_t* fontName) {
+	const char_t* buttonAsset, bool enumerateList, const char_t* fontName) {
 
 	ComboBox* combobox = new ComboBox(position, width, itemHeight, maxItemsShown);
 	combobox->setFactory(this);
@@ -313,7 +307,7 @@ ComboBox* GUIFactory::createComboBox(const Vector2& position,
 		createListBox(
 			Vector2(position.x, position.y + itemHeight),
 			width, itemHeight, maxItemsShown, enumerateList, fontName),
-		enumerateList);
+		buttonAsset, enumerateList);
 
 	return combobox;
 }
@@ -327,15 +321,23 @@ Dialog* GUIFactory::createDialog(bool movable, const char_t* fontName) {
 }
 
 
-
 #include "DDSTextureLoader.h"
 bool GUIFactory::getGUIAssetsFromXML(ComPtr<ID3D11Device> device) {
 
+	string assetsDir =
+		guiAssetsNode.parent().attribute("dir").as_string();
+
+	string guiDir =
+		assetsDir + guiAssetsNode.attribute("dir").as_string();
+
+
 	xml_node fonts = guiAssetsNode.child("spritefonts");
+	string fontDir = assetsDir + fonts.attribute("dir").as_string();
 	for (xml_node fontNode = fonts.child("font"); fontNode;
 		fontNode = fontNode.next_sibling("font")) {
 
-		const char_t* file = fontNode.attribute("file").as_string();
+		string file_s = fontDir + fontNode.attribute("file").as_string();
+		const char_t* file = file_s.c_str();
 		const char_t* name = fontNode.attribute("name").as_string();
 
 		fontMap[name] = file;
@@ -348,7 +350,8 @@ bool GUIFactory::getGUIAssetsFromXML(ComPtr<ID3D11Device> device) {
 	for (xml_node spriteNode = guiAssetsNode.child("sprite"); spriteNode;
 		spriteNode = spriteNode.next_sibling("sprite")) {
 
-		const char_t* file = spriteNode.attribute("file").as_string();
+		string file_s = guiDir + spriteNode.attribute("file").as_string();
+		const char_t* file = file_s.c_str();
 		const char_t* name = spriteNode.attribute("name").as_string();
 
 		string check = name; // I think this is required - pretty sure it is
@@ -361,20 +364,84 @@ bool GUIFactory::getGUIAssetsFromXML(ComPtr<ID3D11Device> device) {
 					L"ERROR", MB_OK);
 				return false;
 			}
-		} /*else {*/
+		}
+
+		/*wostringstream ws;
+		ws << "\nfile: " << file << "\n";
+		ws << "name: " << name << "\n";
+		OutputDebugString(ws.str().c_str());*/
+
 		unique_ptr<GraphicsAsset> guiAsset;
 		guiAsset.reset(new GraphicsAsset());
 		if (!guiAsset->load(device, Assets::convertCharStarToWCharT(file)))
 			return false;
 
 		assetMap[check] = move(guiAsset);
-	//}
-
-	/*wostringstream ws;
-	ws << "file: " << file << "\n";
-	ws << "name : " << name << "\n";
-	OutputDebugString(ws.str().c_str());*/
 	}
 
+	for (xml_node spritesheetNode = guiAssetsNode.child("spritesheet");
+		spritesheetNode; spritesheetNode = spritesheetNode.next_sibling("spritesheet")) {
+
+		string file_s = guiDir + spritesheetNode.attribute("file").as_string();
+		const char_t* file = file_s.c_str();
+
+		// the spritesheet itself is never saved into the map
+		unique_ptr<GraphicsAsset> masterAsset;
+		masterAsset.reset(new GraphicsAsset());
+		if (!masterAsset->load(device, Assets::convertCharStarToWCharT(file)))
+			return false;
+
+
+		// parse all animations from spritesheet
+		for (xml_node animationNode = spritesheetNode.child("animation");
+			animationNode; animationNode = animationNode.next_sibling("animation")) {
+
+			const char_t* name = animationNode.attribute("name").as_string();
+
+			vector<shared_ptr<Frame>> frames;
+			for (xml_node spriteNode = animationNode.child("sprite"); spriteNode;
+				spriteNode = spriteNode.next_sibling("sprite")) {
+
+
+				RECT rect;
+				rect.left = spriteNode.attribute("x").as_int();
+				rect.top = spriteNode.attribute("y").as_int();
+				rect.right = rect.left + spriteNode.attribute("width").as_int();
+				rect.bottom = rect.top + spriteNode.attribute("height").as_int();
+				shared_ptr<Frame> frame;
+				frame.reset(new Frame(rect));
+				frames.push_back(move(frame));
+
+			}
+			shared_ptr<Animation> animationAsset;
+			animationAsset.reset(new Animation(masterAsset->getTexture(), frames));
+			animationMap[name] = animationAsset;
+		}
+
+		// parse all single sprites from spritesheet
+		for (xml_node spriteNode = spritesheetNode.child("sprite"); spriteNode;
+			spriteNode = spriteNode.next_sibling("sprite")) {
+
+			const char_t* name = spriteNode.attribute("name").as_string();
+			// pos in spritesheet
+			Vector2 position = Vector2(spriteNode.attribute("x").as_int(),
+				spriteNode.attribute("y").as_int());
+			// dimensions in spritesheet
+			Vector2 size = Vector2(spriteNode.attribute("width").as_int(),
+				spriteNode.attribute("height").as_int());
+
+			unique_ptr<GraphicsAsset> spriteAsset;
+			spriteAsset.reset(new GraphicsAsset());
+			spriteAsset->loadAsPartOfSheet(masterAsset->getTexture(), position, size);
+
+			assetMap[name] = move(spriteAsset);
+
+			/*wostringstream ws;
+			ws << "\nfile: " << file << "\n";
+			ws << "name: " << name << "\n";
+			OutputDebugString(ws.str().c_str());*/
+		}
+
+	}
 	return true;
 }

@@ -99,7 +99,7 @@ public:
 
 
 	virtual bool clicked() override;
-	virtual bool selected() override;
+	virtual bool pressed() override;
 	virtual bool hovering() override;
 
 private:

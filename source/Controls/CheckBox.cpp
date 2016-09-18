@@ -121,8 +121,8 @@ bool CheckBox::clicked() {
 	return isClicked;
 }
 
-bool CheckBox::selected() {
-	return isSelected;
+bool CheckBox::pressed() {
+	return isPressed;
 }
 
 bool CheckBox::hovering() {

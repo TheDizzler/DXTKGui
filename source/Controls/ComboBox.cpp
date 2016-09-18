@@ -13,16 +13,19 @@ ComboBox::ComboBox(const Vector2& pos, const int len,
 
 
 ComboBox::~ComboBox() {
+
+	delete onClickListener;
 }
 
 #include "../Controls/GUIFactory.h"
-bool ComboBox::initialize(shared_ptr<FontSet> fnt,
-	GraphicsAsset* pixelAsset, ListBox* lstBx, bool enumerateList) {
+bool ComboBox::initialize(shared_ptr<FontSet> fnt, GraphicsAsset* pixelAsset,
+	ListBox* lstBx, const pugi::char_t* buttonName, bool enumerateList) {
 
 
 	frame.reset(new RectangleFrame(pixelAsset));
 
-	comboListButton.reset((ImageButton*) guiFactory->createImageButton("Combo Button Closed"));
+	comboListButton.reset(
+		(ImageButton*) guiFactory->createImageButton(buttonName));
 
 	comboListButton->setPosition(
 		Vector2(position.x + width - comboListButton->getWidth(), position.y));
@@ -44,11 +47,14 @@ void ComboBox::setScrollBar(ScrollBarDesc& scrollBarDesc) {
 
 void ComboBox::update(double deltaTime, MouseController* mouse) {
 
+	if (frame->contains(mouse->getPosition()) && mouse->clicked()) {
+		comboListButton->onClick();
+	}
+
 	selectedLabel->update(deltaTime, mouse);
-	if (frame->contains(mouse->getPosition()) && mouse->clicked())
-		selectedLabel->onClick();
 	comboListButton->update(deltaTime, mouse);
 
+	
 
 	if (isOpen) {
 		listBox->update(deltaTime, mouse);
@@ -138,8 +144,8 @@ bool ComboBox::clicked() {
 	return isClicked;
 }
 
-bool ComboBox::selected() {
-	return isSelected;
+bool ComboBox::pressed() {
+	return isPressed;
 }
 
 bool ComboBox::hovering() {

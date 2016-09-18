@@ -22,6 +22,7 @@ public:
 
 	unique_ptr<FontSet> getFont(const char_t* fontName);
 	unique_ptr<Sprite> getSpriteFromAsset(const char_t* assetName);
+	shared_ptr<Animation> getAnimation(const char_t* animationName);
 	GraphicsAsset* const getAsset(const char_t* assetName);
 
 
@@ -43,6 +44,9 @@ public:
 		const char_t* upImage, const char_t* downImage,
 		const char_t* fontName = "Default Font");
 
+	AnimatedButton* createAnimatedButton(const char_t* animatedButtonName,
+		Vector2 position = Vector2::Zero);
+
 	/** Created a checkbox using default images. */
 	CheckBox* createCheckBox(const Vector2& position, wstring text = L"",
 		const char_t* fontName = "Default Font");
@@ -56,6 +60,7 @@ public:
 
 	ComboBox* createComboBox(const Vector2& position, const int width,
 		const int itemHeight = 32, const int maxItemsShown = 7,
+		const char_t* buttonAsset = "Combo Button Closed",
 		bool enumerateList = false, const char_t* fontName = "Default Font");
 
 	Dialog* createDialog(bool movable = false, const char_t* fontName = "Default Font");
@@ -63,9 +68,6 @@ public:
 	ScrollBar* createScrollBar(const Vector2& position, size_t barHeight);
 	ScrollBar* createScrollBar(const Vector2& position, size_t barHeight,
 		ScrollBarDesc& scrollBarDesc);
-	ScrollBar* createScrollBar(const Vector2& position, size_t barHeight,
-		const char_t* scrollButtonImage, const char_t* scrollBarImage,
-		const char_t* scrubberImage);
 
 private:
 
@@ -85,6 +87,6 @@ private:
 
 	map<string, const char_t*> fontMap;
 	map<string, unique_ptr<GraphicsAsset> > assetMap;
-
+	map<string, shared_ptr<Animation> > animationMap;
 
 };

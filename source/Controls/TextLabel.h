@@ -44,7 +44,7 @@ public:
 	const wchar_t* getText();
 
 	virtual bool clicked() override;
-	virtual bool selected() override;
+	virtual bool pressed() override;
 	virtual bool hovering() override;
 
 	void setHoverable(bool hoverable);
@@ -69,7 +69,7 @@ public:
 
 	void onClick() {
 		if (onClickListener != NULL) {
-			isClicked = isSelected = false;
+			isClicked = isPressed = false;
 			(onClickListener->*onClickFunction)(this);
 		}
 	}

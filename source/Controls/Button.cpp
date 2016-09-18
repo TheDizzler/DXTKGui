@@ -24,6 +24,8 @@ Button::Button(GraphicsAsset* pixelAsset,
 Button::~Button() {
 	if (onClickListener != NULL)
 		delete onClickListener;
+	if (onHoverListener != NULL)
+		delete onHoverListener;
 }
 
 
@@ -57,24 +59,24 @@ void Button::update(double deltaTime, MouseController* mouse) {
 
 	if (hitArea->contains(mouse->getPosition())) {
 		isHover = true;
-		if (!isSelected) {
+		if (!isPressed) {
 			onHover();
 			setToHoverState();
 		}
 	} else
 		isHover = false;
 
-	if (isSelected && !mouse->leftButtonDown()) {
+	if (isPressed && !mouse->leftButtonDown()) {
 		isClicked = true;
 		onClick();
 		setToUnpressedState();
 	} else {
 		isClicked = false;
 		if (!isHover) {
-			isSelected = false;
+			isPressed = false;
 			setToUnpressedState();
 		} else if (mouse->pressed()) {
-			isSelected = true;
+			isPressed = true;
 			setToSelectedState();
 		}
 	}
@@ -197,16 +199,16 @@ const int Button::getHeight() const {
 bool Button::clicked() {
 
 	if (isClicked) {
-		isClicked = isSelected = false;
+		isClicked = isPressed = false;
 		return true;
 	}
 
 	return false;
 }
 
-bool Button::selected() {
+bool Button::pressed() {
 
-	return isSelected;
+	return isPressed;
 }
 
 bool Button::hovering() {
@@ -247,8 +249,7 @@ ImageButton::ImageButton(unique_ptr<Sprite> upButtonSprite,
 
 	normalSprite = move(upButtonSprite);
 	pressedSprite = move(downButtonSprite);
-	//normalSprite->setOrigin(Vector2(0, 0));
-	//pressedSprite->setOrigin(Vector2(0, 0));
+
 	Vector2 size = Vector2(normalSprite->getWidth(), normalSprite->getHeight());
 
 	hitArea.reset(new HitArea(Vector2::Zero, size));
@@ -262,7 +263,6 @@ ImageButton::~ImageButton() {
 
 void ImageButton::draw(SpriteBatch* batch) {
 
-	//drawSprite->draw(batch);
 	batch->Draw(texture, normalSprite->getPosition(), &normalSprite->getRect(),
 		tint, rotation, normalSprite->getOrigin(), scale, SpriteEffects_None, layerDepth);
 	buttonLabel->draw(batch);
@@ -293,7 +293,6 @@ void ImageButton::setRotation(const float rot) {
 	rotation = rot;
 }
 
-
 void ImageButton::setToUnpressedState() {
 
 	buttonLabel->setTint(normalColorText);
@@ -316,4 +315,146 @@ void ImageButton::setToSelectedState() {
 		texture = pressedSprite->getTexture().Get();
 	else
 		tint = selectedColor;
+}
+/** ***** END OF IMAGE BUTTON **** **/
+
+
+
+/** ***** Animated Button ***** **/
+AnimatedButton::AnimatedButton(shared_ptr<Animation> anim, Vector2 pos) {
+
+	animation = anim;
+
+	if (animation->animationFrames.size() > 0)
+		currentFrameIndex = 0;
+
+	position = pos;
+	hitArea.reset(new HitArea(position, Vector2(getWidth(), getHeight())));
+	center = Vector2(getWidth() / 2, getHeight() / 2);
+}
+
+AnimatedButton::~AnimatedButton() {
+	if (onClickListener != NULL)
+		delete onClickListener;
+	/*if (onPressListener != NULL)
+		delete onPressListener;
+	if (onHoverListener != NULL)
+		delete onHoverListener;*/
+
+}
+
+
+void AnimatedButton::update(double deltaTime, MouseController* mouse) {
+
+	if (hitArea->contains(mouse->getPosition())) {
+		isHover = true;
+		if (!isPressed) {
+			onHover(deltaTime);
+		}
+	} else {
+		isHover = false;
+		isPressed = false;
+		//afterHover();
+		if (timeHovering > 0) {
+			timeHovering -= deltaTime;
+			isOpen = false;
+			if (timeHovering < 0) {
+				timeHovering = timePerFrame;
+				--currentFrameIndex;
+				if (currentFrameIndex < 0) {
+					currentFrameIndex = 0;
+				} else
+					adjustPosition(currentFrameIndex + 1);
+			}
+		}
+	}
+
+
+	if (isPressed && !mouse->leftButtonDown()) {
+		isClicked = true;
+		isPressed = false;
+
+		onClick();
+	} else {
+		isClicked = false;
+		if (!isHover) {
+			isPressed = false;
+		} else if (isOpen && mouse->pressed()) {
+			isPressed = true;
+			onPress();
+		}
+	}
+}
+
+
+void AnimatedButton::draw(SpriteBatch* batch) {
+
+	batch->Draw(animation->texture.Get(), position,
+		&animation->animationFrames[currentFrameIndex]->sourceRect, tint, rotation,
+		origin, scale, SpriteEffects_None, layerDepth);
+}
+
+void AnimatedButton::adjustPosition(int lastFrame) {
+
+	Vector2 oldPos = position;
+	Vector2 newPos = oldPos;
+
+	Vector2 oldSize = Vector2(
+		animation->animationFrames[lastFrame]->sourceRect.right
+		- animation->animationFrames[lastFrame]->sourceRect.left,
+		animation->animationFrames[lastFrame]->sourceRect.bottom
+		- animation->animationFrames[lastFrame]->sourceRect.top);
+
+	Vector2 newSize = Vector2(getWidth(), getHeight());
+	Vector2 difference = newSize - oldSize;
+
+	newPos -= difference / 2;
+	setPosition(newPos);
+}
+
+
+void AnimatedButton::setFont(const pugi::char_t* font) {
+}
+
+void AnimatedButton::setText(wstring text) {
+}
+
+/** Not used in Animated Button */
+XMVECTOR XM_CALLCONV AnimatedButton::measureString() const {
+	return Vector2::Zero;
+}
+
+const Vector2& AnimatedButton::getPosition() const {
+	return position;
+}
+
+const int AnimatedButton::getWidth() const {
+	return animation->animationFrames[currentFrameIndex]->sourceRect.right
+		- animation->animationFrames[currentFrameIndex]->sourceRect.left;
+}
+
+const int AnimatedButton::getHeight() const {
+	return animation->animationFrames[currentFrameIndex]->sourceRect.bottom
+		- animation->animationFrames[currentFrameIndex]->sourceRect.top;
+}
+
+bool AnimatedButton::clicked() {
+	return isClicked;
+}
+
+bool AnimatedButton::pressed() {
+	return isPressed;
+}
+
+bool AnimatedButton::hovering() {
+	return isHover;
+}
+
+void AnimatedButton::setToUnpressedState() {
+}
+
+void AnimatedButton::setToHoverState() {
+}
+
+void AnimatedButton::setToSelectedState() {
 }

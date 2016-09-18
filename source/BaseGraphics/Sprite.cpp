@@ -37,18 +37,22 @@ void Sprite::load(GraphicsAsset* const graphicsAsset) {
 	texture = graphicsAsset->getTexture();
 	width = graphicsAsset->getWidth();
 	height = graphicsAsset->getHeight();
-
+	Vector2 sheetLoc = graphicsAsset->getPosition();
 
 	origin = Vector2(width / 2.0f, height / 2.0f);
-	sourceRect.left = 0;
-	sourceRect.top = 0;
-	sourceRect.bottom = height;
-	sourceRect.right = width;
+	sourceRect.left = sheetLoc.x;
+	sourceRect.top = sheetLoc.y;
+	sourceRect.bottom = sheetLoc.y + height;
+	sourceRect.right = sheetLoc.x + width;
 
 	hitArea.reset(new HitArea(
 		Vector2(position.x - origin.x, position.y - origin.y),
 		Vector2(width, height)));
 
+	/*if (graphicsAsset->hasAnimations()) {
+		
+		animationFrames = graphicsAsset->getAnimation();
+	}*/
 }
 
 

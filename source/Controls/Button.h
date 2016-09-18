@@ -49,7 +49,7 @@ public:
 	Color selectedColorText = Color(Vector3(0, .5, 1));
 
 	virtual bool clicked() override;
-	virtual bool selected() override;
+	virtual bool pressed() override;
 	virtual bool hovering() override;
 
 	class OnClickListener {
@@ -67,7 +67,7 @@ public:
 
 	void onClick() {
 		if (onClickListener != NULL) {
-			isClicked = isSelected = false;
+			isClicked = isPressed = false;
 			(onClickListener->*onClickFunction)(this);
 		}
 	}
@@ -129,8 +129,7 @@ public:
 
 	virtual void setPosition(const Vector2& position) override;
 	virtual void setScale(const Vector2 & scale) override;
-	/** Remember: Rotation is around the origin!
-		This is really hacky and should probably not be used! */
+	/** Remember: Rotation is around the origin! */
 	virtual void setRotation(const float rotation) override;
 
 protected:
@@ -140,7 +139,112 @@ protected:
 private:
 	unique_ptr<Sprite> normalSprite;
 	unique_ptr<Sprite> pressedSprite;
-	/* The sprite used in draw(). */
-	//Sprite* drawSprite;
+
 	ID3D11ShaderResourceView* texture;
+};
+
+
+class AnimatedButton : public GUIControl {
+public:
+	AnimatedButton(shared_ptr<Animation> animation, Vector2 position);
+	~AnimatedButton();
+
+	virtual void update(double deltaTime, MouseController* mouse) override;
+	virtual void draw(SpriteBatch* batch) override;
+
+	virtual void setFont(const pugi::char_t * font = "Default Font") override;
+	virtual void setText(wstring text) override;
+	virtual XMVECTOR XM_CALLCONV measureString() const override;
+	virtual const Vector2 & getPosition() const override;
+	virtual const int getWidth() const override;
+	virtual const int getHeight() const override;
+
+	virtual bool clicked() override;
+	virtual bool pressed() override;
+	virtual bool hovering() override;
+
+	virtual void setToUnpressedState();
+	virtual void setToHoverState();
+	virtual void setToSelectedState();
+
+	class ButtonActionListener {
+	public:
+		virtual void onClick(AnimatedButton* button) = 0;
+		virtual void onPress(AnimatedButton* button) = 0;
+		virtual void onHover(AnimatedButton* button) = 0;
+		virtual void afterHover(AnimatedButton* button) {
+		};
+	};
+
+
+	void setActionListener(ButtonActionListener* iOnC) {
+		if (onClickListener != NULL)
+			delete onClickListener;
+		onClickFunction = &ButtonActionListener::onClick;
+		onHoverFunction = &ButtonActionListener::onHover;
+		onPressFunction = &ButtonActionListener::onPress;
+		onClickListener = iOnC;
+	}
+
+	void onClick() {
+		if (onClickListener != NULL) {
+			(onClickListener->*onClickFunction)(this);
+		} else {
+				currentFrameIndex = animation->animationFrames.size() - 1;
+		}
+
+		isClicked = isPressed = false;
+	}
+
+	void onPress() {
+		if (onClickListener != NULL) {
+			(onClickListener->*onPressFunction)(this);
+		} else 
+			currentFrameIndex = animation->animationFrames.size() - 2;
+	}
+
+	void onHover(double deltaTime) {
+		timeHovering += deltaTime;
+
+		if (onClickListener != NULL) {
+			(onClickListener->*onHoverFunction)(this);
+		} else {
+			if (timeHovering > timePerFrame) {
+				timeHovering = 0;
+				++currentFrameIndex;
+				if (currentFrameIndex > animation->animationFrames.size() - 3) {
+					currentFrameIndex = animation->animationFrames.size() - 3;
+					isOpen = true;
+				} else
+					adjustPosition(currentFrameIndex - 1);
+			}
+		}
+
+	}
+
+	double timeHovering = 0;
+	double timePerFrame = .167;
+	bool isOpen = false;
+	int currentFrameIndex = -1;
+
+	shared_ptr<Animation> animation;
+	void adjustPosition(int lastFrame);
+private:
+	typedef void (ButtonActionListener::*OnClickFunction) (AnimatedButton*);
+	ButtonActionListener* onClickListener = NULL;
+	OnClickFunction onClickFunction;
+	OnClickFunction onPressFunction;
+	OnClickFunction onHoverFunction;
+	//OnClickListener* onHoverListener = NULL;
+	//OnClickListener* onPressListener = NULL;
+
+
+
+	/** Because frames of animation aren't always the same size... */
+
+	/** The origin point for adjusting position of animated frames. */
+	Vector2 center;
+
+
+
 };

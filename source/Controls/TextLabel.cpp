@@ -21,6 +21,10 @@ TextLabel::TextLabel(shared_ptr<FontSet> fnt) {
 }
 
 TextLabel::~TextLabel() {
+	if (onClickListener != NULL)
+		delete onClickListener;
+	if (onHoverListener != NULL)
+		delete onHoverListener;
 }
 
 
@@ -29,24 +33,24 @@ void TextLabel::update(double deltaTime, MouseController* mouse) {
 	if (isHoverable) {
 		if (hitArea->contains(mouse->getPosition())) {
 			isHover = true;
-			if (!isSelected) {
+			if (!isPressed) {
 				onHover();
 				setToHoverState();
 			}
 		} else
 			isHover = false;
 
-		if (isSelected && !mouse->leftButtonDown()) {
+		if (isPressed && !mouse->leftButtonDown()) {
 			isClicked = true;
 			onClick();
 			setToUnpressedState();
 		} else {
 			isClicked = false;
 			if (!isHover) {
-				isSelected = false;
+				isPressed = false;
 				setToUnpressedState();
 			} else if (mouse->clicked()) {
-				isSelected = true;
+				isPressed = true;
 				setToSelectedState();
 			}
 		}
@@ -95,16 +99,16 @@ const wchar_t* TextLabel::getText() {
 bool TextLabel::clicked() {
 
 	if (isClicked) {
-		isClicked = isSelected = false;
+		isClicked = isPressed = false;
 		return true;
 	}
 
 	return false;
 }
 
-bool TextLabel::selected() {
+bool TextLabel::pressed() {
 
-	return isSelected;
+	return isPressed;
 }
 
 bool TextLabel::hovering() {

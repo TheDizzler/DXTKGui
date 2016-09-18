@@ -119,27 +119,32 @@ MainScreen::~MainScreen() {
 
 bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
+	AnimatedButton* animButton =
+		GameManager::guiFactory->createAnimatedButton("Launch Button");
+	Vector2 buttonpos = Vector2((Globals::WINDOW_WIDTH - animButton->getWidth()) / 2,
+		Globals::WINDOW_HEIGHT / 3 - animButton->getHeight() / 2);
+	animButton->setPosition(buttonpos);
+	guiControls.push_back(animButton);
+
+
 	Button* button;
-	button = GameManager::guiFactory->createImageButton("Button Up", "Button Down");
-	Vector2 buttonpos = Vector2((Globals::WINDOW_WIDTH - button->getWidth()) / 2,
-		Globals::WINDOW_HEIGHT / 3 - button->getHeight() / 2);
-	button->setText(L"Play");
-	button->setPosition(buttonpos);
-	
-	Vector2 size = Vector2(button->getWidth(), button->getHeight());
-	guiControls.push_back(button);
+	//button = GameManager::guiFactory->createImageButton("Launch Button");
+	////button->setText(L"Play");
+	//button->setPosition(buttonpos);
+
+	Vector2 size = Vector2(animButton->getWidth(), animButton->getHeight());
+	//guiControls.push_back(button);
 
 	buttonpos.y += 150;
 	button = GameManager::guiFactory->createButton(buttonpos, size, L"Settings");
 	OnClickListenerSettingsButton* settingsListener =
 		new OnClickListenerSettingsButton(this);
 	button->setOnClickListener(settingsListener);
-	guiControls.push_back(move(button));
+	guiControls.push_back(button);
 
 	buttonpos.y += 150;
 	button = GameManager::guiFactory->createImageButton(
 		"Button Up", "Button Down");
-	//button->action = GUIControl::EXIT;
 	button->setOnClickListener(new OnClickListenerExitButton(this));
 	button->setText(L"Exit");
 	button->setPosition(buttonpos);
@@ -166,7 +171,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		exitDialog->setText(L"Really Quit The Test Project?");
 		unique_ptr<Button> quitButton;
 		quitButton.reset(GameManager::guiFactory->createButton());
-		quitButton->setOnClickListener(new OnClickListenerQuitButton(this));
+		quitButton->setOnClickListener(new OnClickListenerDialogQuitButton(this));
 		quitButton->setText(L"Quit");
 		exitDialog->setConfirmButton(move(quitButton));
 		exitDialog->setCancelButton(L"Keep Testing!");
@@ -237,7 +242,7 @@ int itemHeight = 32;
 bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
 	Vector2 controlPos = Vector2(50, 50);
-	// Labels for displaying selected info
+	// Labels for displaying pressed info
 	adapterLabel =
 		GameManager::guiFactory->createTextLabel(controlPos, L"Test");
 	adapterLabel->setHoverable(true);
@@ -270,7 +275,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 
 	controlPos.y += displayLabel->getHeight() + MARGIN;
 
-	// create listbox of monitors available to selected gfx card
+	// create listbox of monitors available to pressed gfx card
 	displayListbox = GameManager::guiFactory->createListBox(controlPos, 400, itemHeight);
 	guiControls.push_back(displayListbox);
 	// because only the one adapter has displays on my laptop
@@ -296,7 +301,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	scrollBarDesc.scrubberImage = "Scrubber Custom";
 
 	displayModeCombobox =
-		GameManager::guiFactory->createComboBox(controlPos, 75, itemHeight);
+		GameManager::guiFactory->createComboBox(controlPos, 75, itemHeight, 10);
 
 	populateDisplayModeList(
 		game->getDisplayModeList(0));
@@ -341,7 +346,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 			Globals::WINDOW_HEIGHT - button->getHeight() - 25));
 	guiControls.push_back(button);
 
-	
+
 	return true;
 }
 
@@ -490,7 +495,8 @@ void OnClickListenerSettingsButton::onClick(Button* button) {
 	main->menuManager->openConfigMenu();
 }
 
-void OnClickListenerQuitButton::onClick(Button* button) {
+void OnClickListenerDialogQuitButton::onClick(Button* button) {
+	main->exitDialog->close();
 	main->confirmExit();
 }
 
