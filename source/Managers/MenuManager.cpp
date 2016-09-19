@@ -179,7 +179,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		//exitDialog->setGrowTransition(Vector2(.001, .001), 3);
 		exitDialog->setTransition(
 			//new TransitionEffects::GrowTransition(Vector2(.001, .001), Vector2(1, 1), 3));
-			new TransitionEffects::SlideTransition(Vector2(-100, -100), exitDialog->getPosition(), 5));
+			new TransitionEffects::SlideTransition(Vector2(-200, -200), exitDialog->getPosition(), 10));
 	}
 
 

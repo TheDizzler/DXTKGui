@@ -8,7 +8,7 @@ TransitionEffects::GrowTransition::GrowTransition(const Vector2& strt,
 	endState = end;
 	transitionSpeed = speed;
 }
-
+float threshold = .001;
 bool TransitionEffects::GrowTransition::run(double deltaTime, GUIControl* control) {
 
 	Vector2 newscale = Vector2::Lerp(control->getScale(), endState,
@@ -16,7 +16,7 @@ bool TransitionEffects::GrowTransition::run(double deltaTime, GUIControl* contro
 
 
 	Vector2 diff = newscale - endState;
-	if (diff.x > -.001 || diff.y > -.001) {
+	if (diff.x > -threshold || diff.y > -threshold) {
 		control->setScale(endState);
 		OutputDebugString(L"Finished!");
 		return true;
@@ -46,7 +46,7 @@ bool TransitionEffects::SlideTransition::run(double deltaTime,
 		control->getPosition(), endState, deltaTime*transitionSpeed);
 
 	Vector2 diff = newpos - endState;
-	if (diff.x > -.001 || diff.y > -.001) {
+	if (diff.x > -threshold || diff.y > -threshold) {
 		control->setPosition(endState);
 		OutputDebugString(L"Finished!");
 		return true;

@@ -30,7 +30,7 @@ This is still a massive mess....
 
 
 ##TODO:
->- Dialog Box - allow custom bg image; transition effects
+>- Dialog Box - allow custom bg image;
 >- Scrollbar - that can be slapped on to anything
 >- List Box - multi-select; test adding, removing, clearing items live
 >- Radio Buttons

@@ -74,7 +74,9 @@ public:
 
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 	virtual void setTint(const Color& color) override;
-
+	virtual void setScale(const Vector2& newScale) override;
+	virtual void setPosition(const Vector2& newPosition) override;
+	
 	virtual const Vector2& getPosition() const override;
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
@@ -89,7 +91,7 @@ public:
 	void open();
 	void close();
 	/* Deprecating. Use ActionListeners instead. */
-	ClickAction getResult();
+	//ClickAction getResult();
 
 	bool isOpen = false;
 	bool isTransitioning = false;
@@ -102,12 +104,7 @@ private:
 	vector<unique_ptr<GUIControl> > controls;
 
 	/* Deprecating. Use ActionListeners instead. */
-	ClickAction result = NONE;
-
-	//Vector2 transitionPosition = Vector2::Zero;
-	//Vector2 startPosition = Vector2::Zero;
-	//Vector2 destinationPosition;
-	//float transitionSpeed = 10;
+	//ClickAction result = NONE;
 
 	Vector2 size;
 	Vector2 titleFrameSize = Vector2(0, 40);
@@ -130,8 +127,7 @@ private:
 
 	/** Used for dragging dialog around, if draggable set.
 		Also used for transition effects. */
-	void setPosition(const Vector2& newPosition);
-	void setScale(const Vector2& newScale);
+	void setDraggedPosition(Vector2& newPosition);
 	/** NOT USED. */
 	void movePosition(const Vector2& moveVector);
 

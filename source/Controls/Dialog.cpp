@@ -277,10 +277,8 @@ void Dialog::update(double deltaTime, MouseController* mouse) {
 		return;
 
 	if (isTransitioning) {
-
 		isTransitioning = !(transition->*runTransition)(deltaTime, this);
 	}
-	result = NONE;
 
 	if (movable) {
 		if ((isHover = titleSprite->getHitArea()->contains(mouse->getPosition()))) {
@@ -289,18 +287,13 @@ void Dialog::update(double deltaTime, MouseController* mouse) {
 
 				pressedPosition = mouse->getPosition() - position;
 
-				/*wostringstream ws;
-				ws << mouse->getPosition().x << "," << mouse->getPosition().y << "\n";
-				ws << pressedPosition.x << "," << pressedPosition.y << "\n";
-				OutputDebugString(ws.str().c_str());*/
-
 				isPressed = true;
 			}
 
 		}
 
 		if (isPressed) {
-			setPosition(mouse->getPosition() - pressedPosition);
+			setDraggedPosition(mouse->getPosition() - pressedPosition);
 		}
 
 		if (!mouse->leftButtonDown())
@@ -368,9 +361,9 @@ void Dialog::close() {
 
 }
 
-GUIControl::ClickAction Dialog::getResult() {
-	return result;
-}
+//GUIControl::ClickAction Dialog::getResult() {
+//	return result;
+//}
 
 
 void Dialog::setFont(const pugi::char_t* fontName) {
@@ -380,6 +373,37 @@ void Dialog::setFont(const pugi::char_t* fontName) {
 
 void Dialog::setTint(const Color& color) {
 	bgSprite->setTint(color);
+}
+
+void Dialog::setScale(const Vector2& newScale) {
+
+	GUIControl::setScale(newScale);
+	frame->setScale(newScale);
+	bgSprite->setScale(newScale);
+	titleSprite->setScale(newScale);
+	buttonFrameSprite->setScale(newScale);
+
+	for (auto const& control : controls) {
+		if (control == NULL)
+			continue;
+		control->setScale(newScale);
+	}
+}
+
+void Dialog::setPosition(const Vector2& newPosition) {
+
+	Vector2 moveBy = newPosition - position;
+	GUIControl::setPosition(newPosition);
+	frame->moveBy(moveBy);
+	bgSprite->moveBy(moveBy);
+	titleSprite->moveBy(moveBy);
+	buttonFrameSprite->moveBy(moveBy);
+
+	for (auto const& control : controls) {
+		if (control == NULL)
+			continue;
+		control->moveBy(moveBy);
+	}
 }
 
 const Vector2& Dialog::getPosition() const {
@@ -424,17 +448,22 @@ int Dialog::getMaxButtonHeight() {
 	return maxHeight;
 }
 
-void Dialog::setPosition(const Vector2& newPos) {
+void Dialog::setDraggedPosition(Vector2& newPosition) {
 
-	Vector2 newPosition = newPos;
-	if (newPosition.x < 0)
+	if (newPosition.x < 0) {
+		pressedPosition.x += newPosition.x;
 		newPosition.x = 0;
-	else if (newPosition.x + size.x > Globals::WINDOW_WIDTH)
+	} else if (newPosition.x + size.x > Globals::WINDOW_WIDTH) {
+		pressedPosition.x += newPosition.x + size.x - Globals::WINDOW_WIDTH;
 		newPosition.x = Globals::WINDOW_WIDTH - size.x;
-	if (newPosition.y < 0)
+	}
+	if (newPosition.y < 0) {
+		pressedPosition.y += newPosition.y;
 		newPosition.y = 0;
-	else if (newPosition.y + size.y > Globals::WINDOW_HEIGHT)
+	} else if (newPosition.y + size.y > Globals::WINDOW_HEIGHT) {
+		pressedPosition.y += newPosition.y + size.y - Globals::WINDOW_HEIGHT;
 		newPosition.y = Globals::WINDOW_HEIGHT - size.y;
+	}
 
 	Vector2 moveBy = newPosition - position;
 	GUIControl::setPosition(newPosition);
@@ -447,21 +476,6 @@ void Dialog::setPosition(const Vector2& newPos) {
 		if (control == NULL)
 			continue;
 		control->moveBy(moveBy);
-	}
-}
-
-void Dialog::setScale(const Vector2& newScale) {
-
-	GUIControl::setScale(newScale);
-	frame->setScale(newScale);
-	bgSprite->setScale(newScale);
-	titleSprite->setScale(newScale);
-	buttonFrameSprite->setScale(newScale);
-
-	for (auto const& control : controls) {
-		if (control == NULL)
-			continue;
-		control->setScale(newScale);
 	}
 }
 
