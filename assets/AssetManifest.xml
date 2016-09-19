@@ -2,7 +2,7 @@
 <root game="DirectX ToolKit GUI" xml="AssetManifest" dir="assets/">
 
 	<gui dir="gui/">
-		<spritefonts dir="../fonts/">
+		<spritefonts dir="fonts/">
 			<font name="Arial" file="Arial.spritefont" fontSize="16" />
 			<font name="Bookshelf" file="Bookshelf.spritefont" fontSize="42" />
 			<font name="BlackCloak" file="BlackCloak.spritefont" fontSize="32" />

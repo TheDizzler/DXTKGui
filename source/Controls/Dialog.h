@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Button.h"
-
+#include "../BaseGraphics/TransitionEffects.h"
 
 
 
@@ -33,6 +33,12 @@ public:
 
 	void setDimensions(const Vector2& position, const Vector2& size,
 		const int frameThickness = 2);
+
+	void setTransition(TransitionEffects::TransitionEffect* effect);
+
+	/** End position is set position in dimensions. */
+	void setSlideInTransition(Vector2 startPos, float transitionSpeed);
+	//void setGrowTransition(Vector2 startScale, float transitionSpeed);
 
 	void setTitle(wstring text, const Vector2& scale = Vector2(1.5, 1.5),
 		const pugi::char_t* font = "Default Font");
@@ -86,7 +92,7 @@ public:
 	ClickAction getResult();
 
 	bool isOpen = false;
-
+	bool isTransitioning = false;
 private:
 
 	enum GUIControlLookUp {
@@ -97,6 +103,11 @@ private:
 
 	/* Deprecating. Use ActionListeners instead. */
 	ClickAction result = NONE;
+
+	//Vector2 transitionPosition = Vector2::Zero;
+	//Vector2 startPosition = Vector2::Zero;
+	//Vector2 destinationPosition;
+	//float transitionSpeed = 10;
 
 	Vector2 size;
 	Vector2 titleFrameSize = Vector2(0, 40);
@@ -117,8 +128,11 @@ private:
 	bool calculateButtonPosition(Vector2& buttonPos);
 	int getMaxButtonHeight();
 
-	void setPosition(Vector2& newPosition);
-	/** Used for dragging dialog around, if draggable set. */
+	/** Used for dragging dialog around, if draggable set.
+		Also used for transition effects. */
+	void setPosition(const Vector2& newPosition);
+	void setScale(const Vector2& newScale);
+	/** NOT USED. */
 	void movePosition(const Vector2& moveVector);
 
 	unique_ptr<RectangleSprite> bgSprite;
@@ -130,6 +144,10 @@ private:
 
 	Vector2 pressedPosition;
 	bool movable = false;
+
+	TransitionEffects::TransitionEffect* transition = NULL;
+	TransitionEffects::Run runTransition;
+	TransitionEffects::Reset resetTransition;
 
 	/** Generic OnClick for Cancel Button. */
 	class OnClickListenerCancelButton : public Button::OnClickListener {
@@ -143,12 +161,4 @@ private:
 };
 
 
-//class OnClickListenerConfirmButton : public Button::OnClickListener {
-//public:
-//	OnClickListenerConfirmButton(Dialog* dlg) : dialog(dlg) {
-//	}
-//	virtual void onClick(Button * button) override;
-//private:
-//	Dialog* dialog;
-//};
 

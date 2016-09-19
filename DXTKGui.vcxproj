@@ -149,6 +149,7 @@
     <ClCompile Include="source\BaseGraphics\GraphicsAsset.cpp" />
     <ClCompile Include="Source\BaseGraphics\PrimitiveShapes.cpp" />
     <ClCompile Include="Source\BaseGraphics\Sprite.cpp" />
+    <ClCompile Include="source\BaseGraphics\TransitionEffects.cpp" />
     <ClCompile Include="Source\Controls\Button.cpp" />
     <ClCompile Include="source\Controls\CheckBox.cpp" />
     <ClCompile Include="Source\Controls\ComboBox.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="Source\BaseGraphics\IElement2D.h" />
     <ClInclude Include="Source\BaseGraphics\PrimitiveShapes.h" />
     <ClInclude Include="Source\BaseGraphics\Sprite.h" />
+    <ClInclude Include="source\BaseGraphics\TransitionEffects.h" />
     <ClInclude Include="Source\Controls\Button.h" />
     <ClInclude Include="source\Controls\CheckBox.h" />
     <ClInclude Include="Source\Controls\ComboBox.h" />

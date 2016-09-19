@@ -138,12 +138,12 @@ void Sprite::setSize(const Vector2& size) {
 
 	sourceRect.left = 0;
 	sourceRect.top = 0;
-	sourceRect.bottom = height;
-	sourceRect.right = width;
+	sourceRect.bottom = size.y;
+	sourceRect.right = size.x;
 
 	hitArea.reset(new HitArea(
 		Vector2(position.x - origin.x *scale.x, position.y - origin.y*scale.y),
-		Vector2(width*scale.x, height*scale.y)));
+		Vector2(size.x*scale.x, size.y*scale.y)));
 }
 
 void Sprite::setPosition(const Vector2& pos) {

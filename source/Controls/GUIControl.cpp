@@ -23,11 +23,6 @@ void GUIControl::setScale(const Vector2& scl) {
 	setPosition(position);
 }
 
-//void GUIControl::setScale(const int scl) {
-//
-//	scale = Vector2(scl, scl);
-//	setPosition(position);
-//}
 
 const Vector2& GUIControl::getOrigin() const {
 	return origin;

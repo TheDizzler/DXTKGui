@@ -105,6 +105,9 @@
     <ClCompile Include="source\Controls\ScrollBar.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="source\BaseGraphics\TransitionEffects.cpp">
+      <Filter>Source Files\Engine\BaseGfx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\GameEngine.h">
@@ -178,6 +181,9 @@
     </ClInclude>
     <ClInclude Include="source\Controls\CheckBox.h">
       <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\BaseGraphics\TransitionEffects.h">
+      <Filter>Header Files\Engine\BaseGfx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -166,7 +166,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		dialogPos.y -= dialogSize.y / 2;
 		exitDialog->setDimensions(dialogPos, dialogSize);
 		exitDialog->setTint(Color(0, 120, 207));
-		exitDialog->setTitle(L"Exit Test?");
+		exitDialog->setTitle(L"Exit Test?", Vector2(1,1), "BlackCloak");
 		//exitDialog->setTitleAreaDimensions(Vector2(0, 150));
 		exitDialog->setText(L"Really Quit The Test Project?");
 		unique_ptr<Button> quitButton;
@@ -175,6 +175,11 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		quitButton->setText(L"Quit");
 		exitDialog->setConfirmButton(move(quitButton));
 		exitDialog->setCancelButton(L"Keep Testing!");
+		//exitDialog->setSlideInTransition(Vector2(0, dialogPos.y), 5);
+		//exitDialog->setGrowTransition(Vector2(.001, .001), 3);
+		exitDialog->setTransition(
+			//new TransitionEffects::GrowTransition(Vector2(.001, .001), Vector2(1, 1), 3));
+			new TransitionEffects::SlideTransition(Vector2(-100, -100), exitDialog->getPosition(), 5));
 	}
 
 

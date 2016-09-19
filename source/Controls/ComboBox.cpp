@@ -30,7 +30,7 @@ bool ComboBox::initialize(shared_ptr<FontSet> fnt, GraphicsAsset* pixelAsset,
 	comboListButton->setPosition(
 		Vector2(position.x + width - comboListButton->getWidth(), position.y));
 	comboListButton->setOnClickListener(new ShowListBoxListener(this));
-	frame->setDimensions(position, Vector2(width, comboListButton->getHeight()));
+	frame->setDimensions(position, Vector2(width, comboListButton->getScaledHeight()));
 
 	listBox.reset(lstBx);
 	listBox->setOnClickListener(new ListBoxListener(this));

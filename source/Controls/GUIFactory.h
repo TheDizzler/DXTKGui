@@ -85,7 +85,7 @@ private:
 
 	const char_t* defaultFontFile;
 
-	map<string, const char_t*> fontMap;
+	map<string, string> fontMap;
 	map<string, unique_ptr<GraphicsAsset> > assetMap;
 	map<string, shared_ptr<Animation> > animationMap;
 

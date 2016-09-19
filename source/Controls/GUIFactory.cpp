@@ -42,7 +42,7 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 		return defaultFont;
 	}
 
-	const char_t* fontFile = fontMap[fontName];
+	const char_t* fontFile = fontMap[fontName].c_str();
 
 	unique_ptr<FontSet> font;
 	font.reset(new FontSet());

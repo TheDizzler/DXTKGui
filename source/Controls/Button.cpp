@@ -34,7 +34,6 @@ bool resized = false;
 void Button::setDimensions(const Vector2& pos, const Vector2& size,
 	const int frmThcknss) {
 
-	//position = pos;
 	frameThickness = frmThcknss;
 
 	Vector2 labelSize = measureString();
@@ -49,6 +48,9 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 		resized = true;
 	}
 	hitArea->size = newSize;
+
+	width = newSize.x;
+	height = newSize.y;
 
 	setPosition(pos);
 
@@ -180,6 +182,10 @@ const Vector2& Button::getPosition() const {
 void Button::setScale(const Vector2& scl) {
 
 	GUIControl::setScale(scl);
+	if (frame != NULL)
+		frame->setScale(scl);
+	if (rectSprite != NULL)
+		rectSprite->setScale(scl);
 	buttonLabel->setScale(scale);
 
 }
@@ -187,11 +193,19 @@ void Button::setScale(const Vector2& scl) {
 
 const int Button::getWidth() const {
 
-	return hitArea->size.x;
+	return width;
 }
 
 const int Button::getHeight() const {
 
+	return height;
+}
+
+const int Button::getScaledWidth() const {
+	return hitArea->size.x;
+}
+
+const int Button::getScaledHeight() const {
 	return hitArea->size.y;
 }
 
@@ -233,7 +247,8 @@ ImageButton::ImageButton(unique_ptr<Sprite> buttonSprite,
 	normalSprite = move(buttonSprite);
 	//normalSprite->setOrigin(Vector2(0, 0));
 	Vector2 size = Vector2(normalSprite->getWidth(), normalSprite->getHeight());
-
+	width = size.x;
+	height = size.x;
 	hitArea.reset(new HitArea(Vector2::Zero, size));
 
 	setToUnpressedState();
@@ -251,7 +266,8 @@ ImageButton::ImageButton(unique_ptr<Sprite> upButtonSprite,
 	pressedSprite = move(downButtonSprite);
 
 	Vector2 size = Vector2(normalSprite->getWidth(), normalSprite->getHeight());
-
+	width = size.x;
+	height = size.y;
 	hitArea.reset(new HitArea(Vector2::Zero, size));
 	setToUnpressedState();
 }

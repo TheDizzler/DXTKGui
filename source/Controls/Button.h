@@ -20,6 +20,7 @@ public:
 	void setDimensions(const Vector2& position, const Vector2& size,
 		const int frameThickness = 2);
 
+
 	virtual void update(double deltaTime, MouseController* mouse) override;
 	virtual void draw(SpriteBatch* batch) override;
 
@@ -34,9 +35,15 @@ public:
 	virtual const Vector2& getPosition() const override;
 
 	virtual void setScale(const Vector2& scale) override;
+	/** NOTE: This DOES NOT return scaled width!
+		Use getScaledWidth(). */
 	virtual const int getWidth() const override;
+	/** NOTE: This DOES NOT return scaled height!!
+		Use getScaledHeight(). */
 	virtual const int getHeight() const override;
 
+	const int getScaledWidth() const;
+	const int getScaledHeight() const;
 
 	/** Colors for imageless button. */
 	Color normalColor = Color(Vector3(1, 1, 1));
@@ -95,6 +102,8 @@ protected:
 	OnClickListener* onHoverListener = NULL;
 
 	void positionText();
+	int width = 0;
+	int height = 0;
 
 	virtual void setToUnpressedState();
 	virtual void setToHoverState();
