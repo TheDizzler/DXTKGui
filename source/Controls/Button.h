@@ -25,6 +25,7 @@ public:
 	virtual void draw(SpriteBatch* batch) override;
 
 	virtual void setText(wstring text) override;
+	virtual const wchar_t* getText() override;
 	virtual XMVECTOR XM_CALLCONV measureString() const override;
 
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
@@ -161,8 +162,11 @@ public:
 	virtual void update(double deltaTime, MouseController* mouse) override;
 	virtual void draw(SpriteBatch* batch) override;
 
+	/* Not used in Animated Button. */
 	virtual void setFont(const pugi::char_t * font = "Default Font") override;
+	/* Not used in Animated Button. */
 	virtual void setText(wstring text) override;
+	
 	virtual XMVECTOR XM_CALLCONV measureString() const override;
 	virtual const Vector2 & getPosition() const override;
 	virtual const int getWidth() const override;

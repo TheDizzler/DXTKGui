@@ -34,6 +34,8 @@ void Dialog::initialize(GraphicsAsset* pixelAsset,
 	dialogText->setTint(Color(0, 0, 0));
 	controls[DialogText] = move(dialogText);
 
+	//setCancelButton(L"Cancel");
+
 }
 
 void Dialog::setDimensions(const Vector2& pos, const Vector2& sz,
@@ -79,16 +81,7 @@ void Dialog::setTransition(TransitionEffects::TransitionEffect* effect) {
 	transition = effect;
 }
 
-void Dialog::setSlideInTransition(Vector2 startPos, float transSpeed) {
 
-	//destinationPosition = position;
-	//startPosition = startPos;
-	//position = startPos;
-	//transitionSpeed = transSpeed;
-}
-
-
-int titleTextMargin = 10;
 void Dialog::calculateTitlePos() {
 
 	Vector2 titlesize = controls[TitleText]->measureString();
@@ -128,14 +121,58 @@ void Dialog::setTitle(wstring text, const Vector2& scale, const pugi::char_t* fo
 	calculateTitlePos();
 }
 
+// TODO:
+//		If text to long, add scrollbar.
 void Dialog::calculateDialogTextPos() {
 
-	Vector2 dialogtextsize = controls[DialogText]->measureString();
-	if (dialogtextsize.x > dialogFrameSize.x) { // if the text is longer than the dialog box
-	//	TODO:
-	//		break the text down into multiple lines
+	TextLabel* label = (TextLabel*) controls[DialogText].get();
+	Vector2 dialogtextsize = label->measureString();
 
+	if (dialogtextsize.x + dialogTextMargin * 2 > dialogFrameSize.x) {
+	// if the text is longer than the dialog box
+	//		break the text down into multiple lines
+		wstring newText = L"";
+
+
+		int i = 0;
+		int textLength = wcslen(label->getText());
+		bool done = false;
+		while (i < textLength) {
+			wstring currentLine = L"";
+			while (label->measureString(currentLine).x + (dialogTextMargin * 2)
+				< dialogFrameSize.x) {
+
+				currentLine += label->getText()[i++];
+				if (i >= textLength) {
+					done = true;
+					break;
+				}
+			}
+			if (!done) {
+				wchar_t ch = currentLine[currentLine.length() - 1];
+				int back = 0;
+				while (!isspace(ch)) {
+
+					++back;
+					--i;
+					ch = currentLine[currentLine.length() - back - 1];
+				}
+				currentLine.erase(currentLine.end() - back, currentLine.end());
+			}
+
+		/*wostringstream ws;
+		ws << currentLine;
+		OutputDebugString(ws.str().c_str());*/
+
+			newText += currentLine + L"\n";
+		}
+		label->setText(newText);
+		dialogtextsize = label->measureString();
 	}
+
+	// TODO:
+	//		If text to long, add scrollbar.
+
 	Vector2 dialogpos = Vector2(
 		dialogFramePosition.x + (dialogFrameSize.x - dialogtextsize.x) / 2,
 		dialogFramePosition.y + (dialogFrameSize.y - dialogtextsize.y) / 2);
@@ -157,6 +194,9 @@ void Dialog::setTitleAreaDimensions(const Vector2& newSize) {
 void Dialog::setConfirmButton(unique_ptr<Button> okButton,
 	bool autoPosition, bool autoSize) {
 
+	if (autoSize)
+		okButton->setDimensions(okButtonPosition, standardButtonSize, 3);
+
 	if (autoPosition) {
 		okButtonPosition.x = position.x + buttonMargin;
 		if (calculateButtonPosition(okButtonPosition))
@@ -165,12 +205,8 @@ void Dialog::setConfirmButton(unique_ptr<Button> okButton,
 		okButtonPosition = okButton->getPosition();
 	}
 
-	if (autoSize) {
-		okButton->setDimensions(okButtonPosition, standardButtonSize, 3);
-	} else {
 
-		okButton->setPosition(okButtonPosition);
-	}
+	okButton->setPosition(okButtonPosition);
 
 	controls[ButtonOK].release();
 	controls[ButtonOK] = move(okButton);
@@ -200,13 +236,21 @@ void Dialog::setConfirmOnClickListener(Button::OnClickListener* iOnClickListener
 	((Button*) controls[ButtonOK].get())->setOnClickListener(iOnClickListener);
 }
 
-void Dialog::setCancelButton(unique_ptr<Button> cancelButton) {
+void Dialog::setCancelButton(unique_ptr<Button> cancelButton,
+	bool autoPosition, bool autoSize) {
 
-	cancelButtonPosition.x =
-		position.x + size.x - cancelButton->getWidth() - buttonMargin;
-	if (calculateButtonPosition(cancelButtonPosition))
-		cancelButtonPosition.y -= cancelButton->getHeight() / 2;
-	cancelButton->setPosition(cancelButtonPosition);
+	if (autoPosition) {
+		cancelButtonPosition.x =
+			position.x + size.x - cancelButton->getWidth() - buttonMargin;
+		if (calculateButtonPosition(cancelButtonPosition))
+			cancelButtonPosition.y -= cancelButton->getHeight() / 2;
+	} else {
+		cancelButtonPosition = cancelButton->getPosition();
+	}
+	if (autoSize) {
+		cancelButton->setDimensions(cancelButtonPosition, standardButtonSize, 3);
+	} else
+		cancelButton->setPosition(cancelButtonPosition);
 	controls[ButtonCancel].release();
 	controls[ButtonCancel] = move(cancelButton);
 }
@@ -264,8 +308,7 @@ bool Dialog::calculateButtonPosition(Vector2& buttonPos) {
 		}
 		return false;
 	} else
-		buttonPos.y = buttonFramePosition.y
-		+ buttonFrameSize.y / 2;
+		buttonPos.y = buttonFramePosition.y + buttonFrameSize.y / 2;
 
 	return true;
 }

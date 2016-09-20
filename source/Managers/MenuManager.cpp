@@ -132,21 +132,26 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 	////button->setText(L"Play");
 	//button->setPosition(buttonpos);
 
-	Vector2 size = Vector2(animButton->getWidth(), animButton->getHeight());
+	Vector2 size = Vector2(animButton->getWidth()/2, animButton->getHeight()/4);
 	//guiControls.push_back(button);
+
 
 	buttonpos.y += 150;
 	button = GameManager::guiFactory->createButton(buttonpos, size, L"Settings");
+	buttonpos.x = (Globals::WINDOW_WIDTH - button->getScaledWidth()) / 2;
+	button->setPosition(buttonpos);
 	OnClickListenerSettingsButton* settingsListener =
 		new OnClickListenerSettingsButton(this);
 	button->setOnClickListener(settingsListener);
 	guiControls.push_back(button);
 
-	buttonpos.y += 150;
+	
 	button = GameManager::guiFactory->createImageButton(
 		"Button Up", "Button Down");
 	button->setOnClickListener(new OnClickListenerExitButton(this));
 	button->setText(L"Exit");
+	buttonpos.x = (Globals::WINDOW_WIDTH - button->getScaledWidth()) / 2;
+	buttonpos.y += 150;
 	button->setPosition(buttonpos);
 	guiControls.push_back(button);
 
@@ -166,7 +171,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		dialogPos.y -= dialogSize.y / 2;
 		exitDialog->setDimensions(dialogPos, dialogSize);
 		exitDialog->setTint(Color(0, 120, 207));
-		exitDialog->setTitle(L"Exit Test?", Vector2(1,1), "BlackCloak");
+		exitDialog->setTitle(L"Exit Test?", Vector2(1, 1), "BlackCloak");
 		//exitDialog->setTitleAreaDimensions(Vector2(0, 150));
 		exitDialog->setText(L"Really Quit The Test Project?");
 		unique_ptr<Button> quitButton;

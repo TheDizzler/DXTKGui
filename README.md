@@ -1,4 +1,4 @@
-# DXTKGui v0.31b
+# DXTKGui v0.35b
 
 A GUI Framework for DirectX ToolKit.
 This developed out of one part not being able to find any existing frameworks and one part me procrastinating on developing the game I'm working on. I had some hacky GUI features (button, dialog box, listbox) and I was bothered by how inflexible and cumbersome they were. So I started this project to make an extensible and re-usable GUI framework (re-usable in my game engines anyway).
@@ -27,7 +27,7 @@ This is still a massive mess....
 >- ListBox - with onClickListener; auto-size to content
 >- Scrollbar - now with customizable sprites!
 >- Combo Box
-
+>- can load images and animations from spritesheets
 
 ##TODO:
 >- Dialog Box - allow custom bg image;
@@ -37,7 +37,6 @@ This is still a massive mess....
 >- Slider
 >- add triggers for sfx
 >- screen transition effects
->- allow the use of sprite sheets
 >- Combo Box - allow custom frame/bg image
 >- ListBox - allow custom frame/bg image
 >- tooltips?

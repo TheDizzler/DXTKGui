@@ -91,6 +91,10 @@ XMVECTOR XM_CALLCONV TextLabel::measureString() const {
 	return font->measureString(label.c_str());
 }
 
+Vector2 XM_CALLCONV TextLabel::measureString(wstring string) const {
+	return font->measureString(string.c_str());
+}
+
 const wchar_t* TextLabel::getText() {
 	return label.c_str();
 }

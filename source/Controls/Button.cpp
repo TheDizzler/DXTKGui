@@ -29,7 +29,7 @@ Button::~Button() {
 }
 
 
-int textMargin = 5;
+int textMargin = 10;
 bool resized = false;
 void Button::setDimensions(const Vector2& pos, const Vector2& size,
 	const int frmThcknss) {
@@ -38,15 +38,16 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 
 	Vector2 labelSize = measureString();
 	Vector2 newSize = size;
-	if ((labelSize.x + textMargin * 2) > size.x
-		|| (labelSize.y + textMargin * 2) > size.y) {
 
-		if ((labelSize.x + textMargin * 2) > size.x)
-			newSize.x = labelSize.x + textMargin * 2;
-		if ((labelSize.y + textMargin * 2) > size.y)
-			newSize.y = labelSize.y + textMargin * 2;
+	if ((labelSize.x + textMargin * 2) > size.x) {
+		newSize.x = labelSize.x + textMargin * 2;
 		resized = true;
 	}
+	if ((labelSize.y + textMargin * 2) > size.y) {
+		newSize.y = labelSize.y + textMargin * 2;
+		resized = true;
+	}
+
 	hitArea->size = newSize;
 
 	width = newSize.x;
@@ -123,6 +124,10 @@ void Button::setText(wstring text) {
 		setDimensions(position, hitArea->size, frame->getThickness());
 }
 
+const wchar_t* Button::getText() {
+	return buttonLabel->getText();
+}
+
 XMVECTOR XM_CALLCONV Button::measureString() const {
 	return buttonLabel->measureString();
 }
@@ -157,8 +162,8 @@ void Button::positionText() {
 		Vector2 newPos;
 		if (resized) {
 			newPos = Vector2(
-				position.x + (getWidth() - textsize.x) / 2 - textMargin,
-				position.y + (getHeight() - textsize.y) / 2 - textMargin);
+				position.x + (getWidth() - textsize.x) / 2 /*+ textMargin*/,
+				position.y + (getHeight() - textsize.y) / 2 /*+ textMargin*/);
 			resized = false;
 		} else
 			newPos = Vector2(
@@ -434,6 +439,7 @@ void AnimatedButton::setFont(const pugi::char_t* font) {
 
 void AnimatedButton::setText(wstring text) {
 }
+
 
 /** Not used in Animated Button */
 XMVECTOR XM_CALLCONV AnimatedButton::measureString() const {

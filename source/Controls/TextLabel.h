@@ -38,10 +38,11 @@ public:
 	void setText(string text);
 	void setText(wostringstream& text);
 	virtual void setText(wstring text) override;
-
+	virtual const wchar_t* getText() override;
 	virtual XMVECTOR XM_CALLCONV measureString() const override;
-
-	const wchar_t* getText();
+	/* Convenience method when a FontSet is not available. */
+	Vector2 XM_CALLCONV measureString(wstring string) const;
+	
 
 	virtual bool clicked() override;
 	virtual bool pressed() override;

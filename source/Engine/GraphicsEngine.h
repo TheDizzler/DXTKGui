@@ -1,9 +1,10 @@
 #include "../pch.h"
 #pragma once
-//#define MyMessageBox(a, b, c, d) \
-//	if (swapChain.Get() != NULL) \
-//		swapChain->SetFullscreenState(false, NULL); \
-//	MessageBox(a, b, c, d)
+#define MyMessageBox(a, b, c, d) \
+	if (swapChain.Get() != NULL) \
+		swapChain->SetFullscreenState(false, NULL); \
+	MessageBox(a, b, c, d);
+// ^ doesn't work as intended :/
 #pragma comment (lib, "D3D11.lib")
 #pragma comment (lib, "DXGI.lib")
 

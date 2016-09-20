@@ -1,11 +1,12 @@
+#include "Dbt.h"
 #include "GameEngine.h"
-
 
 
 LPCTSTR wndClassName = L"DirectX ToolKit GUI Framework Test App";
 HWND hwnd;
 
-GameEngine* gameEngine;
+unique_ptr<GameEngine> gameEngine;
+HDEVNOTIFY newAudio = NULL;
 
 double countsPerSecond = 0.0;
 __int64 counterStart = 0;
@@ -33,8 +34,13 @@ void releaseResources() {
 	if (Globals::FULL_SCREEN)
 		ChangeDisplaySettings(NULL, 0);
 
-	if (gameEngine)
-		delete gameEngine;
+	/*if (gameEngine)
+		delete gameEngine;*/
+
+	if (newAudio)
+		UnregisterDeviceNotification(newAudio);
+
+	CoUninitialize();
 }
 
 
@@ -42,7 +48,7 @@ void releaseResources() {
 	@nShowWnd how window should be displayed. Examples: SW_SHOWMAXIMIZED, SW_SHOW, SW_SHOWMINIMIZED. */
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
 
-	gameEngine = new GameEngine();
+	gameEngine.reset(new GameEngine());
 
 	if (!initWindow(hInstance, nShowCmd)) {
 		MessageBox(0, TEXT("Window Initialization - Failed"), L"Error", MB_OK);
@@ -56,8 +62,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 
+	// listen for new audio devices
+	DEV_BROADCAST_DEVICEINTERFACE filter = {0};
+	filter.dbcc_size = sizeof(filter);
+	filter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+	filter.dbcc_classguid = KSCATEGORY_AUDIO;
 
-
+	newAudio = RegisterDeviceNotification(hwnd, &filter, DEVICE_NOTIFY_WINDOW_HANDLE);
 
 	messageLoop(); /* Main program loop */
 	releaseResources();
@@ -229,15 +240,30 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 			return 0;
 
+		case WM_DEVICECHANGE:
+			if (wParam == DBT_DEVICEARRIVAL) {
+				auto pDev = reinterpret_cast<PDEV_BROADCAST_HDR>(lParam);
+				if (pDev) {
+					if (pDev->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE) {
+						auto pInter = reinterpret_cast<
+							const PDEV_BROADCAST_DEVICEINTERFACE>(pDev);
+						if (pInter->dbcc_classguid == KSCATEGORY_AUDIO) {
+							if (gameEngine)
+								gameEngine->onAudioDeviceChange();
+						}
+					}
+				}
+			}
+			return 0;
+
 		case WM_KILLFOCUS:
-			gameEngine->stopFullScreen();
-			gameEngine->pause();
+			gameEngine->suspend();
 			OutputDebugString(L"Lost Focus\n");
 			return 0;
 
 		case WM_ACTIVATE:
 			OutputDebugString(L"Got Focus\n");
-			gameEngine->setFullScreen(Globals::FULL_SCREEN);
+			gameEngine->resume();
 			return 0;
 
 		case WM_DESTROY:	// top right x button pressed

@@ -16,7 +16,9 @@ void GUIControl::setPosition(const Vector2& pos) {
 	hitArea->size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
 }
 
-
+const wchar_t * GUIControl::getText() {
+	return L"";
+}
 
 void GUIControl::setScale(const Vector2& scl) {
 	scale = scl;

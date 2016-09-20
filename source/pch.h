@@ -1,6 +1,6 @@
 #pragma once
 
-/* Global variables and includes */
+/* Global variables and includes */		
 #include <Windows.h>
 #include <wrl.h>
 #include <memory>
@@ -9,10 +9,12 @@
 #include <algorithm> 
 #include <cctype>
 #include <sstream>
+#include <WinSDKVer.h>		// these are necessary for XAudio2.8
+#define _WIN32_WINNT 0x0602	// ^
+#include <SDKDDKVer.h>		// ^
 
-
+#include "Audio.h"
 #include "globals.h"
-//#include "assets.h"
 
 
 using namespace Microsoft::WRL;

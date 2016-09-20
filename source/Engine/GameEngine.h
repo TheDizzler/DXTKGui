@@ -1,5 +1,18 @@
 #pragma once
 
+
+#define ErrorDialog(message, title) \
+	errorDialog->setTitle(title); \
+	errorDialog->setText(message); \
+	errorDialog->open(); \
+	showDialog = errorDialog.get();
+
+#define WarningDialog(message, title) \
+	warningDialog->setTitle(title); \
+	warningDialog->setText(message); \
+	warningDialog->open(); \
+	showDialog = warningDialog.get();
+
 #include "GraphicsEngine.h"
 #include "Input.h"
 
@@ -16,15 +29,25 @@ public:
 	~GameEngine();
 
 	bool initEngine(HWND hwnd, HINSTANCE hInstance);
+	void onAudioDeviceChange();
 
 	void run(double time, int fps);
 	virtual void render(double time);
 
-	void pause();
+	void suspend();
+	void resume();
 	void exit();
+
+	/* Critical error dialog. Exits game when dismissed. */
+	unique_ptr<Dialog> errorDialog;
+	/* Minor error dialog. Choice between exit game and continue. */
+	unique_ptr<Dialog> warningDialog;
+
+	Dialog* showDialog = NULL;
 private:
 
-	std::unique_ptr<GameManager> game;
+	unique_ptr<AudioEngine> audioEngine;
+	unique_ptr<GameManager> game;
 
 	void update(double time);
 
@@ -33,5 +56,6 @@ private:
 
 
 	HWND hwnd;
+	bool retryAudio;
 };
 

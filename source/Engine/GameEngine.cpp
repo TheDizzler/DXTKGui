@@ -6,6 +6,9 @@ GameEngine::GameEngine() {
 
 
 GameEngine::~GameEngine() {
+
+	if (audioEngine != NULL)
+		audioEngine->Suspend();
 }
 
 
@@ -23,6 +26,20 @@ bool GameEngine::initEngine(HWND hw, HINSTANCE hInstance) {
 		return false;
 	}
 
+	// Initialize Audio Engine
+	CoInitializeEx(NULL, COINIT_MULTITHREADED);
+	AUDIO_ENGINE_FLAGS audioFlags = AudioEngine_Default;
+#ifdef _DEBUG
+	audioFlags = audioFlags | AudioEngine_Debug;
+#endif
+	audioEngine.reset(new AudioEngine(audioFlags));
+	retryAudio = false;
+
+	if (!audioEngine->IsAudioDevicePresent()) {
+		// no audio device found. Operating in silent mode.
+
+	}
+
 	if (!initStage()) {
 		MessageBox(0, L"Stage Initialization Failed", L"Error", MB_OK);
 		return false;
@@ -31,6 +48,22 @@ bool GameEngine::initEngine(HWND hw, HINSTANCE hInstance) {
 
 	return true;
 }
+
+void GameEngine::onAudioDeviceChange() {
+	retryAudio = true;
+}
+
+
+class QuitButtonListener : public Button::OnClickListener {
+public:
+	QuitButtonListener(GameEngine* eng) : engine(eng) {
+	}
+	virtual void onClick(Button * button) override {
+		engine->exit();
+	}
+
+	GameEngine* engine;
+};
 
 bool GameEngine::initStage() {
 
@@ -41,23 +74,65 @@ bool GameEngine::initStage() {
 		return false;
 	}
 
+	errorDialog.reset(GameManager::guiFactory->createDialog());
+	Vector2 dialogPos, dialogSize;
+	dialogSize = Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2);
+	dialogPos = dialogSize;
+	dialogPos.x -= dialogSize.x / 2;
+	dialogPos.y -= dialogSize.y / 2;
+	errorDialog->setDimensions(dialogPos, dialogSize);
+	errorDialog->setTint(Color(0, 120, 207));
+	unique_ptr<Button> quitButton;
+	quitButton.reset(GameManager::guiFactory->createButton());
+	quitButton->setText(L"Exit Program");
+	quitButton->setOnClickListener(new QuitButtonListener(this));
+	errorDialog->setCancelButton(move(quitButton));
 
+	warningDialog.reset(GameManager::guiFactory->createDialog());
+	warningDialog->setDimensions(dialogPos, dialogSize);
+	warningDialog->setTint(Color(0, 120, 207));
+	warningDialog->setCancelButton(L"Continue");
+	unique_ptr<Button> quitButton2;
+	quitButton2.reset(GameManager::guiFactory->createButton());
+	quitButton2->setText(L"Exit Program");
+	quitButton2->setOnClickListener(new QuitButtonListener(this));
+	warningDialog->setConfirmButton(move(quitButton2));
+	
+	showDialog = warningDialog.get();
 	return true;
 }
 
-
-
+bool warningCanceled = false;
 void GameEngine::run(double deltaTime, int fps) {
 
 	update(deltaTime);
 	render(deltaTime);
+	if (!audioEngine->IsAudioDevicePresent() && !warningCanceled) {
+		// no audio device found. Operating in silent mode.
+		WarningDialog(L"No audio device found. Operating in Silent Mode. However we must test the dialog parsing text.\nIs this working as intended? It's tough to say. Test we must! Test, I say! Test!!!!! Next we will test how the parser deals with text that's too long height wise. Scrollbars are fun, remember! So scrollbar away! Scrollbars, I say! Scrollbars!!!!!!!!!",
+			L"Audio Engine failure");
+		warningCanceled = true;
+	}
 
+	if (retryAudio) {
+		retryAudio = false;
+		if (audioEngine->Reset()) {
+			// restart looped sounds
+		}
+	} else if (!audioEngine->Update()) {
+		if (audioEngine->IsCriticalError()) {
+			//ErrorDialog(L"Audio device lost!", L"Audio Engine failure");
+			retryAudio = true;
+		}
+	}
 }
-
 
 void GameEngine::update(double deltaTime) {
 
-	game->update(deltaTime, keys.get(), mouse.get());
+	if (showDialog->isOpen)
+		showDialog->update(deltaTime, mouse.get());
+	else
+		game->update(deltaTime, keys.get(), mouse.get());
 }
 
 
@@ -69,6 +144,7 @@ void GameEngine::render(double deltaTime) {
 	batch->Begin(SpriteSortMode_Deferred);
 	{
 		game->draw(batch.get());
+		showDialog->draw(batch.get());
 		mouse->draw(batch.get());
 	}
 	batch->End();
@@ -77,15 +153,25 @@ void GameEngine::render(double deltaTime) {
 	swapChain->Present(0, 0);
 }
 
-void GameEngine::pause() {
+void GameEngine::suspend() {
+
+	stopFullScreen();
 	if (game != NULL)
 		game->pause();
+	if (audioEngine != NULL)
+		audioEngine->Suspend();
+}
+
+void GameEngine::resume() {
+
+	setFullScreen(Globals::FULL_SCREEN);
+	if (audioEngine != NULL)
+		audioEngine->Resume();
 }
 
 void GameEngine::exit() {
-
-	/*if (MessageBox(0, L"Are you sure you want to exit?",
-		L"Really?", MB_YESNO | MB_ICONQUESTION) == IDYES)*/
+	if (swapChain.Get() != NULL)
+		swapChain->SetFullscreenState(false, NULL);
 	DestroyWindow(hwnd);
 }
 

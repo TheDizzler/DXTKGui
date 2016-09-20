@@ -12,6 +12,7 @@
 using namespace pugi;
 
 
+
 class GUIFactory {
 public:
 	GUIFactory(xml_node guiAssetsNode);
