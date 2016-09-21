@@ -1,18 +1,6 @@
 #pragma once
 
 
-#define ErrorDialog(message, title) \
-	errorDialog->setTitle(title); \
-	errorDialog->setText(message); \
-	errorDialog->open(); \
-	showDialog = errorDialog.get();
-
-#define WarningDialog(message, title) \
-	warningDialog->setTitle(title); \
-	warningDialog->setText(message); \
-	warningDialog->open(); \
-	showDialog = warningDialog.get();
-
 #include "GraphicsEngine.h"
 #include "Input.h"
 
@@ -38,12 +26,44 @@ public:
 	void resume();
 	void exit();
 
-	/* Critical error dialog. Exits game when dismissed. */
-	unique_ptr<Dialog> errorDialog;
-	/* Minor error dialog. Choice between exit game and continue. */
-	unique_ptr<Dialog> warningDialog;
 
-	Dialog* showDialog = NULL;
+	static inline bool reportError(HRESULT hr,
+		wstring failMessage = L"This is SRS Error",
+		wstring failTitle = L"Fatal Error") {
+
+		if (FAILED(hr)) {
+
+			_com_error err(hr);
+			wostringstream wss;
+			wss << failMessage;
+			wss << "\nHRESULT: " << err.ErrorMessage();
+			/*if (GUIFactory::initialized)
+				GameEngine::showWarningDialog(wss.str(), failTitle);
+			else */if (!Globals::FULL_SCREEN)
+				MessageBox(NULL, wss.str().c_str(), failTitle.c_str(), MB_OK | MB_ICONERROR);
+			else
+				OutputDebugString(wss.str().c_str());
+			return true;
+		}
+
+		return false;
+	}
+
+	static void showErrorDialog(wstring message, wstring title) {
+		errorDialog->setTitle(title);
+		errorDialog->setText(message);
+		errorDialog->open();
+		showDialog = errorDialog.get();
+	}
+
+	static void showWarningDialog(wstring message, wstring title) {
+		warningDialog->setTitle(title);
+		warningDialog->setText(message);
+		warningDialog->setTextTint(::DirectX::Colors::Red.v);
+		warningDialog->open();
+		showDialog = warningDialog.get();
+	}
+
 private:
 
 	unique_ptr<AudioEngine> audioEngine;
@@ -57,5 +77,11 @@ private:
 
 	HWND hwnd;
 	bool retryAudio;
+
+	/* Critical error dialog. Exits game when dismissed. */
+	static unique_ptr<Dialog> errorDialog;
+	/* Minor error dialog. Choice between exit game and continue. */
+	static unique_ptr<Dialog> warningDialog;
+	static Dialog* showDialog;
 };
 

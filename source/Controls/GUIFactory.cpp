@@ -1,5 +1,6 @@
 #include "GUIFactory.h"
 
+bool GUIFactory::initialized = false;
 GUIFactory::GUIFactory(pugi::xml_node guiAssets) {
 
 	guiAssetsNode = guiAssets;
@@ -12,16 +13,23 @@ GUIFactory::~GUIFactory() {
 }
 
 
-bool GUIFactory::initialize(ComPtr<ID3D11Device> dev) {
+bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
+	ComPtr<ID3D11DeviceContext> devCon, ComPtr<IDXGISwapChain> sChain,
+	SpriteBatch* sBatch) {
 
 	device = dev;
-	if (!getGUIAssetsFromXML(device)) {
+	if (!getGUIAssetsFromXML()) {
 		MessageBox(0, L"Sprite retrieval from Asset Manifest failed.",
 			L"Epic failure", MB_OK);
 		return false;
 	}
 
+	deviceContext = devCon;
+	batch = sBatch;
+	swapChain = sChain;
+	//textureRenderTargetView = rTarget;
 
+	initialized = true;
 	return true;
 }
 
@@ -321,8 +329,114 @@ Dialog* GUIFactory::createDialog(bool movable, const char_t* fontName) {
 }
 
 
+#include "../Engine/GameEngine.h"
+ComPtr<ID3D11ShaderResourceView> GUIFactory::createTextureFromControl(
+	/*ComPtr<ID3D11Device> device, ComPtr<ID3D11DeviceContext> devCon,
+	SpriteBatch* batch,*/ GUIControl* control) {
+
+
+	ComPtr<ID3D11Texture2D> renderTargetTexture;
+	D3D11_TEXTURE2D_DESC textureDesc;
+	ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+	textureDesc.Width = Globals::WINDOW_WIDTH;
+	textureDesc.Height = Globals::WINDOW_HEIGHT;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = 0;
+
+
+
+	if (GameEngine::reportError(device->CreateTexture2D(&textureDesc, NULL,
+		renderTargetTexture.GetAddressOf()),
+		L"Failed to create render target texture.", L"Aw shucks"))
+		return NULL;
+
+	ComPtr<ID3D11RenderTargetView> textureRenderTargetView;
+	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
+	renderTargetViewDesc.Format = textureDesc.Format;
+	renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	renderTargetViewDesc.Texture2D.MipSlice = 0;
+
+
+	if (GameEngine::reportError(
+		device->CreateRenderTargetView(renderTargetTexture.Get(),
+			NULL, textureRenderTargetView.GetAddressOf()),
+		L"Failed to create render target view for custom texture."))
+		return NULL;
+
+
+
+	ComPtr<ID3D11ShaderResourceView> shaderResourceView;
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+	shaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+
+
+
+	if (GameEngine::reportError(
+		device->CreateShaderResourceView(renderTargetTexture.Get(),
+			&shaderResourceViewDesc, shaderResourceView.GetAddressOf()),
+		L"Failed to create Shader Resource View for new texture."))
+		return NULL;
+
+
+
+	// get normal rendertargetview
+	ComPtr<ID3D11RenderTargetView> oldRenderTargetView;
+	deviceContext->OMGetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
+	deviceContext->OMSetRenderTargets(1, textureRenderTargetView.GetAddressOf(), nullptr);
+
+
+
+	//UINT numViewports = 1;
+	//D3D11_VIEWPORT oldViewport[1];
+	//deviceContext->RSGetViewports(&numViewports, oldViewport);
+
+	/*D3D11_VIEWPORT viewport;
+	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
+	viewport.Width = control->getWidth()*2;
+	viewport.Height = control->getHeight()*2;
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+*/
+
+	//deviceContext->RSSetViewports(1, &viewport);
+	//batch->SetViewport(viewport);
+
+
+
+	float color[4] = {1, 1, 1, 1};
+	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), color);
+
+	batch->Begin(SpriteSortMode_Deferred);
+	{
+		control->draw(batch);
+	}
+	batch->End();
+	//swapChain->Present(0, 0);
+
+
+	//batch->SetViewport(oldViewport[0]);
+	//deviceContext->RSSetViewports(1, oldViewport);
+	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
+
+
+	return shaderResourceView;
+}
+
+
 #include "DDSTextureLoader.h"
-bool GUIFactory::getGUIAssetsFromXML(ComPtr<ID3D11Device> device) {
+bool GUIFactory::getGUIAssetsFromXML() {
 
 	string assetsDir =
 		guiAssetsNode.parent().attribute("dir").as_string();
@@ -354,16 +468,15 @@ bool GUIFactory::getGUIAssetsFromXML(ComPtr<ID3D11Device> device) {
 		const char_t* file = file_s.c_str();
 		const char_t* name = spriteNode.attribute("name").as_string();
 
-		string check = name; // I think this is required - pretty sure it is
+		string check = name; // I think this is required - ya, pretty sure it is
 		if (name == string("White Pixel")) {
-			if (Globals::reportError(DirectX::CreateDDSTextureFromFile(
-				device.Get(), Assets::convertCharStarToWCharT(file), NULL,
-				whitePixel.GetAddressOf()))) {
-
-				MessageBox(NULL, L"Failed to create texture from WhitePixel.dds",
-					L"ERROR", MB_OK);
+			if (GameEngine::reportError(
+				DirectX::CreateDDSTextureFromFile(
+					device.Get(), Assets::convertCharStarToWCharT(file), NULL,
+					whitePixel.GetAddressOf()),
+				L"Failed to create texture from WhitePixel.dds", L"ERROR"))
 				return false;
-			}
+
 		}
 
 		/*wostringstream ws;

@@ -170,7 +170,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		dialogPos.x -= dialogSize.x / 2;
 		dialogPos.y -= dialogSize.y / 2;
 		exitDialog->setDimensions(dialogPos, dialogSize);
-		exitDialog->setTint(Color(0, 120, 207));
+		exitDialog->setTint(Color(0, .5, 1));
 		exitDialog->setTitle(L"Exit Test?", Vector2(1, 1), "BlackCloak");
 		//exitDialog->setTitleAreaDimensions(Vector2(0, 150));
 		exitDialog->setText(L"Really Quit The Test Project?");

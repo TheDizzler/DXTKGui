@@ -163,6 +163,7 @@
     <ClCompile Include="source\Controls\GUIControl.cpp" />
     <ClCompile Include="source\Controls\GUIFactory.cpp" />
     <ClCompile Include="Source\Controls\ListBox.cpp" />
+    <ClCompile Include="source\Controls\Panel.cpp" />
     <ClCompile Include="source\Controls\ScrollBar.cpp" />
     <ClCompile Include="Source\Controls\TextLabel.cpp" />
     <ClCompile Include="Source\Engine\GameEngine.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="source\Controls\GUIControl.h" />
     <ClInclude Include="source\Controls\GUIFactory.h" />
     <ClInclude Include="Source\Controls\ListBox.h" />
+    <ClInclude Include="source\Controls\Panel.h" />
     <ClInclude Include="Source\Controls\TextLabel.h" />
     <ClInclude Include="Source\Engine\GameEngine.h" />
     <ClInclude Include="Source\Engine\GraphicsEngine.h" />
@@ -209,7 +211,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="assets\AssetManifest.xml" />
+    <Xml Include="assets\AssetManifest.xml">
+      <SubType>Designer</SubType>
+    </Xml>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

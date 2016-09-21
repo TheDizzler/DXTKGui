@@ -8,39 +8,22 @@ GraphicsAsset::~GraphicsAsset() {
 
 }
 
+#include "../Engine/GameEngine.h"
 #include "../assets.h"
 bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const wchar_t* textureFile) {
 
-	if (Globals::reportError(CreateDDSTextureFromFile(device.Get(), textureFile,
-		resource.GetAddressOf(), texture.GetAddressOf()))) {
-		//MessageBox(NULL, L"Failed to load sprite", L"ERROR", MB_OK);
+	if (GameEngine::reportError(
+		CreateDDSTextureFromFile(device.Get(), textureFile,
+			resource.GetAddressOf(), texture.GetAddressOf()),
+		L"Failed to load sprite", L"ERROR"))
 		return false;
-	}
+
 
 	Assets::getTextureDimensions(resource.Get(), &width, &height);
-	/*sourceRect.left = 0;
-	sourceRect.top = 0;
-	sourceRect.bottom = height;
-	sourceRect.right = width;
-
-	hitArea.reset(new HitArea(
-		Vector2(position.x - width / 2, position.y - height / 2),
-		Vector2(width, height)));*/
-
 
 	return true;
 }
 
-//void GraphicsAsset::loadAsAnimation(ComPtr<ID3D11ShaderResourceView> spriteSheetTexture,
-//	const vector<Frame*> frames) {
-//
-//	texture = spriteSheetTexture;
-//	animationFrames = frames;
-//
-//	position = Vector2(frames[0]->sourceRect.left, frames[0]->sourceRect.top);
-//	width = frames[0]->sourceRect.right - frames[0]->sourceRect.left;
-//	height = frames[0]->sourceRect.bottom - frames[0]->sourceRect.top;
-//}
 
 void GraphicsAsset::loadAsPartOfSheet(
 	ComPtr<ID3D11ShaderResourceView> spriteSheetTexture,

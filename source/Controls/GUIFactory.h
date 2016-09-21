@@ -18,8 +18,11 @@ public:
 	GUIFactory(xml_node guiAssetsNode);
 	~GUIFactory();
 
-
-	bool initialize(ComPtr<ID3D11Device> device);
+	/** DeviceContext and SpriteBatch references are required
+		to create textures from a GUIControl (will probably refactor this). */
+	bool initialize(ComPtr<ID3D11Device> device,
+		ComPtr<ID3D11DeviceContext> devCon, ComPtr<IDXGISwapChain> swapChain,
+		SpriteBatch* batch);
 
 	unique_ptr<FontSet> getFont(const char_t* fontName);
 	unique_ptr<Sprite> getSpriteFromAsset(const char_t* assetName);
@@ -70,18 +73,26 @@ public:
 	ScrollBar* createScrollBar(const Vector2& position, size_t barHeight,
 		ScrollBarDesc& scrollBarDesc);
 
+	ComPtr<ID3D11ShaderResourceView> createTextureFromControl(/*ComPtr<ID3D11Device> device,
+		ComPtr<ID3D11DeviceContext> devCon, SpriteBatch* batch,*/ GUIControl* control);
+
+	static bool initialized;
 private:
 
 	ComPtr<ID3D11Device> device;
-	/** ID3D11ShaderResourceView is a ComPtr!
-		This is used for solid color backgrounds and area fills. */
+	ComPtr<ID3D11DeviceContext> deviceContext;
+	ComPtr<IDXGISwapChain> swapChain;
+	//ComPtr<ID3D11RenderTargetView> textureRenderTargetView;
+	SpriteBatch* batch;
+   /** ID3D11ShaderResourceView is a ComPtr!
+	   This is used for solid color backgrounds and area fills. */
 	ComPtr<ID3D11ShaderResourceView> whitePixel;
 
 	/* Creates an image button with only one image. */
 	Button* createOneImageButton(const char_t* buttonImage,
 		const char_t* fontName = "Default Font");
 
-	bool getGUIAssetsFromXML(ComPtr<ID3D11Device> device);
+	bool getGUIAssetsFromXML();
 	xml_node guiAssetsNode;
 
 	const char_t* defaultFontFile;

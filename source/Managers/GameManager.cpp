@@ -10,6 +10,7 @@ GameManager::~GameManager() {
 }
 
 #include "../assets.h"
+#include "../Engine/GameEngine.h"
 bool GameManager::initializeGame(ComPtr<ID3D11Device> dvc, MouseController* ms) {
 
 	device = dvc;
@@ -26,7 +27,9 @@ bool GameManager::initializeGame(ComPtr<ID3D11Device> dvc, MouseController* ms) 
 	pugi::xml_node guiNode = docAssMan->child("root").child("gui");
 
 	guiFactory.reset(new GUIFactory(guiNode));
-	if (!guiFactory->initialize(device)) {
+	if (!guiFactory->initialize(device, gameEngine->getDeviceContext(),
+		gameEngine->getSwapChain(), gameEngine->getSpriteBatch())) {
+
 		MessageBox(0, L"Failed to load GUIFactory", L"Fatal Error", MB_OK);
 		return false;
 	}
@@ -79,7 +82,7 @@ void GameManager::pause() {
 		currentScreen->pause();
 }
 
-#include "../Engine/GameEngine.h"
+
 void GameManager::exit() {
 	gameEngine->exit();
 }

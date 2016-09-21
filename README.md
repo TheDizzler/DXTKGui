@@ -12,6 +12,8 @@ Included in this project is my custom 2D game engine using DirectX Tool Kit and 
 I literally ripped this out of one of my current projects and I'm in the process of hacking it into a usable state.
 This is still a massive mess....
 
+You are free to use this code in anyway you see fit. However, if you do, I would really appreciate if you dropped me a line letting me know. And, of course, if you have any bug reports, suggestions, or requests, please send them along! Thanks!
+Email: tgillon.sdk@gmail.com
 
 ##3rd party utilities used:
 >- DirectXTK (https://blogs.msdn.microsoft.com/chuckw/2012/03/02/directxtk/)

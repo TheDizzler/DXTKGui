@@ -39,12 +39,18 @@ public:
 	bool setAdapter(size_t adapterIndex);
 	bool changeDisplayMode(size_t newDisplayModeIndex);
 	bool setFullScreen(bool isFullScreen);
+	void setViewport(int xPos, int yPos, int width, int height);
 	/* Call when game loses focus. */
 	bool stopFullScreen();
 
 	size_t getSelectedAdapterIndex();
 	size_t getSelectedDisplayIndex();
 	size_t getSelectedDisplayModeIndex();
+
+	ComPtr<ID3D11DeviceContext> getDeviceContext();
+	/** Used for creating textures from an area on screen */
+	ComPtr<IDXGISwapChain> getSwapChain();
+	SpriteBatch* getSpriteBatch();
 protected:
 	HWND hwnd;
 	unique_ptr<SpriteBatch> batch;
@@ -67,6 +73,7 @@ protected:
 	//unsigned int numModes = 0;
 	/* Changes backbuffer to front buffer. */
 	ComPtr<IDXGISwapChain> swapChain;
+	//ComPtr<IDXGISwapChain> textureSwapChain;
 	/* GPU object */
 	ComPtr<ID3D11Device> device;
 	/* GPU interface */
@@ -96,6 +103,9 @@ protected:
 	void initializeViewport();
 	bool populateDisplayModeList(ComPtr<IDXGIOutput> adapterOut);
 	void setDisplayMode(size_t selectedIndex);
+
+	
+
 
 	/** A debug function to make sure we're using the correct graphics adapter. */
 	bool verifyAdapter(ComPtr<ID3D11Device> deviceCheck);

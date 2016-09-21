@@ -12,8 +12,10 @@ namespace Globals {
 	extern int vsync_enabled;
 	extern bool FULL_SCREEN;
 
-
-	inline bool reportError(HRESULT hr) {
+	/* NOTE: using MessageBox forces a reboot when in full screen mode!
+		Only use this before graphics assets have been loaded and before going
+		full screen. After graphics assets have been loaded use GameEngine::reportError(). */
+	/*inline bool reportError(HRESULT hr) {
 
 		if (FAILED(hr)) {
 			_com_error err(hr);
@@ -22,7 +24,7 @@ namespace Globals {
 		}
 
 		return false;
-	}
+	}*/
 
 	/* For reference purposes only. */
 	/*wstring convertIntToWString(float number) {

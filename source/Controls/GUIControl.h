@@ -38,7 +38,7 @@ public:
 	virtual const Vector2& getOrigin() const override;
 	virtual const Vector2& getScale() const override;
 	virtual const float getRotation() const override;
-	virtual const Color & getTint() const override;
+	virtual const Color& getTint() const override;
 	virtual const float getAlpha() const override;
 	virtual const int getWidth() const = 0;
 	virtual const int getHeight() const = 0;

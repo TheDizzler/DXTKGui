@@ -38,7 +38,7 @@ const float GUIControl::getRotation() const {
 	return rotation;
 }
 
-const Color & GUIControl::getTint() const {
+const Color& GUIControl::getTint() const {
 	return tint;
 }
 

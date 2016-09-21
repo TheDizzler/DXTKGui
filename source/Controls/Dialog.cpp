@@ -17,12 +17,14 @@ Dialog::~Dialog() {
 void Dialog::initialize(GraphicsAsset* pixelAsset,
 	const pugi::char_t* font) {
 
+	panel.reset(new Panel(pixelAsset));
+	panel->setTint(Color(0, 1, 1));
 	frame.reset(new RectangleFrame(pixelAsset));
 	bgSprite.reset(new RectangleSprite(pixelAsset));
 	titleSprite.reset(new RectangleSprite(pixelAsset));
-	titleSprite->setTint(Color(128, 128, 128));
+	titleSprite->setTint(Color(1, 1, 1));
 	buttonFrameSprite.reset(new RectangleSprite(pixelAsset));
-	buttonFrameSprite->setTint(Color(128, 128, 128));
+	buttonFrameSprite->setTint(Color(1, 1, 1));
 	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
 
 	controls.resize(5);
@@ -57,6 +59,8 @@ void Dialog::setDimensions(const Vector2& pos, const Vector2& sz,
 		Vector2(position.x, dialogFramePosition.y + dialogFrameSize.y);
 	buttonFrameSize.x = size.x;
 	buttonFrameSprite->setDimensions(buttonFramePosition, buttonFrameSize);
+
+	panel->setDimensions(dialogFramePosition, dialogFrameSize);
 
 	if (controls[TitleText] != NULL) {
 		Vector2 titlesize = controls[TitleText]->measureString();
@@ -177,6 +181,10 @@ void Dialog::calculateDialogTextPos() {
 		dialogFramePosition.x + (dialogFrameSize.x - dialogtextsize.x) / 2,
 		dialogFramePosition.y + (dialogFrameSize.y - dialogtextsize.y) / 2);
 	controls[DialogText]->setPosition(dialogpos);
+
+	panel->setDimensions(dialogFramePosition, dialogFrameSize);
+	panel->setTexture(guiFactory->createTextureFromControl(controls[DialogText].get()));
+
 }
 
 void Dialog::setText(wstring text) {
@@ -360,14 +368,20 @@ void Dialog::draw(SpriteBatch* batch) {
 	bgSprite->draw(batch);
 	titleSprite->draw(batch);
 	buttonFrameSprite->draw(batch);
-	frame->draw(batch);
-
 
 	for (auto const& control : controls) {
 		if (control == NULL)
 			continue;
 		control->draw(batch);
 	}
+
+	panel->draw(batch);
+
+	frame->draw(batch);
+
+
+
+	
 }
 
 
@@ -414,8 +428,13 @@ void Dialog::setFont(const pugi::char_t* fontName) {
 	controls[DialogText]->setFont(fontName);
 }
 
+void Dialog::setTextTint(const Color& color) {
+	controls[DialogText]->setTint(color);
+}
+
 void Dialog::setTint(const Color& color) {
 	bgSprite->setTint(color);
+	panel->setTint(color);
 }
 
 void Dialog::setScale(const Vector2& newScale) {
@@ -425,6 +444,7 @@ void Dialog::setScale(const Vector2& newScale) {
 	bgSprite->setScale(newScale);
 	titleSprite->setScale(newScale);
 	buttonFrameSprite->setScale(newScale);
+	panel->setScale(newScale);
 
 	for (auto const& control : controls) {
 		if (control == NULL)
@@ -441,6 +461,7 @@ void Dialog::setPosition(const Vector2& newPosition) {
 	bgSprite->moveBy(moveBy);
 	titleSprite->moveBy(moveBy);
 	buttonFrameSprite->moveBy(moveBy);
+	panel->moveBy(moveBy);
 
 	for (auto const& control : controls) {
 		if (control == NULL)
@@ -514,6 +535,7 @@ void Dialog::setDraggedPosition(Vector2& newPosition) {
 	bgSprite->moveBy(moveBy);
 	titleSprite->moveBy(moveBy);
 	buttonFrameSprite->moveBy(moveBy);
+	panel->moveBy(moveBy);
 
 	for (auto const& control : controls) {
 		if (control == NULL)
@@ -530,6 +552,7 @@ void Dialog::movePosition(const Vector2& moveBy) {
 	bgSprite->moveBy(moveBy);
 	titleSprite->moveBy(moveBy);
 	buttonFrameSprite->moveBy(moveBy);
+	panel->moveBy(moveBy);
 
 	for (auto const& control : controls) {
 		if (control == NULL)

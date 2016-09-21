@@ -1,3 +1,4 @@
+#include "../pch.h"
 #pragma once
 
 #include "IElement2D.h"
@@ -28,26 +29,12 @@ struct Animation {
 class GraphicsAsset {
 public:
 
-	//struct Animation {
-	//	int firstTileID;
-	//	/** Duration of each frame. Assume that all frames have equal time.*/
-	//	float duration;
-	//	vector<int> tileIDs;
-
-	//};
-	//struct SpriteFrame {
-	//	RECT sourceRect;
-	//	int gid = -1;
-	//	GraphicsAsset* sheet;
-	//	Animation* animation;
-	//};
 
 	GraphicsAsset();
 	~GraphicsAsset();
 
 	bool load(ComPtr<ID3D11Device> device, const wchar_t* file);
-	//void loadAsAnimation(ComPtr<ID3D11ShaderResourceView> spriteSheetTexture,
-		//const vector<Frame*> frames);
+	
 	void loadAsPartOfSheet(ComPtr<ID3D11ShaderResourceView> spriteSheetTexture,
 		const Vector2& locationInSheet, const Vector2& size);
 
@@ -68,5 +55,4 @@ protected:
 	/* Position in spritesheet (if applicable) */
 	Vector2 position = Vector2::Zero;
 
-	//vector<Frame*> animationFrames;
 };

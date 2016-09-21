@@ -22,7 +22,7 @@ GraphicsEngine::~GraphicsEngine() {
 	adapters.clear();
 	displays.clear();
 	displayModeList.clear();
-	
+
 
 }
 
@@ -56,15 +56,16 @@ bool GraphicsEngine::initD3D(HWND h) {
 
 }
 
-
+#include "../Engine/GameEngine.h"
 bool GraphicsEngine::getDisplayAdapters() {
 
 
 	ComPtr<IDXGIFactory1> factory;
 	// Create a DirectX graphics interface factory.
-	if (Globals::reportError(CreateDXGIFactory1(__uuidof(IDXGIFactory),
-		(void**) factory.GetAddressOf()))) {
-		MessageBox(NULL, L"Cannot create DXGI factory.", L"ERROR", MB_OK);
+	if (GameEngine::reportError(
+		CreateDXGIFactory1(
+			__uuidof(IDXGIFactory), (void**) factory.GetAddressOf()),
+		L"Cannot create DXGI factory.", L"ERROR")) {
 		return false;
 	}
 
@@ -171,19 +172,68 @@ bool GraphicsEngine::initializeAdapter(int adapterIndex) {
 		D3D_FEATURE_LEVEL_9_1
 	};
 
-	if (Globals::reportError(
+	if (GameEngine::reportError(
 		D3D11CreateDeviceAndSwapChain(selectedAdapter.Get(),
 			D3D_DRIVER_TYPE_UNKNOWN, NULL, createDeviceFlags, featureLevels,
 			_countof(featureLevels), D3D11_SDK_VERSION, &swapChainDesc,
 			swapChain.GetAddressOf(), device.GetAddressOf(), &featureLevel,
-			deviceContext.GetAddressOf()))) {
-
-		MessageBox(hwnd, L"Error creating Device and Swap Chain.",
-			L"ERROR", MB_OK);
+			deviceContext.GetAddressOf()),
+		L"Error creating Device and Swap Chain.", L"ERROR"))
 		return false;
-	}
 
 	verifyAdapter(device);
+
+
+	// create extra swapchain for creating textures from screen
+	/*ComPtr<IDXGIDevice> dxgiDevice;
+	if (GameEngine::reportError(
+		device.Get()->QueryInterface(
+			__uuidof(IDXGIDevice), (void**) dxgiDevice.GetAddressOf()),
+		L"Failed Querying interface.", L"WTF"))
+		return false;
+
+	ComPtr<IDXGIAdapter> dxgiAdapter;
+	if (GameEngine::reportError(
+		dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**) dxgiAdapter.GetAddressOf()),
+		L"Failed to get DXGIAdapter from DXGIDevice."))
+		return false;
+	ComPtr<IDXGIFactory1> factory;
+	if (GameEngine::reportError(
+		dxgiAdapter->GetParent(__uuidof(IDXGIFactory1), (void**) factory.GetAddressOf()),
+		L"Failed to get IDXGIFactory from DXGIAdapter"))
+		return false;
+	
+	if (GameEngine::reportError(
+		factory->CreateSwapChain(
+			device.Get(), &swapChainDesc, textureSwapChain.GetAddressOf()),
+		L"Failed to create textureSwapChain"))
+		return false;
+
+	ID3D11Texture2D* backBufferPtr;
+	if (GameEngine::reportError(
+		swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*) &backBufferPtr),
+		L"Could not get pointer to back buffer.", L"ERROR"))
+		return false;
+
+	if (GameEngine::reportError(
+		device->CreateRenderTargetView(backBufferPtr,
+			NULL, textureRenderTargetView.GetAddressOf()),
+		L"Could not create texture render target view.", L"ERROR"))
+		return false;
+
+	ComPtr<ID3D11ShaderResourceView> shaderResourceView;
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+	shaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+
+	if (GameEngine::reportError(
+		device->CreateShaderResourceView(backBufferPtr,
+			&shaderResourceViewDesc, shaderResourceView.GetAddressOf()),
+		L"Failed to create Shader Resource View for new texture."))
+		return false;
+	backBufferPtr->Release();*/
 
 	return true;
 }
@@ -192,17 +242,18 @@ bool GraphicsEngine::initializeRenderTarget() {
 
 	///** **** Create our Render Target **** **/
 	ID3D11Texture2D* backBufferPtr;
-	if (Globals::reportError(swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-		(LPVOID*) &backBufferPtr))) {
-		MessageBox(0, L"Could not get pointer to back buffer.", L"ERROR", MB_OK);
+	if (GameEngine::reportError(
+		swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*) &backBufferPtr),
+		L"Could not get pointer to back buffer.", L"ERROR"))
 		return false;
-	}
 
-	if (Globals::reportError(device->CreateRenderTargetView(backBufferPtr,
-		NULL, renderTargetView.GetAddressOf()))) {
-		MessageBox(0, L"Could not create render target view.", L"ERROR", MB_OK);
+
+	if (GameEngine::reportError(
+		device->CreateRenderTargetView(backBufferPtr,
+			NULL, renderTargetView.GetAddressOf()),
+		L"Could not create render target view.", L"ERROR"))
 		return false;
-	}
+
 
 	deviceContext->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), nullptr);
 
@@ -227,24 +278,42 @@ void GraphicsEngine::initializeViewport() {
 
 }
 
+void GraphicsEngine::setViewport(int xPos, int yPos, int width, int height) {
+
+	D3D11_VIEWPORT viewport;
+	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+
+	viewport.TopLeftX = xPos;
+	viewport.TopLeftY = yPos;
+	viewport.Width = width;
+	viewport.Height = height;
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+
+	deviceContext->RSSetViewports(1, &viewport);
+}
+
+
 bool GraphicsEngine::populateDisplayModeList(ComPtr<IDXGIOutput> display) {
 
 	UINT numModes = 0;
 	// Find total modes that fit the DXGI_FORMAT_R8G8B8A8_UNORM display format
-	if (Globals::reportError(display->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM,
-		DXGI_ENUM_MODES_INTERLACED, &numModes, NULL))) {
-		MessageBox(NULL, L"Error enumerating display modes.", L"ERROR", MB_OK);
+	if (GameEngine::reportError(
+		display->GetDisplayModeList(
+			DXGI_FORMAT_R8G8B8A8_UNORM,
+			DXGI_ENUM_MODES_INTERLACED, &numModes, NULL),
+		L"Error enumerating display modes.", L"ERROR"))
 		return false;
-	}
+
 
 	displayModeList.clear();
 	displayModeList.resize(numModes);
-	if (Globals::reportError(display->GetDisplayModeList(
-		DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED,
-		&numModes, &displayModeList[0]))) {
-		MessageBox(NULL, L"Error getting display mode list.", L"ERROR", MB_OK);
+	if (GameEngine::reportError(
+		display->GetDisplayModeList(
+			DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED,
+			&numModes, &displayModeList[0]), L"Error getting display mode list.", L"ERROR"))
 		return false;
-	}
+
 
 	for (int i = 0; i < displayModeList.size(); ++i) {
 		if (displayModeList[i].Height == Globals::WINDOW_HEIGHT
@@ -316,25 +385,22 @@ vector<DXGI_MODE_DESC> GraphicsEngine::getDisplayModeList(
 
 	UINT totalModes;
 	// Find total modes that fit the DXGI_FORMAT_R8G8B8A8_UNORM display format
-	if (Globals::reportError(
+	if (GameEngine::reportError(
 		display->GetDisplayModeList(
 			DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED,
-			&totalModes, NULL))) {
-		MessageBox(NULL, L"Error enumerating display modes.", L"ERROR", MB_OK);
+			&totalModes, NULL), L"Error enumerating display modes.", L"ERROR"))
 		return vector<DXGI_MODE_DESC>();
-	}
+
 
 	vector<DXGI_MODE_DESC> modeList;
 	modeList.resize(totalModes);
 
-	if (Globals::reportError(
+	if (GameEngine::reportError(
 		display->GetDisplayModeList(
 			DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED,
-			&totalModes, &modeList[0]))) {
-
-		MessageBox(NULL, L"Error getting display mode list.", L"ERROR", MB_OK);
+			&totalModes, &modeList[0]), L"Error getting display mode list.", L"ERROR"))
 		return vector<DXGI_MODE_DESC>();
-	}
+
 
 	return modeList;
 
@@ -347,10 +413,10 @@ bool GraphicsEngine::setAdapter(size_t newAdapterIndex) {
 	//renderTargetView.Get()->Release();
 	//deviceContext.Get()->Release();
 	//device.Get()->Release();
-	
+
 
 	if (!initializeAdapter(newAdapterIndex)) {
-		MessageBox(NULL, L"Error initializing Adapter", L"ERROR", MB_OK);
+		MessageBox(NULL, L"Error initializing new Adapter", L"ERROR", MB_OK);
 		return false;
 	}
 
@@ -415,26 +481,27 @@ bool GraphicsEngine::setFullScreen(bool isFullScreen) {
 bool GraphicsEngine::resizeSwapChain() {
 
 	// release all references to back buffers
-	renderTargetView.Get()->Release();
+	if (renderTargetView)
+		renderTargetView.Get()->Release();
 
 	// resize target
-	if (Globals::reportError(
-		swapChain->ResizeTarget(&displayModeList[selectedDisplayModeIndex]))) {
-		MessageBox(0, L"Failed to resize swapchain target",
-			L"Display Mode Change Error", MB_OK);
+	if (GameEngine::reportError(
+		swapChain->ResizeTarget(
+			&displayModeList[selectedDisplayModeIndex]),
+		L"Failed to resize swapchain target", L"Display Mode Change Error"))
 		return false;
-	}
+
 
 	//resize backbuffers
-	if (Globals::reportError(swapChain->ResizeBuffers(bufferCount,
-		displayModeList[selectedDisplayModeIndex].Width,
-		displayModeList[selectedDisplayModeIndex].Height,
-		displayModeList[selectedDisplayModeIndex].Format, swapChainFlags))) {
-
-		MessageBox(0, L"Failed to resize swapchain buffers",
-			L"Display Mode Change Error", MB_OK);
+	if (GameEngine::reportError(
+		swapChain->ResizeBuffers(bufferCount,
+			displayModeList[selectedDisplayModeIndex].Width,
+			displayModeList[selectedDisplayModeIndex].Height,
+			displayModeList[selectedDisplayModeIndex].Format, swapChainFlags),
+		L"Failed to resize swapchain buffers",
+		L"Display Mode Change Error"))
 		return false;
-	}
+
 
 	// destroy and recreate depth/stencil buffer if used (get width&height from backbuffer!)
 
@@ -459,35 +526,45 @@ size_t GraphicsEngine::getSelectedDisplayModeIndex() {
 	return selectedDisplayModeIndex;
 }
 
+ComPtr<ID3D11DeviceContext> GraphicsEngine::getDeviceContext() {
+	return deviceContext;
+}
+
+
+
+ComPtr<IDXGISwapChain> GraphicsEngine::getSwapChain() {
+	return swapChain;
+}
+
+SpriteBatch* GraphicsEngine::getSpriteBatch() {
+	return batch.get();
+}
+
 
 /** A debug function to make sure we're using the correct graphics adapter.
 		Also because for fun.*/
 bool GraphicsEngine::verifyAdapter(ComPtr<ID3D11Device> deviceCheck) {
 
 	IDXGIDevice* dxgiDev;
-	if (Globals::reportError(
+	if (GameEngine::reportError(
 		deviceCheck.Get()->QueryInterface(
-			__uuidof(IDXGIDevice), (void **) &dxgiDev))) {
+			__uuidof(IDXGIDevice), (void **) &dxgiDev),
+		L"Error querying device interface.", L"ERROR"))
+		return false;
 
-		MessageBox(0, L"Error querying device interface.",
-			L"ERROR", MB_OK);
-		return false;
-	}
 	IDXGIAdapter* dxgiAdapter;
-	if (Globals::reportError(dxgiDev->GetAdapter(&dxgiAdapter))) {
-		MessageBox(0, L"Error getting idxgi adapter from dxgi device.",
-			L"ERROR", MB_OK);
+	if (GameEngine::reportError(dxgiDev->GetAdapter(&dxgiAdapter),
+		L"Error getting idxgi adapter from dxgi device.",
+		L"ERROR"))
 		return false;
-	}
+
 
 	IDXGIFactory* factory;
-	if (Globals::reportError(
-		dxgiAdapter->GetParent(__uuidof(IDXGIFactory), (void**) &factory))) {
-		MessageBox(0, L"Error getting factory from idxgi adapter.",
-			L"ERROR", MB_OK);
+	if (GameEngine::reportError(dxgiAdapter->GetParent(
+		__uuidof(IDXGIFactory), (void**) &factory),
+		L"Error getting factory from idxgi adapter.", L"ERROR"))
 		return false;
 
-	}
 
 	DXGI_ADAPTER_DESC adapterDesc;
 	ZeroMemory(&adapterDesc, sizeof(DXGI_ADAPTER_DESC));

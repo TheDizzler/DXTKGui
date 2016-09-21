@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Button.h"
+#include "Panel.h"
 #include "../BaseGraphics/TransitionEffects.h"
 
 
@@ -71,6 +72,7 @@ public:
 	virtual void addItems(vector<unique_ptr<GUIControl>> controls) override;
 
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
+	void setTextTint(const Color& color);
 	virtual void setTint(const Color& color) override;
 	virtual void setScale(const Vector2& newScale) override;
 	virtual void setPosition(const Vector2& newPosition) override;
@@ -138,6 +140,7 @@ private:
 	unique_ptr<RectangleFrame> frame;
 	unique_ptr<RectangleSprite> titleSprite;
 	unique_ptr<RectangleSprite> buttonFrameSprite;
+	unique_ptr<Panel> panel;
 
 	Vector2 standardButtonSize = Vector2(150, 35);
 

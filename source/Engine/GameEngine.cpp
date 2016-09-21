@@ -1,5 +1,8 @@
 #include "GameEngine.h"
 
+unique_ptr<Dialog> GameEngine::errorDialog;
+unique_ptr<Dialog> GameEngine::warningDialog;
+Dialog* GameEngine::showDialog = NULL;
 
 GameEngine::GameEngine() {
 }
@@ -109,7 +112,7 @@ void GameEngine::run(double deltaTime, int fps) {
 	render(deltaTime);
 	if (!audioEngine->IsAudioDevicePresent() && !warningCanceled) {
 		// no audio device found. Operating in silent mode.
-		WarningDialog(L"No audio device found. Operating in Silent Mode. However we must test the dialog parsing text.\nIs this working as intended? It's tough to say. Test we must! Test, I say! Test!!!!! Next we will test how the parser deals with text that's too long height wise. Scrollbars are fun, remember! So scrollbar away! Scrollbars, I say! Scrollbars!!!!!!!!!",
+		showWarningDialog(L"No audio device found. Operating in Silent Mode. However we must test the dialog parsing text.\nIs this working as intended? It's tough to say. Test we must! Test, I say! Test!!!!! Next we will test how the parser deals with text that's too long height wise. Scrollbars are fun, remember! So scrollbar away! Scrollbars, I say! Scrollbars!!!!!!!!!",
 			L"Audio Engine failure");
 		warningCanceled = true;
 	}
@@ -140,7 +143,7 @@ void GameEngine::update(double deltaTime) {
 void GameEngine::render(double deltaTime) {
 
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), Colors::PeachPuff);
-
+	
 	batch->Begin(SpriteSortMode_Deferred);
 	{
 		game->draw(batch.get());
@@ -174,4 +177,5 @@ void GameEngine::exit() {
 		swapChain->SetFullscreenState(false, NULL);
 	DestroyWindow(hwnd);
 }
+
 
