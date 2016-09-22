@@ -1,3 +1,4 @@
+#include "../pch.h"
 #pragma once
 
 #include "Button.h"
@@ -31,6 +32,9 @@ public:
 
 	void initialize(GraphicsAsset* pixelAsset,
 		const pugi::char_t* font = "Default Font");
+	
+	virtual void setScrollBar(ScrollBarDesc& scrollBarDesc);
+	virtual void alwaysShowScrollBar(bool alwaysShow);
 
 	void setDimensions(const Vector2& position, const Vector2& size,
 		const int frameThickness = 2);
@@ -101,11 +105,11 @@ public:
 private:
 
 	enum GUIControlLookUp {
-		TitleText, DialogText, ButtonOK, ButtonNeutral, ButtonCancel, Other
+		TitleText, /*DialogText,*/ ButtonOK, ButtonNeutral, ButtonCancel, Other
 	};
 
 	vector<unique_ptr<GUIControl> > controls;
-
+	unique_ptr<TextLabel> dialogText;
 	/* Deprecating. Use ActionListeners instead. */
 	//ClickAction result = NONE;
 
@@ -160,6 +164,7 @@ private:
 	private:
 		Dialog* dialog;
 	};
+
 };
 
 

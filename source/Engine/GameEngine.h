@@ -37,9 +37,9 @@ public:
 			wostringstream wss;
 			wss << failMessage;
 			wss << "\nHRESULT: " << err.ErrorMessage();
-			/*if (GUIFactory::initialized)
+			if (GUIFactory::initialized)
 				GameEngine::showWarningDialog(wss.str(), failTitle);
-			else */if (!Globals::FULL_SCREEN)
+			else if (!Globals::FULL_SCREEN)
 				MessageBox(NULL, wss.str().c_str(), failTitle.c_str(), MB_OK | MB_ICONERROR);
 			else
 				OutputDebugString(wss.str().c_str());

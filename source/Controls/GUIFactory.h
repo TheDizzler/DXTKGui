@@ -73,15 +73,20 @@ public:
 	ScrollBar* createScrollBar(const Vector2& position, size_t barHeight,
 		ScrollBarDesc& scrollBarDesc);
 
-	ComPtr<ID3D11ShaderResourceView> createTextureFromControl(/*ComPtr<ID3D11Device> device,
-		ComPtr<ID3D11DeviceContext> devCon, SpriteBatch* batch,*/ GUIControl* control);
+	Panel* createPanel(bool scrollBarAlwaysVisible = false);
+
+	/*ComPtr<ID3D11ShaderResourceView>*/
+	unique_ptr<GraphicsAsset> createTextureFromControl(/*ComPtr<ID3D11Device> device,
+		ComPtr<ID3D11DeviceContext> devCon, SpriteBatch* batch,*/
+		GUIControl* control, const Vector2& offset = Vector2(0, 0),
+		Color bgColor = {1, 1, 1, 1});
 
 	static bool initialized;
 private:
 
 	ComPtr<ID3D11Device> device;
 	ComPtr<ID3D11DeviceContext> deviceContext;
-	ComPtr<IDXGISwapChain> swapChain;
+	//ComPtr<IDXGISwapChain> swapChain;
 	//ComPtr<ID3D11RenderTargetView> textureRenderTargetView;
 	SpriteBatch* batch;
    /** ID3D11ShaderResourceView is a ComPtr!

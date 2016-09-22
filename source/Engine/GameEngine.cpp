@@ -91,8 +91,15 @@ bool GameEngine::initStage() {
 	quitButton->setOnClickListener(new QuitButtonListener(this));
 	errorDialog->setCancelButton(move(quitButton));
 
-	warningDialog.reset(GameManager::guiFactory->createDialog());
+	ScrollBarDesc scrollBarDesc;
+	scrollBarDesc.upButtonImage = "ScrollBar Up Custom";
+	scrollBarDesc.upPressedButtonImage = "ScrollBar Up Pressed Custom";
+	scrollBarDesc.trackImage = "ScrollBar Track Custom";
+	scrollBarDesc.scrubberImage = "Scrubber Custom";
+	warningDialog.reset(GameManager::guiFactory->createDialog(true));
+	
 	warningDialog->setDimensions(dialogPos, dialogSize);
+	warningDialog->setScrollBar(scrollBarDesc);
 	warningDialog->setTint(Color(0, 120, 207));
 	warningDialog->setCancelButton(L"Continue");
 	unique_ptr<Button> quitButton2;
@@ -112,7 +119,7 @@ void GameEngine::run(double deltaTime, int fps) {
 	render(deltaTime);
 	if (!audioEngine->IsAudioDevicePresent() && !warningCanceled) {
 		// no audio device found. Operating in silent mode.
-		showWarningDialog(L"No audio device found. Operating in Silent Mode. However we must test the dialog parsing text.\nIs this working as intended? It's tough to say. Test we must! Test, I say! Test!!!!! Next we will test how the parser deals with text that's too long height wise. Scrollbars are fun, remember! So scrollbar away! Scrollbars, I say! Scrollbars!!!!!!!!!",
+		showWarningDialog(L"No audio device found. Operating in Silent Mode. However we must test the dialog parsing text.\nIs this working as intended? It's tough to say. Test we must! Test, I say! Test!!!!! Next we will test how the parser deals with text that's too long height wise. Scrollbars are fun, remember! So scrollbar away! Scrollbars, I say! Scrollbars!!!!!!!!! New Line char >\nEnd Message...",
 			L"Audio Engine failure");
 		warningCanceled = true;
 	}

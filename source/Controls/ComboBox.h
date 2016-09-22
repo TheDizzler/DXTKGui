@@ -14,6 +14,7 @@ public:
 		bool enumerateList = false);
 
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);
+	void alwaysShowScrollBar(bool alwaysShow);
 
 	virtual void update(double deltaTime, MouseController* mouse);
 	virtual void draw(SpriteBatch* batch);
@@ -100,8 +101,6 @@ private:
 
 	private:
 		ComboBox* comboBox;
-
-		// Inherited via OnClickListener
 		virtual void onClick(ListBox * listbox, int selectedItemIndex) override;
 	};
 

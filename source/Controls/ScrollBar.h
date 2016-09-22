@@ -1,9 +1,7 @@
 #pragma once
 
 #include "Button.h"
-#include "../BaseGraphics/PrimitiveShapes.h"
 
-using namespace std;
 
 class Scrubber : public RectangleSprite {
 public:
@@ -15,6 +13,9 @@ public:
 		const Vector2& size, const int scrollBarHeight);
 
 	virtual void update(double deltaTime, MouseController* mouse);
+
+	virtual void setPosition(const Vector2& position) override;
+	virtual void moveBy(const Vector2& moveVector) override;
 
 	void setScrollPositionByCoord(int newCoordinatePosition);
 	void setScrollPositionByPercent(double newPositionPercentage);
@@ -80,7 +81,10 @@ public:
 	void draw(SpriteBatch* batch);
 
 	void setScrollPositionByPercent(double newPositionPercentage);
-	void setPosition(const Vector2 newPosition);
+	virtual void setPosition(const Vector2& newPosition) override;
+	virtual void moveBy(const Vector2& moveVector) override;
+
+	void setBarHeight(int barHeight);
 	/** Call this from parent control on mouse scroll. */
 	void scrollByIncrement(int scrollIncrement);
 

@@ -96,7 +96,7 @@ void ListBox::resizeBox() {
 
 	scrollBar->setScrollBar(listItems.size(), itemHeight, maxDisplayItems);
 	int frameWidth;
-	if (listItems.size() > maxDisplayItems || alwaysShowScrollBar)
+	if (listItems.size() > maxDisplayItems || alwaysDisplayScrollBar)
 		frameWidth = width;
 	else
 		frameWidth = width - scrollBar->getWidth();
@@ -105,6 +105,10 @@ void ListBox::resizeBox() {
 	Vector2 frameSize = Vector2(frameWidth, frameHeight);
 	frame->setDimensions(position, frameSize, frameThickness);
 	hitArea->size = frameSize;
+}
+
+void ListBox::alwaysShowScrollBar(bool alwaysShow) {
+	alwaysDisplayScrollBar = alwaysShow;
 }
 
 void ListBox::setWidth(int newWidth) {
@@ -124,7 +128,7 @@ void ListBox::clear() {
 
 void ListBox::update(double deltaTime, MouseController* mouse) {
 
-	if (itemsToDisplay == maxDisplayItems || alwaysShowScrollBar) {
+	if (itemsToDisplay == maxDisplayItems || alwaysDisplayScrollBar) {
 
 		if (hitArea->contains(mouse->getPosition()))
 			scrollBar->scrollByIncrement(-mouse->getWheelDelta());
@@ -133,7 +137,7 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 
 		double dif = listItems.size() - maxDisplayItems;
 		firstItemToDisplay = round(scrollBar->percentScroll* (double) dif);
-		
+
 	}
 
 	for (int j = firstItemToDisplay;
@@ -179,7 +183,7 @@ void ListBox::draw(SpriteBatch* batch) {
 
 	}
 
-	if (itemsToDisplay == maxDisplayItems || alwaysShowScrollBar)
+	if (itemsToDisplay == maxDisplayItems || alwaysDisplayScrollBar)
 		scrollBar->draw(batch);
 
 	if (listItems.size() > 0) { // draw frame

@@ -55,8 +55,8 @@ bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 		barHeight - scrollBarUpButton->getHeight() * 2);
 
 	if (scrllBrTrck.get() == NULL) {
-		scrollBarTrack.reset(new RectangleSprite(pixelAsset->getTexture(), 
-		scrollBarPosition, trackSize));
+		scrollBarTrack.reset(new RectangleSprite(pixelAsset->getTexture(),
+			scrollBarPosition, trackSize));
 		scrollBarTrack->setTint(Colors::Gray.v);
 	} else {
 		scrollBarTrack = move(scrllBrTrck);
@@ -80,8 +80,8 @@ bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 }
 
 /* newPosition.x is position of right side of scrollbar's container. */
-void ScrollBar::setPosition(const Vector2 newPosition) {
-
+void ScrollBar::setPosition(const Vector2& newPosition) {
+	/** Do not use ScrollBar's HitArea - it is NULL. */
 	position = newPosition;
 
 	int xPos = newPosition.x - scrollBarUpButton->getWidth();
@@ -94,15 +94,65 @@ void ScrollBar::setPosition(const Vector2 newPosition) {
 	scrollBarTrack->setPosition(
 		Vector2(xPos, newPosition.y + scrollBarUpButton->getHeight()));
 
+	/*wostringstream ws;
+	ws << "newPosition.y: " << newPosition.y << "\n";
+	OutputDebugString(ws.str().c_str());*/
 
 	Vector2 scrubberPos = scrubber->getPosition();
-	scrubberPos.x = newPosition.x;
+	scrubberPos.x = xPos;
 	scrubber->setPosition(scrubberPos);
 
+	/*Vector2 scrubberPos = scrubber->getPosition();
+	scrubberPos.x = xPos - scrubber->getWidth();
+	scrubberPos.y =
+	scrubber->setPosition(scrubberPos);*/
 
-
-	//hitArea->position = scrollBarPosition;
 }
+
+void ScrollBar::moveBy(const Vector2& moveVector) {
+	//setPosition(position + moveVector);
+	position += moveVector;
+	scrollBarUpButton->moveBy(moveVector);
+	scrollBarDownButton->moveBy(moveVector);
+	scrollBarTrack->moveBy(moveVector);
+	scrubber->moveBy(moveVector);
+}
+
+void ScrollBar::setBarHeight(int barHght) {
+	barHeight = barHght;
+
+	scrollBarDownButton->setPosition(
+		Vector2(position.x - scrollBarDownButton->getWidth(),
+			position.y + barHeight - scrollBarDownButton->getHeight()));
+
+
+	// use this for HitArea
+	Vector2 scrollBarPosition =
+		Vector2(position.x - scrollBarUpButton->getWidth(),
+			position.y + scrollBarUpButton->getHeight());
+	Vector2 trackSize = Vector2(scrollBarUpButton->getWidth(),
+		barHeight - scrollBarUpButton->getHeight() * 2);
+
+	/*if (scrllBrTrck.get() == NULL) {
+		scrollBarTrack.reset(new RectangleSprite(pixelAsset->getTexture(),
+			scrollBarPosition, trackSize));
+		scrollBarTrack->setTint(Colors::Gray.v);
+	} else {
+		scrollBarTrack = move(scrllBrTrck);
+		scrollBarTrack->setOrigin(Vector2(0, 0));
+		scrollBarTrack->setDimensions(scrollBarPosition, trackSize);
+	}
+
+*/
+	Vector2 scrubberStartPos(
+		scrollBarPosition.x,
+		scrollBarPosition.y);
+
+
+	scrubber->setDimensions(scrubberStartPos, trackSize, trackSize.y);
+}
+
+
 
 
 void ScrollBar::setScrollBar(int totalItems, int itemHeight, int maxDisplayItems) {
@@ -131,7 +181,7 @@ void ScrollBar::setScrollBar(int totalItems, int itemHeight, int maxDisplayItems
 		scrollBarDownButton->setPosition(newButtonPos);
 	}
 
-	
+
 	scrubber->setDimensions(
 		scrollBarTrack->getPosition(),
 		Vector2(scrollBarTrack->getWidth(), scrollBarTrack->getHeight()* percentToShow),
@@ -328,6 +378,24 @@ void Scrubber::update(double deltaTime, MouseController* mouse) {
 		tint = hoverColor;
 	else
 		tint = normalColor;
+}
+
+void Scrubber::setPosition(const Vector2& pos) {
+
+	//int yDiff = position.y - pos.y;
+	//position.y += yDiff;
+	RectangleSprite::setPosition(pos);
+	//minPosition.y += yDiff;
+	//maxPosition.y += yDiff;
+
+
+}
+
+void Scrubber::moveBy(const Vector2& moveVector) {
+
+	RectangleSprite::moveBy(moveVector);
+	minPosition += moveVector;
+	maxPosition += moveVector;
 }
 
 

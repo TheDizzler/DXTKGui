@@ -105,6 +105,10 @@ void ComboBox::resizeBox() {
 	frame->setDimensions(position, Vector2(width, comboListButton->getHeight()));
 }
 
+void ComboBox::alwaysShowScrollBar(bool alwaysShow) {
+	listBox->alwaysShowScrollBar(alwaysShow);
+}
+
 void ComboBox::setFont(const pugi::char_t * font) {
 }
 

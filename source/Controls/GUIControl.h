@@ -77,6 +77,8 @@ protected:
 
 };
 
+
+
 /** A GUI control that can hold other GUI controls.
 		Not actually implemented.... */
 interface GUIControlBox : public GUIControl {

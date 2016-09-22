@@ -26,7 +26,7 @@ bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 
 	deviceContext = devCon;
 	batch = sBatch;
-	swapChain = sChain;
+	//swapChain = sChain;
 	//textureRenderTargetView = rTarget;
 
 	initialized = true;
@@ -288,6 +288,13 @@ ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight
 	return scrollBar;
 }
 
+Panel* GUIFactory::createPanel(bool scrollBarAlwaysVisible) {
+
+	Panel* panel = new Panel(getAsset("White Pixel"), createScrollBar(Vector2::Zero, 10));
+	panel->setFactory(this);
+	return panel;
+}
+
 
 ListBox* GUIFactory::createListBox(const Vector2& position,
 	const int width, const int itemHeight, const int maxItemsShown,
@@ -330,16 +337,19 @@ Dialog* GUIFactory::createDialog(bool movable, const char_t* fontName) {
 
 
 #include "../Engine/GameEngine.h"
-ComPtr<ID3D11ShaderResourceView> GUIFactory::createTextureFromControl(
+/*ComPtr<ID3D11ShaderResourceView>*/
+unique_ptr<GraphicsAsset> GUIFactory::createTextureFromControl(
 	/*ComPtr<ID3D11Device> device, ComPtr<ID3D11DeviceContext> devCon,
-	SpriteBatch* batch,*/ GUIControl* control) {
+	SpriteBatch* batch,*/ GUIControl* control, const Vector2& offset, Color bgColor) {
 
+	int width = Globals::WINDOW_WIDTH;
+	int height = Globals::WINDOW_HEIGHT;
 
 	ComPtr<ID3D11Texture2D> renderTargetTexture;
 	D3D11_TEXTURE2D_DESC textureDesc;
 	ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE2D_DESC));
-	textureDesc.Width = Globals::WINDOW_WIDTH;
-	textureDesc.Height = Globals::WINDOW_HEIGHT;
+	textureDesc.Width = width;
+	textureDesc.Height = height;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -404,8 +414,8 @@ ComPtr<ID3D11ShaderResourceView> GUIFactory::createTextureFromControl(
 
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
-	viewport.Width = control->getWidth()*2;
-	viewport.Height = control->getHeight()*2;
+	viewport.Width = control->getWidth();
+	viewport.Height = control->getHeight();
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 */
@@ -413,10 +423,10 @@ ComPtr<ID3D11ShaderResourceView> GUIFactory::createTextureFromControl(
 	//deviceContext->RSSetViewports(1, &viewport);
 	//batch->SetViewport(viewport);
 
+	Vector2 oldPos = control->getPosition();
+	control->setPosition(oldPos - offset);
 
-
-	float color[4] = {1, 1, 1, 1};
-	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), color);
+	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), bgColor);
 
 	batch->Begin(SpriteSortMode_Deferred);
 	{
@@ -430,8 +440,11 @@ ComPtr<ID3D11ShaderResourceView> GUIFactory::createTextureFromControl(
 	//deviceContext->RSSetViewports(1, oldViewport);
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
 
-
-	return shaderResourceView;
+	control->setPosition(oldPos);
+	unique_ptr<GraphicsAsset> gfxAsset;
+	gfxAsset.reset(new GraphicsAsset());
+	gfxAsset->loadAsPartOfSheet(shaderResourceView, Vector2(0, 0), Vector2(width, height));
+	return gfxAsset;
 }
 
 

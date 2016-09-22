@@ -5,8 +5,6 @@
 #include "TextLabel.h"
 #include "../BaseGraphics/PrimitiveShapes.h"
 
-using namespace std;
-
 
 /** A visual and logical representation of a button.
 		Now with ActionListeners!.*/

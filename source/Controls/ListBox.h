@@ -75,6 +75,7 @@ public:
 		bool enumerateList = false);
 
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);
+	void alwaysShowScrollBar(bool alwaysShow);
 	/* Note: this function has not been tested much....not at all really...*/
 	void addItem(ListItem* item);
 	void addItems(vector<ListItem*> items);
@@ -96,7 +97,7 @@ public:
 	virtual XMVECTOR XM_CALLCONV measureString() const;
 
 	bool multiSelect = false;
-	bool alwaysShowScrollBar = false;
+	
 	/* Max items to display before showing scroll bar. */
 	size_t maxDisplayItems = 7;
 
@@ -143,6 +144,7 @@ private:
 	size_t itemsToDisplay = 0;
 
 	boolean isEnumerated = false;
+	bool alwaysDisplayScrollBar = false;
 
 	shared_ptr<FontSet> font;
 	vector<ListItem*> listItems;
@@ -168,4 +170,5 @@ private:
 
 	void setWidth(int newWidth);
 	void resizeBox();
+
 };

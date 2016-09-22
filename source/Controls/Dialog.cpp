@@ -17,7 +17,7 @@ Dialog::~Dialog() {
 void Dialog::initialize(GraphicsAsset* pixelAsset,
 	const pugi::char_t* font) {
 
-	panel.reset(new Panel(pixelAsset));
+	panel.reset(guiFactory->createPanel());
 	panel->setTint(Color(0, 1, 1));
 	frame.reset(new RectangleFrame(pixelAsset));
 	bgSprite.reset(new RectangleSprite(pixelAsset));
@@ -31,10 +31,10 @@ void Dialog::initialize(GraphicsAsset* pixelAsset,
 
 	unique_ptr<GUIControl> titleText;
 
-	unique_ptr<GUIControl> dialogText;
+	//unique_ptr<GUIControl> dialogText;
 	dialogText.reset(new TextLabel(guiFactory->getFont(font)));
 	dialogText->setTint(Color(0, 0, 0));
-	controls[DialogText] = move(dialogText);
+	//controls[DialogText] = move(dialogText);
 
 	//setCancelButton(L"Cancel");
 
@@ -69,7 +69,7 @@ void Dialog::setDimensions(const Vector2& pos, const Vector2& sz,
 		}
 	}
 
-	Vector2 dialogsize = controls[DialogText]->measureString();
+	Vector2 dialogsize = dialogText->measureString();
 	if (dialogsize.x > 0) {
 		calculateDialogTextPos();
 	}
@@ -129,8 +129,8 @@ void Dialog::setTitle(wstring text, const Vector2& scale, const pugi::char_t* fo
 //		If text to long, add scrollbar.
 void Dialog::calculateDialogTextPos() {
 
-	TextLabel* label = (TextLabel*) controls[DialogText].get();
-	Vector2 dialogtextsize = label->measureString();
+	//TextLabel* label = (TextLabel*) controls[dialogText].get();
+	Vector2 dialogtextsize = dialogText->measureString();
 
 	if (dialogtextsize.x + dialogTextMargin * 2 > dialogFrameSize.x) {
 	// if the text is longer than the dialog box
@@ -139,14 +139,14 @@ void Dialog::calculateDialogTextPos() {
 
 
 		int i = 0;
-		int textLength = wcslen(label->getText());
+		int textLength = wcslen(dialogText->getText());
 		bool done = false;
 		while (i < textLength) {
 			wstring currentLine = L"";
-			while (label->measureString(currentLine).x + (dialogTextMargin * 2)
+			while (dialogText->measureString(currentLine).x + (dialogTextMargin * 2)
 				< dialogFrameSize.x) {
 
-				currentLine += label->getText()[i++];
+				currentLine += dialogText->getText()[i++];
 				if (i >= textLength) {
 					done = true;
 					break;
@@ -170,8 +170,8 @@ void Dialog::calculateDialogTextPos() {
 
 			newText += currentLine + L"\n";
 		}
-		label->setText(newText);
-		dialogtextsize = label->measureString();
+		dialogText->setText(newText);
+		dialogtextsize = dialogText->measureString();
 	}
 
 	// TODO:
@@ -180,16 +180,21 @@ void Dialog::calculateDialogTextPos() {
 	Vector2 dialogpos = Vector2(
 		dialogFramePosition.x + (dialogFrameSize.x - dialogtextsize.x) / 2,
 		dialogFramePosition.y + (dialogFrameSize.y - dialogtextsize.y) / 2);
-	controls[DialogText]->setPosition(dialogpos);
+	//controls[DialogText]->setPosition(dialogpos);
+	dialogText->setPosition(dialogpos);
 
+	Vector2 textMargin = Vector2(dialogTextMargin, dialogTextMargin);
 	panel->setDimensions(dialogFramePosition, dialogFrameSize);
-	panel->setTexture(guiFactory->createTextureFromControl(controls[DialogText].get()));
+	panel->setTexture(
+		guiFactory->createTextureFromControl(
+			dialogText.get(), dialogFramePosition, panel->getTint()));
 
 }
 
 void Dialog::setText(wstring text) {
 
-	controls[DialogText]->setText(text);
+	//controls[DialogText]->setText(text);
+	dialogText->setText(text);
 	calculateDialogTextPos();
 }
 
@@ -351,6 +356,7 @@ void Dialog::update(double deltaTime, MouseController* mouse) {
 			isPressed = false;
 
 	}
+	panel->update(deltaTime, mouse);
 	for (auto const& control : controls) {
 		if (control == NULL)
 			continue;
@@ -381,7 +387,7 @@ void Dialog::draw(SpriteBatch* batch) {
 
 
 
-	
+
 }
 
 
@@ -425,11 +431,16 @@ void Dialog::close() {
 
 void Dialog::setFont(const pugi::char_t* fontName) {
 
-	controls[DialogText]->setFont(fontName);
+	//controls[DialogText]->setFont(fontName);
+	dialogText->setFont(fontName);
 }
 
 void Dialog::setTextTint(const Color& color) {
-	controls[DialogText]->setTint(color);
+	//controls[DialogText]->setTint(color);
+	dialogText->setTint(color);
+	panel->setTexture(
+		guiFactory->createTextureFromControl(
+			dialogText.get(), dialogFramePosition, panel->getTint()));
 }
 
 void Dialog::setTint(const Color& color) {
@@ -560,6 +571,14 @@ void Dialog::movePosition(const Vector2& moveBy) {
 		control->moveBy(moveBy);
 	}
 	GUIControl::moveBy(moveBy);
+}
+
+void Dialog::setScrollBar(ScrollBarDesc& scrollBarDesc) {
+	panel->setScrollBar(scrollBarDesc);
+}
+
+void Dialog::alwaysShowScrollBar(bool alwaysShow) {
+	panel->alwaysShowScrollBar(alwaysShow);
 }
 
 
