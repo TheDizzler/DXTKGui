@@ -288,9 +288,9 @@ ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight
 	return scrollBar;
 }
 
-Panel* GUIFactory::createPanel(bool scrollBarAlwaysVisible) {
+TexturePanel* GUIFactory::createPanel(bool scrollBarAlwaysVisible) {
 
-	Panel* panel = new Panel(getAsset("White Pixel"), createScrollBar(Vector2::Zero, 10));
+	TexturePanel* panel = new TexturePanel(getAsset("White Pixel"), createScrollBar(Vector2::Zero, 10));
 	panel->setFactory(this);
 	return panel;
 }
@@ -313,7 +313,7 @@ ListBox* GUIFactory::createListBox(const Vector2& position,
 
 ComboBox* GUIFactory::createComboBox(const Vector2& position,
 	const int width, const int itemHeight, const int maxItemsShown,
-	const char_t* buttonAsset, bool enumerateList, const char_t* fontName) {
+	bool enumerateList, const char_t* buttonAsset, const char_t* fontName) {
 
 	ComboBox* combobox = new ComboBox(position, width, itemHeight, maxItemsShown);
 	combobox->setFactory(this);
@@ -337,13 +337,12 @@ Dialog* GUIFactory::createDialog(bool movable, const char_t* fontName) {
 
 
 #include "../Engine/GameEngine.h"
-/*ComPtr<ID3D11ShaderResourceView>*/
 unique_ptr<GraphicsAsset> GUIFactory::createTextureFromControl(
 	/*ComPtr<ID3D11Device> device, ComPtr<ID3D11DeviceContext> devCon,
-	SpriteBatch* batch,*/ GUIControl* control, const Vector2& offset, Color bgColor) {
+	SpriteBatch* batch,*/ IElement2D* control, Color bgColor) {
 
-	int width = Globals::WINDOW_WIDTH;
-	int height = Globals::WINDOW_HEIGHT;
+	int width = control->getWidth() + 5; // +5 gives a bit of lee-way to prevent tearing
+	int height = control->getHeight()+ 5;
 
 	ComPtr<ID3D11Texture2D> renderTargetTexture;
 	D3D11_TEXTURE2D_DESC textureDesc;
@@ -363,7 +362,7 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromControl(
 
 	if (GameEngine::reportError(device->CreateTexture2D(&textureDesc, NULL,
 		renderTargetTexture.GetAddressOf()),
-		L"Failed to create render target texture.", L"Aw shucks"))
+		L"Failed to create render target texture.", L"Aw shucks", true))
 		return NULL;
 
 	ComPtr<ID3D11RenderTargetView> textureRenderTargetView;
@@ -376,7 +375,7 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromControl(
 	if (GameEngine::reportError(
 		device->CreateRenderTargetView(renderTargetTexture.Get(),
 			NULL, textureRenderTargetView.GetAddressOf()),
-		L"Failed to create render target view for custom texture."))
+		L"Failed to create render target view for new texture.", L"Fatal Error", true))
 		return NULL;
 
 
@@ -393,51 +392,30 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromControl(
 	if (GameEngine::reportError(
 		device->CreateShaderResourceView(renderTargetTexture.Get(),
 			&shaderResourceViewDesc, shaderResourceView.GetAddressOf()),
-		L"Failed to create Shader Resource View for new texture."))
+		L"Failed to create Shader Resource View for new texture.", L"Fatal error", true))
 		return NULL;
 
 
 
-	// get normal rendertargetview
+	// get normal rendertargetview and switch to temp one
 	ComPtr<ID3D11RenderTargetView> oldRenderTargetView;
 	deviceContext->OMGetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
 	deviceContext->OMSetRenderTargets(1, textureRenderTargetView.GetAddressOf(), nullptr);
 
 
-
-	//UINT numViewports = 1;
-	//D3D11_VIEWPORT oldViewport[1];
-	//deviceContext->RSGetViewports(&numViewports, oldViewport);
-
-	/*D3D11_VIEWPORT viewport;
-	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
-
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.Width = control->getWidth();
-	viewport.Height = control->getHeight();
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-*/
-
-	//deviceContext->RSSetViewports(1, &viewport);
-	//batch->SetViewport(viewport);
-
 	Vector2 oldPos = control->getPosition();
-	control->setPosition(oldPos - offset);
+	Vector2 oldSize = Vector2(control->getWidth(), control->getHeight());
+	control->setPosition(Vector2::Zero);
 
 	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), bgColor);
 
-	batch->Begin(SpriteSortMode_Deferred);
+	batch->Begin(SpriteSortMode_Immediate);
 	{
 		control->draw(batch);
 	}
 	batch->End();
-	//swapChain->Present(0, 0);
 
 
-	//batch->SetViewport(oldViewport[0]);
-	//deviceContext->RSSetViewports(1, oldViewport);
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
 
 	control->setPosition(oldPos);

@@ -64,8 +64,8 @@ public:
 
 	ComboBox* createComboBox(const Vector2& position, const int width,
 		const int itemHeight = 32, const int maxItemsShown = 7,
-		const char_t* buttonAsset = "Combo Button Closed",
-		bool enumerateList = false, const char_t* fontName = "Default Font");
+		bool enumerateList = false, const char_t* buttonAsset = "Combo Button Closed",
+		const char_t* fontName = "Default Font");
 
 	Dialog* createDialog(bool movable = false, const char_t* fontName = "Default Font");
 
@@ -73,13 +73,14 @@ public:
 	ScrollBar* createScrollBar(const Vector2& position, size_t barHeight,
 		ScrollBarDesc& scrollBarDesc);
 
-	Panel* createPanel(bool scrollBarAlwaysVisible = false);
+	TexturePanel* createPanel(bool scrollBarAlwaysVisible = false);
 
-	/*ComPtr<ID3D11ShaderResourceView>*/
+	/* Creates a texture from a screen grab of an IElement2D object.
+		offset is the vector to bring object to top left corner of screen
+			in prep for its close up.*/
 	unique_ptr<GraphicsAsset> createTextureFromControl(/*ComPtr<ID3D11Device> device,
 		ComPtr<ID3D11DeviceContext> devCon, SpriteBatch* batch,*/
-		GUIControl* control, const Vector2& offset = Vector2(0, 0),
-		Color bgColor = {1, 1, 1, 1});
+		IElement2D* control, Color bgColor = {1, 1, 1, 1});
 
 	static bool initialized;
 private:

@@ -3,7 +3,9 @@
 #include "IElement2D.h"
 #include "SpriteFont.h"
 
-class FontSet/*: public IElement2D */{
+/* A wrapper class for more convenient use of SpriteFonts.
+	Default font color is White. */
+class FontSet {
 public:
 	FontSet();
 	~FontSet();

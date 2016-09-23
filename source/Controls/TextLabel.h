@@ -1,14 +1,10 @@
 #pragma once
 
 #include <tchar.h>
-#include <sstream>
 #include <strsafe.h>
 
-#include "../BaseGraphics/FontSet.h"
 #include "GUIControl.h"
 
-
-using namespace std;
 
 class TextLabel : public GUIControl {
 public:
@@ -39,9 +35,9 @@ public:
 	void setText(wostringstream& text);
 	virtual void setText(wstring text) override;
 	virtual const wchar_t* getText() override;
-	virtual XMVECTOR XM_CALLCONV measureString() const override;
+	virtual const Vector2& XM_CALLCONV measureString() const override;
 	/* Convenience method when a FontSet is not available. */
-	Vector2 XM_CALLCONV measureString(wstring string) const;
+	const Vector2& XM_CALLCONV measureString(wstring string) const;
 	
 
 	virtual bool clicked() override;

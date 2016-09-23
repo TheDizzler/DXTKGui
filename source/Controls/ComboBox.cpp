@@ -101,7 +101,7 @@ void ComboBox::resizeBox() {
 
 	comboListButton->setPosition(
 		Vector2(position.x + width - comboListButton->getWidth(), position.y));
-	comboListButton->setOnClickListener(new ShowListBoxListener(this));
+	//comboListButton->setOnClickListener(new ShowListBoxListener(this)); // necessary?
 	frame->setDimensions(position, Vector2(width, comboListButton->getHeight()));
 }
 
@@ -128,7 +128,7 @@ ListItem* ComboBox::getItem(size_t index) {
 void ComboBox::setText(wstring text) {
 }
 
-XMVECTOR XM_CALLCONV ComboBox::measureString() const {
+const Vector2& XM_CALLCONV ComboBox::measureString() const {
 	return Vector2();
 }
 

@@ -132,7 +132,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 	////button->setText(L"Play");
 	//button->setPosition(buttonpos);
 
-	Vector2 size = Vector2(animButton->getWidth()/2, animButton->getHeight()/4);
+	Vector2 size = Vector2(animButton->getWidth() / 2, animButton->getHeight() / 4);
 	//guiControls.push_back(button);
 
 
@@ -145,7 +145,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 	button->setOnClickListener(settingsListener);
 	guiControls.push_back(button);
 
-	
+
 	button = GameManager::guiFactory->createImageButton(
 		"Button Up", "Button Down");
 	button->setOnClickListener(new OnClickListenerExitButton(this));
@@ -308,10 +308,10 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	scrollBarDesc.upPressedButtonImage = "ScrollBar Up Pressed Custom";
 	//scroll.downButtonImage = "ScrollBar Down";
 	scrollBarDesc.trackImage = "ScrollBar Track Custom";
-	scrollBarDesc.scrubberImage = "Scrubber Custom";
+	//scrollBarDesc.scrubberImage = "Scrubber Custom";
 
 	displayModeCombobox =
-		GameManager::guiFactory->createComboBox(controlPos, 75, itemHeight, 10);
+		GameManager::guiFactory->createComboBox(controlPos, 75, itemHeight, 10, true);
 
 	populateDisplayModeList(
 		game->getDisplayModeList(0));

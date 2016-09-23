@@ -65,7 +65,7 @@ void ListBox::addItem(ListItem* item) {
 	resizeBox();
 }
 
-/** Adds a vector of ListItems to listbox and clears the vector parameter.*/
+/** Adds a vector of ListItems to listbox and clears the input vector.*/
 void ListBox::addItems(vector<ListItem* > items) {
 
 	for (ListItem* item : items) {
@@ -130,14 +130,18 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 
 	if (itemsToDisplay == maxDisplayItems || alwaysDisplayScrollBar) {
 
-		if (hitArea->contains(mouse->getPosition()))
-			scrollBar->scrollByIncrement(-mouse->getWheelDelta());
+		if (hitArea->contains(mouse->getPosition())) {
+			int mouseWheelDelta = mouse->getWheelDelta();
+			if (mouseWheelDelta != 0)
+				scrollBar->scrollByIncrement(-mouseWheelDelta);
+		}
 
 		scrollBar->update(deltaTime, mouse);
 
-		double dif = listItems.size() - maxDisplayItems;
-		firstItemToDisplay = round(scrollBar->percentScroll* (double) dif);
-
+		double dif = listItems.size() /*- maxDisplayItems*/;
+		firstItemToDisplay = round(scrollBar->percentScroll * (double) dif);
+		/*if (firstItemToDisplay > listItems.size() - maxDisplayItems)
+			firstItemToDisplay = listItems.size() - maxDisplayItems;*/
 	}
 
 	for (int j = firstItemToDisplay;
@@ -157,9 +161,6 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 			onClick();
 		}
 	}
-
-
-
 
 	Vector2 pos = firstItemPos;
 
@@ -193,7 +194,6 @@ void ListBox::draw(SpriteBatch* batch) {
 }
 
 
-//#include <cmath>
 void ListBox::setSelected(size_t newIndex) {
 
 	if (listItems.size() <= 0)
@@ -216,7 +216,7 @@ void ListBox::setSelected(size_t newIndex) {
 
 	}
 	scrollBar->setScrollPositionByPercent(
-		selectedIndex / (float) (listItems.size() - maxDisplayItems));
+		selectedIndex / (double) (listItems.size() /*- maxDisplayItems*/));
 
 }
 
@@ -241,7 +241,7 @@ void ListBox::setText(wstring text) {
 }
 
 // do nothing for now
-XMVECTOR XM_CALLCONV ListBox::measureString() const {
+const Vector2& XM_CALLCONV ListBox::measureString() const {
 	return XMVECTOR();
 }
 

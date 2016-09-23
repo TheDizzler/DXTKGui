@@ -179,7 +179,7 @@ bool initWindow(HINSTANCE hInstance, int showWnd) {
 
 //}
 
-	DWORD windowStyle = (WS_OVERLAPPEDWINDOW | /*WS_CAPTION | WS_SYSMENU | */WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+	DWORD windowStyle = (WS_OVERLAPPEDWINDOW&~WS_THICKFRAME| /*WS_CAPTION | WS_SYSMENU | */WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
 	hwnd = CreateWindowEx(
 		NULL,					// extended style, check em out here https://msdn.microsoft.com/en-us/library/61fe4bte(v=vs.140).aspx
 		wndClassName,

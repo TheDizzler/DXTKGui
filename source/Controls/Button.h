@@ -24,7 +24,7 @@ public:
 
 	virtual void setText(wstring text) override;
 	virtual const wchar_t* getText() override;
-	virtual XMVECTOR XM_CALLCONV measureString() const override;
+	virtual const Vector2& XM_CALLCONV measureString() const override;
 
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 
@@ -165,7 +165,7 @@ public:
 	/* Not used in Animated Button. */
 	virtual void setText(wstring text) override;
 	
-	virtual XMVECTOR XM_CALLCONV measureString() const override;
+	virtual const Vector2& XM_CALLCONV measureString() const override;
 	virtual const Vector2 & getPosition() const override;
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;

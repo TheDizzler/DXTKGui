@@ -126,13 +126,14 @@ void Dialog::setTitle(wstring text, const Vector2& scale, const pugi::char_t* fo
 }
 
 // TODO:
-//		If text to long, add scrollbar.
+//		Grow dialogbox size to accomodate scrollbar
 void Dialog::calculateDialogTextPos() {
 
-	//TextLabel* label = (TextLabel*) controls[dialogText].get();
 	Vector2 dialogtextsize = dialogText->measureString();
+	if (dialogtextsize.x <= 0)
+		return;
 
-	if (dialogtextsize.x + dialogTextMargin * 2 > dialogFrameSize.x) {
+	if (dialogtextsize.x + dialogTextMargin.x * 2 > dialogFrameSize.x) {
 	// if the text is longer than the dialog box
 	//		break the text down into multiple lines
 		wstring newText = L"";
@@ -140,10 +141,11 @@ void Dialog::calculateDialogTextPos() {
 
 		int i = 0;
 		int textLength = wcslen(dialogText->getText());
+		bool scrollbarAdded = false;
 		bool done = false;
 		while (i < textLength) {
 			wstring currentLine = L"";
-			while (dialogText->measureString(currentLine).x + (dialogTextMargin * 2)
+			while (dialogText->measureString(currentLine).x + (dialogTextMargin.x * 2)
 				< dialogFrameSize.x) {
 
 				currentLine += dialogText->getText()[i++];
@@ -169,6 +171,16 @@ void Dialog::calculateDialogTextPos() {
 		OutputDebugString(ws.str().c_str());*/
 
 			newText += currentLine + L"\n";
+
+			// If text is getting too long, restart and adjust for scrollbar
+			/*if (!scrollbarAdded
+				&& dialogText->measureString(newText).y + dialogTextMargin.y * 2 > dialogFrameSize.y) {
+				dialogTextMargin.x = panel->getScrollBarSize().x;
+				i = 0;
+				newText = L"";
+				scrollbarAdded = true;
+				done = false;
+			}*/
 		}
 		dialogText->setText(newText);
 		dialogtextsize = dialogText->measureString();
@@ -177,23 +189,25 @@ void Dialog::calculateDialogTextPos() {
 	// TODO:
 	//		If text to long, add scrollbar.
 
-	Vector2 dialogpos = Vector2(
-		dialogFramePosition.x + (dialogFrameSize.x - dialogtextsize.x) / 2,
-		dialogFramePosition.y + (dialogFrameSize.y - dialogtextsize.y) / 2);
-	//controls[DialogText]->setPosition(dialogpos);
+	Vector2 dialogpos =
+		Vector2(dialogFramePosition.x + (dialogFrameSize.x - dialogtextsize.x) / 2, 0);
+
+	if (dialogtextsize.y < dialogFrameSize.y)
+		dialogpos.y = dialogFramePosition.y + (dialogFrameSize.y - dialogtextsize.y) / 2;
+	else
+		dialogpos.y = dialogFramePosition.y;
 	dialogText->setPosition(dialogpos);
 
-	Vector2 textMargin = Vector2(dialogTextMargin, dialogTextMargin);
 	panel->setDimensions(dialogFramePosition, dialogFrameSize);
 	panel->setTexture(
 		guiFactory->createTextureFromControl(
-			dialogText.get(), dialogFramePosition, panel->getTint()));
+			dialogText.get(), panel->getTint()));
 
+	panel->setTexturePosition(dialogpos);
 }
 
 void Dialog::setText(wstring text) {
 
-	//controls[DialogText]->setText(text);
 	dialogText->setText(text);
 	calculateDialogTextPos();
 }
@@ -391,7 +405,6 @@ void Dialog::draw(SpriteBatch* batch) {
 }
 
 
-
 void Dialog::addItem(unique_ptr<GUIControl> control) {
 
 	controls.push_back(move(control));
@@ -405,7 +418,7 @@ void Dialog::addItems(vector<unique_ptr<GUIControl>> newControls) {
 }
 
 /** Not used in DialogBox */
-XMVECTOR XM_CALLCONV Dialog::measureString() const {
+const Vector2& XM_CALLCONV Dialog::measureString() const {
 	return Vector2::Zero;
 }
 
@@ -433,19 +446,26 @@ void Dialog::setFont(const pugi::char_t* fontName) {
 
 	//controls[DialogText]->setFont(fontName);
 	dialogText->setFont(fontName);
+	calculateDialogTextPos();
 }
 
 void Dialog::setTextTint(const Color& color) {
 	//controls[DialogText]->setTint(color);
 	dialogText->setTint(color);
+	Vector2 dialogtextsize = dialogText->measureString();
+	/*Vector2 dialogpos = Vector2(
+		(dialogFrameSize.x - dialogtextsize.x) / 2,
+		(dialogFrameSize.y - dialogtextsize.y) / 2);
 	panel->setTexture(
 		guiFactory->createTextureFromControl(
-			dialogText.get(), dialogFramePosition, panel->getTint()));
+			dialogText.get(), dialogpos, panel->getTint()));*/
+	calculateDialogTextPos();
 }
 
 void Dialog::setTint(const Color& color) {
 	bgSprite->setTint(color);
 	panel->setTint(color);
+	calculateDialogTextPos();
 }
 
 void Dialog::setScale(const Vector2& newScale) {

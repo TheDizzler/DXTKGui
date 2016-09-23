@@ -5,11 +5,11 @@
 #include "ScrollBar.h"
 
 
-class Panel : public GUIControl {
+class TexturePanel : public GUIControl {
 public:
 
-	Panel(GraphicsAsset* pixelAsset, ScrollBar* scrllbr);
-	~Panel();
+	TexturePanel(GraphicsAsset* pixelAsset, ScrollBar* scrllbr);
+	~TexturePanel();
 
 
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);
@@ -22,25 +22,27 @@ public:
 	virtual void draw(SpriteBatch* batch) override;
 
 	void setDimensions(const Vector2& position, const Vector2& size);
+	void setTexturePosition(const Vector2& position);
 
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 	virtual void setText(wstring text) override;
-	virtual XMVECTOR XM_CALLCONV measureString() const override;
+	virtual const Vector2& XM_CALLCONV measureString() const override;
 
 	virtual void moveBy(const Vector2& moveVector) override;
 	virtual const Vector2& getPosition() const override;
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
+	const Vector2& getScrollBarSize() const;
 
 	virtual bool clicked() override;
 	virtual bool pressed() override;
 	virtual bool hovering() override;
+
+	int scrollSpeed = 10;
 private:
 
-	//unique_ptr<RectangleSprite> bgSprite;
 	unique_ptr<GraphicsAsset> gfxAsset;
-	//ComPtr<ID3D11RenderTargetView> renderTargetView;
-	//ComPtr<ID3D11Texture2D> renderTargetTexture;
+	ComPtr<ID3D11ShaderResourceView> texture;
 
 	//RECT panelRect;
 	/* Portion of panel that is visible. */

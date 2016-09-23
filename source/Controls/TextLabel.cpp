@@ -87,11 +87,11 @@ void TextLabel::setText(wstring text) {
 	hitArea.reset(new HitArea(position, size));
 }
 
-XMVECTOR XM_CALLCONV TextLabel::measureString() const {
+const Vector2& XM_CALLCONV TextLabel::measureString() const {
 	return font->measureString(label.c_str());
 }
 
-Vector2 XM_CALLCONV TextLabel::measureString(wstring string) const {
+const Vector2& XM_CALLCONV TextLabel::measureString(wstring string) const {
 	return font->measureString(string.c_str());
 }
 

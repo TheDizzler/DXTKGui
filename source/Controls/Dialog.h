@@ -2,7 +2,7 @@
 #pragma once
 
 #include "Button.h"
-#include "Panel.h"
+#include "TexturePanel.h"
 #include "../BaseGraphics/TransitionEffects.h"
 
 
@@ -90,7 +90,7 @@ public:
 	virtual bool hovering() override;
 
 	/** Not used in DialogBox */
-	virtual XMVECTOR XM_CALLCONV measureString() const override;
+	virtual const Vector2& XM_CALLCONV measureString() const override;
 
 	void open();
 	void close();
@@ -100,7 +100,7 @@ public:
 	bool isOpen = false;
 	bool isTransitioning = false;
 
-	int dialogTextMargin = 10;
+	Vector2 dialogTextMargin = Vector2(10, 10);
 	int titleTextMargin = 10;
 private:
 
@@ -144,7 +144,7 @@ private:
 	unique_ptr<RectangleFrame> frame;
 	unique_ptr<RectangleSprite> titleSprite;
 	unique_ptr<RectangleSprite> buttonFrameSprite;
-	unique_ptr<Panel> panel;
+	unique_ptr<TexturePanel> panel;
 
 	Vector2 standardButtonSize = Vector2(150, 35);
 

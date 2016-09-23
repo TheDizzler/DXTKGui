@@ -108,7 +108,7 @@
     <ClCompile Include="source\BaseGraphics\TransitionEffects.cpp">
       <Filter>Source Files\Engine\BaseGfx</Filter>
     </ClCompile>
-    <ClCompile Include="source\Controls\Panel.cpp">
+    <ClCompile Include="source\Controls\TexturePanel.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
   </ItemGroup>
@@ -188,7 +188,7 @@
     <ClInclude Include="source\BaseGraphics\TransitionEffects.h">
       <Filter>Header Files\Engine\BaseGfx</Filter>
     </ClInclude>
-    <ClInclude Include="source\Controls\Panel.h">
+    <ClInclude Include="source\Controls\TexturePanel.h">
       <Filter>Header Files\Controls</Filter>
     </ClInclude>
   </ItemGroup>

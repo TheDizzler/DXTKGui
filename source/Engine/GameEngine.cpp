@@ -95,7 +95,7 @@ bool GameEngine::initStage() {
 	scrollBarDesc.upButtonImage = "ScrollBar Up Custom";
 	scrollBarDesc.upPressedButtonImage = "ScrollBar Up Pressed Custom";
 	scrollBarDesc.trackImage = "ScrollBar Track Custom";
-	scrollBarDesc.scrubberImage = "Scrubber Custom";
+	//scrollBarDesc.scrubberImage = "Scrubber Custom";
 	warningDialog.reset(GameManager::guiFactory->createDialog(true));
 	
 	warningDialog->setDimensions(dialogPos, dialogSize);

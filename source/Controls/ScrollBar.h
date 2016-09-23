@@ -9,8 +9,10 @@ public:
 	Scrubber(GraphicsAsset* const graphicsAsset, bool assetIsPixel = true);
 	~Scrubber();
 
-	void setDimensions(const Vector2& startPosition,
-		const Vector2& size, const int scrollBarHeight);
+	/*void setDimensions(const Vector2& startPosition,
+		const Vector2& size, const int scrollBarHeight);*/
+	void setDimensions(const Sprite* scrollBarTrack,
+		double percentShowing, double maxPercent);
 
 	virtual void update(double deltaTime, MouseController* mouse);
 
@@ -20,7 +22,7 @@ public:
 	void setScrollPositionByCoord(int newCoordinatePosition);
 	void setScrollPositionByPercent(double newPositionPercentage);
 
-	void scroll(double increment);
+	void scroll(double itemIncrement, double scrubberIncrement);
 
 	bool hovering();
 	bool pressed();
@@ -39,7 +41,9 @@ private:
 
 
 	int scrollBarHeight;
-
+	double scrubberPercentAt = 0;
+	double maxPercent = 0;
+	double percentDifference = 0;
 	bool isHover = false;
 	bool isPressed = false;
 
@@ -63,10 +67,12 @@ struct ScrollBarDesc {
 	string scrubberImage = "";
 };
 
+
+
 /** Do not use this classes HitArea - it is NULL. */
 class ScrollBar : public GUIControl {
 public:
-	ScrollBar(Vector2 position);
+	ScrollBar(const Vector2& position);
 	~ScrollBar();
 
 	/* scrollBarButtons[0] = Up Button
@@ -89,6 +95,7 @@ public:
 	void scrollByIncrement(int scrollIncrement);
 
 	virtual const Vector2& getPosition() const override;
+	const Vector2& getSize() const;
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
 
@@ -99,7 +106,7 @@ public:
 	/* Unused in ScrollBar. */
 	virtual void setText(wstring text) override;
 	/* Unused in ScrollBar. */
-	virtual XMVECTOR XM_CALLCONV measureString() const override;
+	virtual const Vector2& XM_CALLCONV measureString() const override;
 
 
 	virtual bool clicked() override;
@@ -118,7 +125,8 @@ private:
 
 	/* What percent of scroll is equivalent to one item. */
 	double percentForOneItem;
-
+	/* Percentage of scubber movement is equivalent to item. */
+	double scrubberPercentForOneItem;
 
 	unique_ptr<ImageButton> scrollBarUpButton;
 	unique_ptr<ImageButton> scrollBarDownButton;
@@ -127,6 +135,14 @@ private:
 	double autoScrollStartDelay = .25; // time in seconds before scrollbar starts scrolling
 	double autoScrollDelay = autoScrollStartDelay * .75; // time between increments while autoscrolling
 
-	//ComPtr<ID3D11ShaderResourceView> pixel;
+};
+
+
+class SmoothScrollBar : public ScrollBar {
+public:
+	SmoothScrollBar(const Vector2& position);
+	~SmoothScrollBar();
+
+private:
 
 };
