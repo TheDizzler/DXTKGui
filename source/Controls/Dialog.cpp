@@ -69,12 +69,8 @@ void Dialog::setDimensions(const Vector2& pos, const Vector2& sz,
 		}
 	}
 
-	Vector2 dialogsize = dialogText->measureString();
-	if (dialogsize.x > 0) {
-		calculateDialogTextPos();
-	}
-
-
+	//textFormated = false;
+	calculateDialogTextPos();
 }
 
 void Dialog::setTransition(TransitionEffects::TransitionEffect* effect) {
@@ -133,7 +129,9 @@ void Dialog::calculateDialogTextPos() {
 	if (dialogtextsize.x <= 0)
 		return;
 
-	if (dialogtextsize.x + dialogTextMargin.x * 2 > dialogFrameSize.x) {
+	TextLabel formattedText(Vector2::Zero, dialogText->getText(), dialogText->getFont());
+	int scrollBarBuffer = 0;
+	if (/*!textFormated && */dialogtextsize.x + dialogTextMargin.x * 2 > dialogFrameSize.x) {
 	// if the text is longer than the dialog box
 	//		break the text down into multiple lines
 		wstring newText = L"";
@@ -146,7 +144,7 @@ void Dialog::calculateDialogTextPos() {
 		while (i < textLength) {
 			wstring currentLine = L"";
 			while (dialogText->measureString(currentLine).x + (dialogTextMargin.x * 2)
-				< dialogFrameSize.x) {
+				< dialogFrameSize.x - scrollBarBuffer) {
 
 				currentLine += dialogText->getText()[i++];
 				if (i >= textLength) {
@@ -173,35 +171,42 @@ void Dialog::calculateDialogTextPos() {
 			newText += currentLine + L"\n";
 
 			// If text is getting too long, restart and adjust for scrollbar
-			/*if (!scrollbarAdded
-				&& dialogText->measureString(newText).y + dialogTextMargin.y * 2 > dialogFrameSize.y) {
-				dialogTextMargin.x = panel->getScrollBarSize().x;
+			if (!scrollbarAdded
+				&& dialogText->measureString(newText).y + dialogTextMargin.y * 2
+				> dialogFrameSize.y) {
+				scrollBarBuffer = panel->getScrollBarSize().x;
 				i = 0;
 				newText = L"";
 				scrollbarAdded = true;
 				done = false;
-			}*/
+			}
 		}
-		dialogText->setText(newText);
-		dialogtextsize = dialogText->measureString();
+		//dialogText->setText(newText);
+		//dialogtextsize = dialogText->measureString();
+		//textFormated = true;
+
+		formattedText.setText(newText);
+		dialogtextsize = formattedText.measureString();
 	}
 
 	// TODO:
 	//		If text to long, add scrollbar.
 
 	Vector2 dialogpos =
-		Vector2(dialogFramePosition.x + (dialogFrameSize.x - dialogtextsize.x) / 2, 0);
+		Vector2(dialogFramePosition.x +
+		(dialogFrameSize.x - dialogtextsize.x - scrollBarBuffer) / 2, 0);
 
 	if (dialogtextsize.y < dialogFrameSize.y)
 		dialogpos.y = dialogFramePosition.y + (dialogFrameSize.y - dialogtextsize.y) / 2;
 	else
 		dialogpos.y = dialogFramePosition.y;
 	dialogText->setPosition(dialogpos);
+	formattedText.setPosition(dialogpos);
 
 	panel->setDimensions(dialogFramePosition, dialogFrameSize);
 	panel->setTexture(
 		guiFactory->createTextureFromControl(
-			dialogText.get(), panel->getTint()));
+			&formattedText, panel->getTint()));
 
 	panel->setTexturePosition(dialogpos);
 }
@@ -209,6 +214,7 @@ void Dialog::calculateDialogTextPos() {
 void Dialog::setText(wstring text) {
 
 	dialogText->setText(text);
+	//textFormated = false;
 	calculateDialogTextPos();
 }
 
@@ -437,28 +443,16 @@ void Dialog::close() {
 
 }
 
-//GUIControl::ClickAction Dialog::getResult() {
-//	return result;
-//}
-
-
 void Dialog::setFont(const pugi::char_t* fontName) {
 
-	//controls[DialogText]->setFont(fontName);
 	dialogText->setFont(fontName);
+	//textFormated = false;
 	calculateDialogTextPos();
 }
 
 void Dialog::setTextTint(const Color& color) {
-	//controls[DialogText]->setTint(color);
+
 	dialogText->setTint(color);
-	Vector2 dialogtextsize = dialogText->measureString();
-	/*Vector2 dialogpos = Vector2(
-		(dialogFrameSize.x - dialogtextsize.x) / 2,
-		(dialogFrameSize.y - dialogtextsize.y) / 2);
-	panel->setTexture(
-		guiFactory->createTextureFromControl(
-			dialogText.get(), dialogpos, panel->getTint()));*/
 	calculateDialogTextPos();
 }
 
@@ -470,6 +464,7 @@ void Dialog::setTint(const Color& color) {
 
 void Dialog::setScale(const Vector2& newScale) {
 
+	//textFormated = false;
 	GUIControl::setScale(newScale);
 	frame->setScale(newScale);
 	bgSprite->setScale(newScale);
@@ -486,6 +481,7 @@ void Dialog::setScale(const Vector2& newScale) {
 
 void Dialog::setPosition(const Vector2& newPosition) {
 
+	//textFormated = false;
 	Vector2 moveBy = newPosition - position;
 	GUIControl::setPosition(newPosition);
 	frame->moveBy(moveBy);

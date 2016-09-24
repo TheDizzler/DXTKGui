@@ -439,18 +439,16 @@ void Scrubber::setScrollPositionByCoord(int newCoordinatePosition) {
 
 	double distanceBetweenPosAndMax = maxPosition.y - position.y;
 
-	/*percentAt = (minMaxDifference - distanceBetweenPosAndMax)
-		/ (minMaxDifference);*/
 	scrubberPercentAt = (minMaxDifference - distanceBetweenPosAndMax)
 		/ (minMaxDifference);
 	percentAt = scrubberPercentAt/percentDifference;
-	wostringstream ws;
-	ws << "percentAt: " << percentAt << "\n";
-	ws << "scrubberPercentAt: " << scrubberPercentAt << "\n";
-	ws << "percentDifference: " << percentDifference << "\n";
-	ws << "position.y: " << position.y << "\n\n";
+	//wostringstream ws;
+	//ws << "percentAt: " << percentAt << "\n";
+	//ws << "scrubberPercentAt: " << scrubberPercentAt << "\n";
+	//ws << "percentDifference: " << percentDifference << "\n";
+	//ws << "position.y: " << position.y << "\n\n";
 	//ws << "maxPosition.y: " << maxPosition.y << "\n";
-	OutputDebugString(ws.str().c_str());
+	//OutputDebugString(ws.str().c_str());
 }
 
 void Scrubber::setScrollPositionByPercent(double newPositionPercentage) {

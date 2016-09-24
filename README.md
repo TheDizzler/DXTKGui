@@ -1,4 +1,4 @@
-# DXTKGui v0.35b
+# DXTKGui v0.5b
 
 A GUI Framework for DirectX ToolKit.
 This developed out of one part not being able to find any existing frameworks and one part me procrastinating on developing the game I'm working on. I had some hacky GUI features (button, dialog box, listbox) and I was bothered by how inflexible and cumbersome they were. So I started this project to make an extensible and re-usable GUI framework (re-usable in my game engines anyway).
@@ -24,7 +24,8 @@ Email: tgillon.sdk@gmail.com
 >- Primitve Shapes - filled rectangle; un-filled rectangle; line
 >- Text Labels - normal and clickable
 >- Button - text and image
->- Dialog Box - draggable and non-draggable; no image loading yet;
+>- TexturePanel - can take a ShaderResourceView, display it, and scroll vertically
+>- Dialog Box - draggable and non-draggable; implements TexturePanel to allow text scrolling; no image (bg) loading yet;
 >- Check Box - with onClickListener
 >- ListBox - with onClickListener; auto-size to content
 >- Scrollbar - now with customizable sprites!
@@ -32,17 +33,19 @@ Email: tgillon.sdk@gmail.com
 >- can load images and animations from spritesheets
 
 ##TODO:
+>- TexturePanel - add horizontal scrolling
 >- Dialog Box - allow custom bg image;
->- Scrollbar - that can be slapped on to anything
+>- Scrollbar - that can be slapped on to anything; horizontal scrolling
 >- List Box - multi-select; test adding, removing, clearing items live
 >- Radio Buttons
 >- Slider
->- add triggers for sfx
+>- add triggers for sfx (can use actionlisteners...good enough?)
 >- screen transition effects
 >- Combo Box - allow custom frame/bg image
 >- ListBox - allow custom frame/bg image
 >- tooltips?
 >- More Primitive Shapes - if I feel they might be useful
 >- Other stuff I can't think of at the moment
+>- demo and how-to videos
 >- Some kind of document to explain what's going on under the hood and how to use it effectivily....
 

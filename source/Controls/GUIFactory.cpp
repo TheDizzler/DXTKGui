@@ -341,8 +341,9 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromControl(
 	/*ComPtr<ID3D11Device> device, ComPtr<ID3D11DeviceContext> devCon,
 	SpriteBatch* batch,*/ IElement2D* control, Color bgColor) {
 
-	int width = control->getWidth() + 5; // +5 gives a bit of lee-way to prevent tearing
-	int height = control->getHeight()+ 5;
+	int buffer = 5; // padding to give a bit of lee-way to prevent tearing
+	int width = control->getWidth() + buffer; 
+	int height = control->getHeight() + buffer;
 
 	ComPtr<ID3D11Texture2D> renderTargetTexture;
 	D3D11_TEXTURE2D_DESC textureDesc;
@@ -404,8 +405,8 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromControl(
 
 
 	Vector2 oldPos = control->getPosition();
-	Vector2 oldSize = Vector2(control->getWidth(), control->getHeight());
-	control->setPosition(Vector2::Zero);
+	//Vector2 oldSize = Vector2(control->getWidth(), control->getHeight());
+	control->setPosition(Vector2(0, buffer));
 
 	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), bgColor);
 

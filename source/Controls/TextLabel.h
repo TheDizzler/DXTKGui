@@ -23,7 +23,7 @@ public:
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
 
-
+	const shared_ptr<FontSet> getFont() const;
 
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 	virtual void setFont(shared_ptr<FontSet> newFont);

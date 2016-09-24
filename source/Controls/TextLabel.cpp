@@ -5,6 +5,7 @@ TextLabel::TextLabel(Vector2 pos, wstring text, shared_ptr<FontSet> fnt) {
 
 	position = pos;
 	font = fnt;
+	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
 	setText(text);
 }
 
@@ -12,12 +13,14 @@ TextLabel::TextLabel(Vector2 pos, shared_ptr<FontSet> fnt) {
 
 	position = pos;
 	font = fnt;
+	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
 }
 
 
 TextLabel::TextLabel(shared_ptr<FontSet> fnt) {
 
 	font = fnt;
+	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
 }
 
 TextLabel::~TextLabel() {
@@ -84,15 +87,18 @@ void TextLabel::setText(wstring text) {
 
 	label = text;
 	Vector2 size = font->measureString(label.c_str());
-	hitArea.reset(new HitArea(position, size));
+	hitArea->position = position;
+	hitArea->size = size;
 }
 
 const Vector2& XM_CALLCONV TextLabel::measureString() const {
-	return font->measureString(label.c_str());
+	Vector2 size = font->measureString(label.c_str());
+	return size;
 }
 
 const Vector2& XM_CALLCONV TextLabel::measureString(wstring string) const {
-	return font->measureString(string.c_str());
+	Vector2 size = font->measureString(string.c_str());
+	return size;
 }
 
 const wchar_t* TextLabel::getText() {
@@ -169,4 +175,8 @@ int const TextLabel::getWidth() const {
 
 int const TextLabel::getHeight() const {
 	return hitArea->size.y;
+}
+
+const shared_ptr<FontSet> TextLabel::getFont() const {
+	return font;
 }

@@ -127,6 +127,8 @@ private:
 	Vector2 cancelButtonPosition;
 	Vector2 neutralButtonPosition;
 
+	//bool textFormated = false;
+
 	void calculateTitlePos();
 	// TODO:
 	//		If text to long, add scrollbar.
