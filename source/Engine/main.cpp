@@ -179,7 +179,7 @@ bool initWindow(HINSTANCE hInstance, int showWnd) {
 
 //}
 
-	DWORD windowStyle = (WS_OVERLAPPEDWINDOW&~WS_THICKFRAME| /*WS_CAPTION | WS_SYSMENU | */WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+	DWORD windowStyle = (WS_OVERLAPPEDWINDOW&~WS_THICKFRAME | /*WS_CAPTION | WS_SYSMENU | */WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
 	hwnd = CreateWindowEx(
 		NULL,					// extended style, check em out here https://msdn.microsoft.com/en-us/library/61fe4bte(v=vs.140).aspx
 		wndClassName,
@@ -214,6 +214,11 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	UINT dwSize;
 
 	switch (msg) {
+		case WM_ACTIVATEAPP:
+			Mouse::ProcessMessage(msg, wParam, lParam);
+			Keyboard::ProcessMessage(msg, wParam, lParam);
+			return 0;
+
 		case WM_CREATE:
 			return 0;
 			/*case WM_KEYDOWN:
@@ -224,6 +229,28 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				}
 				return 0;*/
 		case WM_INPUT:
+		case WM_MOUSEMOVE:
+		case WM_LBUTTONDOWN:
+		case WM_LBUTTONUP:
+		case WM_RBUTTONDOWN:
+		case WM_RBUTTONUP:
+		case WM_MBUTTONDOWN:
+		case WM_MBUTTONUP:
+		case WM_MOUSEWHEEL:
+		case WM_XBUTTONDOWN:
+		case WM_XBUTTONUP:
+		case WM_MOUSEHOVER:
+			Mouse::ProcessMessage(msg, wParam, lParam);
+			return 0;
+
+		case WM_KEYDOWN:
+		case WM_SYSKEYDOWN:
+		case WM_KEYUP:
+		case WM_SYSKEYUP:
+			Keyboard::ProcessMessage(msg, wParam, lParam);
+			return 0;
+	
+	/*	case WM_INPUT:
 
 			GetRawInputData((HRAWINPUT) lParam, RID_INPUT, NULL,
 				&dwSize, sizeof(RAWINPUTHEADER));
@@ -239,7 +266,7 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 			gameEngine->setRawInput((RAWINPUT*) lpb);
 
-			return 0;
+			return 0;*/
 
 		case WM_DEVICECHANGE:
 			if (wParam == DBT_DEVICEARRIVAL) {
@@ -271,9 +298,9 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			PostQuitMessage(0);
 			return 0;
 
-	}
+}
 
-	return DefWindowProc(hwnd, msg, wParam, lParam);
+return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
 

@@ -372,7 +372,7 @@ void Dialog::update(double deltaTime, MouseController* mouse) {
 			setDraggedPosition(mouse->getPosition() - pressedPosition);
 		}
 
-		if (!mouse->leftButtonDown())
+		if (!mouse->leftButton())
 			isPressed = false;
 
 	}

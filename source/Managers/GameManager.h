@@ -19,7 +19,7 @@ public:
 	bool initializeGame(ComPtr<ID3D11Device> device, MouseController* mouse);
 
 
-	void update(double deltaTime, KeyboardController* keys, MouseController* mouse);
+	void update(double deltaTime, MouseController* mouse);
 	void draw(SpriteBatch* batch);
 
 

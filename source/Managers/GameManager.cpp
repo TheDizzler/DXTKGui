@@ -48,11 +48,10 @@ bool GameManager::initializeGame(ComPtr<ID3D11Device> dvc, MouseController* ms) 
 }
 
 
-void GameManager::update(double deltaTime, KeyboardController* keys,
-	MouseController* mouse) {
+void GameManager::update(double deltaTime, MouseController* mouse) {
 
 
-	currentScreen->update(deltaTime, keys, mouse);
+	currentScreen->update(deltaTime, mouse);
 
 }
 

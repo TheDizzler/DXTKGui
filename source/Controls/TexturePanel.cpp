@@ -33,7 +33,7 @@ void TexturePanel::update(double deltaTime, MouseController* mouse) {
 		verticalScrollBar->update(deltaTime, mouse);
 
 		if (hitArea->contains(mouse->getPosition())) {
-			int mouseWheelDelta = mouse->getWheelDelta();
+			int mouseWheelDelta = mouse->scrollWheelValue();
 			if (mouseWheelDelta != 0)
 				verticalScrollBar->scrollByIncrement(-mouseWheelDelta);
 		}

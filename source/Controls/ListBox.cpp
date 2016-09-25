@@ -131,7 +131,7 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 	if (itemsToDisplay == maxDisplayItems || alwaysDisplayScrollBar) {
 
 		if (hitArea->contains(mouse->getPosition())) {
-			int mouseWheelDelta = mouse->getWheelDelta();
+			int mouseWheelDelta = mouse->scrollWheelValue();
 			if (mouseWheelDelta != 0)
 				scrollBar->scrollByIncrement(-mouseWheelDelta);
 		}
@@ -342,10 +342,10 @@ bool ListItem::update(double deltaTime, MouseController* mouse) {
 
 	if ((isHover = hitArea->contains(mouse->getPosition()))) {
 
-		if (mouse->leftButtonDown() && !buttonDownLast)
+		if (mouse->leftButton() && !buttonDownLast)
 			buttonDownLast = true;
 
-		else if (!mouse->leftButtonDown() && buttonDownLast) {
+		else if (!mouse->leftButton() && buttonDownLast) {
 			isPressed = true;
 			buttonDownLast = false;
 			return true;

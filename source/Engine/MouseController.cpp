@@ -3,6 +3,8 @@
 MouseController::MouseController(HWND hWnd) {
 
 	hwnd = hWnd;
+	mouse = make_unique<Mouse>();
+	mouse->SetWindow(hwnd);
 }
 
 
@@ -10,8 +12,11 @@ MouseController::~MouseController() {
 }
 
 #include "../Controls/GUIFactory.h"
-/* Could just pass the returned GraphicsAsset pointer but that would
-	mean dealing with the error handling every time. */
+void MouseController::setState(Mouse::Mode mode) {
+	mouse->SetMode(mode);
+}
+
+
 bool MouseController::loadMouseIcon(GUIFactory* guiFactory,
 	const pugi::char_t* spriteName) {
 
@@ -29,100 +34,121 @@ bool MouseController::loadMouseIcon(GUIFactory* guiFactory,
 	return true;
 }
 
-int i = 0;
-void MouseController::getRawInput(RAWMOUSE* rawMouse) {
 
-	raw = rawMouse;
+void MouseController::saveMouseState() {
+
+	lastState = state;
+	state = mouse->GetState();
+	setPosition(Vector2(state.x, state.y));
+	// This is the absolute position of the mouse relative
+	// to the upper-left corner of the window
+
+
+	isPressed = !lastState.leftButton && state.leftButton;
+	isClicked = lastState.leftButton && !state.leftButton;
+
+
+
+	//int i = 0;
+	//void MouseController::getRawInput(RAWMOUSE* rawMouse) {
+	//
+	//	raw = rawMouse;
+	//	saveLastRawInput();
+	//
+	//	const USHORT buttonFlags = raw->usButtonFlags;
+	//
+	//	if (buttonFlags & RI_MOUSE_WHEEL) {
+	//		mouseWheelDelta = (short) raw->usButtonData;
+	//		/*wostringstream ws;
+	//		ws << "mouseWheel: " << mouseWheel << "\n";
+	//		OutputDebugString(ws.str().c_str());*/
+	//	}
+	//
+	//
+	//	if (buttonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) {
+	//		currentButtons.leftButton = true;
+	//	} else if (buttonFlags & RI_MOUSE_LEFT_BUTTON_UP) {
+	//		currentButtons.leftButton = false;
+	//	}
+	//
+	//	if (buttonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN)
+	//		currentButtons.middleButton = true;
+	//	else if (buttonFlags & RI_MOUSE_MIDDLE_BUTTON_UP)
+	//		currentButtons.middleButton = false;
+	//
+	//	if (buttonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN)
+	//		currentButtons.rightButton = true;
+	//	else if (buttonFlags & RI_MOUSE_RIGHT_BUTTON_UP)
+	//		currentButtons.rightButton = false;
+	//
+	//	POINT cursorPos;
+	//	GetCursorPos(&cursorPos);
+	//	ScreenToClient(hwnd, &cursorPos);
+	//	setPosition(Vector2(cursorPos.x, cursorPos.y));
+	//
+	//	isPressed = !lastButtons.leftButton && currentButtons.leftButton;
+	//
+	//	if (lastButtons.leftButton && !currentButtons.leftButton) {
+	//		isClicked = true;
+	//	} else {
+	//		isClicked = false;
+	//
+	//	}
+}
+
+//const Vector2 MouseController::getMovement() const {
 	/*wostringstream ws;
 	ws << "MoveBy: " << raw->lLastX << ", " << raw->lLastY << "\n";
-	OutputDebugString(ws.str().c_str());*/
-	saveLastRawInput();
-
-	const USHORT buttonFlags = raw->usButtonFlags;
-
-	if (buttonFlags & RI_MOUSE_WHEEL) {
-		mouseWheelDelta = (short) raw->usButtonData;
-		/*wostringstream ws;
-		ws << "mouseWheel: " << mouseWheel << "\n";
-		OutputDebugString(ws.str().c_str());*/
-	}
-
-
-	if (buttonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) {
-		currentButtons.leftButtonDown = true;
-	} else if (buttonFlags & RI_MOUSE_LEFT_BUTTON_UP) {
-		currentButtons.leftButtonDown = false;
-	}
-
-	if (buttonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN)
-		currentButtons.midButtonDown = true;
-	else if (buttonFlags & RI_MOUSE_MIDDLE_BUTTON_UP)
-		currentButtons.midButtonDown = false;
-
-	if (buttonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN)
-		currentButtons.rightButtonDown = true;
-	else if (buttonFlags & RI_MOUSE_RIGHT_BUTTON_UP)
-		currentButtons.rightButtonDown = false;
-
-	POINT cursorPos;
-	GetCursorPos(&cursorPos);
-	ScreenToClient(hwnd, &cursorPos);
-	setPosition(Vector2(cursorPos.x, cursorPos.y));
-
-	isPressed = !lastButtons.leftButtonDown && currentButtons.leftButtonDown;
-
-	if (lastButtons.leftButtonDown && !currentButtons.leftButtonDown) {
-		isClicked = true;
-	} else {
-		isClicked = false;
-
-	}
-}
-
-const Vector2 MouseController::getMovement() const {
-	wostringstream ws;
-	ws << "MoveBy: " << raw->lLastX << ", " << raw->lLastY << "\n";
 	OutputDebugString(ws.str().c_str());
-	return Vector2(raw->lLastX, raw->lLastY);
-}
+	return Vector2(raw->lLastX, raw->lLastY);*/
+//}
 
 
-void MouseController::saveLastRawInput() {
+//void MouseController::saveLastRawInput() {
+//
+//	lastButtons = currentButtons;
+//
+//}
 
-	lastButtons = currentButtons;
+int MouseController::scrollWheelValue() {
 
-}
-
-const short MouseController::getWheelDelta() {
-
-	short delta = mouseWheelDelta / WHEEL_DELTA;
-	mouseWheelDelta = 0;
+	int delta = state.scrollWheelValue / WHEEL_DELTA;
+	mouse->ResetScrollWheelValue();
 	return delta;
+	/*short delta = mouseWheelDelta / WHEEL_DELTA;
+	mouseWheelDelta = 0;
+	return delta;*/
 }
 
-bool MouseController::leftButtonDown() {
+bool MouseController::leftButton() {
 
-	return currentButtons.leftButtonDown;
+	//return currentButtons.leftButton;
+	return state.leftButton;
 }
 
-bool MouseController::midButtonDown() {
-	return currentButtons.midButtonDown;
+bool MouseController::middleButton() {
+	//return currentButtons.middleButton;
+	return state.middleButton;
 }
 
-bool MouseController::rightButtonDown() {
-	return currentButtons.rightButtonDown;
+bool MouseController::rightButton() {
+	//return currentButtons.rightButton;
+	return state.rightButton;
 }
 
-bool MouseController::leftButtonLastDown() {
-	return lastButtons.leftButtonDown;
+bool MouseController::leftButtonLast() {
+	//return lastButtons.leftButton;
+	return lastState.leftButton;
 }
 
-bool MouseController::midButtonLastDown() {
-	return lastButtons.midButtonDown;
+bool MouseController::middleButtonLast() {
+	//return lastButtons.middleButton;
+	return lastState.middleButton;
 }
 
-bool MouseController::rightButtonLastDown() {
-	return lastButtons.rightButtonDown;
+bool MouseController::rightButtonLast() {
+	//return lastButtons.rightButton;
+	return lastState.rightButton;
 }
 
 

@@ -97,7 +97,7 @@ bool GameEngine::initStage() {
 	scrollBarDesc.trackImage = "ScrollBar Track Custom";
 	//scrollBarDesc.scrubberImage = "Scrubber Custom";
 	warningDialog.reset(GameManager::guiFactory->createDialog(true));
-	
+
 	warningDialog->setDimensions(dialogPos, dialogSize);
 	warningDialog->setScrollBar(scrollBarDesc);
 	warningDialog->setTint(Color(0, 120, 207));
@@ -107,7 +107,7 @@ bool GameEngine::initStage() {
 	quitButton2->setText(L"Exit Program");
 	quitButton2->setOnClickListener(new QuitButtonListener(this));
 	warningDialog->setConfirmButton(move(quitButton2));
-	
+
 	showDialog = warningDialog.get();
 	return true;
 }
@@ -139,10 +139,11 @@ void GameEngine::run(double deltaTime, int fps) {
 
 void GameEngine::update(double deltaTime) {
 
+	mouse->saveMouseState();
 	if (showDialog->isOpen)
 		showDialog->update(deltaTime, mouse.get());
 	else
-		game->update(deltaTime, keys.get(), mouse.get());
+		game->update(deltaTime, mouse.get());
 }
 
 
@@ -150,7 +151,7 @@ void GameEngine::update(double deltaTime) {
 void GameEngine::render(double deltaTime) {
 
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), Colors::PeachPuff);
-	
+
 	batch->Begin(SpriteSortMode_Deferred);
 	{
 		game->draw(batch.get());

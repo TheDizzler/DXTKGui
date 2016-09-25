@@ -69,7 +69,7 @@ void Button::update(double deltaTime, MouseController* mouse) {
 	} else
 		isHover = false;
 
-	if (isPressed && !mouse->leftButtonDown()) {
+	if (isPressed && !mouse->leftButton()) {
 		isClicked = true;
 		onClick();
 		setToUnpressedState();
@@ -391,7 +391,7 @@ void AnimatedButton::update(double deltaTime, MouseController* mouse) {
 	}
 
 
-	if (isPressed && !mouse->leftButtonDown()) {
+	if (isPressed && !mouse->leftButton()) {
 		isClicked = true;
 		isPressed = false;
 

@@ -40,15 +40,14 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, MouseController* mouse
 
 
 #include "../globals.h"
-void MenuManager::update(double deltaTime,
-	KeyboardController* keys, MouseController* mouse) {
+void MenuManager::update(double deltaTime, MouseController* mouse) {
 
 	if (switchTo != NULL) {
 	// not so optimal, but should be ok for menus
 		currentScreen = switchTo;
 		switchTo = NULL;
 	}
-	currentScreen->update(deltaTime, keys, mouse);
+	currentScreen->update(deltaTime, mouse);
 
 }
 
@@ -192,25 +191,27 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 	return true;
 }
 
-int countDialog = 0;
-void MainScreen::update(double deltaTime,
-	KeyboardController* keys, MouseController* mouse) {
+Keyboard::KeyboardStateTracker keyTracker;
+void MainScreen::update(double deltaTime, MouseController* mouse) {
 
 	wostringstream ws;
 	ws << "Mouse: " << mouse->getPosition().x << ", " << mouse->getPosition().y;
 	mouseLabel->setText(ws);
 
 
-
-	if (keys->keyDown[KeyboardController::ESC] && !escLastStateDown) {
+	auto state = Keyboard::Get().GetState();
+	keyTracker.Update(state);
+	//if (keys->keyDown[KeyboardController::ESC] && !escLastStateDown) {
+	//if (state.Escape && !escLastStateDown) {
+	if (keyTracker.IsKeyReleased(Keyboard::Escape)) {
 		if (exitDialog->isOpen)
 			exitDialog->close();
 		else
 			exitDialog->open();
 	}
 
-	escLastStateDown = keys->keyDown[KeyboardController::ESC];
-
+	//escLastStateDown = keys->keyDown[KeyboardController::ESC];
+	//escLastStateDown = state.Escape;
 
 	if (exitDialog->isOpen) {
 		exitDialog->update(deltaTime, mouse);
@@ -361,15 +362,18 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 }
 
 
-void ConfigScreen::update(double deltaTime, KeyboardController* keys,
-	MouseController* mouse) {
+void ConfigScreen::update(double deltaTime, MouseController* mouse) {
 
-
-	if (escLastStateDown && !keys->keyDown[KeyboardController::ESC]) {
+	auto state = Keyboard::Get().GetState();
+	keyTracker.Update(state);
+	//if (escLastStateDown && !keys->keyDown[KeyboardController::ESC]) {
+	//if (!state.Escape && escLastStateDown) {
+	if (keyTracker.IsKeyReleased(Keyboard::Escape)) {
 		menuManager->openMainMenu();
 	}
 
-	escLastStateDown = keys->keyDown[KeyboardController::ESC];
+	//escLastStateDown = keys->keyDown[KeyboardController::ESC];
+	escLastStateDown = state.Escape;
 
 	for (auto const& control : guiControls) {
 		control->update(deltaTime, mouse);

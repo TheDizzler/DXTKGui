@@ -196,7 +196,7 @@ void ScrollBar::update(double deltaTime, MouseController* mouse) {
 
 	scrubber->update(deltaTime, mouse);
 
-	if (!scrubber->hovering() && isHover && mouse->leftButtonDown()) {
+	if (!scrubber->hovering() && isHover && mouse->leftButton()) {
 
 		if (firstClickTimer == 0) {
 			bool up = mouse->getPosition().y > scrubber->getPosition().y;
@@ -393,11 +393,11 @@ void Scrubber::update(double deltaTime, MouseController* mouse) {
 
 	isHover = hitArea->contains(mouse->getPosition());
 
-	if (isHover && mouse->leftButtonDown() && !mouse->leftButtonLastDown()) {
+	if (isHover && mouse->leftButton() && !mouse->leftButtonLast()) {
 		isPressed = true;
 		pressedPosition = mouse->getPosition().y - position.y;
 
-	} else if (!mouse->leftButtonDown())
+	} else if (!mouse->leftButton())
 		isPressed = false;
 
 	if (isPressed) {
