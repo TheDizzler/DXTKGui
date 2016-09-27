@@ -307,9 +307,9 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mous
 	ScrollBarDesc scrollBarDesc;
 	scrollBarDesc.upButtonImage = "ScrollBar Up Custom";
 	scrollBarDesc.upPressedButtonImage = "ScrollBar Up Pressed Custom";
-	//scroll.downButtonImage = "ScrollBar Down";
+	//scrollBarDesc.downButtonImage = "ScrollBar Down";
 	scrollBarDesc.trackImage = "ScrollBar Track Custom";
-	//scrollBarDesc.scrubberImage = "Scrubber Custom";
+	scrollBarDesc.scrubberImage = "Scrubber Custom";
 
 	displayModeCombobox =
 		GameManager::guiFactory->createComboBox(controlPos, 75, itemHeight, 10, true);

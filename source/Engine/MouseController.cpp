@@ -46,54 +46,6 @@ void MouseController::saveMouseState() {
 
 	isPressed = !lastState.leftButton && state.leftButton;
 	isClicked = lastState.leftButton && !state.leftButton;
-
-
-
-	//int i = 0;
-	//void MouseController::getRawInput(RAWMOUSE* rawMouse) {
-	//
-	//	raw = rawMouse;
-	//	saveLastRawInput();
-	//
-	//	const USHORT buttonFlags = raw->usButtonFlags;
-	//
-	//	if (buttonFlags & RI_MOUSE_WHEEL) {
-	//		mouseWheelDelta = (short) raw->usButtonData;
-	//		/*wostringstream ws;
-	//		ws << "mouseWheel: " << mouseWheel << "\n";
-	//		OutputDebugString(ws.str().c_str());*/
-	//	}
-	//
-	//
-	//	if (buttonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) {
-	//		currentButtons.leftButton = true;
-	//	} else if (buttonFlags & RI_MOUSE_LEFT_BUTTON_UP) {
-	//		currentButtons.leftButton = false;
-	//	}
-	//
-	//	if (buttonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN)
-	//		currentButtons.middleButton = true;
-	//	else if (buttonFlags & RI_MOUSE_MIDDLE_BUTTON_UP)
-	//		currentButtons.middleButton = false;
-	//
-	//	if (buttonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN)
-	//		currentButtons.rightButton = true;
-	//	else if (buttonFlags & RI_MOUSE_RIGHT_BUTTON_UP)
-	//		currentButtons.rightButton = false;
-	//
-	//	POINT cursorPos;
-	//	GetCursorPos(&cursorPos);
-	//	ScreenToClient(hwnd, &cursorPos);
-	//	setPosition(Vector2(cursorPos.x, cursorPos.y));
-	//
-	//	isPressed = !lastButtons.leftButton && currentButtons.leftButton;
-	//
-	//	if (lastButtons.leftButton && !currentButtons.leftButton) {
-	//		isClicked = true;
-	//	} else {
-	//		isClicked = false;
-	//
-	//	}
 }
 
 //const Vector2 MouseController::getMovement() const {
@@ -104,50 +56,34 @@ void MouseController::saveMouseState() {
 //}
 
 
-//void MouseController::saveLastRawInput() {
-//
-//	lastButtons = currentButtons;
-//
-//}
-
 int MouseController::scrollWheelValue() {
 
 	int delta = state.scrollWheelValue / WHEEL_DELTA;
 	mouse->ResetScrollWheelValue();
 	return delta;
-	/*short delta = mouseWheelDelta / WHEEL_DELTA;
-	mouseWheelDelta = 0;
-	return delta;*/
 }
 
 bool MouseController::leftButton() {
-
-	//return currentButtons.leftButton;
 	return state.leftButton;
 }
 
 bool MouseController::middleButton() {
-	//return currentButtons.middleButton;
 	return state.middleButton;
 }
 
 bool MouseController::rightButton() {
-	//return currentButtons.rightButton;
 	return state.rightButton;
 }
 
 bool MouseController::leftButtonLast() {
-	//return lastButtons.leftButton;
 	return lastState.leftButton;
 }
 
 bool MouseController::middleButtonLast() {
-	//return lastButtons.middleButton;
 	return lastState.middleButton;
 }
 
 bool MouseController::rightButtonLast() {
-	//return lastButtons.rightButton;
 	return lastState.rightButton;
 }
 

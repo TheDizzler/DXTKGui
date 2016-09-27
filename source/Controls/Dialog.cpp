@@ -121,8 +121,7 @@ void Dialog::setTitle(wstring text, const Vector2& scale, const pugi::char_t* fo
 	calculateTitlePos();
 }
 
-// TODO:
-//		Grow dialogbox size to accomodate scrollbar
+
 void Dialog::calculateDialogTextPos() {
 
 	Vector2 dialogtextsize = dialogText->measureString();
@@ -135,7 +134,6 @@ void Dialog::calculateDialogTextPos() {
 	// if the text is longer than the dialog box
 	//		break the text down into multiple lines
 		wstring newText = L"";
-
 
 		int i = 0;
 		int textLength = wcslen(dialogText->getText());
@@ -188,9 +186,6 @@ void Dialog::calculateDialogTextPos() {
 		formattedText.setText(newText);
 		dialogtextsize = formattedText.measureString();
 	}
-
-	// TODO:
-	//		If text to long, add scrollbar.
 
 	Vector2 dialogpos =
 		Vector2(dialogFramePosition.x +
