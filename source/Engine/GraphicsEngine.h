@@ -12,6 +12,7 @@
 #include <dxgi1_2.h>
 
 #include "SpriteBatch.h"
+#include "CommonStates.h"
 
 using namespace std;
 using namespace DirectX;
@@ -104,11 +105,9 @@ protected:
 	bool populateDisplayModeList(ComPtr<IDXGIOutput> adapterOut);
 	void setDisplayMode(size_t selectedIndex);
 
-	
-
-
 	/** A debug function to make sure we're using the correct graphics adapter. */
 	bool verifyAdapter(ComPtr<ID3D11Device> deviceCheck);
+
 
 };
 

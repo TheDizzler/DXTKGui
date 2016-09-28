@@ -39,11 +39,11 @@ public:
 	void setDimensions(const Vector2& position, const Vector2& size,
 		const int frameThickness = 2);
 
-	void setTransition(TransitionEffects::TransitionEffect* effect);
-
+	void setOpenTransition(TransitionEffects::TransitionEffect* effect);
+	void setCloseTransition(TransitionEffects::TransitionEffect* effect);
 
 	void setTitle(wstring text, const Vector2& scale = Vector2(1.5, 1.5),
-		const pugi::char_t* font = "Default Font");
+		const pugi::char_t* font = "Default Font", Color color = Color(0, 0, 0, 1));
 	virtual void setText(wstring text) override;
 
 	/* Works in the y dimension. x dimension gets uppity. */
@@ -76,14 +76,16 @@ public:
 	virtual void addItems(vector<unique_ptr<GUIControl>> controls) override;
 
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
-	void setTextTint(const Color& color);
-	virtual void setTint(const Color& color) override;
+	void setTextTint(const XMFLOAT4 color);
+	virtual void setTint(const XMFLOAT4 color) override;
 	virtual void setScale(const Vector2& newScale) override;
 	virtual void setPosition(const Vector2& newPosition) override;
 
 	virtual const Vector2& getPosition() const override;
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
+
+	virtual const vector<IElement2D*> getElements() const;
 
 	virtual bool clicked() override;
 	virtual bool pressed() override;
@@ -98,7 +100,8 @@ public:
 	//ClickAction getResult();
 
 	bool isOpen = false;
-	bool isTransitioning = false;
+	bool isOpening = false;
+	bool isClosing = false;
 
 	Vector2 dialogTextMargin = Vector2(10, 10);
 	int titleTextMargin = 10;
@@ -153,7 +156,8 @@ private:
 	Vector2 pressedPosition;
 	bool movable = false;
 
-	TransitionEffects::TransitionEffect* transition = NULL;
+	TransitionEffects::TransitionEffect* openTransition = NULL;
+	TransitionEffects::TransitionEffect* closeTransition = NULL;
 	TransitionEffects::Run runTransition;
 	TransitionEffects::Reset resetTransition;
 

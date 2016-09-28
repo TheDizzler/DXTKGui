@@ -5,7 +5,6 @@
 #include "MouseController.h"
 #include "KeyboardController.h"
 
-using namespace std;
 using namespace DirectX;
 
 
@@ -16,9 +15,8 @@ public:
 
 	bool initRawInput(HWND hwnd);
 	/* Depracting. */
-	void setRawInput(RAWINPUT* raw);
+	//void setRawInput(RAWINPUT* raw);
 
-	//void processMouseMessage(UINT message, WPARAM wParam, LPARAM lParam);
 
 protected:
 

@@ -33,19 +33,9 @@ void RectangleSprite::moveBy(const Vector2& moveVector) {
 
 RectangleFrame::RectangleFrame(GraphicsAsset* pixelAsset) {
 
-	//if (pixelAsset != NULL)
-		pixel = pixelAsset->getTexture();
+	pixel = pixelAsset->getTexture();
 }
 
-//RectangleFrame::RectangleFrame(ComPtr<ID3D11ShaderResourceView> pxl,
-//	const Vector2& position, const Vector2& size, int frameThickness) {
-//
-//	pixel = pxl;
-//
-//	setDimensions(position, size, frameThickness);
-//
-//	tint = DirectX::Colors::Black.v;
-//}
 
 RectangleFrame::~RectangleFrame() {
 }
@@ -60,13 +50,13 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	// upper horizontal frame
 	frameHorizontal.left = 0;
 	frameHorizontal.top = 0;
-	frameHorizontal.right = size.x;
+	frameHorizontal.right = size.x * scale.x;
 	frameHorizontal.bottom = frameThickness; // thickness of frame
 	frameTopPos = Vector2(position.x, position.y);
 
 
 	// lower horizontal frame
-	int height = size.y;
+	int height = size.y * scale.y;
 	frameBottomPos = frameTopPos;
 	frameBottomPos.y += height - frameThickness;
 	// frame sticks out passed rectangle area; (-frameThickness) pulls it back in
@@ -76,7 +66,7 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	frameLeftPos.y = position.y;
 	frameVertical = frameHorizontal;
 	frameVertical.right = frameThickness;
-	frameVertical.bottom = height;
+	frameVertical.bottom = height * scale.y;
 
 
 	// right vertical frame
@@ -84,7 +74,24 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	frameRightPos.x += size.x - frameThickness;
 	// frame sticks out passed rectangle area; (-frameThickness) pulls it back in
 
-	hitArea.reset(new HitArea(pos, size));
+	hitArea.reset(new HitArea(pos, size * scale));
+
+}
+
+bool cyberGrow = true;
+void RectangleFrame::refreshDimensions() {
+
+	if (!cyberGrow) {
+
+		frameBottomPos = frameTopPos;
+		frameBottomPos.y += getHeight() *scale.y - frameThickness;
+		frameLeftPos = frameTopPos;
+		frameRightPos = frameTopPos;
+		frameRightPos.x += getWidth() *scale.x - frameThickness;
+
+	}
+	hitArea->size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
+	hitArea->position = frameTopPos;
 
 }
 
@@ -113,11 +120,13 @@ void RectangleFrame::draw(SpriteBatch* batch) {
 }
 
 void RectangleFrame::setPosition(const Vector2& newPosition) {
-	// this doesn't seem right....
+
 	frameTopPos = newPosition;
 	frameBottomPos = newPosition;
+	frameBottomPos.y += getHeight() - frameThickness;
 	frameLeftPos = newPosition;
 	frameRightPos = newPosition;
+	frameRightPos.x += getWidth() - frameThickness;
 	hitArea->position = newPosition;
 }
 
@@ -131,7 +140,7 @@ void RectangleFrame::moveBy(const Vector2& moveVector) {
 }
 
 
-const Vector2 & RectangleFrame::getPosition() const {
+const Vector2& RectangleFrame::getPosition() const {
 	return frameTopPos;
 }
 
@@ -147,12 +156,11 @@ const int RectangleFrame::getThickness() const {
 	return frameThickness;
 }
 
-const Vector2 & RectangleFrame::getOrigin() const {
+const Vector2& RectangleFrame::getOrigin() const {
 	return origin;
 }
 
-void RectangleFrame::setTint(const Color& color) {
-
+void RectangleFrame::setTint(const XMFLOAT4 color) {
 	tint = color;
 }
 
@@ -169,7 +177,7 @@ const Color & RectangleFrame::getTint() const {
 }
 
 const float RectangleFrame::getAlpha() const {
-	return 0.0f;
+	return tint.w;
 }
 
 void RectangleFrame::setOrigin(const Vector2& orgn) {
@@ -177,7 +185,9 @@ void RectangleFrame::setOrigin(const Vector2& orgn) {
 }
 
 void RectangleFrame::setScale(const Vector2& scl) {
+
 	scale = scl;
+	refreshDimensions();
 }
 
 void RectangleFrame::setRotation(const float rot) {
@@ -185,7 +195,7 @@ void RectangleFrame::setRotation(const float rot) {
 }
 
 void RectangleFrame::setAlpha(const float alpha) {
-
+	tint.w = alpha;
 }
 
 bool RectangleFrame::contains(const Vector2& point) {
@@ -227,6 +237,7 @@ void Line::setDimensions(const Vector2& pos, const Vector2& size) {
 
 void Line::setTint(const Color& color) {
 	tint = color;
+
 }
 
 void Line::draw(SpriteBatch* batch) {

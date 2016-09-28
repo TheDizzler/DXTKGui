@@ -33,6 +33,7 @@ Email: tgillon.sdk@gmail.com
 >- can load images and animations from spritesheets
 
 ##TODO:
+>- uncouple controls and factory from my game engine
 >- TexturePanel - add horizontal scrolling
 >- Dialog Box - allow custom bg image;
 >- Scrollbar - that can be slapped on to anything; horizontal scrolling
@@ -43,6 +44,7 @@ Email: tgillon.sdk@gmail.com
 >- screen transition effects
 >- Combo Box - allow custom frame/bg image
 >- ListBox - allow custom frame/bg image
+>- change to shared fontsets from unique
 >- tooltips?
 >- More Primitive Shapes - if I feel they might be useful
 >- Other stuff I can't think of at the moment

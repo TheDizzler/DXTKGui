@@ -5,6 +5,7 @@
 ScrollBar::ScrollBar(const Vector2& pos) {
 
 	position = pos;
+	
 }
 
 ScrollBar::~ScrollBar() {
@@ -57,7 +58,7 @@ bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 	if (scrllBrTrck.get() == NULL) {
 		scrollBarTrack.reset(new RectangleSprite(pixelAsset->getTexture(),
 			scrollBarPosition, trackSize));
-		scrollBarTrack->setTint(Colors::Gray.v);
+		scrollBarTrack->setTint(Color(.502, .502, .502, 1));
 	} else {
 		scrollBarTrack = move(scrllBrTrck);
 		scrollBarTrack->setOrigin(Vector2(0, 0));
@@ -303,6 +304,14 @@ bool ScrollBar::pressed() {
 
 bool ScrollBar::hovering() {
 	return isHover;
+}
+
+void ScrollBar::setScale(const Vector2& newScale) {
+
+	scrollBarTrack->setScale(newScale);
+	scrubber->setScale(newScale);
+	scrollBarUpButton->setScale(newScale);
+	scrollBarDownButton->setScale(newScale);
 }
 
 /* Unused in ScrollBar. */

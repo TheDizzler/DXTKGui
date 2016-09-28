@@ -24,12 +24,14 @@ void TexturePanel::setTexture(unique_ptr<GraphicsAsset> gfx) {
 	if (gfxAsset->getHeight() > getHeight()) {
 		verticalScrollBar->setScrollBar(
 			gfxAsset->getHeight() / scrollSpeed, 1, getHeight() / scrollSpeed);
-	}
+		showScrollBar = true;
+	} else
+		showScrollBar = false;
 }
 
 void TexturePanel::update(double deltaTime, MouseController* mouse) {
 
-	if (getHeight() <= gfxAsset->getHeight()) {
+	if (showScrollBar || alwaysDisplayScrollBar) {
 		verticalScrollBar->update(deltaTime, mouse);
 
 		if (hitArea->contains(mouse->getPosition())) {
@@ -51,7 +53,7 @@ void TexturePanel::draw(SpriteBatch* batch) {
 		batch->Draw(texture.Get(), position, &viewRect,
 			Color(1, 1, 1), rotation, origin, scale, SpriteEffects_None);
 
-		if (getHeight() < gfxAsset->getHeight() || alwaysDisplayScrollBar) {
+		if (showScrollBar || alwaysDisplayScrollBar) {
 			verticalScrollBar->draw(batch);
 		}
 	}
@@ -81,11 +83,15 @@ void TexturePanel::setTexturePosition(const Vector2& texPos) {
 	setPosition(texPos);
 }
 
+void TexturePanel::setScale(const Vector2& newScale) {
+	GUIControl::setScale(newScale);
+	verticalScrollBar->setScale(newScale);
+}
+
 
 void TexturePanel::moveBy(const Vector2 & moveVector) {
 	GUIControl::moveBy(moveVector);
 	verticalScrollBar->moveBy(moveVector);
-	//bgSprite->moveBy(moveVector);
 }
 
 const Vector2& TexturePanel::getPosition() const {

@@ -12,20 +12,6 @@ namespace Globals {
 	extern int vsync_enabled;
 	extern bool FULL_SCREEN;
 
-	/* NOTE: using MessageBox forces a reboot when in full screen mode!
-		Only use this before graphics assets have been loaded and before going
-		full screen. After graphics assets have been loaded use GameEngine::reportError(). */
-	/*inline bool reportError(HRESULT hr) {
-
-		if (FAILED(hr)) {
-			_com_error err(hr);
-			MessageBox(NULL, err.ErrorMessage(), TEXT("This is SRS Error"), MB_OK | MB_ICONERROR);
-			return true;
-		}
-
-		return false;
-	}*/
-
 	/* For reference purposes only. */
 	/*wstring convertIntToWString(float number) {
 

@@ -9,8 +9,10 @@ Dialog::~Dialog() {
 
 	controls.clear();
 
-	if (transition != NULL)
-		delete transition;
+	if (openTransition != NULL)
+		delete openTransition;
+	if (closeTransition != NULL)
+		delete closeTransition;
 }
 
 #include "../Controls/GUIFactory.h"
@@ -18,13 +20,13 @@ void Dialog::initialize(GraphicsAsset* pixelAsset,
 	const pugi::char_t* font) {
 
 	panel.reset(guiFactory->createPanel());
-	panel->setTint(Color(0, 1, 1));
+	panel->setTint(Color(0, 1, 1, 1));
 	frame.reset(new RectangleFrame(pixelAsset));
 	bgSprite.reset(new RectangleSprite(pixelAsset));
 	titleSprite.reset(new RectangleSprite(pixelAsset));
-	titleSprite->setTint(Color(1, 1, 1));
+	titleSprite->setTint(Color(1, 1, 1, 1));
 	buttonFrameSprite.reset(new RectangleSprite(pixelAsset));
-	buttonFrameSprite->setTint(Color(1, 1, 1));
+	buttonFrameSprite->setTint(Color(1, 1, 1, 1));
 	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
 
 	controls.resize(5);
@@ -33,7 +35,7 @@ void Dialog::initialize(GraphicsAsset* pixelAsset,
 
 	//unique_ptr<GUIControl> dialogText;
 	dialogText.reset(new TextLabel(guiFactory->getFont(font)));
-	dialogText->setTint(Color(0, 0, 0));
+	dialogText->setTint(Color(0, 0, 0, 1));
 	//controls[DialogText] = move(dialogText);
 
 	//setCancelButton(L"Cancel");
@@ -73,12 +75,26 @@ void Dialog::setDimensions(const Vector2& pos, const Vector2& sz,
 	calculateDialogTextPos();
 }
 
-void Dialog::setTransition(TransitionEffects::TransitionEffect* effect) {
-	if (transition != NULL)
-		delete transition;
-	runTransition = &TransitionEffects::TransitionEffect::run;
-	resetTransition = &TransitionEffects::TransitionEffect::reset;
-	transition = effect;
+void Dialog::setOpenTransition(TransitionEffects::TransitionEffect* effect) {
+	if (openTransition != NULL)
+		delete openTransition;
+	else {
+		runTransition = &TransitionEffects::TransitionEffect::run;
+		resetTransition = &TransitionEffects::TransitionEffect::reset;
+	}
+	openTransition = effect;
+	(openTransition->*resetTransition)(this);
+}
+
+void Dialog::setCloseTransition(TransitionEffects::TransitionEffect* effect) {
+
+	if (closeTransition != NULL)
+		delete closeTransition;
+	else {
+		runTransition = &TransitionEffects::TransitionEffect::run;
+		resetTransition = &TransitionEffects::TransitionEffect::reset;
+	}
+	closeTransition = effect;
 }
 
 
@@ -111,16 +127,16 @@ void Dialog::calculateTitlePos() {
 	controls[TitleText]->setPosition(titlePos);
 }
 
-void Dialog::setTitle(wstring text, const Vector2& scale, const pugi::char_t* font) {
+void Dialog::setTitle(wstring text, const Vector2& scale,
+	const pugi::char_t* font, Color color) {
 
 	controls[TitleText].release();
 	controls[TitleText].reset(new TextLabel(guiFactory->getFont(font)));
 	controls[TitleText]->setText(text);
 	controls[TitleText]->setScale(scale);
-	controls[TitleText]->setTint(Color(0, 0, 0));
+	controls[TitleText]->setTint(color);
 	calculateTitlePos();
 }
-
 
 void Dialog::calculateDialogTextPos() {
 
@@ -347,20 +363,22 @@ void Dialog::update(double deltaTime, MouseController* mouse) {
 	if (!isOpen)
 		return;
 
-	if (isTransitioning) {
-		isTransitioning = !(transition->*runTransition)(deltaTime, this);
+	if (isOpening) {
+		isOpening = !(openTransition->*runTransition)(deltaTime, this);
+	} else if (isClosing) {
+		isClosing = !(closeTransition->*runTransition)(deltaTime, this);
+		isOpen = isClosing;
+		if (!isOpen)
+			(closeTransition->*resetTransition)(this);
 	}
 
 	if (movable) {
 		if ((isHover = titleSprite->getHitArea()->contains(mouse->getPosition()))) {
 
 			if (mouse->pressed()) {
-
 				pressedPosition = mouse->getPosition() - position;
-
 				isPressed = true;
 			}
-
 		}
 
 		if (isPressed) {
@@ -397,12 +415,7 @@ void Dialog::draw(SpriteBatch* batch) {
 	}
 
 	panel->draw(batch);
-
 	frame->draw(batch);
-
-
-
-
 }
 
 
@@ -423,35 +436,45 @@ const Vector2& XM_CALLCONV Dialog::measureString() const {
 	return Vector2::Zero;
 }
 
+
 void Dialog::open() {
 	isOpen = true;
-	if (transition != NULL) {
-		isTransitioning = true;
-		(transition->*resetTransition)(this);
+	isClosing = false;
+	if (openTransition != NULL) {
+		isOpening = true;
+		(openTransition->*resetTransition)(this);
 	}
 }
 
 void Dialog::close() {
 
-	isOpen = false;
-	isTransitioning = false;
+	isOpening = false;
+	if (closeTransition != NULL) {
+		if (isClosing) {
+			open();
+		} else {
+			isClosing = true;
+			(closeTransition->*resetTransition)(this);
+		}
+	} else
+		isOpen = false;
 
 }
+
 
 void Dialog::setFont(const pugi::char_t* fontName) {
 
 	dialogText->setFont(fontName);
-	//textFormated = false;
 	calculateDialogTextPos();
 }
 
-void Dialog::setTextTint(const Color& color) {
+void Dialog::setTextTint(const XMFLOAT4 color) {
 
 	dialogText->setTint(color);
 	calculateDialogTextPos();
 }
 
-void Dialog::setTint(const Color& color) {
+void Dialog::setTint(const XMFLOAT4 color) {
 	bgSprite->setTint(color);
 	panel->setTint(color);
 	calculateDialogTextPos();
@@ -459,7 +482,6 @@ void Dialog::setTint(const Color& color) {
 
 void Dialog::setScale(const Vector2& newScale) {
 
-	//textFormated = false;
 	GUIControl::setScale(newScale);
 	frame->setScale(newScale);
 	bgSprite->setScale(newScale);
@@ -476,7 +498,6 @@ void Dialog::setScale(const Vector2& newScale) {
 
 void Dialog::setPosition(const Vector2& newPosition) {
 
-	//textFormated = false;
 	Vector2 moveBy = newPosition - position;
 	GUIControl::setPosition(newPosition);
 	frame->moveBy(moveBy);
@@ -493,7 +514,6 @@ void Dialog::setPosition(const Vector2& newPosition) {
 }
 
 const Vector2& Dialog::getPosition() const {
-
 	return position;
 }
 
@@ -503,6 +523,23 @@ const int Dialog::getWidth() const {
 
 const int Dialog::getHeight() const {
 	return size.y;
+}
+
+const vector<IElement2D*> Dialog::getElements() const {
+
+	vector<IElement2D*> elements;
+	elements.push_back(frame.get());
+	elements.push_back(bgSprite.get());
+	elements.push_back(titleSprite.get());
+	elements.push_back(buttonFrameSprite.get());
+	elements.push_back(panel.get());
+
+	for (auto const& control : controls) {
+		if (control == NULL)
+			continue;
+		elements.push_back(control.get());
+	}
+	return elements;
 }
 
 bool Dialog::clicked() {

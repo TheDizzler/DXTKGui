@@ -27,11 +27,12 @@ public:
 
 	void setDimensions(const Vector2& position, const Vector2& size,
 		int frameThickness = 2);
+	void refreshDimensions();
 
 	void setPosition(const Vector2& newPosition);
 	void moveBy(const Vector2& moveVector);
 
-	void setTint(const Color& color);
+	void setTint(const XMFLOAT4 color);
 
 	void draw(SpriteBatch* batch);
 
@@ -44,12 +45,10 @@ public:
 	virtual const Vector2& getScale() const override;
 	virtual const float getRotation() const override;
 	virtual const Color& getTint() const override;
-	/* No alpha implementation. */
 	virtual const float getAlpha() const override;
 	virtual void setOrigin(const Vector2& origin) override;
 	virtual void setScale(const Vector2& scale) override;
 	virtual void setRotation(const float rotation) override;
-	/* No alpha implementation. */
 	virtual void setAlpha(const float alpha) override;
 
 	bool contains(const Vector2& point);
@@ -67,7 +66,7 @@ private:
 	Vector2 origin = Vector2(0, 0);
 	Vector2 scale = Vector2(1, 1);
 	float rotation = 0.0f;
-	Color tint;
+	Color tint = Colors::Black;
 	int frameThickness;
 
 	unique_ptr<HitArea> hitArea;

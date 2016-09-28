@@ -22,7 +22,7 @@ const wchar_t * GUIControl::getText() {
 
 void GUIControl::setScale(const Vector2& scl) {
 	scale = scl;
-	setPosition(position);
+	hitArea->size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
 }
 
 
@@ -43,16 +43,12 @@ const Color& GUIControl::getTint() const {
 }
 
 const float GUIControl::getAlpha() const {
-	return alpha;
+	return tint.w;
 }
 
 bool GUIControl::contains(const Vector2& point) {
-
 	return hitArea->contains(point);
 }
-
-
-
 
 void GUIControl::setOrigin(const Vector2 & org) {
 	origin = org;
@@ -62,11 +58,11 @@ void GUIControl::setRotation(const float rot) {
 	rotation = rot;
 }
 
-void GUIControl::setTint(const Color& color) {
+void GUIControl::setTint(const XMFLOAT4 color) {
 	tint = color;
 }
 
-void GUIControl::setAlpha(const float alfa) {
-	alpha = alfa;
+void GUIControl::setAlpha(const float alpha) {
+	tint.w = alpha;
 }
 

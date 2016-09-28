@@ -59,7 +59,7 @@ public:
 	static void showWarningDialog(wstring message, wstring title) {
 		warningDialog->setTitle(title);
 		warningDialog->setText(message);
-		warningDialog->setTextTint(::DirectX::Colors::Red.v);
+		warningDialog->setTextTint(Color(1, 0, 0, 1));
 		warningDialog->open();
 		showDialog = warningDialog.get();
 	}

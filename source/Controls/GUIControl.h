@@ -31,7 +31,7 @@ public:
 	virtual void setOrigin(const Vector2& origin) override;
 	/** Remember: Rotation is around the origin! */
 	virtual void setRotation(const float rotation) override;
-	virtual void setTint(const Color& color) override;
+	virtual void setTint(const XMFLOAT4 color) override;
 	virtual void setAlpha(const float alpha) override;
 
 	virtual const Vector2& getPosition() const = 0;
@@ -60,8 +60,7 @@ protected:
 
 
 	Vector2 origin = Vector2(0, 0);
-	Color tint = DirectX::Colors::White.v;
-	float alpha = 1.0f;
+	Color tint = DirectX::Colors::White;
 	float rotation = 0.0f;
 	float layerDepth = 0.0f;
 

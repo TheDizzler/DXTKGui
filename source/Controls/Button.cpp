@@ -162,13 +162,13 @@ void Button::positionText() {
 		Vector2 newPos;
 		if (resized) {
 			newPos = Vector2(
-				position.x + (getWidth() - textsize.x) / 2 /*+ textMargin*/,
-				position.y + (getHeight() - textsize.y) / 2 /*+ textMargin*/);
+				position.x + (getScaledWidth() - textsize.x) / 2 /*+ textMargin*/,
+				position.y + (getScaledHeight() - textsize.y) / 2 /*+ textMargin*/);
 			resized = false;
 		} else
 			newPos = Vector2(
-				position.x + (getWidth() - textsize.x) / 2,
-				position.y + (getHeight() - textsize.y) / 2);
+				position.x + (getScaledWidth() - textsize.x) / 2,
+				position.y + (getScaledHeight() - textsize.y) / 2);
 
 
 		unpressedTextPosition = newPos;

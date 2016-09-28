@@ -1,7 +1,6 @@
 #include "../pch.h"
 #pragma once
 
-#include <map>
 #include <pugixml.hpp>
 #include "ComboBox.h"
 #include "../BaseGraphics/GraphicsAsset.h"
@@ -87,8 +86,7 @@ private:
 
 	ComPtr<ID3D11Device> device;
 	ComPtr<ID3D11DeviceContext> deviceContext;
-	//ComPtr<IDXGISwapChain> swapChain;
-	//ComPtr<ID3D11RenderTargetView> textureRenderTargetView;
+
 	SpriteBatch* batch;
    /** ID3D11ShaderResourceView is a ComPtr!
 	   This is used for solid color backgrounds and area fills. */

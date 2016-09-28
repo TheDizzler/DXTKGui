@@ -76,6 +76,10 @@ void MenuManager::openConfigMenu() {
 	switchTo = configScreen.get();
 }
 
+const Vector2 & MenuManager::getPosition() const {
+	return position;
+}
+
 
 /** **** MenuScreen abstract class **** */
 MenuScreen::MenuScreen(MenuManager* mngr) {
@@ -89,11 +93,6 @@ MenuScreen::~MenuScreen() {
 		delete control;
 
 	guiControls.clear();
-
-	wostringstream ws;
-	ws << "\nMenuScreen destroying\n";
-	OutputDebugString(ws.str().c_str());
-
 }
 
 void MenuScreen::setGameManager(GameManager* gmMng) {
@@ -103,6 +102,10 @@ void MenuScreen::setGameManager(GameManager* gmMng) {
 
 void MenuScreen::pause() {
 	// do nothing??
+}
+
+const Vector2& MenuScreen::getPosition() const {
+	return position;
 }
 
 
@@ -159,6 +162,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 	guiControls.push_back(test);
 
 	mouseLabel = GameManager::guiFactory->createTextLabel(Vector2(10, 100));
+	mouseLabel->setAlpha(.1);
 	guiControls.push_back(mouseLabel);
 
 	{
@@ -169,7 +173,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		dialogPos.x -= dialogSize.x / 2;
 		dialogPos.y -= dialogSize.y / 2;
 		exitDialog->setDimensions(dialogPos, dialogSize);
-		exitDialog->setTint(Color(0, .5, 1));
+		exitDialog->setTint(Color(0, .5, 1, 1));
 		exitDialog->setTitle(L"Exit Test?", Vector2(1, 1), "BlackCloak");
 		//exitDialog->setTitleAreaDimensions(Vector2(0, 150));
 		exitDialog->setText(L"Really Quit The Test Project?");
@@ -179,11 +183,20 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		quitButton->setText(L"Quit");
 		exitDialog->setConfirmButton(move(quitButton));
 		exitDialog->setCancelButton(L"Keep Testing!");
-		//exitDialog->setSlideInTransition(Vector2(0, dialogPos.y), 5);
-		//exitDialog->setGrowTransition(Vector2(.001, .001), 3);
-		exitDialog->setTransition(
-			//new TransitionEffects::GrowTransition(Vector2(.001, .001), Vector2(1, 1), 3));
-			new TransitionEffects::SlideTransition(Vector2(-200, -200), exitDialog->getPosition(), 10));
+
+		exitDialog->setOpenTransition(
+			/*new TransitionEffects::TrueGrowTransition(exitDialog.get(),
+				Vector2(.001, .001), Vector2(1, 1), 10));*/
+			/*new TransitionEffects::SlideAndGrowTransition(
+				Vector2(-200, -200), exitDialog->getPosition(),
+				Vector2(.001, .001), Vector2(1, 1), 10));*/
+			/*new TransitionEffects::GrowTransition(
+				Vector2(.0001, 0001), Vector2(1, 1), 10));*/
+			new TransitionEffects::SlideTransition(
+				Vector2(-200, -200), exitDialog->getPosition(), 10));
+		exitDialog->setCloseTransition(
+			new TransitionEffects::ShrinkTransition(
+				Vector2(1, 1), Vector2(.001, .001), 10));
 	}
 
 

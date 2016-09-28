@@ -27,7 +27,7 @@ public:
 	virtual void setOrigin(const Vector2& origin) = 0;
 	virtual void setScale(const Vector2& scale) = 0;
 	virtual void setRotation(const float rotation) = 0;
-	virtual void setTint(const Color& color) = 0;
+	virtual void setTint(const XMFLOAT4 color) = 0;
 	virtual void setAlpha(const float alpha) = 0;
 
 	virtual void draw(SpriteBatch* batch) = 0;

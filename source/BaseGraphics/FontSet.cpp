@@ -3,11 +3,11 @@
 
 FontSet::FontSet() {
 
-	//alpha = 1.0f;
-	rotation = 0.0f;
+	//rotation = 0.0f;
 	scale = Vector2(1, 1);
-	tint = DirectX::Colors::White.v;
+	tint = Color(0, 0, 0, 1);
 	layerDepth = 1.0f;
+	origin = Vector2(0, 0);
 }
 
 
@@ -28,88 +28,70 @@ XMVECTOR XM_CALLCONV FontSet::measureString(wchar_t const* text) const {
 }
 
 
-void FontSet::draw(SpriteBatch* batch, const wchar_t* text, Vector2 pos) {
+//void FontSet::draw(SpriteBatch* batch, const wchar_t* text, const Vector2& position) {
+//
+//	font->DrawString(batch, text, position, tint, 0.0f, origin, scale,
+//		SpriteEffects_None, layerDepth);
+//}
+//
+//void FontSet::draw(SpriteBatch* batch, const wchar_t* text, const Vector2& position,
+//	const Color& newTint) {
+//
+//	font->DrawString(batch, text, position, newTint, 0.0f, origin, scale,
+//		SpriteEffects_None, layerDepth);
+//}
 
-	font->DrawString(batch, text, pos, tint, rotation, origin, scale, SpriteEffects_None, layerDepth);
-}
+void FontSet::draw(SpriteBatch* batch, const wchar_t* text,
+	const Vector2& position, const Color& newTint, float rotation,
+	const Vector2& origin, const Vector2& scale) {
 
-void FontSet::draw(SpriteBatch* batch, const wchar_t* text, Vector2 pos, Color newTint) {
-
-	font->DrawString(batch, text, pos, newTint, rotation, origin, scale, SpriteEffects_None, layerDepth);
+	font->DrawString(batch, text, position, newTint, rotation, origin,
+		scale, SpriteEffects_None, layerDepth);
 }
 
 
 /** Don't use this draw function except for testing!! */
 void FontSet::draw(SpriteBatch* batch) {
-
 	font->DrawString(batch, defaultText, Vector2(0, 0));
-
 }
 
 
-//const Vector2& FontSet::getPosition() const {
-//
-//	return Vector2(0, 0);
-//}
-
-
 const Vector2& FontSet::getOrigin() const {
-
 	return origin;
 }
 
 const Vector2& FontSet::getScale() const {
-
 	return scale;
 }
 
-const float FontSet::getRotation() const {
-	return rotation;
-}
-
+//const float FontSet::getRotation() const {
+//	return rotation;
+//}
 
 const Color& FontSet::getTint() const {
-
 	return tint;
 }
 
-
-//const float FontSet::getAlpha() const {
-//
-//	return alpha;
-//}
-
-
-//void FontSet::setPosition(const Vector2& position) {
-//
-//}
-
+const float FontSet::getAlpha() const {
+	return tint.w;
+}
 
 void FontSet::setOrigin(const Vector2& org) {
-
 	origin = org;
 }
 
-
 void FontSet::setScale(const Vector2& scl) {
-
 	scale = scl;
 }
 
+//void FontSet::setRotation(const float rot) {
+//	rotation = rot;
+//}
 
-void FontSet::setRotation(const float rot) {
-
-	rotation = rot;
-}
-
-
-void FontSet::setTint(const Color& color) {
-
+void FontSet::setTint(const XMFLOAT4 color) {
 	tint = color;
 }
 
-
-//void FontSet::setAlpha(const float alph) {
-//
-//	alpha = alph;
-//}
+void FontSet::setAlpha(const float alpha) {
+	tint.w = alpha;
+}

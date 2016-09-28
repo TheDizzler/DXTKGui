@@ -34,9 +34,10 @@ public:
 	~GraphicsAsset();
 
 	bool load(ComPtr<ID3D11Device> device, const wchar_t* file);
-	
 	void loadAsPartOfSheet(ComPtr<ID3D11ShaderResourceView> spriteSheetTexture,
 		const Vector2& locationInSheet, const Vector2& size);
+
+	void getTextureDimensions(ID3D11Resource* res, UINT* width, UINT* height);
 
 	const int getWidth() const;
 	const int getHeight() const;

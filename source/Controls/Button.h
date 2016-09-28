@@ -45,14 +45,14 @@ public:
 	const int getScaledHeight() const;
 
 	/** Colors for imageless button. */
-	Color normalColor = Color(Vector3(1, 1, 1));
-	Color hoverColor = Color(Vector3(1, .75, 0));
-	Color selectedColor = Color(Vector3(1, 0, .4));
+	Color normalColor = Color(1, 1, 1, 1);
+	Color hoverColor = Color(1, .75, 0, 1);
+	Color selectedColor = Color(1, 0, .4, 1);
 
 	/** Colors for text on button. */
-	Color normalColorText = Color(Vector3(0, 0, 0));
-	Color hoverColorText = Color(Vector3(.5, .75, 1));
-	Color selectedColorText = Color(Vector3(0, .5, 1));
+	Color normalColorText = Color(0, 0, 0, 1);
+	Color hoverColorText = Color(.5, .75, 1, 1);
+	Color selectedColorText = Color(0, .5, 1, 1);
 
 	virtual bool clicked() override;
 	virtual bool pressed() override;

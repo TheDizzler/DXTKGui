@@ -374,21 +374,21 @@ void ListItem::draw(SpriteBatch* batch) {
 	if (isPressed) {// draw pressed color bg
 
 		batch->Draw(pixel.Get(), itemPosition, &itemRect,
-			::DirectX::Colors::White.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
+			::DirectX::Colors::White, 0.0f, Vector2(0, 0), Vector2(1, 1),
 			SpriteEffects_None, 0.0f);
-		textLabel->draw(batch, ::DirectX::Colors::Black.v);
+		textLabel->draw(batch, Color(0, 0, 0, 1));
 
 	} else if (isHover) { // draw hover color bg
 
 		batch->Draw(pixel.Get(), itemPosition, &itemRect,
-			::DirectX::Colors::Aqua.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
+			::DirectX::Colors::Aqua, 0.0f, Vector2(0, 0), Vector2(1, 1),
 			SpriteEffects_None, 0.0f);
 		textLabel->draw(batch);
 
 	} else { // draw basic bg
 
 		batch->Draw(pixel.Get(), itemPosition, &itemRect,
-			::DirectX::Colors::BurlyWood.v, 0.0f, Vector2(0, 0), Vector2(1, 1),
+			::DirectX::Colors::BurlyWood, 0.0f, Vector2(0, 0), Vector2(1, 1),
 			SpriteEffects_None, 0.0f);
 		textLabel->draw(batch);
 	}

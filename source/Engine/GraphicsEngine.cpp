@@ -202,7 +202,7 @@ bool GraphicsEngine::initializeAdapter(int adapterIndex) {
 		dxgiAdapter->GetParent(__uuidof(IDXGIFactory1), (void**) factory.GetAddressOf()),
 		L"Failed to get IDXGIFactory from DXGIAdapter"))
 		return false;
-	
+
 	if (GameEngine::reportError(
 		factory->CreateSwapChain(
 			device.Get(), &swapChainDesc, textureSwapChain.GetAddressOf()),
@@ -464,7 +464,7 @@ bool GraphicsEngine::setFullScreen(bool isFullScreen) {
 	if (swapChain.Get() == NULL)
 		return false;
 
-	Globals::FULL_SCREEN = isFullScreen;
+
 
 	if (isFullScreen) {
 		swapChain->SetFullscreenState(true, NULL);
@@ -474,6 +474,7 @@ bool GraphicsEngine::setFullScreen(bool isFullScreen) {
 	if (!resizeSwapChain())
 		return false;
 
+	Globals::FULL_SCREEN = isFullScreen;
 	return true;
 }
 

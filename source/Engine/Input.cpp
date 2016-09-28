@@ -38,7 +38,7 @@ bool Input::initRawInput(HWND hwnd) {
 	return true;
 }
 
-void Input::setRawInput(RAWINPUT* raw) {
+//void Input::setRawInput(RAWINPUT* raw) {
 
 	//if (raw->header.dwType == RIM_TYPEKEYBOARD) {
 	//	//rawKeys = &raw->data.keyboard;
@@ -50,10 +50,6 @@ void Input::setRawInput(RAWINPUT* raw) {
 	//	//rawMouse = &raw->data.mouse;
 	//	mouse->getRawInput(&raw->data.mouse);
 	//}
-}
-
-//void Input::processMouseMessage(UINT message, WPARAM wParam, LPARAM lParam) {
-//	mouse->ProcessMessage(message, wParam, lParam);
 //}
 
 

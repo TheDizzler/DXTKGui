@@ -33,8 +33,13 @@ bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 	return true;
 }
 
+//int fontCount = 0;
 #include "../assets.h"
 unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
+
+	/*wostringstream wss;
+	wss << "fontCount: " << ++fontCount << " ";
+	OutputDebugString(wss.str().c_str());*/
 
 	if (fontMap.find(fontName) == fontMap.end()) {
 
@@ -45,7 +50,7 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 		unique_ptr<FontSet> defaultFont;
 		defaultFont.reset(new FontSet());
 		defaultFont->load(device, Assets::convertCharStarToWCharT(defaultFontFile));
-		defaultFont->setTint(DirectX::Colors::White.v);
+		//defaultFont->setTint(Color(1, 1, 1, 1));
 
 		return defaultFont;
 	}
@@ -55,7 +60,7 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 	unique_ptr<FontSet> font;
 	font.reset(new FontSet());
 	font->load(device, Assets::convertCharStarToWCharT(fontFile));
-	font->setTint(DirectX::Colors::White.v);
+	font->setTint(Color(1, 1, 1, 1));
 	return font;
 }
 
@@ -361,9 +366,9 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromControl(
 
 
 
-	if (GameEngine::reportError(device->CreateTexture2D(&textureDesc, NULL,
+	if (Assets::reportError(device->CreateTexture2D(&textureDesc, NULL,
 		renderTargetTexture.GetAddressOf()),
-		L"Failed to create render target texture.", L"Aw shucks", true))
+		L"Failed to create render target texture.", L"Aw shucks"))
 		return NULL;
 
 	ComPtr<ID3D11RenderTargetView> textureRenderTargetView;
@@ -373,10 +378,10 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromControl(
 	renderTargetViewDesc.Texture2D.MipSlice = 0;
 
 
-	if (GameEngine::reportError(
+	if (Assets::reportError(
 		device->CreateRenderTargetView(renderTargetTexture.Get(),
 			NULL, textureRenderTargetView.GetAddressOf()),
-		L"Failed to create render target view for new texture.", L"Fatal Error", true))
+		L"Failed to create render target view for new texture.", L"Fatal Error"))
 		return NULL;
 
 

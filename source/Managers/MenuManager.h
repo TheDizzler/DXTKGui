@@ -134,6 +134,8 @@ public:
 
 	virtual void pause() override;
 
+	virtual const Vector2& getPosition() const override;
+
 	void openMainMenu();
 	void openConfigMenu();
 
@@ -144,8 +146,11 @@ private:
 	unique_ptr<MainScreen> mainScreen;
 	unique_ptr<ConfigScreen> configScreen;
 
+	Vector2 position = Vector2::Zero;
 
 	GameManager* game;
+
+	
 };
 
 
@@ -157,14 +162,15 @@ public:
 	MenuScreen(MenuManager* manager);
 	virtual ~MenuScreen();
 
-
 	virtual void setGameManager(GameManager* game) override;
-
+	virtual const Vector2& getPosition() const override;
 	virtual void pause() override;
 protected:
 
 	GameManager* game;
 	MenuManager* menuManager;
+
+	Vector2 position = Vector2::Zero;
 
 	vector<GUIControl* > guiControls;
 

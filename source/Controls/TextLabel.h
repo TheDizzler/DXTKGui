@@ -27,7 +27,7 @@ public:
 
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 	virtual void setFont(shared_ptr<FontSet> newFont);
-	virtual void setTint(const Color& color) override;
+	virtual void setTint(const XMFLOAT4 color) override;
 	/** Warning: this will affect all text sharing this font! */
 	virtual void setScale(const Vector2& scl) override;
 
@@ -35,8 +35,10 @@ public:
 	void setText(wostringstream& text);
 	virtual void setText(wstring text) override;
 	virtual const wchar_t* getText() override;
+	/* Calculated with scaling. */
 	virtual const Vector2& XM_CALLCONV measureString() const override;
-	/* Convenience method when a FontSet is not available. */
+	/* Convenience method when a FontSet is not available. 
+		Scaling is not considered. */
 	const Vector2& XM_CALLCONV measureString(wstring string) const;
 	
 

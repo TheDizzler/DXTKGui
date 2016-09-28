@@ -3,10 +3,9 @@
 
 Sprite::Sprite() {
 
-	alpha = 1.0f;
 	rotation = 0.0f;
 	scale = Vector2(1, 1);
-	tint = DirectX::Colors::White.v;
+	tint = DirectX::Colors::White;
 	layerDepth = 0.0f;
 
 	width = 0;
@@ -16,10 +15,9 @@ Sprite::Sprite() {
 Sprite::Sprite(const Vector2& pos) {
 
 	position = pos;
-	alpha = 1.0f;
 	rotation = 0.0f;
 	scale = Vector2(1, 1);
-	tint = DirectX::Colors::White.v;
+	tint = DirectX::Colors::White;
 	layerDepth = 0.0f;
 	width = 0;
 	height = 0;
@@ -30,7 +28,6 @@ Sprite::~Sprite() {
 
 }
 
-#include "../globals.h"
 void Sprite::load(GraphicsAsset* const graphicsAsset) {
 
 	texture.Reset();
@@ -99,7 +96,7 @@ const Color& Sprite::getTint() const {
 }
 
 const float Sprite::getAlpha() const {
-	return alpha;
+	return tint.w;
 }
 
 const RECT Sprite::getRect() const {
@@ -165,19 +162,19 @@ void Sprite::setOrigin(const Vector2& orgn) {
 void Sprite::setScale(const Vector2& scl) {
 
 	scale = scl;
-	setPosition(position);
+	//setPosition(position);
 }
 
 void Sprite::setRotation(const float rot) {
 	rotation = rot;
 }
 
-void Sprite::setTint(const Color& colr) {
+void Sprite::setTint(const XMFLOAT4 colr) {
 	tint = colr;
 }
 
-void Sprite::setAlpha(const float alph) {
-	alpha = alph;
+void Sprite::setAlpha(const float alpha) {
+	tint.w = alpha;
 }
 
 

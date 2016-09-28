@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <wrl.h>
 #include <memory>
+#include <map>
 #include <vector>
 #include <comdef.h>
 #include <algorithm> 

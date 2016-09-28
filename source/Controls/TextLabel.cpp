@@ -63,23 +63,24 @@ void TextLabel::update(double deltaTime, MouseController* mouse) {
 
 void TextLabel::draw(SpriteBatch* batch) {
 
-	font->draw(batch, label.c_str(), position);
+	//font->draw(batch, label.c_str(), position, tint);
+	font->draw(batch, label.c_str(), position, tint,
+		rotation, origin, scale);
 }
 
 void TextLabel::draw(SpriteBatch* batch, Color color) {
-
-	font->draw(batch, label.c_str(), position, color);
+	font->draw(batch, label.c_str(), position, color,
+		rotation, origin, scale);
 }
 
 void TextLabel::setText(string text) {
 
-	wostringstream ws;
-	ws << text.c_str();
-	setText(ws);
+	wostringstream wss;
+	wss << text.c_str();
+	setText(wss);
 }
 
 void TextLabel::setText(wostringstream& text) {
-
 	setText(text.str());
 }
 
@@ -87,13 +88,14 @@ void TextLabel::setText(wstring text) {
 
 	label = text;
 	Vector2 size = font->measureString(label.c_str());
+	size *= scale;
 	hitArea->position = position;
 	hitArea->size = size;
 }
 
 const Vector2& XM_CALLCONV TextLabel::measureString() const {
 	Vector2 size = font->measureString(label.c_str());
-	return size;
+	return size * scale;
 }
 
 const Vector2& XM_CALLCONV TextLabel::measureString(wstring string) const {
@@ -117,7 +119,6 @@ bool TextLabel::clicked() {
 }
 
 bool TextLabel::pressed() {
-
 	return isPressed;
 }
 
@@ -143,24 +144,22 @@ void TextLabel::setToSelectedState() {
 
 #include "../Controls/GUIFactory.h"
 void TextLabel::setFont(const pugi::char_t* fontName) {
-
 	font = guiFactory->getFont(fontName);
 }
 
 void TextLabel::setFont(shared_ptr<FontSet> newFont) {
-
 	font = newFont;
 }
 
-void TextLabel::setTint(const Color& color) {
-
+void TextLabel::setTint(const XMFLOAT4 color) {
 	tint = color; // this kind of irrelevant, but oh well
-	font->setTint(color);
+	//font->setTint(color);
 }
 
 /** Warning: this will affect all text sharing this font! */
 void TextLabel::setScale(const Vector2 & scl) {
-	font->setScale(scl);
+	scale = scl;
+	//font->setScale(scl);
 }
 
 const Vector2& TextLabel::getPosition() const {

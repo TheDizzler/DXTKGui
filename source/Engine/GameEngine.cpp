@@ -32,9 +32,9 @@ bool GameEngine::initEngine(HWND hw, HINSTANCE hInstance) {
 	// Initialize Audio Engine
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
 	AUDIO_ENGINE_FLAGS audioFlags = AudioEngine_Default;
-#ifdef _DEBUG
-	audioFlags = audioFlags | AudioEngine_Debug;
-#endif
+//#ifdef _DEBUG
+//	audioFlags = audioFlags | AudioEngine_Debug;
+//#endif
 	audioEngine.reset(new AudioEngine(audioFlags));
 	retryAudio = false;
 
@@ -147,12 +147,12 @@ void GameEngine::update(double deltaTime) {
 }
 
 
-
+#include "CommonStates.h"
 void GameEngine::render(double deltaTime) {
 
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), Colors::PeachPuff);
-
-	batch->Begin(SpriteSortMode_Deferred);
+	/*CommonStates blendState(device.Get());*/
+	batch->Begin(SpriteSortMode_Deferred/*, blendState.NonPremultiplied()*/);
 	{
 		game->draw(batch.get());
 		showDialog->draw(batch.get());
