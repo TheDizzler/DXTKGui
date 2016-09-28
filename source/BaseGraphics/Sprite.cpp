@@ -47,7 +47,7 @@ void Sprite::load(GraphicsAsset* const graphicsAsset) {
 		Vector2(width, height)));
 
 	/*if (graphicsAsset->hasAnimations()) {
-		
+
 		animationFrames = graphicsAsset->getAnimation();
 	}*/
 }
@@ -162,7 +162,9 @@ void Sprite::setOrigin(const Vector2& orgn) {
 void Sprite::setScale(const Vector2& scl) {
 
 	scale = scl;
-	//setPosition(position);
+	hitArea->position = Vector2(position.x - origin.x*scale.x,
+		position.y - origin.y*scale.y);
+	hitArea->size = Vector2(width * scale.x, height * scale.y);
 }
 
 void Sprite::setRotation(const float rot) {

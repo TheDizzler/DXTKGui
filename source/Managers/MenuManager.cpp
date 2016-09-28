@@ -185,18 +185,18 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		exitDialog->setCancelButton(L"Keep Testing!");
 
 		exitDialog->setOpenTransition(
-			/*new TransitionEffects::TrueGrowTransition(exitDialog.get(),
-				Vector2(.001, .001), Vector2(1, 1), 10));*/
+			new TransitionEffects::TrueGrowTransition(exitDialog.get(),
+				Vector2(.001, .001), Vector2(1, 1), 1));
 			/*new TransitionEffects::SlideAndGrowTransition(
 				Vector2(-200, -200), exitDialog->getPosition(),
-				Vector2(.001, .001), Vector2(1, 1), 10));*/
+				Vector2(.001, .001), Vector2(1, 1)));*/
 			/*new TransitionEffects::GrowTransition(
-				Vector2(.0001, 0001), Vector2(1, 1), 10));*/
-			new TransitionEffects::SlideTransition(
-				Vector2(-200, -200), exitDialog->getPosition(), 10));
+				Vector2(.0001, 0001), Vector2(1, 1)));*/
+			/*new TransitionEffects::SlideTransition(
+				Vector2(-200, -200), exitDialog->getPosition()));*/
 		exitDialog->setCloseTransition(
 			new TransitionEffects::ShrinkTransition(
-				Vector2(1, 1), Vector2(.001, .001), 10));
+				Vector2(1, 1), Vector2(.001, .001)));
 	}
 
 

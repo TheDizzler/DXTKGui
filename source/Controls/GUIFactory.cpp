@@ -343,11 +343,10 @@ Dialog* GUIFactory::createDialog(bool movable, const char_t* fontName) {
 
 #include "../Engine/GameEngine.h"
 unique_ptr<GraphicsAsset> GUIFactory::createTextureFromControl(
-	/*ComPtr<ID3D11Device> device, ComPtr<ID3D11DeviceContext> devCon,
-	SpriteBatch* batch,*/ IElement2D* control, Color bgColor) {
+	IElement2D* control, Color bgColor) {
 
 	int buffer = 5; // padding to give a bit of lee-way to prevent tearing
-	int width = control->getWidth() + buffer; 
+	int width = control->getWidth() + buffer;
 	int height = control->getHeight() + buffer;
 
 	ComPtr<ID3D11Texture2D> renderTargetTexture;

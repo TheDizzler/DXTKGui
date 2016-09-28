@@ -77,8 +77,7 @@ public:
 	/* Creates a texture from a screen grab of an IElement2D object.
 		offset is the vector to bring object to top left corner of screen
 			in prep for its close up.*/
-	unique_ptr<GraphicsAsset> createTextureFromControl(/*ComPtr<ID3D11Device> device,
-		ComPtr<ID3D11DeviceContext> devCon, SpriteBatch* batch,*/
+	unique_ptr<GraphicsAsset> createTextureFromControl(
 		IElement2D* control, Color bgColor = {1, 1, 1, 1});
 
 	static bool initialized;

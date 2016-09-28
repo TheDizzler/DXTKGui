@@ -83,7 +83,7 @@ void Dialog::setOpenTransition(TransitionEffects::TransitionEffect* effect) {
 		resetTransition = &TransitionEffects::TransitionEffect::reset;
 	}
 	openTransition = effect;
-	(openTransition->*resetTransition)(this);
+	//(openTransition->*resetTransition)(this);
 }
 
 void Dialog::setCloseTransition(TransitionEffects::TransitionEffect* effect) {
@@ -372,7 +372,7 @@ void Dialog::update(double deltaTime, MouseController* mouse) {
 			(closeTransition->*resetTransition)(this);
 	}
 
-	if (movable) {
+	if (movable && !isOpening && !isClosing) {
 		if ((isHover = titleSprite->getHitArea()->contains(mouse->getPosition()))) {
 
 			if (mouse->pressed()) {
@@ -381,12 +381,16 @@ void Dialog::update(double deltaTime, MouseController* mouse) {
 			}
 		}
 
+		if (!mouse->leftButton()) {
+			isPressed = false;
+			pressedPosition = Vector2::Zero;
+		}
+
 		if (isPressed) {
 			setDraggedPosition(mouse->getPosition() - pressedPosition);
 		}
 
-		if (!mouse->leftButton())
-			isPressed = false;
+
 
 	}
 	panel->update(deltaTime, mouse);
@@ -404,7 +408,16 @@ void Dialog::draw(SpriteBatch* batch) {
 	if (!isOpen)
 		return;
 
+	/*if (isOpening) {
+
+		(openTransition->*drawTransition)(batch);
+
+	} else if (isClosing) {
+		(closeTransition->*drawTransition)(batch);
+
+	} else {*/
 	bgSprite->draw(batch);
+	panel->draw(batch);
 	titleSprite->draw(batch);
 	buttonFrameSprite->draw(batch);
 
@@ -414,8 +427,9 @@ void Dialog::draw(SpriteBatch* batch) {
 		control->draw(batch);
 	}
 
-	panel->draw(batch);
+
 	frame->draw(batch);
+//}
 }
 
 
@@ -448,17 +462,21 @@ void Dialog::open() {
 
 void Dialog::close() {
 
-	isOpening = false;
-	if (closeTransition != NULL) {
-		if (isClosing) {
-			open();
-		} else {
-			isClosing = true;
-			(closeTransition->*resetTransition)(this);
-		}
-	} else
-		isOpen = false;
+	/*if (isOpening) {
 
+
+	} else {*/
+		isOpening = false;
+		if (closeTransition != NULL) {
+			if (isClosing) {
+				open();
+			} else {
+				isClosing = true;
+				(closeTransition->*resetTransition)(this);
+			}
+		} else
+			isOpen = false;
+	//}
 }
 
 

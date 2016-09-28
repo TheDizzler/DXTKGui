@@ -160,6 +160,7 @@ private:
 	TransitionEffects::TransitionEffect* closeTransition = NULL;
 	TransitionEffects::Run runTransition;
 	TransitionEffects::Reset resetTransition;
+	TransitionEffects::Draw drawTransition;
 
 	/** Generic OnClick for Cancel Button. */
 	class OnClickListenerCancelButton : public Button::OnClickListener {

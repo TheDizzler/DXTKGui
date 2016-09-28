@@ -18,17 +18,17 @@ namespace TransitionEffects {
 		/* Some effects will never actually conclude. Effects should check against
 			this threshold to decide when it's logically finished, if not mathmatically
 			finished. Adjust to feel. */
-		float threshold = .001;
+		//float threshold = .9;
 	};
 
 	typedef bool (TransitionEffect::*Run) (double, GUIControl*);
 	typedef void (TransitionEffect::*Reset) (GUIControl*);
-
+	
 
 	class GrowTransition : public TransitionEffect {
 	public:
 		GrowTransition(const Vector2& startScale, const Vector2& endScale,
-			float transitionSpeed = 10);
+			float transitionSpeed = 20);
 		virtual bool run(double deltaTime, GUIControl* control) override;
 		virtual void reset(GUIControl* control) override;
 	protected:
@@ -39,14 +39,14 @@ namespace TransitionEffects {
 	class ShrinkTransition : public GrowTransition {
 	public:
 		ShrinkTransition(const Vector2& startScale, const Vector2& endScale,
-			float transitionSpeed);
+			float transitionSpeed = 20);
 		virtual bool run(double deltaTime, GUIControl * control) override;
 	};
 
 	class SlideTransition : public TransitionEffect {
 	public:
 		SlideTransition(const Vector2& startPos, const Vector2& endPos,
-			float transitionSpeed);
+			float transitionSpeed = 20);
 		virtual bool run(double deltaTime, GUIControl* control) override;
 		virtual void reset(GUIControl * control) override;
 	protected:
@@ -59,7 +59,7 @@ namespace TransitionEffects {
 	public:
 		SlideAndGrowTransition(const Vector2& startPos, const Vector2& endPos,
 			const Vector2& startScale, const Vector2& endScale,
-			float transitionSpeed);
+			float transitionSpeed = 20);
 		virtual bool run(double deltaTime, GUIControl * control) override;
 		virtual void reset(GUIControl * control) override;
 
@@ -78,7 +78,7 @@ namespace TransitionEffects {
 	public:
 		TrueGrowTransition(Dialog* containerControl,
 			const Vector2& startScale, const Vector2& endScale,
-			float transitionSpeed);
+			float transitionSpeed = 20);
 		virtual bool run(double deltaTime, GUIControl* control) override;
 		virtual void reset(GUIControl * control) override;
 
@@ -87,8 +87,24 @@ namespace TransitionEffects {
 		Vector2 endScale;
 		vector<IElement2D*> elements;
 		vector<Vector2> endPositions;
-		//map<IElement2D*, Vector2> endPositions;
 
 		bool containerDone = false;
 	};
+
+
+	/* A base class for transitions that require advanced graphical features. */
+	class TexturedTransition : public TransitionEffect {
+	public:
+		TexturedTransition(unique_ptr<GraphicsAsset> texture);
+
+		virtual bool run(double deltaTime, GUIControl * control) override;
+		virtual void reset(GUIControl * control) override;
+
+		void draw(SpriteBatch* batch);
+
+	protected:
+		unique_ptr<GraphicsAsset> texture;
+
+	};
+	typedef void (TransitionEffect::*Draw)(SpriteBatch*);
 };
