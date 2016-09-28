@@ -237,12 +237,116 @@ void TransitionEffects::TrueGrowTransition::reset(GUIControl* containerControl) 
 
 
 
-TransitionEffects::TexturedTransition::TexturedTransition(unique_ptr<GraphicsAsset> texture) {
+TransitionEffects::TexturedTransition::TexturedTransition(
+	GUIControl* control, float speed) {
+
+
+	gfxAsset.reset(control->createTexture());
+	texture = gfxAsset->getTexture();
+	viewRect.left = 0;
+	viewRect.top = 0;
+	viewRect.right = gfxAsset->getWidth();
+	viewRect.bottom = gfxAsset->getHeight();
+
+	//origin = Vector2(gfxAsset->getWidth(), gfxAsset->getHeight());
+	position = control->getPosition();
+
+	transitionSpeed = speed;
 }
 
-bool TransitionEffects::TexturedTransition::run(double deltaTime, GUIControl * control) {
+
+bool TransitionEffects::TexturedTransition::draw(SpriteBatch* batch) {
+
+	batch->Draw(texture.Get(), position, &viewRect,
+		tint, rotation, origin, scale, SpriteEffects_None);
+	return true;
+}
+
+
+
+TransitionEffects::SpinTransition::SpinTransition(
+	GUIControl* control, float speed) : TexturedTransition(control, speed) {
+
+	origin = Vector2(gfxAsset->getWidth() / 2, gfxAsset->getHeight() / 2);
+	position.x += gfxAsset->getWidth() / 2;
+	position.y += gfxAsset->getHeight() / 2;
+
+	startScale = Vector2(0, 0);
+	endScale = control->getScale();
+	scale = startScale;
+}
+
+bool TransitionEffects::SpinTransition::run(double deltaTime, GUIControl* control) {
+
+	if (!scaleDone) {
+		scale = Vector2::Lerp(scale, endScale,
+			deltaTime/**transitionSpeed/1.5*/);
+		Vector2 diffScale = endScale - scale;
+		if (diffScale.x <= .05 && diffScale.y <= .05) {
+			scale = endScale;
+			scaleDone = true;
+		}
+	}
+	if (!scaleDone) {
+		rotation += deltaTime*transitionSpeed;
+		if (rotation >= XM_PI*2) {
+			rotation = 0;
+			rotationDone = true;
+		}
+	}
+	return scaleDone && rotationDone;
+}
+
+
+void TransitionEffects::SpinTransition::reset(GUIControl* control) {
+
+	scaleDone = false;
+	rotationDone = false;
+	scale = startScale;
+}
+
+
+
+TransitionEffects::SplitTransition::SplitTransition(
+	GUIControl* control, float speed) : TexturedTransition(control, speed) {
+
+
+	viewRect.right = gfxAsset->getWidth() / 2;
+
+
+	viewRectRight.left = gfxAsset->getWidth() / 2;
+	viewRectRight.top = 0;
+	viewRectRight.right = gfxAsset->getWidth();
+	viewRectRight.bottom = gfxAsset->getHeight();
+
+	positionRight = position;
+	position.x = -gfxAsset->getWidth() / 2;
+	positionRight.x = Globals::WINDOW_WIDTH;
+}
+
+bool TransitionEffects::SplitTransition::run(double deltaTime, GUIControl* control) {
+
+	double change = deltaTime *transitionSpeed * 10;
+	position.x += change;
+	positionRight.x -= change;
+	if (position.x >= control->getPosition().x)
+		return true;
 	return false;
 }
 
-void TransitionEffects::TexturedTransition::reset(GUIControl * control) {
+void TransitionEffects::SplitTransition::reset(GUIControl* control) {
+
+	position.x = -gfxAsset->getWidth() / 2;
+	positionRight.x = Globals::WINDOW_WIDTH;
 }
+
+bool TransitionEffects::SplitTransition::draw(SpriteBatch* batch) {
+
+	batch->Draw(texture.Get(), position, &viewRect,
+		tint, rotation, origin, scale, SpriteEffects_None);
+	batch->Draw(texture.Get(), positionRight, &viewRectRight,
+		tint, rotation, origin, scale, SpriteEffects_None);
+	return true;
+}
+
+

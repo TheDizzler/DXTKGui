@@ -9,10 +9,12 @@ namespace TransitionEffects {
 	class TransitionEffect {
 	public:
 
-		/* Returns if transition effect is finished. */
+		/* Returns true when transition effect is finished. */
 		virtual bool run(double deltaTime, GUIControl* control) = 0;
 		virtual void reset(GUIControl* control) = 0;
-
+		virtual bool draw(SpriteBatch* batch) {
+			return false;
+		}
 		float transitionSpeed;
 
 		/* Some effects will never actually conclude. Effects should check against
@@ -20,10 +22,10 @@ namespace TransitionEffects {
 			finished. Adjust to feel. */
 		//float threshold = .9;
 	};
-
+	/* Returns true when transition effect is finished. */
 	typedef bool (TransitionEffect::*Run) (double, GUIControl*);
 	typedef void (TransitionEffect::*Reset) (GUIControl*);
-	
+	typedef bool (TransitionEffect::*Draw) (SpriteBatch*);
 
 	class GrowTransition : public TransitionEffect {
 	public:
@@ -31,6 +33,7 @@ namespace TransitionEffects {
 			float transitionSpeed = 20);
 		virtual bool run(double deltaTime, GUIControl* control) override;
 		virtual void reset(GUIControl* control) override;
+
 	protected:
 		Vector2 startScale;
 		Vector2 endScale;
@@ -49,6 +52,7 @@ namespace TransitionEffects {
 			float transitionSpeed = 20);
 		virtual bool run(double deltaTime, GUIControl* control) override;
 		virtual void reset(GUIControl * control) override;
+
 	protected:
 		Vector2 startPosition;
 		Vector2 endPosition;
@@ -62,6 +66,7 @@ namespace TransitionEffects {
 			float transitionSpeed = 20);
 		virtual bool run(double deltaTime, GUIControl * control) override;
 		virtual void reset(GUIControl * control) override;
+
 
 	protected:
 		Vector2 startPosition;
@@ -95,16 +100,49 @@ namespace TransitionEffects {
 	/* A base class for transitions that require advanced graphical features. */
 	class TexturedTransition : public TransitionEffect {
 	public:
-		TexturedTransition(unique_ptr<GraphicsAsset> texture);
+		TexturedTransition(GUIControl* control, float transitionSpeed);
 
+		virtual bool draw(SpriteBatch* batch) override;
+
+	protected:
+		std::unique_ptr<GraphicsAsset> gfxAsset;
+		ComPtr<ID3D11ShaderResourceView> texture;
+
+		Vector2 position = Vector2::Zero;
+		Vector2 origin = Vector2::Zero;
+		Vector2 scale = Vector2(1, 1);
+		Color tint = Color(1, 1, 1, 1);
+		float rotation = 0.0f;
+		RECT viewRect;
+
+	};
+
+
+	class SpinTransition : public TexturedTransition {
+	public:
+		SpinTransition(GUIControl* control, float transitionSpeed = 5.0);
+		virtual bool run(double deltaTime, GUIControl* control) override;
+		virtual void reset(GUIControl * control) override;
+	private:
+		Vector2 startScale;
+		Vector2 endScale;
+
+		bool rotationDone = false;
+		bool scaleDone = false;
+	};
+
+
+	class SplitTransition : public TexturedTransition {
+	public:
+		SplitTransition(GUIControl* control, float transitionSpeed = 50.0);
 		virtual bool run(double deltaTime, GUIControl * control) override;
 		virtual void reset(GUIControl * control) override;
 
-		void draw(SpriteBatch* batch);
+		virtual bool draw(SpriteBatch* batch) override;
 
-	protected:
-		unique_ptr<GraphicsAsset> texture;
-
+	private:
+		Vector2 positionRight;
+		RECT viewRectRight;
 	};
-	typedef void (TransitionEffect::*Draw)(SpriteBatch*);
+
 };

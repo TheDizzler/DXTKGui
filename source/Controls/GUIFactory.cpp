@@ -342,7 +342,7 @@ Dialog* GUIFactory::createDialog(bool movable, const char_t* fontName) {
 
 
 #include "../Engine/GameEngine.h"
-unique_ptr<GraphicsAsset> GUIFactory::createTextureFromControl(
+GraphicsAsset* GUIFactory::createTextureFromControl(
 	IElement2D* control, Color bgColor) {
 
 	int buffer = 5; // padding to give a bit of lee-way to prevent tearing
@@ -410,7 +410,7 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromControl(
 
 	Vector2 oldPos = control->getPosition();
 	//Vector2 oldSize = Vector2(control->getWidth(), control->getHeight());
-	control->setPosition(Vector2(0, buffer));
+	control->setPosition(Vector2(0, 0));
 
 	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), bgColor);
 
@@ -424,9 +424,9 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromControl(
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
 
 	control->setPosition(oldPos);
-	unique_ptr<GraphicsAsset> gfxAsset;
-	gfxAsset.reset(new GraphicsAsset());
-	gfxAsset->loadAsPartOfSheet(shaderResourceView, Vector2(0, 0), Vector2(width, height));
+	GraphicsAsset* gfxAsset = new GraphicsAsset();
+	gfxAsset->loadAsPartOfSheet(shaderResourceView, Vector2(0, 0),
+		Vector2(width - buffer, height - buffer));
 	return gfxAsset;
 }
 

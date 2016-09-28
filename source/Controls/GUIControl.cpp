@@ -50,6 +50,12 @@ bool GUIControl::contains(const Vector2& point) {
 	return hitArea->contains(point);
 }
 
+#include "GUIFactory.h"
+GraphicsAsset* GUIControl::createTexture() {
+	return guiFactory->createTextureFromControl(this);
+
+}
+
 void GUIControl::setOrigin(const Vector2 & org) {
 	origin = org;
 }

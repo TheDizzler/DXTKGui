@@ -15,7 +15,7 @@ public:
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);
 	void alwaysShowScrollBar(bool alwaysShow);
 
-	void setTexture(unique_ptr<GraphicsAsset> gfxAsset);
+	void setTexture(GraphicsAsset* gfxAsset);
 	
 
 	virtual void update(double deltaTime, MouseController* mouse) override;

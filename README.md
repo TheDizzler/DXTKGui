@@ -31,6 +31,7 @@ Email: tgillon.sdk@gmail.com
 >- Scrollbar - now with customizable sprites!
 >- Combo Box
 >- can load images and animations from spritesheets
+>- transition effects (tested on dialog only)
 
 ##TODO:
 >- uncouple controls and factory from my game engine

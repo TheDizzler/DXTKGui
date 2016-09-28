@@ -12,10 +12,10 @@ TexturePanel::~TexturePanel() {
 }
 
 
-void TexturePanel::setTexture(unique_ptr<GraphicsAsset> gfx) {
+void TexturePanel::setTexture(GraphicsAsset* gfx) {
 
 	gfxAsset.release();
-	gfxAsset = move(gfx);
+	gfxAsset.reset(gfx);
 	texture = gfxAsset->getTexture();
 	//origin = Vector2(gfxAsset->getWidth() / 2, gfxAsset->getHeight() / 2);
 	//position.x += origin.x/2;
@@ -51,7 +51,7 @@ void TexturePanel::draw(SpriteBatch* batch) {
 
 	if (gfxAsset != NULL) {
 		batch->Draw(texture.Get(), position, &viewRect,
-			Color(1, 1, 1), rotation, origin, scale, SpriteEffects_None);
+			Color(1, 1, 1, 1), rotation, origin, scale, SpriteEffects_None);
 
 		if (showScrollBar || alwaysDisplayScrollBar) {
 			verticalScrollBar->draw(batch);

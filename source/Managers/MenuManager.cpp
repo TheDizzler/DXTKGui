@@ -183,10 +183,12 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		quitButton->setText(L"Quit");
 		exitDialog->setConfirmButton(move(quitButton));
 		exitDialog->setCancelButton(L"Keep Testing!");
-
+		exitDialog->open();
 		exitDialog->setOpenTransition(
-			new TransitionEffects::TrueGrowTransition(exitDialog.get(),
-				Vector2(.001, .001), Vector2(1, 1), 1));
+			new TransitionEffects::SpinTransition(exitDialog.get(), 15));
+			/*new TransitionEffects::SplitTransition(exitDialog.get(), 250));*/
+			/*new TransitionEffects::TrueGrowTransition(exitDialog.get(),
+				Vector2(.001, .001), Vector2(1, 1)));*/
 			/*new TransitionEffects::SlideAndGrowTransition(
 				Vector2(-200, -200), exitDialog->getPosition(),
 				Vector2(.001, .001), Vector2(1, 1)));*/
@@ -194,9 +196,11 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 				Vector2(.0001, 0001), Vector2(1, 1)));*/
 			/*new TransitionEffects::SlideTransition(
 				Vector2(-200, -200), exitDialog->getPosition()));*/
+		exitDialog->close();
 		exitDialog->setCloseTransition(
 			new TransitionEffects::ShrinkTransition(
 				Vector2(1, 1), Vector2(.001, .001)));
+			
 	}
 
 

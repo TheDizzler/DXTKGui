@@ -44,6 +44,8 @@ public:
 	virtual const int getHeight() const = 0;
 	bool contains(const Vector2& point);
 
+	GraphicsAsset* createTexture();
+
 	virtual bool clicked() = 0;
 	/* Is Mouse Button down over control? */
 	virtual bool pressed() = 0;

@@ -81,6 +81,7 @@ void Dialog::setOpenTransition(TransitionEffects::TransitionEffect* effect) {
 	else {
 		runTransition = &TransitionEffects::TransitionEffect::run;
 		resetTransition = &TransitionEffects::TransitionEffect::reset;
+		drawTransition = &TransitionEffects::TransitionEffect::draw;
 	}
 	openTransition = effect;
 	//(openTransition->*resetTransition)(this);
@@ -225,7 +226,6 @@ void Dialog::calculateDialogTextPos() {
 void Dialog::setText(wstring text) {
 
 	dialogText->setText(text);
-	//textFormated = false;
 	calculateDialogTextPos();
 }
 
@@ -408,28 +408,27 @@ void Dialog::draw(SpriteBatch* batch) {
 	if (!isOpen)
 		return;
 
-	/*if (isOpening) {
+	if (isOpening && (openTransition->*drawTransition)(batch)) {
 
-		(openTransition->*drawTransition)(batch);
+		OutputDebugString(L"opening");
+	} else if (isClosing && (closeTransition->*drawTransition)(batch)) {
+		OutputDebugString(L"Closing\n");
 
-	} else if (isClosing) {
-		(closeTransition->*drawTransition)(batch);
+	} else {
+		bgSprite->draw(batch);
+		panel->draw(batch);
+		titleSprite->draw(batch);
+		buttonFrameSprite->draw(batch);
 
-	} else {*/
-	bgSprite->draw(batch);
-	panel->draw(batch);
-	titleSprite->draw(batch);
-	buttonFrameSprite->draw(batch);
+		for (auto const& control : controls) {
+			if (control == NULL)
+				continue;
+			control->draw(batch);
+		}
 
-	for (auto const& control : controls) {
-		if (control == NULL)
-			continue;
-		control->draw(batch);
+
+		frame->draw(batch);
 	}
-
-
-	frame->draw(batch);
-//}
 }
 
 
@@ -462,21 +461,16 @@ void Dialog::open() {
 
 void Dialog::close() {
 
-	/*if (isOpening) {
-
-
-	} else {*/
-		isOpening = false;
-		if (closeTransition != NULL) {
-			if (isClosing) {
-				open();
-			} else {
-				isClosing = true;
-				(closeTransition->*resetTransition)(this);
-			}
-		} else
-			isOpen = false;
-	//}
+	isOpening = false;
+	if (closeTransition != NULL) {
+		if (isClosing) {
+			open();
+		} else {
+			isClosing = true;
+			(closeTransition->*resetTransition)(this);
+		}
+	} else
+		isOpen = false;
 }
 
 
@@ -529,6 +523,10 @@ void Dialog::setPosition(const Vector2& newPosition) {
 			continue;
 		control->moveBy(moveBy);
 	}
+}
+
+const Color& Dialog::getPanelTint() const {
+	return panel->getTint();
 }
 
 const Vector2& Dialog::getPosition() const {
