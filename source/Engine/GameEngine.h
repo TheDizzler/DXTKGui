@@ -50,17 +50,17 @@ public:
 	}
 
 	static void showErrorDialog(wstring message, wstring title) {
+		errorDialog->open();
 		errorDialog->setTitle(title);
 		errorDialog->setText(message);
-		errorDialog->open();
 		showDialog = errorDialog.get();
 	}
 
 	static void showWarningDialog(wstring message, wstring title) {
+		warningDialog->open();
 		warningDialog->setTitle(title);
 		warningDialog->setText(message);
 		warningDialog->setTextTint(Color(1, 0, 0, 1));
-		warningDialog->open();
 		showDialog = warningDialog.get();
 	}
 

@@ -2,8 +2,9 @@
 #pragma once
 
 #include <pugixml.hpp>
-#include "ComboBox.h"
+#include "../Managers/screen.h"
 #include "../BaseGraphics/GraphicsAsset.h"
+#include "ComboBox.h"
 #include "Dialog.h"
 #include "CheckBox.h"
 
@@ -77,8 +78,10 @@ public:
 	/* Creates a texture from a screen grab of an IElement2D object.
 		offset is the vector to bring object to top left corner of screen
 			in prep for its close up.*/
-	GraphicsAsset* createTextureFromControl(
+	GraphicsAsset* createTextureFromIElement2D(
 		IElement2D* control, Color bgColor = {1, 1, 1, 1});
+
+	GraphicsAsset* createTextureFromScreen(Screen* screen, Color bgColor = {1, 1, 1, 1});
 
 	static bool initialized;
 private:

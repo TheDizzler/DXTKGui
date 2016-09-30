@@ -67,6 +67,10 @@ void Sprite::draw(SpriteBatch* batch) {
 
 }
 
+//GraphicsAsset* Sprite::createTexture() {
+//	return nullptr;
+//}
+
 ComPtr<ID3D11ShaderResourceView> Sprite::getTexture() {
 	return texture;
 }

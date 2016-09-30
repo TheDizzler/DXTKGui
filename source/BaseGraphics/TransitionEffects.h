@@ -4,35 +4,37 @@
 #include "../Controls/GUIControl.h"
 
 class Dialog;
+class Screen;
 namespace TransitionEffects {
 
+	/* Non-linear effects will never actually conclude. Effects should check against
+	a threshold to decide when it's logically finished, if not mathmatically
+	finished. Adjust to feel. */
 	class TransitionEffect {
 	public:
 
 		/* Returns true when transition effect is finished. */
-		virtual bool run(double deltaTime, GUIControl* control) = 0;
-		virtual void reset(GUIControl* control) = 0;
+		virtual bool run(double deltaTime, IElement2D* control) = 0;
+		virtual void reset(IElement2D* control) = 0;
+		/** This must return false if not being used! */
 		virtual bool draw(SpriteBatch* batch) {
 			return false;
 		}
 		float transitionSpeed;
 
-		/* Some effects will never actually conclude. Effects should check against
-			this threshold to decide when it's logically finished, if not mathmatically
-			finished. Adjust to feel. */
-		//float threshold = .9;
+
 	};
 	/* Returns true when transition effect is finished. */
-	typedef bool (TransitionEffect::*Run) (double, GUIControl*);
-	typedef void (TransitionEffect::*Reset) (GUIControl*);
+	typedef bool (TransitionEffect::*Run) (double, IElement2D*);
+	typedef void (TransitionEffect::*Reset) (IElement2D*);
 	typedef bool (TransitionEffect::*Draw) (SpriteBatch*);
 
 	class GrowTransition : public TransitionEffect {
 	public:
 		GrowTransition(const Vector2& startScale, const Vector2& endScale,
 			float transitionSpeed = 20);
-		virtual bool run(double deltaTime, GUIControl* control) override;
-		virtual void reset(GUIControl* control) override;
+		virtual bool run(double deltaTime, IElement2D* control) override;
+		virtual void reset(IElement2D* control) override;
 
 	protected:
 		Vector2 startScale;
@@ -43,15 +45,15 @@ namespace TransitionEffects {
 	public:
 		ShrinkTransition(const Vector2& startScale, const Vector2& endScale,
 			float transitionSpeed = 20);
-		virtual bool run(double deltaTime, GUIControl * control) override;
+		virtual bool run(double deltaTime, IElement2D* control) override;
 	};
 
 	class SlideTransition : public TransitionEffect {
 	public:
 		SlideTransition(const Vector2& startPos, const Vector2& endPos,
 			float transitionSpeed = 20);
-		virtual bool run(double deltaTime, GUIControl* control) override;
-		virtual void reset(GUIControl * control) override;
+		virtual bool run(double deltaTime, IElement2D* control) override;
+		virtual void reset(IElement2D* control) override;
 
 	protected:
 		Vector2 startPosition;
@@ -64,8 +66,8 @@ namespace TransitionEffects {
 		SlideAndGrowTransition(const Vector2& startPos, const Vector2& endPos,
 			const Vector2& startScale, const Vector2& endScale,
 			float transitionSpeed = 20);
-		virtual bool run(double deltaTime, GUIControl * control) override;
-		virtual void reset(GUIControl * control) override;
+		virtual bool run(double deltaTime, IElement2D* control) override;
+		virtual void reset(IElement2D* control) override;
 
 
 	protected:
@@ -84,8 +86,8 @@ namespace TransitionEffects {
 		TrueGrowTransition(Dialog* containerControl,
 			const Vector2& startScale, const Vector2& endScale,
 			float transitionSpeed = 20);
-		virtual bool run(double deltaTime, GUIControl* control) override;
-		virtual void reset(GUIControl * control) override;
+		virtual bool run(double deltaTime, IElement2D* control) override;
+		virtual void reset(IElement2D* control) override;
 
 	protected:
 		Vector2 startScale;
@@ -114,29 +116,45 @@ namespace TransitionEffects {
 		Color tint = Color(1, 1, 1, 1);
 		float rotation = 0.0f;
 		RECT viewRect;
-
 	};
 
 
-	class SpinTransition : public TexturedTransition {
+	class BlindsTransition : public TexturedTransition {
 	public:
-		SpinTransition(GUIControl* control, float transitionSpeed = 5.0);
-		virtual bool run(double deltaTime, GUIControl* control) override;
-		virtual void reset(GUIControl * control) override;
+		BlindsTransition(GUIControl* control, float transitionTime = .5,
+			bool vertical = true, bool horizontal = false);
+		virtual bool run(double deltaTime, IElement2D* control) override;
+		virtual void reset(IElement2D* control) override;
+		virtual bool draw(SpriteBatch* batch) override;
+	private:
+		vector<vector<RECT>> squareRects;
+		int squareSize = 32;
+		Vector2 startScale = Vector2(1, 1);
+		Vector2 endScale;
+	};
+
+
+	class SpinGrowTransition : public TexturedTransition {
+	public:
+	/** Time for transition to complete. */
+		SpinGrowTransition(GUIControl* control, float transitionTime = .5);
+		virtual bool run(double deltaTime, IElement2D* control) override;
+		virtual void reset(IElement2D* control) override;
 	private:
 		Vector2 startScale;
 		Vector2 endScale;
 
 		bool rotationDone = false;
 		bool scaleDone = false;
+		double timer = 0;
 	};
 
 
 	class SplitTransition : public TexturedTransition {
 	public:
 		SplitTransition(GUIControl* control, float transitionSpeed = 50.0);
-		virtual bool run(double deltaTime, GUIControl * control) override;
-		virtual void reset(GUIControl * control) override;
+		virtual bool run(double deltaTime, IElement2D* control) override;
+		virtual void reset(IElement2D* control) override;
 
 		virtual bool draw(SpriteBatch* batch) override;
 
@@ -145,4 +163,46 @@ namespace TransitionEffects {
 		RECT viewRectRight;
 	};
 
+
+	
+	class ScreenTransition {
+	public:
+		ScreenTransition(GraphicsAsset* screenTexture, float transitionTime);
+
+		/* Returns true when transition effect is finished. */
+		virtual bool run(double deltaTime, Screen* screen) = 0;
+		virtual void draw(SpriteBatch* batch) = 0;
+		virtual void reset(Screen* screen) = 0;
+
+		float transitionTime;
+
+	protected:
+		std::unique_ptr<GraphicsAsset> gfxAsset;
+		ComPtr<ID3D11ShaderResourceView> texture;
+
+
+		Vector2 position = Vector2::Zero;
+		Vector2 origin = Vector2::Zero;
+		Vector2 scale = Vector2(1, 1);
+		Color tint = Color(1, 1, 1, 1);
+		float rotation = 0.0f;
+		RECT viewRect;
+	};
+
+	typedef bool (ScreenTransition::*RunScreen) (double, Screen*);
+	typedef void (ScreenTransition::*DrawScreen) (SpriteBatch*);
+	typedef void (ScreenTransition::*ResetScreen) (Screen*);
+
+
+	class FlipScreenTransition : public ScreenTransition {
+	public:
+		FlipScreenTransition(GraphicsAsset* screenTexture, float transitionTime = 5);
+		/** Return true when transition complete. */
+		virtual bool run(double deltaTime, Screen* screen) override;
+		virtual void draw(SpriteBatch* batch) override;
+		virtual void reset(Screen* screen) override;
+
+	private:
+		SpriteEffects currentOrientation;
+	};
 };

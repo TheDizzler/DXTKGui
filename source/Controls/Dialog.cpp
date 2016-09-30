@@ -84,7 +84,6 @@ void Dialog::setOpenTransition(TransitionEffects::TransitionEffect* effect) {
 		drawTransition = &TransitionEffects::TransitionEffect::draw;
 	}
 	openTransition = effect;
-	//(openTransition->*resetTransition)(this);
 }
 
 void Dialog::setCloseTransition(TransitionEffects::TransitionEffect* effect) {
@@ -94,6 +93,7 @@ void Dialog::setCloseTransition(TransitionEffects::TransitionEffect* effect) {
 	else {
 		runTransition = &TransitionEffects::TransitionEffect::run;
 		resetTransition = &TransitionEffects::TransitionEffect::reset;
+		drawTransition = &TransitionEffects::TransitionEffect::draw;
 	}
 	closeTransition = effect;
 }
@@ -147,7 +147,7 @@ void Dialog::calculateDialogTextPos() {
 
 	TextLabel formattedText(Vector2::Zero, dialogText->getText(), dialogText->getFont());
 	int scrollBarBuffer = 0;
-	if (/*!textFormated && */dialogtextsize.x + dialogTextMargin.x * 2 > dialogFrameSize.x) {
+	if (dialogtextsize.x + dialogTextMargin.x * 2 > dialogFrameSize.x) {
 	// if the text is longer than the dialog box
 	//		break the text down into multiple lines
 		wstring newText = L"";
@@ -217,7 +217,7 @@ void Dialog::calculateDialogTextPos() {
 
 	panel->setDimensions(dialogFramePosition, dialogFrameSize);
 	panel->setTexture(
-		guiFactory->createTextureFromControl(
+		guiFactory->createTextureFromIElement2D(
 			&formattedText, panel->getTint()));
 
 	panel->setTexturePosition(dialogpos);
@@ -409,11 +409,9 @@ void Dialog::draw(SpriteBatch* batch) {
 		return;
 
 	if (isOpening && (openTransition->*drawTransition)(batch)) {
-
-		OutputDebugString(L"opening");
+		//OutputDebugString(L"opening\n");
 	} else if (isClosing && (closeTransition->*drawTransition)(batch)) {
-		OutputDebugString(L"Closing\n");
-
+		//OutputDebugString(L"Closing\n");
 	} else {
 		bgSprite->draw(batch);
 		panel->draw(batch);

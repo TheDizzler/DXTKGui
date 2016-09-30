@@ -70,7 +70,8 @@ public:
 	virtual void update(double deltaTime);
 	virtual void draw(SpriteBatch* batch) override;
 
-	
+	/** Use getTexture(). */
+	//virtual GraphicsAsset* createTexture() override;
 	ComPtr<ID3D11ShaderResourceView> getTexture();
 
 	bool isAlive = true;

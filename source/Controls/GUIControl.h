@@ -1,9 +1,9 @@
 #pragma once
 
 #include <pugixml.hpp>
-#include "../Engine/MouseController.h"
 #include "../BaseGraphics/FontSet.h"
-
+#include "../Engine/MouseController.h"
+#include "../BaseGraphics/GraphicsAsset.h"
 
 
 interface GUIControl : public IElement2D {

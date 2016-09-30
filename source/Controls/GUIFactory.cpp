@@ -342,12 +342,25 @@ Dialog* GUIFactory::createDialog(bool movable, const char_t* fontName) {
 
 
 #include "../Engine/GameEngine.h"
-GraphicsAsset* GUIFactory::createTextureFromControl(
+GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 	IElement2D* control, Color bgColor) {
 
 	int buffer = 5; // padding to give a bit of lee-way to prevent tearing
-	int width = control->getWidth() + buffer;
-	int height = control->getHeight() + buffer;
+
+	int width = control->getWidth();
+	int height = control->getHeight();
+	int heightPadding = 0;
+	int widthPadding = 0;
+	float ratio = (float)Globals::WINDOW_WIDTH / Globals::WINDOW_HEIGHT;
+	if (width > height) {
+		heightPadding = width / ratio - height;
+		height = width / ratio;
+	} else {
+		widthPadding = height*ratio - width;
+		width = height * ratio;
+	}
+	width += buffer;
+	height += buffer;
 
 	ComPtr<ID3D11Texture2D> renderTargetTexture;
 	D3D11_TEXTURE2D_DESC textureDesc;
@@ -424,6 +437,89 @@ GraphicsAsset* GUIFactory::createTextureFromControl(
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
 
 	control->setPosition(oldPos);
+	GraphicsAsset* gfxAsset = new GraphicsAsset();
+	gfxAsset->loadAsPartOfSheet(shaderResourceView, Vector2(0, 0),
+		Vector2(width - widthPadding - buffer, height - heightPadding - buffer));
+	return gfxAsset;
+}
+
+GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, Color bgColor) {
+	
+	int buffer = 5; // padding to give a bit of lee-way to prevent tearing
+
+	int width = Globals::WINDOW_WIDTH + buffer;
+	int height = Globals::WINDOW_HEIGHT + buffer;
+
+	ComPtr<ID3D11Texture2D> renderTargetTexture;
+	D3D11_TEXTURE2D_DESC textureDesc;
+	ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+	textureDesc.Width = width;
+	textureDesc.Height = height;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.CPUAccessFlags = 0;
+	textureDesc.MiscFlags = 0;
+
+
+
+	if (Assets::reportError(device->CreateTexture2D(&textureDesc, NULL,
+		renderTargetTexture.GetAddressOf()),
+		L"Failed to create render target texture.", L"Aw shucks"))
+		return NULL;
+
+	ComPtr<ID3D11RenderTargetView> textureRenderTargetView;
+	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
+	renderTargetViewDesc.Format = textureDesc.Format;
+	renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	renderTargetViewDesc.Texture2D.MipSlice = 0;
+
+
+	if (Assets::reportError(
+		device->CreateRenderTargetView(renderTargetTexture.Get(),
+			NULL, textureRenderTargetView.GetAddressOf()),
+		L"Failed to create render target view for new texture.", L"Fatal Error"))
+		return NULL;
+
+
+
+	ComPtr<ID3D11ShaderResourceView> shaderResourceView;
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+	shaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+
+
+
+	if (GameEngine::reportError(
+		device->CreateShaderResourceView(renderTargetTexture.Get(),
+			&shaderResourceViewDesc, shaderResourceView.GetAddressOf()),
+		L"Failed to create Shader Resource View for new texture.", L"Fatal error", true))
+		return NULL;
+
+
+
+	// get normal rendertargetview and switch to temp one
+	ComPtr<ID3D11RenderTargetView> oldRenderTargetView;
+	deviceContext->OMGetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
+	deviceContext->OMSetRenderTargets(1, textureRenderTargetView.GetAddressOf(), nullptr);
+
+
+	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), bgColor);
+
+	batch->Begin(SpriteSortMode_Immediate);
+	{
+		screen->draw(batch);
+	}
+	batch->End();
+
+
+	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
+
 	GraphicsAsset* gfxAsset = new GraphicsAsset();
 	gfxAsset->loadAsPartOfSheet(shaderResourceView, Vector2(0, 0),
 		Vector2(width - buffer, height - buffer));

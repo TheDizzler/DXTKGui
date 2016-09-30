@@ -131,10 +131,14 @@ public:
 	virtual bool initialize(ComPtr<ID3D11Device> device, MouseController* mouse);
 	virtual void update(double deltaTime, MouseController* mouse);
 	virtual void draw(SpriteBatch* batch);
+	virtual void drawScreenTransition(SpriteBatch* batch) override;
 
 	virtual void pause() override;
 
-	virtual const Vector2& getPosition() const override;
+	virtual bool openScreen(double deltaTime) override;
+	virtual bool closeScreen(double deltaTime) override;
+
+	
 
 	void openMainMenu();
 	void openConfigMenu();
@@ -150,7 +154,6 @@ private:
 
 	GameManager* game;
 
-	
 };
 
 
@@ -163,19 +166,20 @@ public:
 	virtual ~MenuScreen();
 
 	virtual void setGameManager(GameManager* game) override;
-	virtual const Vector2& getPosition() const override;
 	virtual void pause() override;
+
+	virtual void setOpenTransition(TransitionEffects::ScreenTransition* effect) override;
+	virtual void setCloseTransition(TransitionEffects::ScreenTransition* effect) override;
+
+	virtual void drawScreenTransition(SpriteBatch * batch) override;
+	virtual bool openScreen(double deltaTime) override;
+	virtual bool closeScreen(double deltaTime) override;
 protected:
 
 	GameManager* game;
 	MenuManager* menuManager;
 
-	Vector2 position = Vector2::Zero;
-
-	vector<GUIControl* > guiControls;
-
-	bool escLastStateDown = false;
-
+	vector<GUIControl*> guiControls;
 };
 
 
@@ -187,7 +191,6 @@ public:
 	ConfigScreen(MenuManager* manager);
 	~ConfigScreen();
 
-	// Inherited via MenuScreen
 	virtual bool initialize(ComPtr<ID3D11Device> device,
 		MouseController* mouse) override;
 
@@ -207,7 +210,6 @@ private:
 	ListBox* displayListbox;
 	ComboBox* displayModeCombobox;
 
-
 };
 
 class MainScreen : public MenuScreen {
@@ -216,8 +218,7 @@ class MainScreen : public MenuScreen {
 public:
 	MainScreen(MenuManager* manager);
 	~MainScreen();
-
-	// Inherited via MenuScreen
+	
 	virtual bool initialize(ComPtr<ID3D11Device> device,
 		MouseController * mouse) override;
 	virtual void update(double deltaTime, MouseController* mouse) override;
@@ -228,7 +229,5 @@ private:
 	unique_ptr<Dialog> exitDialog;
 	TextLabel* test;
 	TextLabel* mouseLabel;
-
-
 };
 

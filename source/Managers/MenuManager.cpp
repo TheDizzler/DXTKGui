@@ -31,7 +31,11 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, MouseController* mouse
 	configScreen->setGameManager(game);
 	if (!configScreen->initialize(device, mouse))
 		return false;
-
+	configScreen->update(0, mouse);
+	configScreen->setOpenTransition(
+		new TransitionEffects::FlipScreenTransition(
+			GameManager::guiFactory->createTextureFromScreen(
+				configScreen.get(), Color(1, .5, 0, 1))));
 
 
 	currentScreen = mainScreen.get();
@@ -43,23 +47,52 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, MouseController* mouse
 void MenuManager::update(double deltaTime, MouseController* mouse) {
 
 	if (switchTo != NULL) {
-	// not so optimal, but should be ok for menus
-		currentScreen = switchTo;
-		switchTo = NULL;
-	}
-	currentScreen->update(deltaTime, mouse);
+		bool closeDone = currentScreen->closeScreen(deltaTime);
+		bool openDone = switchTo->openScreen(deltaTime);
+		if (closeDone && openDone) {
+			currentScreen->resetScreenTransition();
+			switchTo->resetScreenTransition();
+			currentScreen = switchTo;
+			switchTo = NULL;
+		}
+	} else
+		currentScreen->update(deltaTime, mouse);
 
 }
 
 
 void MenuManager::draw(SpriteBatch* batch) {
 
-	currentScreen->draw(batch);
+	if (switchTo != NULL) {
+		currentScreen->drawScreenTransition(batch);
+		switchTo->drawScreenTransition(batch);
+	} else
+		currentScreen->draw(batch);
 
+}
+
+void MenuManager::drawScreenTransition(SpriteBatch * batch) {
+	if (currentTransition != NULL)
+		(currentTransition->*drawTransition)(batch);
 }
 
 void MenuManager::pause() {
 	// do nothing?
+}
+
+
+bool MenuManager::openScreen(double deltaTime) {
+	if (openTransition == NULL)
+		return true;
+	currentTransition = openTransition;
+	return (openTransition->*runTransition)(deltaTime, this);
+}
+
+bool MenuManager::closeScreen(double deltaTime) {
+	if (closeTransition == NULL)
+		return true;
+	currentTransition = closeTransition;
+	return (closeTransition->*runTransition)(deltaTime, this);
 }
 
 void MenuManager::openMainMenu() {
@@ -70,15 +103,11 @@ void MenuManager::openMainMenu() {
 
 void MenuManager::openConfigMenu() {
 
-	//currentScreen = configScreen.get();
-
 	// switch screens at next frame
 	switchTo = configScreen.get();
 }
+/** **** END MENUMANAGER **** */
 
-const Vector2 & MenuManager::getPosition() const {
-	return position;
-}
 
 
 /** **** MenuScreen abstract class **** */
@@ -104,9 +133,52 @@ void MenuScreen::pause() {
 	// do nothing??
 }
 
-const Vector2& MenuScreen::getPosition() const {
-	return position;
+bool MenuScreen::openScreen(double deltaTime) {
+	if (openTransition == NULL)
+		return true;
+	currentTransition = openTransition;
+	return (openTransition->*runTransition)(deltaTime, this);
 }
+
+bool MenuScreen::closeScreen(double deltaTime) {
+	if (closeTransition == NULL)
+		return true;
+	currentTransition = closeTransition;
+	return (closeTransition->*runTransition)(deltaTime, this);
+}
+
+void MenuScreen::setOpenTransition(
+	TransitionEffects::ScreenTransition* effect) {
+
+	if (openTransition != NULL)
+		delete openTransition;
+	else {
+		runTransition = &TransitionEffects::ScreenTransition::run;
+		resetTransition = &TransitionEffects::ScreenTransition::reset;
+		drawTransition = &TransitionEffects::ScreenTransition::draw;
+	}
+	openTransition = effect;
+}
+
+void MenuScreen::setCloseTransition(
+	TransitionEffects::ScreenTransition* effect) {
+
+	if (closeTransition != NULL)
+		delete closeTransition;
+	else {
+		runTransition = &TransitionEffects::ScreenTransition::run;
+		resetTransition = &TransitionEffects::ScreenTransition::reset;
+		drawTransition = &TransitionEffects::ScreenTransition::draw;
+	}
+	closeTransition = effect;
+}
+
+void MenuScreen::drawScreenTransition(SpriteBatch * batch) {
+
+	if (currentTransition != NULL)
+		(currentTransition->*drawTransition)(batch);
+}
+
 
 
 /** **** MainMenuScreen **** **/
@@ -185,8 +257,9 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 		exitDialog->setCancelButton(L"Keep Testing!");
 		exitDialog->open();
 		exitDialog->setOpenTransition(
-			new TransitionEffects::SpinTransition(exitDialog.get(), 15));
-			/*new TransitionEffects::SplitTransition(exitDialog.get(), 250));*/
+			/*new TransitionEffects::SpinGrowTransition(exitDialog.get(), .5));*/
+			//new TransitionEffects::SplitTransition(exitDialog.get(), 25));
+			new TransitionEffects::BlindsTransition(exitDialog.get(), .5, false, true));
 			/*new TransitionEffects::TrueGrowTransition(exitDialog.get(),
 				Vector2(.001, .001), Vector2(1, 1)));*/
 			/*new TransitionEffects::SlideAndGrowTransition(
@@ -196,11 +269,11 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse)
 				Vector2(.0001, 0001), Vector2(1, 1)));*/
 			/*new TransitionEffects::SlideTransition(
 				Vector2(-200, -200), exitDialog->getPosition()));*/
+
+		//exitDialog->setCloseTransition(
+			/*new TransitionEffects::ShrinkTransition(
+				Vector2(1, 1), Vector2(.001, .001)));*/
 		exitDialog->close();
-		exitDialog->setCloseTransition(
-			new TransitionEffects::ShrinkTransition(
-				Vector2(1, 1), Vector2(.001, .001)));
-			
 	}
 
 
@@ -254,6 +327,7 @@ void MainScreen::confirmExit() {
 	//exitDialog->open();
 	game->exit();
 }
+
 
 
 
@@ -390,7 +464,7 @@ void ConfigScreen::update(double deltaTime, MouseController* mouse) {
 	}
 
 	//escLastStateDown = keys->keyDown[KeyboardController::ESC];
-	escLastStateDown = state.Escape;
+	//escLastStateDown = state.Escape;
 
 	for (auto const& control : guiControls) {
 		control->update(deltaTime, mouse);
@@ -433,14 +507,15 @@ void ConfigScreen::populateDisplayModeList(vector<DXGI_MODE_DESC> displayModes) 
 	displayModeCombobox->clear();
 	vector<ListItem*> displayModeItems;
 	for (DXGI_MODE_DESC mode : displayModes) {
-		if (!Globals::FULL_SCREEN && mode.Scaling == 0)
-			continue;
+		/*if (!Globals::FULL_SCREEN && mode.Scaling == 0)
+			continue;*/
 		DisplayModeItem* item = new DisplayModeItem();
 		item->modeDesc = mode;
 		displayModeItems.push_back(item);
 	}
 	displayModeCombobox->addItems(displayModeItems);
 }
+
 
 
 void AdapterItem::setText() {
@@ -517,8 +592,10 @@ void OnClickListenerFullScreenCheckBox::onClick(CheckBox* checkbox, bool isCheck
 		// revert to old settings
 	} else {
 		// reconstruct display
+
+		config->populateDisplayModeList(config->game->getDisplayModeList(0));
+		//config->displayModeCombobox->setSelected(config->game->getSelectedDisplayModeIndex());
 	}
-	config->populateDisplayModeList(config->game->getDisplayModeList(0));
 }
 
 void OnClickListenerSettingsButton::onClick(Button* button) {

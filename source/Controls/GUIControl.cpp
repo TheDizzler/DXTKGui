@@ -52,7 +52,7 @@ bool GUIControl::contains(const Vector2& point) {
 
 #include "GUIFactory.h"
 GraphicsAsset* GUIControl::createTexture() {
-	return guiFactory->createTextureFromControl(this);
+	return guiFactory->createTextureFromIElement2D(this);
 
 }
 

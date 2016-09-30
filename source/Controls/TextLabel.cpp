@@ -95,7 +95,8 @@ void TextLabel::setText(wstring text) {
 
 const Vector2& XM_CALLCONV TextLabel::measureString() const {
 	Vector2 size = font->measureString(label.c_str());
-	return size * scale;
+	Vector2 scaledSize = size*scale;
+	return scaledSize;
 }
 
 const Vector2& XM_CALLCONV TextLabel::measureString(wstring string) const {

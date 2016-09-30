@@ -5,6 +5,8 @@
 #include <SimpleMath.h>
 #include "SpriteBatch.h"
 
+
+
 using namespace std;
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -32,6 +34,6 @@ public:
 
 	virtual void draw(SpriteBatch* batch) = 0;
 
-
+	//virtual GraphicsAsset* createTexture() = 0;
 };
 
