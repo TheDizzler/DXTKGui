@@ -174,6 +174,7 @@
     <ClCompile Include="Source\Engine\MouseController.cpp" />
     <ClCompile Include="source\Managers\GameManager.cpp" />
     <ClCompile Include="source\Managers\MenuManager.cpp" />
+    <ClCompile Include="source\Managers\ScreenTransitions.cpp" />
     <ClCompile Include="source\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -205,6 +206,7 @@
     <ClInclude Include="source\Managers\GameManager.h" />
     <ClInclude Include="source\Managers\MenuManager.h" />
     <ClInclude Include="source\Managers\screen.h" />
+    <ClInclude Include="source\Managers\ScreenTransitions.h" />
     <ClInclude Include="source\pch.h" />
   </ItemGroup>
   <ItemGroup>

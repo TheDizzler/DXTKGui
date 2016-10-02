@@ -7,7 +7,7 @@
 #include "../Controls/ComboBox.h"
 #include "../Controls/Button.h"
 #include "../Controls/CheckBox.h"
-
+#include "ScreenTransitions.h"
 
 class MenuScreen;
 class MainScreen;
@@ -131,14 +131,11 @@ public:
 	virtual bool initialize(ComPtr<ID3D11Device> device, MouseController* mouse);
 	virtual void update(double deltaTime, MouseController* mouse);
 	virtual void draw(SpriteBatch* batch);
-	virtual void drawScreenTransition(SpriteBatch* batch) override;
 
 	virtual void pause() override;
 
-	virtual bool openScreen(double deltaTime) override;
-	virtual bool closeScreen(double deltaTime) override;
 
-	
+	unique_ptr<ScreenTransitions::ScreenTransitionManager> transitionManager;
 
 	void openMainMenu();
 	void openConfigMenu();
@@ -168,12 +165,6 @@ public:
 	virtual void setGameManager(GameManager* game) override;
 	virtual void pause() override;
 
-	virtual void setOpenTransition(TransitionEffects::ScreenTransition* effect) override;
-	virtual void setCloseTransition(TransitionEffects::ScreenTransition* effect) override;
-
-	virtual void drawScreenTransition(SpriteBatch * batch) override;
-	virtual bool openScreen(double deltaTime) override;
-	virtual bool closeScreen(double deltaTime) override;
 protected:
 
 	GameManager* game;

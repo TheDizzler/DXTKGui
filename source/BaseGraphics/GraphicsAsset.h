@@ -2,8 +2,7 @@
 #pragma once
 
 #include "IElement2D.h"
-//using namespace std;
-//using namespace DirectX;
+
 
 struct Frame {
 	Frame(RECT srcRect) : sourceRect(srcRect) {

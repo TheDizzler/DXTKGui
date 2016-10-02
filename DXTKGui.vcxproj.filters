@@ -111,6 +111,9 @@
     <ClCompile Include="source\Controls\TexturePanel.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="source\Managers\ScreenTransitions.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\GameEngine.h">
@@ -190,6 +193,9 @@
     </ClInclude>
     <ClInclude Include="source\Controls\TexturePanel.h">
       <Filter>Header Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Managers\ScreenTransitions.h">
+      <Filter>Header Files\Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

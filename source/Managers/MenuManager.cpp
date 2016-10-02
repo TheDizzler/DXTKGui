@@ -32,13 +32,16 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, MouseController* mouse
 	if (!configScreen->initialize(device, mouse))
 		return false;
 	configScreen->update(0, mouse);
-	configScreen->setOpenTransition(
-		new TransitionEffects::FlipScreenTransition(
-			GameManager::guiFactory->createTextureFromScreen(
-				configScreen.get(), Color(1, .5, 0, 1))));
-
 
 	currentScreen = mainScreen.get();
+
+	transitionManager.reset(
+		new ScreenTransitions::ScreenTransitionManager(GameManager::guiFactory.get()));
+	transitionManager->setTransition(
+		//new ScreenTransitions::FlipScreenTransition(true));
+		new ScreenTransitions::SquareFlipScreenTransition());
+
+
 	return true;
 }
 
@@ -47,11 +50,7 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, MouseController* mouse
 void MenuManager::update(double deltaTime, MouseController* mouse) {
 
 	if (switchTo != NULL) {
-		bool closeDone = currentScreen->closeScreen(deltaTime);
-		bool openDone = switchTo->openScreen(deltaTime);
-		if (closeDone && openDone) {
-			currentScreen->resetScreenTransition();
-			switchTo->resetScreenTransition();
+		if (transitionManager->runTransition(deltaTime)) {
 			currentScreen = switchTo;
 			switchTo = NULL;
 		}
@@ -64,47 +63,28 @@ void MenuManager::update(double deltaTime, MouseController* mouse) {
 void MenuManager::draw(SpriteBatch* batch) {
 
 	if (switchTo != NULL) {
-		currentScreen->drawScreenTransition(batch);
-		switchTo->drawScreenTransition(batch);
+		transitionManager->drawTransition(batch);
 	} else
 		currentScreen->draw(batch);
 
-}
-
-void MenuManager::drawScreenTransition(SpriteBatch * batch) {
-	if (currentTransition != NULL)
-		(currentTransition->*drawTransition)(batch);
 }
 
 void MenuManager::pause() {
 	// do nothing?
 }
 
-
-bool MenuManager::openScreen(double deltaTime) {
-	if (openTransition == NULL)
-		return true;
-	currentTransition = openTransition;
-	return (openTransition->*runTransition)(deltaTime, this);
-}
-
-bool MenuManager::closeScreen(double deltaTime) {
-	if (closeTransition == NULL)
-		return true;
-	currentTransition = closeTransition;
-	return (closeTransition->*runTransition)(deltaTime, this);
-}
-
 void MenuManager::openMainMenu() {
 
 	// switch screens at next frame so draw() doesn't freak out
 	switchTo = mainScreen.get();
+	transitionManager->transitionBetween(currentScreen, switchTo, 5);
 }
 
 void MenuManager::openConfigMenu() {
 
 	// switch screens at next frame
 	switchTo = configScreen.get();
+	transitionManager->transitionBetween(currentScreen, switchTo, 5);
 }
 /** **** END MENUMANAGER **** */
 
@@ -131,52 +111,6 @@ void MenuScreen::setGameManager(GameManager* gmMng) {
 
 void MenuScreen::pause() {
 	// do nothing??
-}
-
-bool MenuScreen::openScreen(double deltaTime) {
-	if (openTransition == NULL)
-		return true;
-	currentTransition = openTransition;
-	return (openTransition->*runTransition)(deltaTime, this);
-}
-
-bool MenuScreen::closeScreen(double deltaTime) {
-	if (closeTransition == NULL)
-		return true;
-	currentTransition = closeTransition;
-	return (closeTransition->*runTransition)(deltaTime, this);
-}
-
-void MenuScreen::setOpenTransition(
-	TransitionEffects::ScreenTransition* effect) {
-
-	if (openTransition != NULL)
-		delete openTransition;
-	else {
-		runTransition = &TransitionEffects::ScreenTransition::run;
-		resetTransition = &TransitionEffects::ScreenTransition::reset;
-		drawTransition = &TransitionEffects::ScreenTransition::draw;
-	}
-	openTransition = effect;
-}
-
-void MenuScreen::setCloseTransition(
-	TransitionEffects::ScreenTransition* effect) {
-
-	if (closeTransition != NULL)
-		delete closeTransition;
-	else {
-		runTransition = &TransitionEffects::ScreenTransition::run;
-		resetTransition = &TransitionEffects::ScreenTransition::reset;
-		drawTransition = &TransitionEffects::ScreenTransition::draw;
-	}
-	closeTransition = effect;
-}
-
-void MenuScreen::drawScreenTransition(SpriteBatch * batch) {
-
-	if (currentTransition != NULL)
-		(currentTransition->*drawTransition)(batch);
 }
 
 
@@ -291,8 +225,6 @@ void MainScreen::update(double deltaTime, MouseController* mouse) {
 
 	auto state = Keyboard::Get().GetState();
 	keyTracker.Update(state);
-	//if (keys->keyDown[KeyboardController::ESC] && !escLastStateDown) {
-	//if (state.Escape && !escLastStateDown) {
 	if (keyTracker.IsKeyReleased(Keyboard::Escape)) {
 		if (exitDialog->isOpen)
 			exitDialog->close();
@@ -300,8 +232,6 @@ void MainScreen::update(double deltaTime, MouseController* mouse) {
 			exitDialog->open();
 	}
 
-	//escLastStateDown = keys->keyDown[KeyboardController::ESC];
-	//escLastStateDown = state.Escape;
 
 	if (exitDialog->isOpen) {
 		exitDialog->update(deltaTime, mouse);
@@ -457,14 +387,11 @@ void ConfigScreen::update(double deltaTime, MouseController* mouse) {
 
 	auto state = Keyboard::Get().GetState();
 	keyTracker.Update(state);
-	//if (escLastStateDown && !keys->keyDown[KeyboardController::ESC]) {
-	//if (!state.Escape && escLastStateDown) {
+
 	if (keyTracker.IsKeyReleased(Keyboard::Escape)) {
 		menuManager->openMainMenu();
 	}
 
-	//escLastStateDown = keys->keyDown[KeyboardController::ESC];
-	//escLastStateDown = state.Escape;
 
 	for (auto const& control : guiControls) {
 		control->update(deltaTime, mouse);

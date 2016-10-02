@@ -302,7 +302,7 @@ TransitionEffects::BlindsTransition::BlindsTransition(
 		squareRects.push_back(rowVect);
 	}
 }
-double timer = 0;
+
 bool TransitionEffects::BlindsTransition::run(double deltaTime, IElement2D* control) {
 
 	scale = Vector2::Lerp(startScale, endScale, timer / transitionSpeed);
@@ -332,8 +332,6 @@ void TransitionEffects::BlindsTransition::reset(IElement2D* control) {
 	position = control->getPosition();
 	timer = 0;
 }
-
-
 /******* */
 
 
@@ -407,7 +405,6 @@ bool TransitionEffects::SplitTransition::run(double deltaTime, IElement2D* contr
 	position.x += change;
 	positionRight.x -= change;
 	if (position.x >= control->getPosition().x)
-	//if (position.x + viewRect.right >= positionRight.x)
 		return true;
 	return false;
 }
@@ -439,68 +436,3 @@ bool TransitionEffects::SplitTransition::draw(SpriteBatch* batch) {
 	return true;
 }
 
-
-
-
-#include "../Managers/screen.h"
-TransitionEffects::ScreenTransition::ScreenTransition(
-	GraphicsAsset* screenTexture, float time) {
-
-	gfxAsset.reset(screenTexture);
-	texture = gfxAsset->getTexture();
-	origin = Vector2(gfxAsset->getWidth() / 2, gfxAsset->getHeight() / 2);
-
-	viewRect.left = 0;
-	viewRect.top = 0;
-	viewRect.right = gfxAsset->getWidth();
-	viewRect.bottom = gfxAsset->getHeight();
-	transitionTime = time;
-}
-
-bool TransitionEffects::ScreenTransition::run(
-	double deltaTime, Screen * screen) {
-	return false;
-}
-
-
-
-
-TransitionEffects::FlipScreenTransition::FlipScreenTransition(
-	GraphicsAsset* screenTexture, float transitionTime)
-	: ScreenTransition(screenTexture, transitionTime) {
-
-	currentOrientation = SpriteEffects::SpriteEffects_FlipHorizontally;
-	origin = Vector2::Zero;
-}
-
-bool TransitionEffects::FlipScreenTransition::run(
-	double deltaTime, Screen* screen) {
-
-	if (currentOrientation == SpriteEffects::SpriteEffects_FlipHorizontally) {
-		scale = Vector2::Lerp(Vector2(1, 1), Vector2(0, 0), timer / transitionTime *2);
-		scale.Clamp(Vector2::Zero, Vector2(1, 1));
-		if (scale == Vector2(0, 0)) {
-			currentOrientation = SpriteEffects::SpriteEffects_None;
-			timer = 0;
-		}
-	} else {
-		scale = Vector2::Lerp(Vector2(0, 0), Vector2(1, 1), timer / transitionTime*2);
-		scale.Clamp(Vector2::Zero, Vector2(1, 1));
-		if (scale == Vector2(1, 1))
-			return true;
-	}
-	timer += deltaTime;
-	return false;
-}
-
-void TransitionEffects::FlipScreenTransition::draw(SpriteBatch* batch) {
-
-	batch->Draw(texture.Get(), position, &viewRect,
-		tint, rotation, origin, scale, currentOrientation);
-}
-
-void TransitionEffects::FlipScreenTransition::reset(Screen* screen) {
-
-	currentOrientation = SpriteEffects::SpriteEffects_FlipHorizontally;
-	timer = 0;
-}

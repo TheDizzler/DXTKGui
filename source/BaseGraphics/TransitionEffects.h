@@ -131,6 +131,8 @@ namespace TransitionEffects {
 		int squareSize = 32;
 		Vector2 startScale = Vector2(1, 1);
 		Vector2 endScale;
+
+		double timer = 0;
 	};
 
 
@@ -163,46 +165,4 @@ namespace TransitionEffects {
 		RECT viewRectRight;
 	};
 
-
-	
-	class ScreenTransition {
-	public:
-		ScreenTransition(GraphicsAsset* screenTexture, float transitionTime);
-
-		/* Returns true when transition effect is finished. */
-		virtual bool run(double deltaTime, Screen* screen) = 0;
-		virtual void draw(SpriteBatch* batch) = 0;
-		virtual void reset(Screen* screen) = 0;
-
-		float transitionTime;
-
-	protected:
-		std::unique_ptr<GraphicsAsset> gfxAsset;
-		ComPtr<ID3D11ShaderResourceView> texture;
-
-
-		Vector2 position = Vector2::Zero;
-		Vector2 origin = Vector2::Zero;
-		Vector2 scale = Vector2(1, 1);
-		Color tint = Color(1, 1, 1, 1);
-		float rotation = 0.0f;
-		RECT viewRect;
-	};
-
-	typedef bool (ScreenTransition::*RunScreen) (double, Screen*);
-	typedef void (ScreenTransition::*DrawScreen) (SpriteBatch*);
-	typedef void (ScreenTransition::*ResetScreen) (Screen*);
-
-
-	class FlipScreenTransition : public ScreenTransition {
-	public:
-		FlipScreenTransition(GraphicsAsset* screenTexture, float transitionTime = 5);
-		/** Return true when transition complete. */
-		virtual bool run(double deltaTime, Screen* screen) override;
-		virtual void draw(SpriteBatch* batch) override;
-		virtual void reset(Screen* screen) override;
-
-	private:
-		SpriteEffects currentOrientation;
-	};
 };
