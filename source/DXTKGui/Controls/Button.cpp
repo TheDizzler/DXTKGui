@@ -234,7 +234,7 @@ bool Button::hovering() {
 	return isHover;
 }
 
-#include "../Controls/GUIFactory.h"
+#include "GUIFactory.h"
 void Button::setFont(const pugi::char_t* font) {
 
 	buttonLabel->setFont(guiFactory->getFont(font));
@@ -297,8 +297,7 @@ void ImageButton::setPosition(const Vector2& pos) {
 	spritePos.x += normalSprite->getWidth() / 2;
 	spritePos.y += normalSprite->getHeight() / 2;
 	normalSprite->setPosition(spritePos);
-	//if (pressedSprite != NULL)
-		//pressedSprite->setPosition(position);
+
 
 }
 
@@ -357,10 +356,6 @@ AnimatedButton::AnimatedButton(shared_ptr<Animation> anim, Vector2 pos) {
 AnimatedButton::~AnimatedButton() {
 	if (onClickListener != NULL)
 		delete onClickListener;
-	/*if (onPressListener != NULL)
-		delete onPressListener;
-	if (onHoverListener != NULL)
-		delete onHoverListener;*/
 
 }
 

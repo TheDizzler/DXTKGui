@@ -8,11 +8,11 @@ GraphicsAsset::~GraphicsAsset() {
 
 }
 
-#include "../../assets.h"
+#include "../GuiAssets.h"
 #include <DDSTextureLoader.h>
 bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const wchar_t* textureFile) {
 
-	if (Assets::reportError(
+	if (GUIAssets::reportError(
 		CreateDDSTextureFromFile(device.Get(), textureFile,
 			resource.GetAddressOf(), texture.GetAddressOf()),
 		L"Failed to load sprite", L"ERROR"))

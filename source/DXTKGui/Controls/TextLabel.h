@@ -28,7 +28,6 @@ public:
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 	virtual void setFont(shared_ptr<FontSet> newFont);
 	virtual void setTint(const XMFLOAT4 color) override;
-	/** Warning: this will affect all text sharing this font! */
 	virtual void setScale(const Vector2& scl) override;
 
 	void setText(string text);

@@ -49,7 +49,6 @@ public:
 	virtual const Vector2& getScale() const override;
 	virtual const float getRotation() const override;
 	virtual const Color& getTint() const override;
-	/* No alpha implementation. */
 	virtual const float getAlpha() const override;
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
@@ -64,14 +63,11 @@ public:
 	virtual void setScale(const Vector2& scale) override;
 	virtual void setRotation(const float rotation) override;
 	virtual void setTint(const XMFLOAT4 color) override;
-	/* No alpha implementation. */
 	virtual void setAlpha(const float alpha) override;
 
 	virtual void update(double deltaTime);
 	virtual void draw(SpriteBatch* batch) override;
 
-	/** Use getTexture(). */
-	//virtual GraphicsAsset* createTexture() override;
 	ComPtr<ID3D11ShaderResourceView> getTexture();
 
 	bool isAlive = true;

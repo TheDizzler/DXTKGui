@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Windows.h>
-//#include <d3d11.h>
 #include "Keyboard.h"
 
 using namespace DirectX;

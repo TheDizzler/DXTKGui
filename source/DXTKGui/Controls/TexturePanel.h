@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GUIControl.h"
 #include "ScrollBar.h"
 
 
@@ -50,7 +49,6 @@ private:
 	unique_ptr<GraphicsAsset> gfxAsset;
 	ComPtr<ID3D11ShaderResourceView> texture;
 
-	//RECT panelRect;
 	/* Portion of panel that is visible. */
 	RECT viewRect;
 

@@ -26,20 +26,16 @@ bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 
 	deviceContext = devCon;
 	batch = sBatch;
-	//swapChain = sChain;
-	//textureRenderTargetView = rTarget;
 
 	initialized = true;
 	return true;
 }
 
-//int fontCount = 0;
-#include "../../assets.h"
+
+#include "../StringHelper.h"
+#include <sstream>
 unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 
-	/*wostringstream wss;
-	wss << "fontCount: " << ++fontCount << " ";
-	OutputDebugString(wss.str().c_str());*/
 
 	if (fontMap.find(fontName) == fontMap.end()) {
 
@@ -49,7 +45,7 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 
 		unique_ptr<FontSet> defaultFont;
 		defaultFont.reset(new FontSet());
-		defaultFont->load(device, Assets::convertCharStarToWCharT(defaultFontFile));
+		defaultFont->load(device, StringHelper::convertCharStarToWCharT(defaultFontFile));
 		//defaultFont->setTint(Color(1, 1, 1, 1));
 
 		return defaultFont;
@@ -59,7 +55,7 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 
 	unique_ptr<FontSet> font;
 	font.reset(new FontSet());
-	font->load(device, Assets::convertCharStarToWCharT(fontFile));
+	font->load(device, StringHelper::convertCharStarToWCharT(fontFile));
 	font->setTint(Color(1, 1, 1, 1));
 	return font;
 }
@@ -341,7 +337,7 @@ Dialog* GUIFactory::createDialog(bool movable, const char_t* fontName) {
 }
 
 
-#include "../../Engine/GameEngine.h"
+#include "../GuiAssets.h"
 GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 	IElement2D* control, Color bgColor) {
 
@@ -378,7 +374,7 @@ GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 
 
 
-	if (Assets::reportError(device->CreateTexture2D(&textureDesc, NULL,
+	if (GUIAssets::reportError(device->CreateTexture2D(&textureDesc, NULL,
 		renderTargetTexture.GetAddressOf()),
 		L"Failed to create render target texture.", L"Aw shucks"))
 		return NULL;
@@ -390,7 +386,7 @@ GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 	renderTargetViewDesc.Texture2D.MipSlice = 0;
 
 
-	if (Assets::reportError(
+	if (GUIAssets::reportError(
 		device->CreateRenderTargetView(renderTargetTexture.Get(),
 			NULL, textureRenderTargetView.GetAddressOf()),
 		L"Failed to create render target view for new texture.", L"Fatal Error"))
@@ -407,10 +403,10 @@ GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 
 
 
-	if (GameEngine::reportError(
+	if (GUIAssets::reportError(
 		device->CreateShaderResourceView(renderTargetTexture.Get(),
 			&shaderResourceViewDesc, shaderResourceView.GetAddressOf()),
-		L"Failed to create Shader Resource View for new texture.", L"Fatal error", true))
+		L"Failed to create Shader Resource View for new texture.", L"Fatal error"))
 		return NULL;
 
 
@@ -466,7 +462,7 @@ GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, Color bgColor
 
 
 
-	if (Assets::reportError(device->CreateTexture2D(&textureDesc, NULL,
+	if (GUIAssets::reportError(device->CreateTexture2D(&textureDesc, NULL,
 		renderTargetTexture.GetAddressOf()),
 		L"Failed to create render target texture.", L"Aw shucks"))
 		return NULL;
@@ -478,7 +474,7 @@ GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, Color bgColor
 	renderTargetViewDesc.Texture2D.MipSlice = 0;
 
 
-	if (Assets::reportError(
+	if (GUIAssets::reportError(
 		device->CreateRenderTargetView(renderTargetTexture.Get(),
 			NULL, textureRenderTargetView.GetAddressOf()),
 		L"Failed to create render target view for new texture.", L"Fatal Error"))
@@ -495,10 +491,10 @@ GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, Color bgColor
 
 
 
-	if (GameEngine::reportError(
+	if (GUIAssets::reportError(
 		device->CreateShaderResourceView(renderTargetTexture.Get(),
 			&shaderResourceViewDesc, shaderResourceView.GetAddressOf()),
-		L"Failed to create Shader Resource View for new texture.", L"Fatal error", true))
+		L"Failed to create Shader Resource View for new texture.", L"Fatal error"))
 		return NULL;
 
 
@@ -550,8 +546,8 @@ bool GUIFactory::getGUIAssetsFromXML() {
 
 	}
 
-	defaultFontFile = Assets::defaultFontFile;
-	fontMap["Default Font"] = Assets::defaultFontFile;
+	defaultFontFile = GUIAssets::defaultFontFile;
+	fontMap["Default Font"] = GUIAssets::defaultFontFile;
 
 	for (xml_node spriteNode = guiAssetsNode.child("sprite"); spriteNode;
 		spriteNode = spriteNode.next_sibling("sprite")) {
@@ -562,23 +558,19 @@ bool GUIFactory::getGUIAssetsFromXML() {
 
 		string check = name; // I think this is required - ya, pretty sure it is
 		if (name == string("White Pixel")) {
-			if (GameEngine::reportError(
+			if (GUIAssets::reportError(
 				DirectX::CreateDDSTextureFromFile(
-					device.Get(), Assets::convertCharStarToWCharT(file), NULL,
+					device.Get(), StringHelper::convertCharStarToWCharT(file), NULL,
 					whitePixel.GetAddressOf()),
 				L"Failed to create texture from WhitePixel.dds", L"ERROR"))
 				return false;
 
 		}
 
-		/*wostringstream ws;
-		ws << "\nfile: " << file << "\n";
-		ws << "name: " << name << "\n";
-		OutputDebugString(ws.str().c_str());*/
 
 		unique_ptr<GraphicsAsset> guiAsset;
 		guiAsset.reset(new GraphicsAsset());
-		if (!guiAsset->load(device, Assets::convertCharStarToWCharT(file)))
+		if (!guiAsset->load(device, StringHelper::convertCharStarToWCharT(file)))
 			return false;
 
 		assetMap[check] = move(guiAsset);
@@ -593,7 +585,7 @@ bool GUIFactory::getGUIAssetsFromXML() {
 		// the spritesheet itself is never saved into the map
 		unique_ptr<GraphicsAsset> masterAsset;
 		masterAsset.reset(new GraphicsAsset());
-		if (!masterAsset->load(device, Assets::convertCharStarToWCharT(file)))
+		if (!masterAsset->load(device, StringHelper::convertCharStarToWCharT(file)))
 			return false;
 
 
@@ -640,11 +632,6 @@ bool GUIFactory::getGUIAssetsFromXML() {
 			spriteAsset->loadAsPartOfSheet(masterAsset->getTexture(), position, size);
 
 			assetMap[name] = move(spriteAsset);
-
-			/*wostringstream ws;
-			ws << "\nfile: " << file << "\n";
-			ws << "name: " << name << "\n";
-			OutputDebugString(ws.str().c_str());*/
 		}
 
 	}

@@ -63,7 +63,6 @@ void TextLabel::update(double deltaTime, MouseController* mouse) {
 
 void TextLabel::draw(SpriteBatch* batch) {
 
-	//font->draw(batch, label.c_str(), position, tint);
 	font->draw(batch, label.c_str(), position, tint,
 		rotation, origin, scale);
 }
@@ -144,7 +143,7 @@ void TextLabel::setToSelectedState() {
 	font->setTint(selectedColorText);
 }
 
-#include "../Controls/GUIFactory.h"
+#include "GUIFactory.h"
 void TextLabel::setFont(const pugi::char_t* fontName) {
 	font = guiFactory->getFont(fontName);
 }
@@ -154,14 +153,11 @@ void TextLabel::setFont(shared_ptr<FontSet> newFont) {
 }
 
 void TextLabel::setTint(const XMFLOAT4 color) {
-	tint = color; // this kind of irrelevant, but oh well
-	//font->setTint(color);
+	tint = color;
 }
 
-/** Warning: this will affect all text sharing this font! */
 void TextLabel::setScale(const Vector2 & scl) {
 	scale = scl;
-	//font->setScale(scl);
 }
 
 const Vector2& TextLabel::getPosition() const {

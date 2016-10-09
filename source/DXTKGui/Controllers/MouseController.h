@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Windows.h>
-
 #include <pugixml.hpp>
+
 #include "Mouse.h"
 #include "../BaseGraphics/Sprite.h"
 

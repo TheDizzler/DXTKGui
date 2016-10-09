@@ -15,7 +15,7 @@ Dialog::~Dialog() {
 		delete closeTransition;
 }
 
-#include "../Controls/GUIFactory.h"
+#include "GUIFactory.h"
 void Dialog::initialize(GraphicsAsset* pixelAsset,
 	const pugi::char_t* font) {
 
@@ -33,12 +33,9 @@ void Dialog::initialize(GraphicsAsset* pixelAsset,
 
 	unique_ptr<GUIControl> titleText;
 
-	//unique_ptr<GUIControl> dialogText;
 	dialogText.reset(new TextLabel(guiFactory->getFont(font)));
 	dialogText->setTint(Color(0, 0, 0, 1));
-	//controls[DialogText] = move(dialogText);
 
-	//setCancelButton(L"Cancel");
 
 }
 
@@ -71,7 +68,6 @@ void Dialog::setDimensions(const Vector2& pos, const Vector2& sz,
 		}
 	}
 
-	//textFormated = false;
 	calculateDialogTextPos();
 }
 
@@ -179,10 +175,6 @@ void Dialog::calculateDialogTextPos() {
 				currentLine.erase(currentLine.end() - back, currentLine.end());
 			}
 
-		/*wostringstream ws;
-		ws << currentLine;
-		OutputDebugString(ws.str().c_str());*/
-
 			newText += currentLine + L"\n";
 
 			// If text is getting too long, restart and adjust for scrollbar
@@ -196,9 +188,6 @@ void Dialog::calculateDialogTextPos() {
 				done = false;
 			}
 		}
-		//dialogText->setText(newText);
-		//dialogtextsize = dialogText->measureString();
-		//textFormated = true;
 
 		formattedText.setText(newText);
 		dialogtextsize = formattedText.measureString();

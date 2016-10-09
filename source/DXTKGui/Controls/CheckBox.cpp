@@ -15,7 +15,6 @@ CheckBox::CheckBox(unique_ptr<Sprite> unchkdSprite,
 	label.reset(new TextLabel(move(font)));
 	label->setText(L"");
 
-	//drawSprite = uncheckedSprite.get();
 	texture = uncheckedSprite->getTexture().Get();
 }
 
@@ -55,7 +54,7 @@ void CheckBox::draw(SpriteBatch* batch) {
 }
 
 
-#include "../Controls/GUIFactory.h"
+#include "GUIFactory.h"
 void CheckBox::setFont(const pugi::char_t* font) {
 	label->setFont(guiFactory->getFont(font));
 }

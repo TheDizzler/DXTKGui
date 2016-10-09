@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../globals.h"
+//#include "../../globals.h"
 
 
-#include <vector>
+//#include <vector>
 #include "../Controls/GUIControl.h"
 
 class Dialog;

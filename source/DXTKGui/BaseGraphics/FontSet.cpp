@@ -3,7 +3,6 @@
 
 FontSet::FontSet() {
 
-	//rotation = 0.0f;
 	scale = Vector2(1, 1);
 	tint = Color(0, 0, 0, 1);
 	layerDepth = 1.0f;
@@ -28,19 +27,6 @@ XMVECTOR XM_CALLCONV FontSet::measureString(wchar_t const* text) const {
 }
 
 
-//void FontSet::draw(SpriteBatch* batch, const wchar_t* text, const Vector2& position) {
-//
-//	font->DrawString(batch, text, position, tint, 0.0f, origin, scale,
-//		SpriteEffects_None, layerDepth);
-//}
-//
-//void FontSet::draw(SpriteBatch* batch, const wchar_t* text, const Vector2& position,
-//	const Color& newTint) {
-//
-//	font->DrawString(batch, text, position, newTint, 0.0f, origin, scale,
-//		SpriteEffects_None, layerDepth);
-//}
-
 void FontSet::draw(SpriteBatch* batch, const wchar_t* text,
 	const Vector2& position, const Color& newTint, float rotation,
 	const Vector2& origin, const Vector2& scale) {
@@ -64,9 +50,6 @@ const Vector2& FontSet::getScale() const {
 	return scale;
 }
 
-//const float FontSet::getRotation() const {
-//	return rotation;
-//}
 
 const Color& FontSet::getTint() const {
 	return tint;
@@ -84,9 +67,6 @@ void FontSet::setScale(const Vector2& scl) {
 	scale = scl;
 }
 
-//void FontSet::setRotation(const float rot) {
-//	rotation = rot;
-//}
 
 void FontSet::setTint(const XMFLOAT4 color) {
 	tint = color;

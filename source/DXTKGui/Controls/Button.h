@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Controllers/MouseController.h"
-#include "GUIControl.h"
 #include "TextLabel.h"
 #include "../BaseGraphics/PrimitiveShapes.h"
 
@@ -246,8 +245,7 @@ private:
 	OnClickFunction onClickFunction;
 	OnClickFunction onPressFunction;
 	OnClickFunction onHoverFunction;
-	//OnClickListener* onHoverListener = NULL;
-	//OnClickListener* onPressListener = NULL;
+
 
 
 

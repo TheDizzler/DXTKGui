@@ -245,7 +245,7 @@ const Vector2& XM_CALLCONV ListBox::measureString() const {
 	return XMVECTOR();
 }
 
-#include "../Controls/GUIFactory.h"
+
 void ListBox::setFont(const pugi::char_t* fontName) {
 
 	font = guiFactory->getFont(fontName);

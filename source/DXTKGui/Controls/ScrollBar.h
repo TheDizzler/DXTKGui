@@ -137,13 +137,3 @@ private:
 	double autoScrollDelay = autoScrollStartDelay * .75; // time between increments while autoscrolling
 
 };
-
-
-class SmoothScrollBar : public ScrollBar {
-public:
-	SmoothScrollBar(const Vector2& position);
-	~SmoothScrollBar();
-
-private:
-
-};

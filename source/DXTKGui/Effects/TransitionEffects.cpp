@@ -122,13 +122,6 @@ bool TransitionEffects::SlideAndGrowTransition::run(double deltaTime, IElement2D
 	} else
 		control->setScale(newscale);
 
-	/*if (!(positioningDone && scalingDone)) {
-		++waitingCount;
-	} else {
-		wostringstream wss;
-		wss << "WaitCount: " << waitingCount << "\n";
-		OutputDebugString(wss.str().c_str());
-	}*/
 	return positioningDone && scalingDone;
 }
 
@@ -155,8 +148,6 @@ TransitionEffects::TrueGrowTransition::TrueGrowTransition(
 	elements = containerControl->getElements();
 	for (IElement2D* element : elements) {
 		endPositions.push_back(element->getPosition());
-		//element->setPosition(containerControl->getPosition()/*Vector2::Zero*/);
-		//element->setScale(startScale);
 	}
 }
 
@@ -180,8 +171,7 @@ bool TransitionEffects::TrueGrowTransition::run(double deltaTime, IElement2D* co
 			allControlsDone = false;
 		}
 	}
-	//if (allControlsDone)
-		//OutputDebugString(L"Controls Finished!\n");
+
 
 	Vector2 newscale = Vector2::Lerp(container->getScale(), endScale,
 		deltaTime*transitionSpeed);
@@ -190,19 +180,9 @@ bool TransitionEffects::TrueGrowTransition::run(double deltaTime, IElement2D* co
 	Vector2 diffScale = endScale - newscale;
 	if (diffScale.x <= .01 && diffScale.y <= .01) {
 		container->setScale(endScale);
-		//OutputDebugString(L"Container Finished!\n");
 		containerDone = true;
 	} else
 		container->setScale(newscale);
-
-
-	/*if (!(containerDone && allControlsDone))
-		++waitCount;
-	else {
-		wostringstream wss;
-		wss << "WaitCount: " << waitCount << "\n";
-		OutputDebugString(wss.str().c_str());
-	}*/
 
 	return containerDone && allControlsDone;
 }
@@ -219,7 +199,6 @@ void TransitionEffects::TrueGrowTransition::reset(IElement2D* containerControl) 
 
 	containerDone = false;
 
-	//containerControl->setPosition(containerControl->getPosition());
 	containerControl->setScale(startScale);
 	i = 0;
 	for (IElement2D* element : elements) {
@@ -358,7 +337,6 @@ bool TransitionEffects::SpinGrowTransition::run(double deltaTime, IElement2D* co
 	rotation = (/*rotation * (1.0f - timer/ transitionSpeed)*/0)
 		+ (XM_PI * 4 * timer / transitionSpeed);
 
-	//timer = min(transitionSpeed , max(timer + deltaTime, 0.0));
 
 	return timer >= transitionSpeed;
 
@@ -371,7 +349,6 @@ void TransitionEffects::SpinGrowTransition::reset(IElement2D* control) {
 	scale = startScale;
 	timer = 0;
 	rotation = 0;
-	//spinTimer = 0;
 
 	position = control->getPosition();
 	position.x += gfxAsset->getWidth() / 2;

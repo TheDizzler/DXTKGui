@@ -1,6 +1,6 @@
 #include "TexturePanel.h"
 
-#include "../../Engine/GameEngine.h"
+//#include "../../Engine/GameEngine.h"
 TexturePanel::TexturePanel(GraphicsAsset* pixelAsset, ScrollBar* scrllbr) {
 
 	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
@@ -122,6 +122,7 @@ bool TexturePanel::hovering() {
 	return isHover;
 }
 
+#include "GUIFactory.h"
 void TexturePanel::setScrollBar(ScrollBarDesc& scrollBarDesc) {
 
 	verticalScrollBar.reset(guiFactory->createScrollBar(

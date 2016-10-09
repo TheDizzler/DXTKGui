@@ -17,7 +17,7 @@ ComboBox::~ComboBox() {
 	delete onClickListener;
 }
 
-#include "../Controls/GUIFactory.h"
+#include "GUIFactory.h"
 bool ComboBox::initialize(shared_ptr<FontSet> fnt, GraphicsAsset* pixelAsset,
 	ListBox* lstBx, const pugi::char_t* buttonName, bool enumerateList) {
 
@@ -77,31 +77,17 @@ void ComboBox::draw(SpriteBatch* batch) {
 void ComboBox::open() {
 
 	isOpen = !isOpen;
-	//float rot = XM_PI*isOpen;
-	//comboListButton->setRotation(rot);
-
-	//Vector2 buttonPos = comboListButton->getPosition();
-
-	//if (rot == 0)
-	//	comboListButton->setPosition(
-	//		Vector2(buttonPos.x - comboListButton->getWidth(),
-	//			buttonPos.y - comboListButton->getHeight()));
-	//else if (rot == XM_PI*isOpen)
-	//	comboListButton->setPosition(
-	//		Vector2(buttonPos.x + comboListButton->getWidth(),
-	//			buttonPos.y + comboListButton->getHeight()));
+	
 }
 
 void ComboBox::close() {
 	isOpen = false;
-	//comboListButton->setRotation(0);
 }
 
 void ComboBox::resizeBox() {
 
 	comboListButton->setPosition(
 		Vector2(position.x + width - comboListButton->getWidth(), position.y));
-	//comboListButton->setOnClickListener(new ShowListBoxListener(this)); // necessary?
 	frame->setDimensions(position, Vector2(width, comboListButton->getHeight()));
 }
 

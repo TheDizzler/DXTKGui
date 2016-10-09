@@ -1,6 +1,7 @@
 #pragma once
 
 #include <pugixml.hpp>
+
 #include "../BaseGraphics/FontSet.h"
 #include "../BaseGraphics/GraphicsAsset.h"
 #include "../Controllers/MouseController.h"
