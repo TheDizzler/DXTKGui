@@ -221,13 +221,6 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_CREATE:
 			return 0;
-			/*case WM_KEYDOWN:
-				if (wParam == VK_ESCAPE) {
-				if (MessageBox(0, L"Are you sure you want to exit?",
-				L"Really?", MB_YESNO | MB_ICONQUESTION) == IDYES)
-				DestroyWindow(hwnd);
-				}
-				return 0;*/
 		case WM_INPUT:
 		case WM_MOUSEMOVE:
 		case WM_LBUTTONDOWN:
@@ -250,23 +243,6 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			Keyboard::ProcessMessage(msg, wParam, lParam);
 			return 0;
 	
-	/*	case WM_INPUT:
-
-			GetRawInputData((HRAWINPUT) lParam, RID_INPUT, NULL,
-				&dwSize, sizeof(RAWINPUTHEADER));
-			lpb = new BYTE[dwSize];
-			if (lpb == NULL)
-				return 0;
-
-			if (GetRawInputData((HRAWINPUT) lParam, RID_INPUT, lpb,
-				&dwSize, sizeof(RAWINPUTHEADER)) != dwSize) {
-				delete[] lpb;
-				return 0;
-			}
-
-			gameEngine->setRawInput((RAWINPUT*) lpb);
-
-			return 0;*/
 
 		case WM_DEVICECHANGE:
 			if (wParam == DBT_DEVICEARRIVAL) {
