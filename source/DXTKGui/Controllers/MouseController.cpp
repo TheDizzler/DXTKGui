@@ -16,7 +16,7 @@ void MouseController::setState(Mouse::Mode mode) {
 	mouse->SetMode(mode);
 }
 
-
+#include <sstream>
 bool MouseController::loadMouseIcon(GUIFactory* guiFactory,
 	const pugi::char_t* spriteName) {
 

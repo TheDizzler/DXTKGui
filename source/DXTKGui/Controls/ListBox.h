@@ -1,7 +1,8 @@
 #pragma once
 
-#include "ScrollBar.h"
+#include <vector>
 
+#include "ScrollBar.h"
 
 
 class ListItem {
@@ -31,14 +32,13 @@ public:
 protected:
 
 	virtual void setText() = 0;
-	//unique_ptr<T> item;
 	unique_ptr<TextLabel> textLabel;
 
 	RECT itemRect;
 	unique_ptr<HitArea> hitArea;
 
 	/** itemPosition: position of entire Item.
-			position: for actual text only. */
+			position: for text only. */
 	Vector2 itemPosition;
 
 	size_t textMarginX = 10;

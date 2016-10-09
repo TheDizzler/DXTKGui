@@ -9,7 +9,7 @@ GraphicsAsset::~GraphicsAsset() {
 }
 
 #include "../../assets.h"
-#include "DDSTextureLoader.h"
+#include <DDSTextureLoader.h>
 bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const wchar_t* textureFile) {
 
 	if (Assets::reportError(
@@ -62,8 +62,6 @@ void GraphicsAsset::getTextureDimensions(ID3D11Resource* res, UINT* width, UINT*
 				*width = 0; // width in pixels
 			if (height)
 				*height = 0; // height in pixels
-
-
 	}
 }
 

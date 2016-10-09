@@ -1,6 +1,9 @@
-#include "../../pch.h"
 #pragma once
 
+#include "../../globals.h"
+
+
+#include <vector>
 #include "../Controls/GUIControl.h"
 
 class Dialog;

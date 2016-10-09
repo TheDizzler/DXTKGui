@@ -56,6 +56,7 @@ bool GraphicsEngine::initD3D(HWND h) {
 
 }
 
+#include <sstream>
 #include "../Engine/GameEngine.h"
 bool GraphicsEngine::getDisplayAdapters() {
 

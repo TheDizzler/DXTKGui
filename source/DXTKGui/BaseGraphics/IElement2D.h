@@ -1,8 +1,9 @@
-#include "../../pch.h"
 #pragma once
 
+#include <wrl.h>
 #include <d3d11_1.h>
 #include <SimpleMath.h>
+#include <vector>
 #include "SpriteBatch.h"
 
 
@@ -10,7 +11,7 @@
 using namespace std;
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
-
+using namespace Microsoft::WRL;
 
 interface IElement2D {
 public:
@@ -22,7 +23,7 @@ public:
 	virtual const Color& getTint() const = 0;
 	virtual const float getAlpha() const = 0;
 	virtual const int getWidth() const = 0;
-	virtual const int getHeight() const =0 ;
+	virtual const int getHeight() const = 0;
 
 	virtual void moveBy(const Vector2& moveVector) = 0;
 	virtual void setPosition(const Vector2& position) = 0;

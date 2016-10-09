@@ -1,5 +1,5 @@
-#include "../pch.h"
 #pragma once
+
 
 #include "MenuManager.h"
 #include "../DXTKGui/Controls/GUIFactory.h"

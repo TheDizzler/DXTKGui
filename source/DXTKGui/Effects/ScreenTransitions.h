@@ -1,7 +1,5 @@
-#include "../../pch.h"
 #pragma once
 
-//#include "../BaseGraphics/GraphicsAsset.h"
 #include "../Controls/GUIFactory.h"
 
 class Screen;

@@ -1,5 +1,9 @@
-#include "../pch.h"
+#pragma once
+
+#include <Windows.h>
 #include "Dbt.h"
+
+
 #include "GameEngine.h"
 
 

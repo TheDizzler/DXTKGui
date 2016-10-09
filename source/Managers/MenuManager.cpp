@@ -77,14 +77,14 @@ void MenuManager::openMainMenu() {
 
 	// switch screens at next frame so draw() doesn't freak out
 	switchTo = mainScreen.get();
-	transitionManager->transitionBetween(currentScreen, switchTo, 1);
+	transitionManager->transitionBetween(currentScreen, switchTo);
 }
 
 void MenuManager::openConfigMenu() {
 
 	// switch screens at next frame
 	switchTo = configScreen.get();
-	transitionManager->transitionBetween(currentScreen, switchTo, 1);
+	transitionManager->transitionBetween(currentScreen, switchTo);
 }
 /** **** END MENUMANAGER **** */
 
@@ -124,7 +124,7 @@ MainScreen::~MainScreen() {
 	guiControls.clear();
 }
 
-
+#include <sstream>
 bool MainScreen::initialize(ComPtr<ID3D11Device> device, MouseController* mouse) {
 
 	AnimatedButton* animButton =

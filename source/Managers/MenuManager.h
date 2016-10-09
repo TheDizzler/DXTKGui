@@ -1,5 +1,5 @@
-#include "../pch.h"
 #pragma once
+
 
 
 #include "../DXTKGui/BaseGraphics/Screen.h"

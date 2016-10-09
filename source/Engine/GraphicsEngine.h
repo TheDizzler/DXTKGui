@@ -1,4 +1,3 @@
-#include "../pch.h"
 #pragma once
 //#define MyMessageBox(a, b, c, d) \
 //	if (swapChain.Get() != NULL) \
@@ -10,13 +9,17 @@
 
 #include <d3d11_1.h>
 #include <dxgi1_2.h>
+#include <wrl.h>
+#include <vector>
 
 #include "SpriteBatch.h"
 #include "CommonStates.h"
 
+
+
 using namespace std;
 using namespace DirectX;
-
+using namespace Microsoft::WRL;
 
 
 class GraphicsEngine {

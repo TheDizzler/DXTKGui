@@ -45,11 +45,6 @@ void Sprite::load(GraphicsAsset* const graphicsAsset) {
 	hitArea.reset(new HitArea(
 		Vector2(position.x - origin.x, position.y - origin.y),
 		Vector2(width, height)));
-
-	/*if (graphicsAsset->hasAnimations()) {
-
-		animationFrames = graphicsAsset->getAnimation();
-	}*/
 }
 
 

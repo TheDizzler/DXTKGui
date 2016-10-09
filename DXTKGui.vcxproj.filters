@@ -25,14 +25,8 @@
     <Filter Include="Source Files\Managers">
       <UniqueIdentifier>{fb7b9b85-d1a0-4686-8393-8d0435547495}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DXTKGui">
-      <UniqueIdentifier>{dd9fc71c-3b6a-45cf-90c1-f99b5b32fc64}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\DXTKGui">
       <UniqueIdentifier>{ec182f94-3530-4083-aacc-63adac721fb2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="DXTKGui\BaseGraphics">
-      <UniqueIdentifier>{091e546d-d950-4277-b0d5-9879edf169b5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\DXTKGui\BaseGraphics">
       <UniqueIdentifier>{898aa462-282f-49fe-9ef4-5705260410b3}</UniqueIdentifier>
@@ -40,19 +34,25 @@
     <Filter Include="Source Files\DXTKGui\Effects">
       <UniqueIdentifier>{5d39d85a-bf2c-4088-af84-4234eaef7052}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DXTKGui\Effects">
-      <UniqueIdentifier>{aef1acfc-f251-4acf-b6f7-6995f50bf851}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\DXTKGui\Controls">
       <UniqueIdentifier>{b02cce54-c4f7-40dc-8b07-e7837be62ed2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\DXTKGui\Controllers">
       <UniqueIdentifier>{86993698-8c93-491b-9beb-b897bf36f522}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DXTKGui\Controls">
+    <Filter Include="Header Files\DXTKGui">
+      <UniqueIdentifier>{dd9fc71c-3b6a-45cf-90c1-f99b5b32fc64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DXTKGui\BaseGraphics">
+      <UniqueIdentifier>{091e546d-d950-4277-b0d5-9879edf169b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DXTKGui\Effects">
+      <UniqueIdentifier>{aef1acfc-f251-4acf-b6f7-6995f50bf851}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DXTKGui\Controls">
       <UniqueIdentifier>{7d99d9d8-9e7c-4a51-beb2-7d9883b73c4d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DXTKGui\Controllers">
+    <Filter Include="Header Files\DXTKGui\Controllers">
       <UniqueIdentifier>{3531ea5a-d5d2-4dd1-8c1d-6b6f2a3c6641}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -155,68 +155,68 @@
     <ClInclude Include="source\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\globals.h">
-      <Filter>DXTKGui</Filter>
-    </ClInclude>
     <ClInclude Include="source\DXTKGui\BaseGraphics\FontSet.h">
-      <Filter>DXTKGui\BaseGraphics</Filter>
+      <Filter>Header Files\DXTKGui\BaseGraphics</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\BaseGraphics\GraphicsAsset.h">
-      <Filter>DXTKGui\BaseGraphics</Filter>
+      <Filter>Header Files\DXTKGui\BaseGraphics</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\BaseGraphics\IElement2D.h">
-      <Filter>DXTKGui\BaseGraphics</Filter>
+      <Filter>Header Files\DXTKGui\BaseGraphics</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\BaseGraphics\screen.h">
-      <Filter>DXTKGui\BaseGraphics</Filter>
+      <Filter>Header Files\DXTKGui\BaseGraphics</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\BaseGraphics\Sprite.h">
-      <Filter>DXTKGui\BaseGraphics</Filter>
+      <Filter>Header Files\DXTKGui\BaseGraphics</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\BaseGraphics\PrimitiveShapes.h">
-      <Filter>DXTKGui\BaseGraphics</Filter>
+      <Filter>Header Files\DXTKGui\BaseGraphics</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Controls\Button.h">
-      <Filter>DXTKGui\Controls</Filter>
+      <Filter>Header Files\DXTKGui\Controls</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Controls\CheckBox.h">
-      <Filter>DXTKGui\Controls</Filter>
+      <Filter>Header Files\DXTKGui\Controls</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Controls\ComboBox.h">
-      <Filter>DXTKGui\Controls</Filter>
+      <Filter>Header Files\DXTKGui\Controls</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Controls\Dialog.h">
-      <Filter>DXTKGui\Controls</Filter>
+      <Filter>Header Files\DXTKGui\Controls</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Controls\GUIControl.h">
-      <Filter>DXTKGui\Controls</Filter>
+      <Filter>Header Files\DXTKGui\Controls</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Controls\GUIFactory.h">
-      <Filter>DXTKGui\Controls</Filter>
+      <Filter>Header Files\DXTKGui\Controls</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Controls\ListBox.h">
-      <Filter>DXTKGui\Controls</Filter>
+      <Filter>Header Files\DXTKGui\Controls</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Controls\ScrollBar.h">
-      <Filter>DXTKGui\Controls</Filter>
+      <Filter>Header Files\DXTKGui\Controls</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Controls\TextLabel.h">
-      <Filter>DXTKGui\Controls</Filter>
+      <Filter>Header Files\DXTKGui\Controls</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Controls\TexturePanel.h">
-      <Filter>DXTKGui\Controls</Filter>
+      <Filter>Header Files\DXTKGui\Controls</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Effects\ScreenTransitions.h">
-      <Filter>DXTKGui\Effects</Filter>
+      <Filter>Header Files\DXTKGui\Effects</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Effects\TransitionEffects.h">
-      <Filter>DXTKGui\Effects</Filter>
+      <Filter>Header Files\DXTKGui\Effects</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Controllers\KeyboardController.h">
-      <Filter>DXTKGui\Controllers</Filter>
+      <Filter>Header Files\DXTKGui\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Controllers\MouseController.h">
-      <Filter>DXTKGui\Controllers</Filter>
+      <Filter>Header Files\DXTKGui\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\globals.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

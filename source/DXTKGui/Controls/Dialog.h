@@ -1,4 +1,3 @@
-#include "../../pch.h"
 #pragma once
 
 #include "Button.h"

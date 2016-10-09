@@ -94,8 +94,6 @@ protected:
 	Vector2 scale;
 	unique_ptr<HitArea> hitArea;
 
-	// these get cleaned up in it's originating GraphicsAsset
-	//vector<Frame*> animationFrames;
 };
 
 

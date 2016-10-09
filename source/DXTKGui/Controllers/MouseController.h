@@ -1,18 +1,12 @@
 #pragma once
 
+#include <Windows.h>
+
 #include <pugixml.hpp>
 #include "Mouse.h"
 #include "../BaseGraphics/Sprite.h"
 
 
-
-//class MouseButton {
-//public:
-//	bool leftButton = false;
-//	bool middleButton = false;
-//	bool rightButton = false;
-//
-//};
 
 class GUIFactory;
 /** A mouse controller that gets rawinput from WM_INPUT in the windows
@@ -21,9 +15,6 @@ class GUIFactory;
 		will freeze in that state. */
 class MouseController : public Sprite {
 public:
-
-	//MouseButton currentButtons;
-	//MouseButton lastButtons;
 
 
 	MouseController(HWND hwnd);
@@ -39,16 +30,6 @@ public:
 
 	void saveMouseState();
 
-	/*void loadTexture(ComPtr<ID3D11ShaderResourceView> texture,
-		ComPtr<ID3D11Resource> resource);*/
-
-	/** RawInput should be used for moving cameras, etc.
-		If only using mouse as a cursor, use GetCursorPos(). */
-	//void getRawInput(RAWMOUSE* rawMouse);
-
-	/* Dangerous! If no mouse action is sent to windows message pump
-		(WM_INPUT) then the same RAWMOUSE info gets recycled. */
-	//const Vector2 getMovement() const;
 
 	int scrollWheelValue();
 	bool leftButton();
@@ -69,9 +50,7 @@ private:
 
 	Mouse::State state;
 	Mouse::State lastState;
-	//RAWMOUSE* raw;
 
-	//void saveLastRawInput();
 
 	short mouseWheelDelta = 0;
 

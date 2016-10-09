@@ -73,6 +73,7 @@ void TextLabel::draw(SpriteBatch* batch, Color color) {
 		rotation, origin, scale);
 }
 
+#include <sstream>
 void TextLabel::setText(string text) {
 
 	wostringstream wss;
