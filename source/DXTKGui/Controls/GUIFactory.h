@@ -1,8 +1,8 @@
-#include "../pch.h"
+#include "../../pch.h"
 #pragma once
 
 #include <pugixml.hpp>
-#include "../Managers/screen.h"
+#include "../BaseGraphics/screen.h"
 #include "../BaseGraphics/GraphicsAsset.h"
 #include "ComboBox.h"
 #include "Dialog.h"

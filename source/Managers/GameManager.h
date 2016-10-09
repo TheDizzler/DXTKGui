@@ -2,7 +2,7 @@
 #pragma once
 
 #include "MenuManager.h"
-#include "../Controls/GUIFactory.h"
+#include "../DXTKGui/Controls/GUIFactory.h"
 
 class GameEngine;
 

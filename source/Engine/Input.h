@@ -2,8 +2,8 @@
 #pragma once
 
 
-#include "MouseController.h"
-#include "KeyboardController.h"
+#include "../DXTKGui/Controllers/MouseController.h"
+#include "../DXTKGui/Controllers/KeyboardController.h"
 
 using namespace DirectX;
 

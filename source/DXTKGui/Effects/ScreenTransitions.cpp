@@ -41,7 +41,7 @@ void ScreenTransitionManager::drawTransition(SpriteBatch* batch) {
 
 
 
-#include "../Managers/screen.h"
+#include "../BaseGraphics/screen.h"
 void ScreenTransition::setTransitionBetween(
 	GraphicsAsset* oldScreen, GraphicsAsset* newScreen, float time) {
 

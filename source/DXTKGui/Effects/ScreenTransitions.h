@@ -1,4 +1,4 @@
-#include "../pch.h"
+#include "../../pch.h"
 #pragma once
 
 //#include "../BaseGraphics/GraphicsAsset.h"
@@ -43,7 +43,7 @@ namespace ScreenTransitions {
 
 		void setTransition(ScreenTransition* effect);
 		void transitionBetween(Screen* oldScreen, Screen* newScreen,
-			float transitionTime = 1);
+			float transitionTime = .5);
 
 		/** Return true when transition complete. */
 		bool runTransition(double deltaTime);

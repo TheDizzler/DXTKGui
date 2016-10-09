@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../BaseGraphics/TransitionEffects.h"
+#include "../Effects/TransitionEffects.h"
 #include "../Controls/TextLabel.h"
-#include "../Engine/MouseController.h"
-#include "../Engine/KeyboardController.h"
+#include "../Controllers/MouseController.h"
+#include "../Controllers/KeyboardController.h"
 
 
 class GameManager;

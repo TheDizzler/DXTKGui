@@ -2,12 +2,12 @@
 #pragma once
 
 
-#include "Screen.h"
-#include "../Controls/Dialog.h"
-#include "../Controls/ComboBox.h"
-#include "../Controls/Button.h"
-#include "../Controls/CheckBox.h"
-#include "ScreenTransitions.h"
+#include "../DXTKGui/BaseGraphics/Screen.h"
+#include "../DXTKGui/Controls/Dialog.h"
+#include "../DXTKGui/Controls/ComboBox.h"
+#include "../DXTKGui/Controls/Button.h"
+#include "../DXTKGui/Controls/CheckBox.h"
+#include "../DXTKGUI/Effects/ScreenTransitions.h"
 
 class MenuScreen;
 class MainScreen;

@@ -1,26 +1,12 @@
-#include "../pch.h"
+#include "../../pch.h"
 #pragma once
 
 #include "Button.h"
 #include "TexturePanel.h"
-#include "../BaseGraphics/TransitionEffects.h"
+#include "../Effects/TransitionEffects.h"
 
 
 
-	/** Creates a Dialog Box using a custom dds background file. */
-	/*class CustomBGDialog : public Dialog {
-	public:
-		CustomBGDialog(const Vector2& position);
-
-		bool initialize(ComPtr<ID3D11Device> device, const wchar_t* fontFile,
-			const wchar_t* bgFile);
-
-	private:
-
-		unique_ptr<Sprite> bgSprite;
-
-
-	};*/
 
 /** A pop-up Dialog Box. Title area and button area
 	automatically adjust to size of their components. */

@@ -1,6 +1,6 @@
 #include "TexturePanel.h"
 
-#include "../Engine/GameEngine.h"
+#include "../../Engine/GameEngine.h"
 TexturePanel::TexturePanel(GraphicsAsset* pixelAsset, ScrollBar* scrllbr) {
 
 	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));

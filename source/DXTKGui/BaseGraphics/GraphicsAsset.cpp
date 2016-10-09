@@ -8,7 +8,7 @@ GraphicsAsset::~GraphicsAsset() {
 
 }
 
-#include "../assets.h"
+#include "../../assets.h"
 #include "DDSTextureLoader.h"
 bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const wchar_t* textureFile) {
 

@@ -19,29 +19,44 @@
     <Filter Include="Source Files\Engine">
       <UniqueIdentifier>{76804a96-ada4-4211-bebe-77a2e1e08339}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Engine\BaseGfx">
-      <UniqueIdentifier>{33fac6d1-0874-4f6b-8c5f-c45db2cd22c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\BaseGfx">
-      <UniqueIdentifier>{ac12ca84-e254-4509-96a2-c85519ce31e4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Controls">
-      <UniqueIdentifier>{157f53fe-b816-46b5-882a-9a3d12b87d1e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Controls">
-      <UniqueIdentifier>{c1ad0bfe-a060-4641-9a8a-809e1f84c774}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Managers">
       <UniqueIdentifier>{9a060f31-a4d6-4638-974c-655e7c31c2fb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Managers">
       <UniqueIdentifier>{fb7b9b85-d1a0-4686-8393-8d0435547495}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DXTKGui">
+      <UniqueIdentifier>{dd9fc71c-3b6a-45cf-90c1-f99b5b32fc64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DXTKGui">
+      <UniqueIdentifier>{ec182f94-3530-4083-aacc-63adac721fb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXTKGui\BaseGraphics">
+      <UniqueIdentifier>{091e546d-d950-4277-b0d5-9879edf169b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DXTKGui\BaseGraphics">
+      <UniqueIdentifier>{898aa462-282f-49fe-9ef4-5705260410b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DXTKGui\Effects">
+      <UniqueIdentifier>{5d39d85a-bf2c-4088-af84-4234eaef7052}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXTKGui\Effects">
+      <UniqueIdentifier>{aef1acfc-f251-4acf-b6f7-6995f50bf851}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DXTKGui\Controls">
+      <UniqueIdentifier>{b02cce54-c4f7-40dc-8b07-e7837be62ed2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DXTKGui\Controllers">
+      <UniqueIdentifier>{86993698-8c93-491b-9beb-b897bf36f522}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXTKGui\Controls">
+      <UniqueIdentifier>{7d99d9d8-9e7c-4a51-beb2-7d9883b73c4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXTKGui\Controllers">
+      <UniqueIdentifier>{3531ea5a-d5d2-4dd1-8c1d-6b6f2a3c6641}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Engine\MouseController.cpp">
-      <Filter>Source Files\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\main.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
@@ -54,65 +69,68 @@
     <ClCompile Include="Source\Engine\Input.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\KeyboardController.cpp">
-      <Filter>Source Files\Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BaseGraphics\FontSet.cpp">
-      <Filter>Source Files\Engine\BaseGfx</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BaseGraphics\Sprite.cpp">
-      <Filter>Source Files\Engine\BaseGfx</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Controls\ComboBox.cpp">
-      <Filter>Source Files\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Controls\Button.cpp">
-      <Filter>Source Files\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Controls\Dialog.cpp">
-      <Filter>Source Files\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Controls\ListBox.cpp">
-      <Filter>Source Files\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Controls\TextLabel.cpp">
-      <Filter>Source Files\Controls</Filter>
-    </ClCompile>
     <ClCompile Include="source\Managers\GameManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
     <ClCompile Include="source\Managers\MenuManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="source\Controls\GUIControl.cpp">
-      <Filter>Source Files\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="source\BaseGraphics\GraphicsAsset.cpp">
-      <Filter>Source Files\Engine\BaseGfx</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Controls\GUIFactory.cpp">
-      <Filter>Source Files\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\BaseGraphics\PrimitiveShapes.cpp">
-      <Filter>Source Files\Engine\BaseGfx</Filter>
-    </ClCompile>
     <ClCompile Include="source\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Controls\CheckBox.cpp">
-      <Filter>Source Files\Controls</Filter>
+    <ClCompile Include="source\DXTKGui\BaseGraphics\FontSet.cpp">
+      <Filter>Source Files\DXTKGui\BaseGraphics</Filter>
     </ClCompile>
-    <ClCompile Include="source\Controls\ScrollBar.cpp">
-      <Filter>Source Files\Controls</Filter>
+    <ClCompile Include="source\DXTKGui\BaseGraphics\GraphicsAsset.cpp">
+      <Filter>Source Files\DXTKGui\BaseGraphics</Filter>
     </ClCompile>
-    <ClCompile Include="source\BaseGraphics\TransitionEffects.cpp">
-      <Filter>Source Files\Engine\BaseGfx</Filter>
+    <ClCompile Include="source\DXTKGui\BaseGraphics\Sprite.cpp">
+      <Filter>Source Files\DXTKGui\BaseGraphics</Filter>
     </ClCompile>
-    <ClCompile Include="source\Controls\TexturePanel.cpp">
-      <Filter>Source Files\Controls</Filter>
+    <ClCompile Include="source\DXTKGui\BaseGraphics\PrimitiveShapes.cpp">
+      <Filter>Source Files\DXTKGui\BaseGraphics</Filter>
     </ClCompile>
-    <ClCompile Include="source\Managers\ScreenTransitions.cpp">
-      <Filter>Source Files\Managers</Filter>
+    <ClCompile Include="source\DXTKGui\Effects\ScreenTransitions.cpp">
+      <Filter>Source Files\DXTKGui\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controls\Button.cpp">
+      <Filter>Source Files\DXTKGui\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controls\CheckBox.cpp">
+      <Filter>Source Files\DXTKGui\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controls\ComboBox.cpp">
+      <Filter>Source Files\DXTKGui\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controls\Dialog.cpp">
+      <Filter>Source Files\DXTKGui\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controls\GUIControl.cpp">
+      <Filter>Source Files\DXTKGui\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controls\GUIFactory.cpp">
+      <Filter>Source Files\DXTKGui\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controls\ListBox.cpp">
+      <Filter>Source Files\DXTKGui\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controls\ScrollBar.cpp">
+      <Filter>Source Files\DXTKGui\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controls\TextLabel.cpp">
+      <Filter>Source Files\DXTKGui\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controls\TexturePanel.cpp">
+      <Filter>Source Files\DXTKGui\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controllers\KeyboardController.cpp">
+      <Filter>Source Files\DXTKGui\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controllers\MouseController.cpp">
+      <Filter>Source Files\DXTKGui\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\Effects\TransitionEffects.cpp">
+      <Filter>Source Files\DXTKGui\Effects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -125,40 +143,7 @@
     <ClInclude Include="Source\Engine\Input.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\KeyboardController.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\MouseController.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\BaseGraphics\FontSet.h">
-      <Filter>Header Files\Engine\BaseGfx</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\BaseGraphics\IElement2D.h">
-      <Filter>Header Files\Engine\BaseGfx</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\BaseGraphics\Sprite.h">
-      <Filter>Header Files\Engine\BaseGfx</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Controls\Button.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Controls\ComboBox.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Controls\Dialog.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Controls\ListBox.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Controls\TextLabel.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
     <ClInclude Include="Source\assets.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\Managers\GameManager.h">
@@ -167,35 +152,71 @@
     <ClInclude Include="source\Managers\MenuManager.h">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="source\Managers\screen.h">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Controls\GUIControl.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="source\BaseGraphics\GraphicsAsset.h">
-      <Filter>Header Files\Engine\BaseGfx</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Controls\GUIFactory.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\BaseGraphics\PrimitiveShapes.h">
-      <Filter>Header Files\Engine\BaseGfx</Filter>
-    </ClInclude>
     <ClInclude Include="source\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\Controls\CheckBox.h">
-      <Filter>Header Files\Controls</Filter>
+    <ClInclude Include="Source\globals.h">
+      <Filter>DXTKGui</Filter>
     </ClInclude>
-    <ClInclude Include="source\BaseGraphics\TransitionEffects.h">
-      <Filter>Header Files\Engine\BaseGfx</Filter>
+    <ClInclude Include="source\DXTKGui\BaseGraphics\FontSet.h">
+      <Filter>DXTKGui\BaseGraphics</Filter>
     </ClInclude>
-    <ClInclude Include="source\Controls\TexturePanel.h">
-      <Filter>Header Files\Controls</Filter>
+    <ClInclude Include="source\DXTKGui\BaseGraphics\GraphicsAsset.h">
+      <Filter>DXTKGui\BaseGraphics</Filter>
     </ClInclude>
-    <ClInclude Include="source\Managers\ScreenTransitions.h">
-      <Filter>Header Files\Managers</Filter>
+    <ClInclude Include="source\DXTKGui\BaseGraphics\IElement2D.h">
+      <Filter>DXTKGui\BaseGraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\BaseGraphics\screen.h">
+      <Filter>DXTKGui\BaseGraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\BaseGraphics\Sprite.h">
+      <Filter>DXTKGui\BaseGraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\BaseGraphics\PrimitiveShapes.h">
+      <Filter>DXTKGui\BaseGraphics</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controls\Button.h">
+      <Filter>DXTKGui\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controls\CheckBox.h">
+      <Filter>DXTKGui\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controls\ComboBox.h">
+      <Filter>DXTKGui\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controls\Dialog.h">
+      <Filter>DXTKGui\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controls\GUIControl.h">
+      <Filter>DXTKGui\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controls\GUIFactory.h">
+      <Filter>DXTKGui\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controls\ListBox.h">
+      <Filter>DXTKGui\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controls\ScrollBar.h">
+      <Filter>DXTKGui\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controls\TextLabel.h">
+      <Filter>DXTKGui\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controls\TexturePanel.h">
+      <Filter>DXTKGui\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Effects\ScreenTransitions.h">
+      <Filter>DXTKGui\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Effects\TransitionEffects.h">
+      <Filter>DXTKGui\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controllers\KeyboardController.h">
+      <Filter>DXTKGui\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controllers\MouseController.h">
+      <Filter>DXTKGui\Controllers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

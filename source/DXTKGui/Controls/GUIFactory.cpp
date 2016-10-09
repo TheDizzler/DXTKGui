@@ -34,7 +34,7 @@ bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 }
 
 //int fontCount = 0;
-#include "../assets.h"
+#include "../../assets.h"
 unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 
 	/*wostringstream wss;
@@ -341,7 +341,7 @@ Dialog* GUIFactory::createDialog(bool movable, const char_t* fontName) {
 }
 
 
-#include "../Engine/GameEngine.h"
+#include "../../Engine/GameEngine.h"
 GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 	IElement2D* control, Color bgColor) {
 
