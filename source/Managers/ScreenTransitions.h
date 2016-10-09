@@ -111,10 +111,13 @@ namespace ScreenTransitions {
 			float timer = 0;
 		};
 		vector<vector<Square*>> squares;
-		//ComPtr<ID3D11ShaderResourceView> oldScreenTexture;
+		vector<int> numInRowActive;
 
 		Vector2 startScale;
 		Color tint = Color(1, 1, 1, 1);
 		float rotation = 0.0f;
+
+		int maxJ = 1;
+		double delay;
 	};
 };

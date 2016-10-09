@@ -126,7 +126,7 @@ void SquareFlipScreenTransition::setTransitionBetween(
 		}
 	}
 	squares.clear();
-
+	numInRowActive.clear();
 	for (int j = 0; j < col; ++j) {
 		vector<Square*> rowVect;
 		for (int i = 0; i < row; ++i) {
@@ -154,9 +154,12 @@ void SquareFlipScreenTransition::setTransitionBetween(
 			rowVect.push_back(square);
 		}
 		squares.push_back(rowVect);
+		numInRowActive.push_back(1);
 	}
 
 	startScale = Vector2(0, 1);
+	maxJ = 1;
+	delay = transitionTime / 10;
 }
 
 SquareFlipScreenTransition::~SquareFlipScreenTransition() {
@@ -174,24 +177,32 @@ bool SquareFlipScreenTransition::run(double deltaTime) {
 		return true;
 	bool allDone = true;
 
-	int maxJ = 1;
-	int maxI = 1;
-
-
-	maxJ = squares.size();
+	if (timer >= delay) {
+		++maxJ;
+		timer = 0;
+	}
+	if (maxJ > squares.size())
+		maxJ = squares.size();
 
 	for (int j = 0; j < maxJ; ++j) {
 
-		maxI = squares[j].size();
-		for (int i = 0; i < maxI; ++i) {
-			squares[j][i]->timer += deltaTime; // change this to unsync flips
-			if (squares[j][i]->texture == oldTexture) {
-				squares[j][i]->scale = Vector2::Lerp(
-					Vector2(1, 1), startScale, squares[j][i]->timer / transitionTime * 2);
-				squares[j][i]->scale.Clamp(startScale, Vector2(1, 1));
-				if (squares[j][i]->scale == startScale) {
-					squares[j][i]->texture = newTexture;
-					squares[j][i]->timer = 0;
+		for (int i = 0; i < numInRowActive[j]; ++i) {
+			Square* square = squares[j][i];
+			square->timer += deltaTime; // change this to unsync flips
+			if (square->texture == oldTexture) {
+				square->scale = Vector2::Lerp(
+					Vector2(1, 1), startScale, square->timer / transitionTime * 2);
+				square->scale.Clamp(startScale, Vector2(1, 1));
+
+				if (i == numInRowActive[j] - 1 && square->timer >= delay) {
+					// start next square in row
+					++numInRowActive[j];
+					if (numInRowActive[j] > squares[j].size())
+						numInRowActive[j] = squares[j].size();
+				}
+				if (square->scale == startScale) {
+					square->texture = newTexture;
+					square->timer = 0;
 				}
 				allDone = false;
 			} else {
@@ -202,9 +213,9 @@ bool SquareFlipScreenTransition::run(double deltaTime) {
 					allDone = false;
 			}
 		}
-		--maxI;
+		//--maxI;
 	}
-	//timer += deltaTime;
+	timer += deltaTime;
 	return allDone;
 }
 
@@ -222,6 +233,10 @@ void SquareFlipScreenTransition::draw(SpriteBatch* batch) {
 void SquareFlipScreenTransition::reset() {
 
 	timer = 0;
+	//for (int j = 0; j < squares.size(); ++j) {
+	//	for (int i = 0; i < squares[j].size(); ++i) {
+	//	sqare
+	//	}
+	//	numInRowActive[j] = 1;
+	//	}
 }
-
-

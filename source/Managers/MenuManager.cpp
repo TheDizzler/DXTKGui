@@ -77,14 +77,14 @@ void MenuManager::openMainMenu() {
 
 	// switch screens at next frame so draw() doesn't freak out
 	switchTo = mainScreen.get();
-	transitionManager->transitionBetween(currentScreen, switchTo, 5);
+	transitionManager->transitionBetween(currentScreen, switchTo, 1);
 }
 
 void MenuManager::openConfigMenu() {
 
 	// switch screens at next frame
 	switchTo = configScreen.get();
-	transitionManager->transitionBetween(currentScreen, switchTo, 5);
+	transitionManager->transitionBetween(currentScreen, switchTo, 1);
 }
 /** **** END MENUMANAGER **** */
 
