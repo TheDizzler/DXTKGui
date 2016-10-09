@@ -50,9 +50,7 @@ namespace ScreenTransitions {
 		void drawTransition(SpriteBatch* batch);
 	private:
 		ScreenTransition* transition = NULL;
-		/*RunScreen runTransition;
-		ResetScreen resetTransition;
-		DrawScreen drawTransition;*/
+		unique_ptr<Sprite> bg;
 
 		GUIFactory* guiFactory;
 	};

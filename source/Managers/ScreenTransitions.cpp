@@ -6,6 +6,9 @@ using namespace ScreenTransitions;
 ScreenTransitionManager::ScreenTransitionManager(GUIFactory* factory) {
 
 	guiFactory = factory;
+	bg = move(guiFactory->getSpriteFromAsset("Test BG"));
+	bg->setPosition(Vector2(bg->getWidth() / 2, bg->getHeight() / 2));
+	bg->setOrigin(bg->getPosition());
 }
 
 ScreenTransitionManager::~ScreenTransitionManager() {
@@ -32,6 +35,7 @@ bool ScreenTransitionManager::runTransition(double deltaTime) {
 }
 
 void ScreenTransitionManager::drawTransition(SpriteBatch* batch) {
+	bg->draw(batch);
 	transition->draw(batch);
 }
 
