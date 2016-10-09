@@ -8,6 +8,7 @@
 			<font name="BlackCloak" file="BlackCloak.spritefont" fontSize="32" />
 		</spritefonts>
 
+		<sprite name="Test BG" file="TestBG.dds" />
 		<sprite name="White Pixel" file="WhitePixel.dds" />
 		<sprite name="Mouse Icon" file="mouse icon.dds" />
 		<sprite name="Mouse Reticle" file="reticle (16x16).dds" />
