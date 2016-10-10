@@ -374,7 +374,7 @@ GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 
 
 
-	if (GUIAssets::reportError(device->CreateTexture2D(&textureDesc, NULL,
+	if (StringHelper::reportError(device->CreateTexture2D(&textureDesc, NULL,
 		renderTargetTexture.GetAddressOf()),
 		L"Failed to create render target texture.", L"Aw shucks"))
 		return NULL;
@@ -386,7 +386,7 @@ GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 	renderTargetViewDesc.Texture2D.MipSlice = 0;
 
 
-	if (GUIAssets::reportError(
+	if (StringHelper::reportError(
 		device->CreateRenderTargetView(renderTargetTexture.Get(),
 			NULL, textureRenderTargetView.GetAddressOf()),
 		L"Failed to create render target view for new texture.", L"Fatal Error"))
@@ -403,7 +403,7 @@ GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 
 
 
-	if (GUIAssets::reportError(
+	if (StringHelper::reportError(
 		device->CreateShaderResourceView(renderTargetTexture.Get(),
 			&shaderResourceViewDesc, shaderResourceView.GetAddressOf()),
 		L"Failed to create Shader Resource View for new texture.", L"Fatal error"))
@@ -462,7 +462,7 @@ GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, Color bgColor
 
 
 
-	if (GUIAssets::reportError(device->CreateTexture2D(&textureDesc, NULL,
+	if (StringHelper::reportError(device->CreateTexture2D(&textureDesc, NULL,
 		renderTargetTexture.GetAddressOf()),
 		L"Failed to create render target texture.", L"Aw shucks"))
 		return NULL;
@@ -474,7 +474,7 @@ GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, Color bgColor
 	renderTargetViewDesc.Texture2D.MipSlice = 0;
 
 
-	if (GUIAssets::reportError(
+	if (StringHelper::reportError(
 		device->CreateRenderTargetView(renderTargetTexture.Get(),
 			NULL, textureRenderTargetView.GetAddressOf()),
 		L"Failed to create render target view for new texture.", L"Fatal Error"))
@@ -491,7 +491,7 @@ GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, Color bgColor
 
 
 
-	if (GUIAssets::reportError(
+	if (StringHelper::reportError(
 		device->CreateShaderResourceView(renderTargetTexture.Get(),
 			&shaderResourceViewDesc, shaderResourceView.GetAddressOf()),
 		L"Failed to create Shader Resource View for new texture.", L"Fatal error"))
@@ -558,7 +558,7 @@ bool GUIFactory::getGUIAssetsFromXML() {
 
 		string check = name; // I think this is required - ya, pretty sure it is
 		if (name == string("White Pixel")) {
-			if (GUIAssets::reportError(
+			if (StringHelper::reportError(
 				DirectX::CreateDDSTextureFromFile(
 					device.Get(), StringHelper::convertCharStarToWCharT(file), NULL,
 					whitePixel.GetAddressOf()),
