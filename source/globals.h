@@ -12,16 +12,9 @@ namespace Globals {
 	extern int vsync_enabled;
 	extern bool FULL_SCREEN;
 
+	
+
 	/* For reference purposes only. */
-	/*wstring convertIntToWString(float number) {
-
-		wostringstream ws;
-		ws << "The number: " << number;
-
-		return ws.str();
-	}*/
-
-
 	/*wostringstream ws;
 	ws << "some writing here" << someVariable << "\n";
 	OutputDebugString(ws.str().c_str());*/

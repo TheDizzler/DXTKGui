@@ -140,9 +140,6 @@
     <ClInclude Include="Source\Engine\Input.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\assets.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\Managers\GameManager.h">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
@@ -211,6 +208,12 @@
     </ClInclude>
     <ClInclude Include="Source\globals.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\GuiAssets.h">
+      <Filter>Header Files\DXTKGui</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\StringHelper.h">
+      <Filter>Header Files\DXTKGui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
