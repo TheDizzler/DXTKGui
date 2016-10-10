@@ -360,7 +360,7 @@ AnimatedButton::~AnimatedButton() {
 }
 
 
-void AnimatedButton::update(double deltaTime, MouseController* mouse) {
+void AnimatedButton::update(double deltaTime) {
 
 	if (hitArea->contains(mouse->getPosition())) {
 		isHover = true;

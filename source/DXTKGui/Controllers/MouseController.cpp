@@ -3,8 +3,18 @@
 MouseController::MouseController(HWND hWnd) {
 
 	hwnd = hWnd;
-	mouse = make_unique<Mouse>();
+	mouse.reset(new Mouse());
 	mouse->SetWindow(hwnd);
+}
+
+MouseController::MouseController(HWND hWnd, Mouse& mse) {
+
+	hwnd = hWnd;
+
+	mouse.reset(&mse);
+	hitArea.reset(new HitArea(
+		Vector2(position.x - origin.x, position.y - origin.y),
+		Vector2(width, height)));
 }
 
 

@@ -51,6 +51,7 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, MouseController* mouse
 #include "../globals.h"
 void MenuManager::update(double deltaTime, MouseController* mouse) {
 
+
 	if (switchTo != NULL) {
 		if (transitionManager->runTransition(deltaTime)) {
 			currentScreen = switchTo;
@@ -236,10 +237,10 @@ void MainScreen::update(double deltaTime, MouseController* mouse) {
 
 
 	if (exitDialog->isOpen) {
-		exitDialog->update(deltaTime, mouse);
+		exitDialog->update(deltaTime);
 	} else {
 		for (auto const& control : guiControls)
-			control->update(deltaTime, mouse);
+			control->update(deltaTime);
 	}
 }
 
@@ -396,20 +397,8 @@ void ConfigScreen::update(double deltaTime, MouseController* mouse) {
 
 
 	for (auto const& control : guiControls) {
-		control->update(deltaTime, mouse);
-		//if (control->clicked()) {
-		//	switch (control->action) {
-		//		case GUIControl::CANCEL:
-		//			menuManager->openMainMenu();
-		//			break;
-		//		case GUIControl::CONFIRM:
-		//			// update graphics engine
-
-		//			break;
-		//	}
-		//}
+		control->update(deltaTime);
 	}
-
 }
 
 void ConfigScreen::draw(SpriteBatch* batch) {

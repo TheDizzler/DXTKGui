@@ -1,9 +1,5 @@
 #include "GUIControl.h"
 
-void GUIControl::setFactory(GUIFactory* factory) {
-
-	guiFactory = factory;
-}
 
 void GUIControl::moveBy(const Vector2& moveVector) {
 

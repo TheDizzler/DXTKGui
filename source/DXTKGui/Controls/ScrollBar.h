@@ -83,8 +83,8 @@ public:
 
 	void setScrollBar(int totalItems, int itemHeight, int maxDisplayItems);
 
-	void update(double deltaTime, MouseController* mouse);
-	void draw(SpriteBatch* batch);
+	void update(double deltaTime) override;
+	void draw(SpriteBatch* batch) override;
 
 	void setScrollPositionByPercent(double newPositionPercentage);
 	virtual void setPosition(const Vector2& newPosition) override;

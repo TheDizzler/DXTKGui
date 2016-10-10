@@ -18,6 +18,7 @@ public:
 
 
 	MouseController(HWND hwnd);
+	MouseController(HWND hwnd, Mouse& mouse);
 	~MouseController();
 
 	/* MODE_ABSOLUTE (default) or MODE_RELATIVE (cannot handle relative mode yet). */

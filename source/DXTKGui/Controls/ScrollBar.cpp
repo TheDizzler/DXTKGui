@@ -180,11 +180,11 @@ void ScrollBar::setScrollBar(int totalItems, int itemHeight, int maxDisplayItems
 }
 
 
-void ScrollBar::update(double deltaTime, MouseController* mouse) {
+void ScrollBar::update(double deltaTime) {
 
 	isHover = scrollBarTrack->getHitArea()->contains(mouse->getPosition());
 
-	scrubber->update(deltaTime, mouse);
+	scrubber->update(deltaTime, mouse.get());
 
 	if (!scrubber->hovering() && isHover && mouse->leftButton()) {
 
@@ -205,8 +205,8 @@ void ScrollBar::update(double deltaTime, MouseController* mouse) {
 
 	}
 
-	scrollBarDownButton->update(deltaTime, mouse);
-	scrollBarUpButton->update(deltaTime, mouse);
+	scrollBarDownButton->update(deltaTime);
+	scrollBarUpButton->update(deltaTime);
 	// change this to actionlisteners, or nah?
 	if (scrollBarDownButton->pressed()) {
 		// scroll down

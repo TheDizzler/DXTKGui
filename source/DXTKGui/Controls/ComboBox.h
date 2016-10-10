@@ -16,8 +16,8 @@ public:
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);
 	void alwaysShowScrollBar(bool alwaysShow);
 
-	virtual void update(double deltaTime, MouseController* mouse);
-	virtual void draw(SpriteBatch* batch);
+	virtual void update(double deltaTime) override;
+	virtual void draw(SpriteBatch* batch) override;
 
 	virtual void setFont(const pugi::char_t * font = "Default Font") override;
 

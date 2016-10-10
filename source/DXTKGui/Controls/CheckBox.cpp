@@ -25,7 +25,7 @@ CheckBox::~CheckBox() {
 }
 
 
-void CheckBox::update(double deltaTime, MouseController* mouse) {
+void CheckBox::update(double deltaTime) {
 
 	if (hitArea->contains(mouse->getPosition())
 		|| label->contains(mouse->getPosition())) {

@@ -10,7 +10,7 @@ public:
 		unique_ptr<Sprite> checkedSprite, unique_ptr<FontSet> font);
 	~CheckBox();
 
-	virtual void update(double deltaTime, MouseController* mouse) override;
+	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
 	/* Should probably changed the way this works. */

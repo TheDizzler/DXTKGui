@@ -45,19 +45,19 @@ void ComboBox::setScrollBar(ScrollBarDesc& scrollBarDesc) {
 	listBox->setScrollBar(scrollBarDesc);
 }
 
-void ComboBox::update(double deltaTime, MouseController* mouse) {
+void ComboBox::update(double deltaTime) {
 
 	if (frame->contains(mouse->getPosition()) && mouse->clicked()) {
 		comboListButton->onClick();
 	}
 
-	selectedLabel->update(deltaTime, mouse);
-	comboListButton->update(deltaTime, mouse);
+	selectedLabel->update(deltaTime);
+	comboListButton->update(deltaTime);
 
 	
 
 	if (isOpen) {
-		listBox->update(deltaTime, mouse);
+		listBox->update(deltaTime);
 	}
 
 }

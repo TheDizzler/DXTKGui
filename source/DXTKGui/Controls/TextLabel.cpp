@@ -31,7 +31,7 @@ TextLabel::~TextLabel() {
 }
 
 
-void TextLabel::update(double deltaTime, MouseController* mouse) {
+void TextLabel::update(double deltaTime) {
 
 	if (isHoverable) {
 		if (hitArea->contains(mouse->getPosition())) {

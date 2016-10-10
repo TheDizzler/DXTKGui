@@ -10,7 +10,11 @@
 interface GUIControl : public IElement2D {
 public:
 
-	void setFactory(GUIFactory* factory);
+	void initializeControl(GUIFactory* factory,
+		shared_ptr<MouseController> mouseController) {
+		guiFactory = factory;
+		mouse = mouseController;
+	}
 
 	/* Deprecating */
 	enum ClickAction {

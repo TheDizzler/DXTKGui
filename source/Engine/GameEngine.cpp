@@ -141,7 +141,7 @@ void GameEngine::update(double deltaTime) {
 
 	mouse->saveMouseState();
 	if (showDialog->isOpen)
-		showDialog->update(deltaTime, mouse.get());
+		showDialog->update(deltaTime);
 	else
 		game->update(deltaTime, mouse.get());
 }

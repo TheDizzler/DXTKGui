@@ -348,7 +348,7 @@ bool Dialog::calculateButtonPosition(Vector2& buttonPos) {
 }
 
 
-void Dialog::update(double deltaTime, MouseController* mouse) {
+void Dialog::update(double deltaTime) {
 
 	if (!isOpen)
 		return;
@@ -383,11 +383,11 @@ void Dialog::update(double deltaTime, MouseController* mouse) {
 
 
 	}
-	panel->update(deltaTime, mouse);
+	panel->update(deltaTime);
 	for (auto const& control : controls) {
 		if (control == NULL)
 			continue;
-		control->update(deltaTime, mouse);
+		control->update(deltaTime);
 
 	}
 }

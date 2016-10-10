@@ -50,7 +50,7 @@ bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc, MouseContr
 
 void GameManager::update(double deltaTime, MouseController* mouse) {
 
-
+	guiFactory->updateMouse();
 	currentScreen->update(deltaTime, mouse);
 
 }

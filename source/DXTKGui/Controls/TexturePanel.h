@@ -16,7 +16,7 @@ public:
 	void setTexture(GraphicsAsset* gfxAsset);
 	
 
-	virtual void update(double deltaTime, MouseController* mouse) override;
+	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
 	void setDimensions(const Vector2& position, const Vector2& size);

@@ -86,12 +86,13 @@ public:
 
 	GraphicsAsset* createTextureFromScreen(Screen* screen, Color bgColor = {1, 1, 1, 1});
 
+	void updateMouse();
 	static bool initialized;
 private:
 	HWND hwnd;
 	ComPtr<ID3D11Device> device;
 	ComPtr<ID3D11DeviceContext> deviceContext;
-
+	shared_ptr<MouseController> mouseController;
 	unique_ptr<pugi::xml_document> docAssMan;
 
 	SpriteBatch* batch;

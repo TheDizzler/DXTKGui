@@ -126,7 +126,7 @@ void ListBox::clear() {
 }
 
 
-void ListBox::update(double deltaTime, MouseController* mouse) {
+void ListBox::update(double deltaTime) {
 
 	if (itemsToDisplay == maxDisplayItems || alwaysDisplayScrollBar) {
 
@@ -136,7 +136,7 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 				scrollBar->scrollByIncrement(-mouseWheelDelta);
 		}
 
-		scrollBar->update(deltaTime, mouse);
+		scrollBar->update(deltaTime);
 
 		double dif = listItems.size() /*- maxDisplayItems*/;
 		firstItemToDisplay = round(scrollBar->percentScroll * (double) dif);
@@ -146,7 +146,7 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 
 	for (int j = firstItemToDisplay;
 		j < firstItemToDisplay + itemsToDisplay; ++j) {
-		if (listItems[j]->update(deltaTime, mouse)) {
+		if (listItems[j]->update(deltaTime, mouse.get())) {
 			if (!multiSelect) {
 				for (int i = 0; i < listItems.size(); ++i) {
 					if (listItems[i] == listItems[j]) {
@@ -170,7 +170,6 @@ void ListBox::update(double deltaTime, MouseController* mouse) {
 		listItems[i]->updatePosition(pos);
 		pos.y += itemHeight;
 	}
-
 }
 
 

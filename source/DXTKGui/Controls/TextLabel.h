@@ -14,7 +14,7 @@ public:
 	TextLabel(shared_ptr<FontSet> font);
 	~TextLabel();
 
-	virtual void update(double deltaTime, MouseController* mouse) override;
+	virtual void update(double deltaTime) override;
 	void draw(SpriteBatch* batch);
 	/* Draw with an alternate color. */
 	void draw(SpriteBatch* batch, Color tint);

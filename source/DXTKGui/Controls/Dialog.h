@@ -51,7 +51,7 @@ public:
 	has not already beeen created for it. */
 	void setCancelOnClickListener(Button::OnClickListener* iOnClickListener);
 
-	virtual void update(double deltaTime, MouseController* mouse);
+	virtual void update(double deltaTime);
 	virtual void draw(SpriteBatch* batch);
 
 	/* Add other GUIControls to dialog. Not Implemented Yet. */

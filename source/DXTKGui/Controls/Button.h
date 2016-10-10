@@ -156,7 +156,7 @@ public:
 	AnimatedButton(shared_ptr<Animation> animation, Vector2 position);
 	~AnimatedButton();
 
-	virtual void update(double deltaTime, MouseController* mouse) override;
+	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
 	/* Not used in Animated Button. */

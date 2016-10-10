@@ -29,10 +29,10 @@ void TexturePanel::setTexture(GraphicsAsset* gfx) {
 		showScrollBar = false;
 }
 
-void TexturePanel::update(double deltaTime, MouseController* mouse) {
+void TexturePanel::update(double deltaTime) {
 
 	if (showScrollBar || alwaysDisplayScrollBar) {
-		verticalScrollBar->update(deltaTime, mouse);
+		verticalScrollBar->update(deltaTime);
 
 		if (hitArea->contains(mouse->getPosition())) {
 			int mouseWheelDelta = mouse->scrollWheelValue();

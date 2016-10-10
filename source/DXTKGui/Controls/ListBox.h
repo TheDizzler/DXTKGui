@@ -81,7 +81,7 @@ public:
 	void addItems(vector<ListItem*> items);
 	void clear();
 
-	virtual void update(double deltaTime, MouseController * mouse) override;
+	virtual void update(double deltaTime) override;
 	void draw(SpriteBatch* batch);
 
 
