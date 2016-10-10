@@ -72,7 +72,7 @@ bool GameEngine::initStage() {
 
 
 	game.reset(new GameManager(this));
-	if (!game->initializeGame(device, mouse.get())) {
+	if (!game->initializeGame(hwnd, device, mouse.get())) {
 		MessageBox(0, L"Game Manager failed to load.", L"Critical Failure", MB_OK);
 		return false;
 	}

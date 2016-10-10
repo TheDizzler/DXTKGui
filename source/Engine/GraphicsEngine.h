@@ -15,6 +15,7 @@
 #include "SpriteBatch.h"
 #include "CommonStates.h"
 
+#include "../globals.h"
 
 
 using namespace std;

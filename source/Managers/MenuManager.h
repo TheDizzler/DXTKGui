@@ -94,31 +94,6 @@ private:
 	MainScreen* main;
 };
 
-//class OnClickListenerLaunchButton : public AnimatedButton::ButtonActionListener {
-//public:
-//	OnClickListenerLaunchButton(MainScreen* screen) : main(screen) {
-//	}
-//
-//	virtual void onClick(AnimatedButton* button) override {
-//	
-//	
-//	}
-//	virtual void onPress(AnimatedButton* button) override {
-//
-//
-//	}
-//
-//	virtual void onHover(AnimatedButton* button) override {
-//
-//		
-//
-//	}
-//
-//private:
-//	MainScreen* main;
-//
-//};
-
 
 class MenuManager : public Screen {
 public:

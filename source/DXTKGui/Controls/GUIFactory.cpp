@@ -1,8 +1,14 @@
 #include "GUIFactory.h"
 
 bool GUIFactory::initialized = false;
-GUIFactory::GUIFactory(pugi::xml_node guiAssets) {
 
+
+GUIFactory::GUIFactory(HWND h) {
+
+}
+
+GUIFactory::GUIFactory(HWND h, pugi::xml_node guiAssets) {
+	hwnd = h;
 	guiAssetsNode = guiAssets;
 }
 
@@ -12,10 +18,22 @@ GUIFactory::~GUIFactory() {
 	fontMap.clear();
 }
 
-
+#include "../GuiAssets.h"
 bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 	ComPtr<ID3D11DeviceContext> devCon, ComPtr<IDXGISwapChain> sChain,
-	SpriteBatch* sBatch) {
+	SpriteBatch* sBatch, const char_t* assetManifestFile) {
+
+	if (assetManifestFile != NULL) {
+	// get graphical assets from xml file
+		docAssMan.reset(new pugi::xml_document());
+		if (!docAssMan->load_file(assetManifestFile)) {
+			MessageBox(0, L"Could not read AssetManifest file!",
+				L"Fatal Read Error!", MB_OK);
+			return false;
+		}
+	}
+
+	guiAssetsNode = docAssMan->child("root").child("gui");
 
 	device = dev;
 	if (!getGUIAssetsFromXML()) {
@@ -330,24 +348,30 @@ ComboBox* GUIFactory::createComboBox(const Vector2& position,
 
 Dialog* GUIFactory::createDialog(bool movable, const char_t* fontName) {
 
-	Dialog* dialog = new Dialog(movable);
+	Dialog* dialog = new Dialog(hwnd, movable);
 	dialog->setFactory(this);
 	dialog->initialize(getAsset("White Pixel"), fontName);
 	return dialog;
 }
 
 
-#include "../GuiAssets.h"
+
 GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 	IElement2D* control, Color bgColor) {
 
 	int buffer = 5; // padding to give a bit of lee-way to prevent tearing
 
+	RECT rect;
+	GetClientRect(hwnd, &rect);
+
+	int screenWidth = rect.right - rect.left + buffer;
+	int screenHeight = rect.bottom - rect.top + buffer;
+
 	int width = control->getWidth();
 	int height = control->getHeight();
 	int heightPadding = 0;
 	int widthPadding = 0;
-	float ratio = (float)Globals::WINDOW_WIDTH / Globals::WINDOW_HEIGHT;
+	float ratio = (float) screenWidth / screenHeight;
 	if (width > height) {
 		heightPadding = width / ratio - height;
 		height = width / ratio;
@@ -440,17 +464,21 @@ GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 }
 
 GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, Color bgColor) {
-	
+
 	int buffer = 5; // padding to give a bit of lee-way to prevent tearing
 
-	int width = Globals::WINDOW_WIDTH + buffer;
-	int height = Globals::WINDOW_HEIGHT + buffer;
+
+	RECT rect;
+	GetClientRect(hwnd, &rect);
+
+	int screenWidth = rect.right - rect.left + buffer;
+	int screenHeight = rect.bottom - rect.top + buffer;
 
 	ComPtr<ID3D11Texture2D> renderTargetTexture;
 	D3D11_TEXTURE2D_DESC textureDesc;
 	ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE2D_DESC));
-	textureDesc.Width = width;
-	textureDesc.Height = height;
+	textureDesc.Width = screenWidth;
+	textureDesc.Height = screenHeight;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -518,7 +546,7 @@ GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, Color bgColor
 
 	GraphicsAsset* gfxAsset = new GraphicsAsset();
 	gfxAsset->loadAsPartOfSheet(shaderResourceView, Vector2(0, 0),
-		Vector2(width - buffer, height - buffer));
+		Vector2(screenWidth - buffer, screenHeight - buffer));
 	return gfxAsset;
 }
 
@@ -570,8 +598,12 @@ bool GUIFactory::getGUIAssetsFromXML() {
 
 		unique_ptr<GraphicsAsset> guiAsset;
 		guiAsset.reset(new GraphicsAsset());
-		if (!guiAsset->load(device, StringHelper::convertCharStarToWCharT(file)))
+		if (!guiAsset->load(device, StringHelper::convertCharStarToWCharT(file))) {
+			wstringstream wss;
+			wss << "Unable to load file: " << file;
+			MessageBox(hwnd, wss.str().c_str(), L"Critical error", MB_OK);
 			return false;
+		}
 
 		assetMap[check] = move(guiAsset);
 	}

@@ -1,7 +1,8 @@
 #include "Dialog.h"
 
 
-Dialog::Dialog(bool canMove) {
+Dialog::Dialog(HWND h, bool canMove) {
+	hwnd = h;
 	movable = canMove;
 }
 
@@ -576,19 +577,26 @@ int Dialog::getMaxButtonHeight() {
 
 void Dialog::setDraggedPosition(Vector2& newPosition) {
 
+	RECT rect;
+	GetClientRect(hwnd, &rect);
+
+	int screenWidth = rect.right - rect.left;
+	int screenHeight = rect.bottom - rect.top;
+
+
 	if (newPosition.x < 0) {
 		pressedPosition.x += newPosition.x;
 		newPosition.x = 0;
-	} else if (newPosition.x + size.x > Globals::WINDOW_WIDTH) {
-		pressedPosition.x += newPosition.x + size.x - Globals::WINDOW_WIDTH;
-		newPosition.x = Globals::WINDOW_WIDTH - size.x;
+	} else if (newPosition.x + size.x > screenWidth) {
+		pressedPosition.x += newPosition.x + size.x - screenWidth;
+		newPosition.x = screenWidth - size.x;
 	}
 	if (newPosition.y < 0) {
 		pressedPosition.y += newPosition.y;
 		newPosition.y = 0;
-	} else if (newPosition.y + size.y > Globals::WINDOW_HEIGHT) {
-		pressedPosition.y += newPosition.y + size.y - Globals::WINDOW_HEIGHT;
-		newPosition.y = Globals::WINDOW_HEIGHT - size.y;
+	} else if (newPosition.y + size.y > screenHeight) {
+		pressedPosition.y += newPosition.y + size.y - screenHeight;
+		newPosition.y = screenHeight - size.y;
 	}
 
 	Vector2 moveBy = newPosition - position;

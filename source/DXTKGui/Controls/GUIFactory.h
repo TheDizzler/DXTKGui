@@ -16,14 +16,16 @@ using namespace pugi;
 
 class GUIFactory {
 public:
-	GUIFactory(xml_node guiAssetsNode);
+	/** If this constructor is used, the assetManifest file MUST be set in initialize(). */
+	GUIFactory(HWND h);
+	GUIFactory(HWND hwnd, xml_node guiAssetsNode);
 	~GUIFactory();
 
 	/** DeviceContext and SpriteBatch references are required
 		to create textures from a GUIControl (will probably refactor this). */
 	bool initialize(ComPtr<ID3D11Device> device,
 		ComPtr<ID3D11DeviceContext> devCon, ComPtr<IDXGISwapChain> swapChain,
-		SpriteBatch* batch);
+		SpriteBatch* batch, const char_t* assetManifestFile = NULL);
 
 	unique_ptr<FontSet> getFont(const char_t* fontName);
 	unique_ptr<Sprite> getSpriteFromAsset(const char_t* assetName);
@@ -86,9 +88,11 @@ public:
 
 	static bool initialized;
 private:
-
+	HWND hwnd;
 	ComPtr<ID3D11Device> device;
 	ComPtr<ID3D11DeviceContext> deviceContext;
+
+	unique_ptr<pugi::xml_document> docAssMan;
 
 	SpriteBatch* batch;
    /** ID3D11ShaderResourceView is a ComPtr!

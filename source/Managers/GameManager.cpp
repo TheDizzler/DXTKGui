@@ -9,25 +9,26 @@ GameManager::GameManager(GameEngine* gmngn) {
 GameManager::~GameManager() {
 }
 
+#include "../DXTKGui/GuiAssets.h"
 #include "../Engine/GameEngine.h"
-bool GameManager::initializeGame(ComPtr<ID3D11Device> dvc, MouseController* ms) {
+bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc, MouseController* ms) {
 
 	device = dvc;
 	mouse = ms;
 
-	// get graphical assets from xml file
-	docAssMan.reset(new pugi::xml_document());
-	if (!docAssMan->load_file(Assets::assetManifestFile)) {
-		MessageBox(0, L"Could not read AssetManifest file!",
-			L"Fatal Read Error!", MB_OK);
-		return false;
-	}
+	//// get graphical assets from xml file
+	//docAssMan.reset(new pugi::xml_document());
+	//if (!docAssMan->load_file(Assets::assetManifestFile)) {
+	//	MessageBox(0, L"Could not read AssetManifest file!",
+	//		L"Fatal Read Error!", MB_OK);
+	//	return false;
+	//}
 
-	pugi::xml_node guiNode = docAssMan->child("root").child("gui");
+	//pugi::xml_node guiNode = docAssMan->child("root").child("gui");
 
-	guiFactory.reset(new GUIFactory(guiNode));
+	guiFactory.reset(new GUIFactory(hwnd));
 	if (!guiFactory->initialize(device, gameEngine->getDeviceContext(),
-		gameEngine->getSwapChain(), gameEngine->getSpriteBatch())) {
+		gameEngine->getSwapChain(), gameEngine->getSpriteBatch(), GUIAssets::assetManifestFile)) {
 
 		MessageBox(0, L"Failed to load GUIFactory", L"Fatal Error", MB_OK);
 		return false;

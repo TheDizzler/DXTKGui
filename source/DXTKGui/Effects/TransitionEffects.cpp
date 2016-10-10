@@ -358,7 +358,9 @@ void TransitionEffects::SpinGrowTransition::reset(IElement2D* control) {
 
 
 TransitionEffects::SplitTransition::SplitTransition(
-	GUIControl* control, float speed) : TexturedTransition(control, speed) {
+	GUIControl* control, int sWidth, float speed) : TexturedTransition(control, speed) {
+
+	screenWidth = sWidth;
 
 
 	viewRect.right = gfxAsset->getWidth() / 2;
@@ -371,7 +373,7 @@ TransitionEffects::SplitTransition::SplitTransition(
 
 	positionRight = position;
 	position.x = -gfxAsset->getWidth() / 2;
-	positionRight.x = Globals::WINDOW_WIDTH;
+	positionRight.x = screenWidth;
 
 	origin = Vector2::Zero;
 }
@@ -392,7 +394,7 @@ void TransitionEffects::SplitTransition::reset(IElement2D* control) {
 	positionRight.y = control->getPosition().y;
 
 	position.x = -gfxAsset->getWidth() / 2;
-	positionRight.x = Globals::WINDOW_WIDTH;
+	positionRight.x = screenWidth;
 
 	int center = control->getPosition().x + control->getWidth() / 2;
 	int differenceRight = positionRight.x - center;

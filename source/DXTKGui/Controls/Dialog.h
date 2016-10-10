@@ -11,7 +11,7 @@
 class Dialog : public GUIControlBox {
 public:
 
-	Dialog(bool movable);
+	Dialog(HWND hwnd, bool movable);
 	~Dialog();
 
 	void initialize(GraphicsAsset* pixelAsset,
@@ -96,6 +96,7 @@ private:
 		TitleText, /*DialogText,*/ ButtonOK, ButtonNeutral, ButtonCancel, Other
 	};
 
+	HWND hwnd;
 	vector<unique_ptr<GUIControl> > controls;
 	unique_ptr<TextLabel> dialogText;
 	/* Deprecating. Use ActionListeners instead. */

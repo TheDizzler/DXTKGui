@@ -16,7 +16,7 @@ public:
 	~GameManager();
 
 
-	bool initializeGame(ComPtr<ID3D11Device> device, MouseController* mouse);
+	bool initializeGame(HWND hwnd, ComPtr<ID3D11Device> device, MouseController* mouse);
 
 
 	void update(double deltaTime, MouseController* mouse);
@@ -62,7 +62,7 @@ private:
 	MouseController* mouse;
 	ComPtr<ID3D11Device> device;
 	
-	unique_ptr<pugi::xml_document> docAssMan;
+	//unique_ptr<pugi::xml_document> docAssMan;
 
 	
 };
