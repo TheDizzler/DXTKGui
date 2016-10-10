@@ -58,7 +58,7 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 }
 
 
-void Button::update(double deltaTime, MouseController* mouse) {
+void Button::update(double deltaTime) {
 
 	if (hitArea->contains(mouse->getPosition())) {
 		isHover = true;

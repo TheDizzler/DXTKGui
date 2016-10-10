@@ -18,7 +18,7 @@ public:
 		NEUTRAL, SELECTION_CHANGED
 	};
 
-	virtual void update(double deltaTime, MouseController* mouse) = 0;
+	virtual void update(double deltaTime) = 0;
 
 	virtual void setFont(const pugi::char_t* font = "Default Font") = 0;
 	virtual void setText(wstring text) = 0;
@@ -75,7 +75,7 @@ protected:
 
 
 	GUIFactory* guiFactory;
-
+	shared_ptr<MouseController> mouse;
 
 };
 

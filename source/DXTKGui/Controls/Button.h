@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Controllers/MouseController.h"
+//#include "../Controllers/MouseController.h"
 #include "TextLabel.h"
 #include "../BaseGraphics/PrimitiveShapes.h"
 
@@ -18,7 +18,7 @@ public:
 		const int frameThickness = 2);
 
 
-	virtual void update(double deltaTime, MouseController* mouse) override;
+	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
 	virtual void setText(wstring text) override;
