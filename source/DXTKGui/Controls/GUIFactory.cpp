@@ -5,6 +5,7 @@ bool GUIFactory::initialized = false;
 
 GUIFactory::GUIFactory(HWND h) {
 
+	hwnd = h;
 }
 
 GUIFactory::GUIFactory(HWND h, pugi::xml_node guiAssets) {

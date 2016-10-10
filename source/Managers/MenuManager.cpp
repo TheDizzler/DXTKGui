@@ -36,10 +36,12 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, MouseController* mouse
 	currentScreen = mainScreen.get();
 
 	transitionManager.reset(
-		new ScreenTransitions::ScreenTransitionManager(GameManager::guiFactory.get()));
+		new ScreenTransitions::ScreenTransitionManager(
+			GameManager::guiFactory.get(), "Test BG"));
 	transitionManager->setTransition(
 		//new ScreenTransitions::FlipScreenTransition(true));
-		new ScreenTransitions::SquareFlipScreenTransition());
+		//new ScreenTransitions::SquareFlipScreenTransition());
+		new ScreenTransitions::LineWipeScreenTransition());
 
 
 	return true;

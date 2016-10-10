@@ -3,10 +3,10 @@
 using namespace ScreenTransitions;
 
 
-ScreenTransitionManager::ScreenTransitionManager(GUIFactory* factory) {
+ScreenTransitionManager::ScreenTransitionManager(GUIFactory* factory, const char_t* bgName) {
 
 	guiFactory = factory;
-	bg = move(guiFactory->getSpriteFromAsset("Test BG"));
+	bg = move(guiFactory->getSpriteFromAsset(bgName));
 	bg->setPosition(Vector2(bg->getWidth() / 2, bg->getHeight() / 2));
 	bg->setOrigin(bg->getPosition());
 }
@@ -26,8 +26,9 @@ void ScreenTransitionManager::setTransition(ScreenTransition* effect) {
 void ScreenTransitionManager::transitionBetween(
 	Screen* oldScreen, Screen* newScreen, float transitionTime) {
 
-	transition->setTransitionBetween(guiFactory->createTextureFromScreen(oldScreen),
-		guiFactory->createTextureFromScreen(newScreen), transitionTime);
+	transition->setTransitionBetween(
+	guiFactory->createTextureFromScreen(oldScreen, Color(158, 0, 58)),
+		guiFactory->createTextureFromScreen(newScreen, Color(0, 58, 158)), transitionTime);
 }
 
 bool ScreenTransitionManager::runTransition(double deltaTime) {
@@ -116,19 +117,30 @@ void FlipScreenTransition::reset() {
 }
 
 
+
+SquareFlipScreenTransition::~SquareFlipScreenTransition() {
+	for (int j = 0; j < squares.size(); ++j) {
+		for (int i = 0; i < squares[j].size(); ++i) {
+			delete squares[j][i];
+		}
+	}
+	squares.clear();
+}
+
 void SquareFlipScreenTransition::setTransitionBetween(
 	GraphicsAsset* oldScreen, GraphicsAsset* newScreen, float time) {
 	ScreenTransition::setTransitionBetween(oldScreen, newScreen, time);
 
 	int squareSize = 64;
-	int row = ceil((float) oldScreenAsset->getWidth() / squareSize);
-	int col = ceil((float) oldScreenAsset->getHeight() / squareSize);
+	int row = ceil((float) oldScreenAsset->getWidth() / squareSize) + 1;
+	int col = ceil((float) oldScreenAsset->getHeight() / squareSize) + 1;
 
 	for (int j = 0; j < squares.size(); ++j) {
 		for (int i = 0; i < squares[j].size(); ++i) {
 			delete squares[j][i];
 		}
 	}
+
 	squares.clear();
 	numInRowActive.clear();
 	for (int j = 0; j < col; ++j) {
@@ -166,14 +178,6 @@ void SquareFlipScreenTransition::setTransitionBetween(
 	delay = transitionTime / 10;
 }
 
-SquareFlipScreenTransition::~SquareFlipScreenTransition() {
-	for (int j = 0; j < squares.size(); ++j) {
-		for (int i = 0; i < squares[j].size(); ++i) {
-			delete squares[j][i];
-		}
-	}
-	squares.clear();
-}
 
 bool SquareFlipScreenTransition::run(double deltaTime) {
 
@@ -192,7 +196,7 @@ bool SquareFlipScreenTransition::run(double deltaTime) {
 
 		for (int i = 0; i < numInRowActive[j]; ++i) {
 			Square* square = squares[j][i];
-			square->timer += deltaTime; // change this to unsync flips
+			square->timer += deltaTime;
 			if (square->texture == oldTexture) {
 				square->scale = Vector2::Lerp(
 					Vector2(1, 1), startScale, square->timer / transitionTime * 2);
@@ -237,10 +241,82 @@ void SquareFlipScreenTransition::draw(SpriteBatch* batch) {
 void SquareFlipScreenTransition::reset() {
 
 	timer = 0;
-	//for (int j = 0; j < squares.size(); ++j) {
-	//	for (int i = 0; i < squares[j].size(); ++i) {
-	//	sqare
-	//	}
-	//	numInRowActive[j] = 1;
-	//	}
+}
+
+
+
+ScreenTransitions::LineWipeScreenTransition::~LineWipeScreenTransition() {
+	for (Line* line : lines)
+		delete line;
+	lines.clear();
+}
+
+void LineWipeScreenTransition::setTransitionBetween(
+	GraphicsAsset* oldScreen, GraphicsAsset* newScreen, float time) {
+	ScreenTransition::setTransitionBetween(oldScreen, newScreen, time);
+
+	int rows = 7;
+	int rowHeight = ceil((float) oldScreenAsset->getHeight() / rows);
+
+	for (Line* line : lines)
+		delete line;
+	lines.clear();
+
+	for (int i = 0; i < rows; ++i) {
+
+		Line* line = new Line();
+		RECT rect;
+		rect.left = 0;
+		rect.right = oldScreen->getWidth();
+		rect.top = i*rowHeight;
+		rect.bottom = rect.top + rowHeight;
+		line->rect = rect;
+
+		line->position = Vector2(0, rect.top);
+		line->start = Vector2(0, rect.top);
+		line->end = Vector2(line->position.x - oldScreenAsset->getWidth(), line->position.y);
+		lines.push_back(line);
+
+	}
+
+	delay = transitionTime / rows;
+}
+
+
+bool ScreenTransitions::LineWipeScreenTransition::run(double deltaTime) {
+
+	bool allDone = true;
+	timer += deltaTime;
+	double slideTimer = timer;
+	for (Line* line : lines) {
+		line->position = Vector2::Lerp(
+			line->start,
+			line->end,
+			slideTimer / transitionTime);
+		slideTimer -= delay;
+		if (slideTimer <= 0) {
+			allDone = false;
+			break;
+		}
+		if (line->position.x + oldScreenAsset->getWidth() > 0)
+			allDone = false;
+	}
+
+
+	return allDone;
+}
+
+void ScreenTransitions::LineWipeScreenTransition::draw(SpriteBatch* batch) {
+
+	batch->Draw(newTexture.Get(), position, &screenRect,
+		tint, rotation, origin, scale, SpriteEffects_None);
+
+	for (Line* line : lines)
+		batch->Draw(oldTexture.Get(), line->position, &line->rect,
+			tint, rotation, origin, scale, SpriteEffects_None);
+}
+
+void ScreenTransitions::LineWipeScreenTransition::reset() {
+
+	timer = 0;
 }

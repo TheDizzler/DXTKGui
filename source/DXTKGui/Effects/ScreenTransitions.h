@@ -36,7 +36,7 @@ namespace ScreenTransitions {
 
 	class ScreenTransitionManager {
 	public:
-		ScreenTransitionManager(GUIFactory* guiFactory);
+		ScreenTransitionManager(GUIFactory* guiFactory, const char_t* bgName);
 		~ScreenTransitionManager();
 
 		void setTransition(ScreenTransition* effect);
@@ -52,10 +52,6 @@ namespace ScreenTransitions {
 
 		GUIFactory* guiFactory;
 	};
-
-
-
-
 
 
 
@@ -116,4 +112,34 @@ namespace ScreenTransitions {
 		int maxJ = 1;
 		double delay;
 	};
+
+
+	class LineWipeScreenTransition : public ScreenTransition {
+	public:
+		~LineWipeScreenTransition();
+		virtual void setTransitionBetween(GraphicsAsset* oldScreenAsset,
+			GraphicsAsset* newScreenAsset, float transitionTime) override;
+		virtual bool run(double deltaTime) override;
+		virtual void draw(SpriteBatch * batch) override;
+		virtual void reset() override;
+
+	private:
+		struct Line {
+			RECT rect;
+			Vector2 position;
+			Vector2 start;
+			Vector2 end;
+		};
+		double timer = 0;
+		double delay;
+		vector<Line*> lines;
+
+		Vector2 position = Vector2::Zero;
+		Vector2 origin = Vector2::Zero;
+		Vector2 scale = Vector2(1, 1);
+		Color tint = Color(1, 1, 1, 1);
+		float rotation = 0.0f;
+	};
+
+
 };
