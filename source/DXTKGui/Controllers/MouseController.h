@@ -18,6 +18,7 @@ public:
 
 
 	MouseController(HWND hwnd);
+	/** Constructor for GUIFactory. */
 	MouseController(HWND hwnd, Mouse& mouse);
 	~MouseController();
 
