@@ -134,6 +134,7 @@ public:
 
 	virtual void draw(SpriteBatch* batch) override;
 
+	virtual void setText(wstring text) override;
 	virtual void setPosition(const Vector2& position) override;
 	virtual void setScale(const Vector2 & scale) override;
 	/** Remember: Rotation is around the origin! */

@@ -274,6 +274,9 @@ void Dialog::setCancelButton(unique_ptr<Button> cancelButton,
 	bool autoPosition, bool autoSize) {
 
 	if (autoPosition) {
+		if (cancelButton->getWidth() == 0) {
+			cancelButton->setDimensions(cancelButtonPosition, standardButtonSize, 3);
+		}
 		cancelButtonPosition.x =
 			position.x + size.x - cancelButton->getWidth() - buttonMargin;
 		if (calculateButtonPosition(cancelButtonPosition))

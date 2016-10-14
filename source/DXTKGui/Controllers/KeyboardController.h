@@ -20,7 +20,7 @@ public:
 	KeyboardController();
 	~KeyboardController();
 
-	void saveKeyboard();
+	void saveKeyboardState();
 
 	//void getInput(RAWKEYBOARD* rawKeys);
 

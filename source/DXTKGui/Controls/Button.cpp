@@ -289,6 +289,10 @@ void ImageButton::draw(SpriteBatch* batch) {
 	buttonLabel->draw(batch);
 }
 
+void ImageButton::setText(wstring text) {
+	buttonLabel->setText(text);
+}
+
 void ImageButton::setPosition(const Vector2& pos) {
 
 	position = pos;

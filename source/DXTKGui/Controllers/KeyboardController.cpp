@@ -8,7 +8,7 @@ KeyboardController::KeyboardController() {
 KeyboardController::~KeyboardController() {
 }
 
-void KeyboardController::saveKeyboard() {
+void KeyboardController::saveKeyboardState() {
 
 	lastState = state;
 	state = keyboard->GetState();
