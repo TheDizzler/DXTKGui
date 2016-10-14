@@ -33,6 +33,8 @@ public:
 	GraphicsAsset* const getAsset(const char_t* assetName);
 
 
+	RectangleSprite* createRectangle(const Vector2& position, const Vector2& size);
+
 	TextLabel* createTextLabel(const Vector2& position,
 		const char_t* fontName = "Default Font");
 	TextLabel* createTextLabel(const Vector2& position,
@@ -93,7 +95,7 @@ private:
 	ComPtr<ID3D11Device> device;
 	ComPtr<ID3D11DeviceContext> deviceContext;
 	shared_ptr<MouseController> mouseController;
-	unique_ptr<pugi::xml_document> docAssMan;
+	unique_ptr<xml_document> docAssMan;
 
 	SpriteBatch* batch;
    /** ID3D11ShaderResourceView is a ComPtr!

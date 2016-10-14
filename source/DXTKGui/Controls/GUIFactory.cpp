@@ -33,9 +33,10 @@ bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 				L"Fatal Read Error!", MB_OK);
 			return false;
 		}
+
+		guiAssetsNode = docAssMan->child("root").child("gui");
 	}
 
-	guiAssetsNode = docAssMan->child("root").child("gui");
 
 	device = dev;
 	deviceContext = devCon;
@@ -57,7 +58,6 @@ bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 #include "../StringHelper.h"
 #include <sstream>
 unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
-
 
 	if (fontMap.find(fontName) == fontMap.end()) {
 
@@ -120,6 +120,15 @@ shared_ptr<Animation> GUIFactory::getAnimation(const char_t* animationName) {
 	return animationMap[animationName];
 }
 
+
+RectangleSprite* GUIFactory::createRectangle(
+	const Vector2& position, const Vector2& size) {
+
+	RectangleSprite* rect = new RectangleSprite(getAsset("White Pixel"));
+	rect->setDimensions(position, size);
+
+	return rect;
+}
 
 TextLabel* GUIFactory::createTextLabel(const Vector2& position,
 	const char_t* fontName) {
