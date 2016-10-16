@@ -157,7 +157,7 @@ namespace TransitionEffects {
 
 	class SplitTransition : public TexturedTransition {
 	public:
-		SplitTransition(GUIControl* control, int screenWidth, float transitionSpeed = 50.0);
+		SplitTransition(GUIControl* control, int screenWidth, float transitionSpeed = 150.0);
 		virtual bool run(double deltaTime, IElement2D* control) override;
 		virtual void reset(IElement2D* control) override;
 

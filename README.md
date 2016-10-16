@@ -33,6 +33,7 @@ Email: tgillon.sdk@gmail.com
 >- transition effects (tested on screens and dialog only)
 
 ##TODO:
+>- add createRectangleSprite/Frame to GuiFactory
 >- change static guiFactory to shared_ptr
 >- TexturePanel - add horizontal scrolling
 >- Dialog Box - allow custom bg image;

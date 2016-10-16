@@ -130,6 +130,16 @@ RectangleSprite* GUIFactory::createRectangle(
 	return rect;
 }
 
+RectangleFrame* GUIFactory::createRectangleFrame(const Vector2& position,
+	const Vector2& size, USHORT frameThickness, Color frameColor) {
+
+	RectangleFrame* frame = new RectangleFrame(getAsset("White Pixel"));
+	frame->setDimensions(position, size, frameThickness);
+	frame->setTint(frameColor);
+
+	return frame;
+}
+
 TextLabel* GUIFactory::createTextLabel(const Vector2& position,
 	const char_t* fontName) {
 

@@ -34,6 +34,9 @@ public:
 
 
 	RectangleSprite* createRectangle(const Vector2& position, const Vector2& size);
+	RectangleFrame* createRectangleFrame(const Vector2& position,
+		const Vector2& size, USHORT frameThickness = 2,
+		Color frameColor = Color(0, 0, 0, 1));
 
 	TextLabel* createTextLabel(const Vector2& position,
 		const char_t* fontName = "Default Font");
