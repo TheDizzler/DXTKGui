@@ -115,7 +115,7 @@ void ComboBox::setText(wstring text) {
 }
 
 const Vector2& XM_CALLCONV ComboBox::measureString() const {
-	return Vector2();
+	return Vector2::Zero;
 }
 
 const Vector2 & ComboBox::getPosition() const {

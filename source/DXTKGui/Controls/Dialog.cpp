@@ -1,9 +1,10 @@
 #include "Dialog.h"
 
 
-Dialog::Dialog(HWND h, bool canMove) {
+Dialog::Dialog(HWND h, bool canMove, bool centerTxt) {
 	hwnd = h;
 	movable = canMove;
+	centerText = centerTxt;
 }
 
 Dialog::~Dialog() {
@@ -24,6 +25,7 @@ void Dialog::initialize(GraphicsAsset* pixelAsset,
 	panel->setTint(Color(0, 1, 1, 1));
 	frame.reset(new RectangleFrame(pixelAsset));
 	bgSprite.reset(new RectangleSprite(pixelAsset));
+	bgSprite->setTint(panel->getTint());
 	titleSprite.reset(new RectangleSprite(pixelAsset));
 	titleSprite->setTint(Color(1, 1, 1, 1));
 	buttonFrameSprite.reset(new RectangleSprite(pixelAsset));
@@ -116,7 +118,7 @@ void Dialog::calculateTitlePos() {
 		}
 
 		//setTitleAreaDimensions(newSize);
-		setDimensions(newPos, newSize);
+		setDimensions(newPos, newSize, frameThickness);
 		// not sure if this is necessary, but it was a fun excersize :O
 	}
 	Vector2 titlePos = Vector2(
@@ -139,8 +141,11 @@ void Dialog::setTitle(wstring text, const Vector2& scale,
 void Dialog::calculateDialogTextPos() {
 
 	Vector2 dialogtextsize = dialogText->measureString();
-	if (dialogtextsize.x <= 0)
+	if (dialogtextsize.x <= 0) {
+		// if text changed from something to empty texturepanel needs to be reset
+		panel->setDimensions(Vector2::Zero, Vector2::Zero);
 		return;
+	}
 
 	TextLabel formattedText(Vector2::Zero, dialogText->getText(), dialogText->getFont());
 	int scrollBarBuffer = 0;
@@ -149,14 +154,18 @@ void Dialog::calculateDialogTextPos() {
 	//		break the text down into multiple lines
 		wstring newText = L"";
 
+
+		// how long line length?
+		int maxLineLength = dialogFrameSize.x - scrollBarBuffer - (dialogTextMargin.x * 2);
+
+
 		int i = 0;
 		int textLength = wcslen(dialogText->getText());
 		bool scrollbarAdded = false;
 		bool done = false;
 		while (i < textLength) {
 			wstring currentLine = L"";
-			while (dialogText->measureString(currentLine).x + (dialogTextMargin.x * 2)
-				< dialogFrameSize.x - scrollBarBuffer) {
+			while (dialogText->measureString(currentLine).x < maxLineLength) {
 
 				currentLine += dialogText->getText()[i++];
 				if (i >= textLength) {
@@ -164,14 +173,38 @@ void Dialog::calculateDialogTextPos() {
 					break;
 				}
 			}
+
+			// how long is currentLine?
+			int currentLength = dialogText->measureString(currentLine).x;
+
 			if (!done) {
+				// go through currentLine until a whitespace is found and add a newline char before it
 				wchar_t ch = currentLine[currentLine.length() - 1];
 				int back = 0;
 				while (!isspace(ch)) {
 
 					++back;
 					--i;
-					ch = currentLine[currentLine.length() - back - 1];
+					// check to see if word is too long for line
+					int nextChar = currentLine.length() - back - 1;
+					if (nextChar < 0) {
+						/* this means current word is too long for line
+							(i.e. stupidly narrow dialog box or ridiculously long word) */
+						// TODO: hyphenate word and put rest on next line
+						int excessLength = currentLength - maxLineLength;
+						int o = currentLine.length();
+						while (excessLength > 0) {
+							wstring choppedWord = currentLine.substr(0, --o);
+							excessLength = dialogText->measureString(choppedWord).x - maxLineLength;
+						}
+						// should have a nicely fiting word chunk now (no hypen)
+						i += o;
+						back -= o;
+						/*i += (back - newback);
+						back = newback;*/
+						break;
+					}
+					ch = currentLine[nextChar];
 				}
 				currentLine.erase(currentLine.end() - back, currentLine.end());
 			}
@@ -181,8 +214,10 @@ void Dialog::calculateDialogTextPos() {
 			// If text is getting too long, restart and adjust for scrollbar
 			if (!scrollbarAdded
 				&& dialogText->measureString(newText).y + dialogTextMargin.y * 2
-				> dialogFrameSize.y) {
+			> dialogFrameSize.y) {
+
 				scrollBarBuffer = panel->getScrollBarSize().x;
+				maxLineLength = dialogFrameSize.x - scrollBarBuffer - (dialogTextMargin.x * 2);
 				i = 0;
 				newText = L"";
 				scrollbarAdded = true;
@@ -194,15 +229,21 @@ void Dialog::calculateDialogTextPos() {
 		dialogtextsize = formattedText.measureString();
 	}
 
-	Vector2 dialogpos =
-		Vector2(dialogFramePosition.x +
-		(dialogFrameSize.x - dialogtextsize.x - scrollBarBuffer) / 2, 0);
+	Vector2 dialogpos;
+	if (centerText) {
+		dialogpos = Vector2(dialogFramePosition.x +
+			(dialogFrameSize.x - dialogtextsize.x - scrollBarBuffer) / 2, 0);
+	} else {
+		dialogpos = dialogFramePosition + dialogTextMargin;
+	}
 
 	if (dialogtextsize.y < dialogFrameSize.y)
 		dialogpos.y = dialogFramePosition.y + (dialogFrameSize.y - dialogtextsize.y) / 2;
 	else
 		dialogpos.y = dialogFramePosition.y;
 	dialogText->setPosition(dialogpos);
+	Color tint = dialogText->getTint();
+	formattedText.setTint(dialogText->getTint());
 	formattedText.setPosition(dialogpos);
 
 	panel->setDimensions(dialogFramePosition, dialogFrameSize);
@@ -228,22 +269,25 @@ void Dialog::setTitleAreaDimensions(const Vector2& newSize) {
 void Dialog::setConfirmButton(unique_ptr<Button> okButton,
 	bool autoPosition, bool autoSize) {
 
+
 	if (autoSize)
 		okButton->setDimensions(okButtonPosition, standardButtonSize, 3);
+
+	controls[ButtonOK].release();
+	controls[ButtonOK] = move(okButton);
 
 	if (autoPosition) {
 		okButtonPosition.x = position.x + buttonMargin;
 		if (calculateButtonPosition(okButtonPosition))
-			okButtonPosition.y -= okButton->getHeight() / 2;
+			okButtonPosition.y -= controls[ButtonOK]->getHeight() / 2;
 	} else {
-		okButtonPosition = okButton->getPosition();
+		okButtonPosition = controls[ButtonOK]->getPosition();
 	}
 
 
-	okButton->setPosition(okButtonPosition);
+	controls[ButtonOK]->setPosition(okButtonPosition);
 
-	controls[ButtonOK].release();
-	controls[ButtonOK] = move(okButton);
+	
 }
 
 void Dialog::setConfirmButton(wstring text, const pugi::char_t* font) {
@@ -273,7 +317,30 @@ void Dialog::setConfirmOnClickListener(Button::OnClickListener* iOnClickListener
 void Dialog::setCancelButton(unique_ptr<Button> cancelButton,
 	bool autoPosition, bool autoSize) {
 
+
+	if (autoSize)
+		cancelButton->setDimensions(cancelButtonPosition, standardButtonSize, 3);
+
+	controls[ButtonCancel].release();
+	controls[ButtonCancel] = move(cancelButton);
+
 	if (autoPosition) {
+		cancelButtonPosition.x =
+			position.x + size.x - controls[ButtonCancel]->getWidth() - buttonMargin;
+		if (calculateButtonPosition(cancelButtonPosition))
+			cancelButtonPosition.y -= controls[ButtonCancel]->getHeight() / 2;
+	} else {
+		cancelButtonPosition = controls[ButtonCancel]->getPosition();
+	}
+
+
+	controls[ButtonCancel]->setPosition(cancelButtonPosition);
+
+
+
+
+
+	/*if (autoPosition) {
 		if (cancelButton->getWidth() == 0) {
 			cancelButton->setDimensions(cancelButtonPosition, standardButtonSize, 3);
 		}
@@ -284,12 +351,14 @@ void Dialog::setCancelButton(unique_ptr<Button> cancelButton,
 	} else {
 		cancelButtonPosition = cancelButton->getPosition();
 	}
+
 	if (autoSize) {
 		cancelButton->setDimensions(cancelButtonPosition, standardButtonSize, 3);
 	} else
 		cancelButton->setPosition(cancelButtonPosition);
+
 	controls[ButtonCancel].release();
-	controls[ButtonCancel] = move(cancelButton);
+	controls[ButtonCancel] = move(cancelButton);*/
 }
 
 void Dialog::setCancelButton(wstring text, const pugi::char_t * font) {
@@ -423,16 +492,22 @@ void Dialog::draw(SpriteBatch* batch) {
 }
 
 
-void Dialog::addItem(unique_ptr<GUIControl> control) {
+size_t Dialog::addControl(unique_ptr<GUIControl> control) {
 
+	control->moveBy(dialogFramePosition);
 	controls.push_back(move(control));
+	return controls.size() - 1;
 }
 
 /* Not too sure how this will behave....*/
-void Dialog::addItems(vector<unique_ptr<GUIControl>> newControls) {
+void Dialog::addControls(vector<unique_ptr<GUIControl>> newControls) {
 
 	for (int i = 0; i < newControls.size(); ++i)
 		controls.push_back(move(newControls[i]));
+}
+
+GUIControl* Dialog::getControl(size_t controlPosition) const {
+	return controls.at(controlPosition).get();
 }
 
 /** Not used in DialogBox */
@@ -503,6 +578,8 @@ void Dialog::setPosition(const Vector2& newPosition) {
 
 	Vector2 moveBy = newPosition - position;
 	GUIControl::setPosition(newPosition);
+	dialogFramePosition += moveBy;
+	titleFramePosition += moveBy;
 	frame->moveBy(moveBy);
 	bgSprite->moveBy(moveBy);
 	titleSprite->moveBy(moveBy);
@@ -604,6 +681,8 @@ void Dialog::setDraggedPosition(Vector2& newPosition) {
 
 	Vector2 moveBy = newPosition - position;
 	GUIControl::setPosition(newPosition);
+	dialogFramePosition += moveBy;
+	titleFramePosition += moveBy;
 	frame->moveBy(moveBy);
 	bgSprite->moveBy(moveBy);
 	titleSprite->moveBy(moveBy);

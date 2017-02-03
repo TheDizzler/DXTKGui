@@ -103,8 +103,8 @@ public:
 
 	virtual void setGameManager(GameManager* game);
 
-	virtual bool initialize(ComPtr<ID3D11Device> device, MouseController* mouse);
-	virtual void update(double deltaTime, MouseController* mouse);
+	virtual bool initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse);
+	virtual void update(double deltaTime, shared_ptr<MouseController> mouse);
 	virtual void draw(SpriteBatch* batch);
 
 	virtual void pause() override;
@@ -149,19 +149,28 @@ protected:
 };
 
 
+class BackButtonListener : public Button::OnClickListener {
+public:
+	BackButtonListener(ConfigScreen* screen) : configScreen(screen) {
+	}
+	virtual void onClick(Button * button) override;
+
+private:
+	ConfigScreen* configScreen;
+};
+
 class ConfigScreen : public MenuScreen {
 	friend class OnClickListenerAdapterList;
 	friend class OnClickListenerDisplayModeList;
 	friend class OnClickListenerFullScreenCheckBox;
+	friend class BackButtonListener;
 public:
 	ConfigScreen(MenuManager* manager);
 	~ConfigScreen();
 
-	virtual bool initialize(ComPtr<ID3D11Device> device,
-		MouseController* mouse) override;
-
-	virtual void update(double deltaTime, MouseController* mouse) override;
-	virtual void draw(SpriteBatch * batch) override;
+	virtual bool initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse) override;
+	virtual void update(double deltaTime, shared_ptr<MouseController> mouse) override;
+	virtual void draw(SpriteBatch* batch) override;
 
 private:
 
@@ -184,11 +193,10 @@ class MainScreen : public MenuScreen {
 public:
 	MainScreen(MenuManager* manager);
 	~MainScreen();
-	
-	virtual bool initialize(ComPtr<ID3D11Device> device,
-		MouseController * mouse) override;
-	virtual void update(double deltaTime, MouseController* mouse) override;
-	virtual void draw(SpriteBatch * batch) override;
+
+	virtual bool initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse) override;
+	virtual void update(double deltaTime, shared_ptr<MouseController> mouse) override;
+	virtual void draw(SpriteBatch* batch) override;
 
 	void confirmExit();
 private:

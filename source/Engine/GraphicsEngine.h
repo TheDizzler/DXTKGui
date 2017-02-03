@@ -1,9 +1,5 @@
 #pragma once
-//#define MyMessageBox(a, b, c, d) \
-//	if (swapChain.Get() != NULL) \
-//		swapChain->SetFullscreenState(false, NULL); \
-//	MessageBox(a, b, c, d);
-// ^ doesn't work as intended :/
+
 #pragma comment (lib, "D3D11.lib")
 #pragma comment (lib, "DXGI.lib")
 
@@ -16,23 +12,20 @@
 #include "CommonStates.h"
 
 #include "../globals.h"
-
+#include "Camera.h"
 
 using namespace std;
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
-
 class GraphicsEngine {
 public:
 	GraphicsEngine();
-	virtual ~GraphicsEngine();
+	~GraphicsEngine();
 
 	bool initD3D(HWND hwnd);
 
-
 	virtual void render(double time) = 0;
-
 
 	vector<ComPtr<IDXGIAdapter> > getAdapterList();
 	vector<ComPtr<IDXGIOutput> > getDisplayList();
@@ -56,10 +49,12 @@ public:
 	/** Used for creating textures from an area on screen */
 	ComPtr<IDXGISwapChain> getSwapChain();
 	SpriteBatch* getSpriteBatch();
+
+	shared_ptr<Camera> camera;
 protected:
 	HWND hwnd;
 	unique_ptr<SpriteBatch> batch;
-	//SpriteBatch* batch;
+	
 	/* Adapter currently being used. */
 	ComPtr<IDXGIAdapter> selectedAdapter;
 	/* Monitor being used. */
@@ -81,6 +76,7 @@ protected:
 	//ComPtr<IDXGISwapChain> textureSwapChain;
 	/* GPU object */
 	ComPtr<ID3D11Device> device;
+	ComPtr<ID3D11Debug> debugDevice;
 	/* GPU interface */
 	ComPtr<ID3D11DeviceContext> deviceContext;
 	/* The backbuffer that gets drawn to. */
@@ -88,14 +84,11 @@ protected:
 
 	//D3D_DRIVER_TYPE driverType;
 	D3D_FEATURE_LEVEL featureLevel;
-	D3D11_VIEWPORT viewport;
+	//D3D11_VIEWPORT d3d_viewport;
+	Viewport viewport;
+
 	/* List of all gfx cards on this machine. */
 	vector<ComPtr<IDXGIAdapter> > adapters;
-	//vector<ComPtr<ID3D11DeviceContext> > deviceContexts;
-	//vector<ComPtr<IDXGISwapChain> > swapChains; 
-	//vector<ComPtr<ID3D11Device> > devices;
-	//vector<ComPtr<ID3D11RenderTargetView> > renderTargetViews;
-	//vector<unique_ptr<SpriteBatch> > batches;
 	/* List of all monitors available with this adapter. */
 	vector<ComPtr<IDXGIOutput> > displays;
 	vector<DXGI_MODE_DESC> displayModeList; // all possible display modes with this monitor/video card 

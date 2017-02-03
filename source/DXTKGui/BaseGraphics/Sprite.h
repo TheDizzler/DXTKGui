@@ -53,6 +53,7 @@ public:
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
 	virtual const RECT getRect() const;
+	virtual const float getLayerDepth() const override;
 
 	virtual void moveBy(const Vector2& moveVector);
 	virtual void setDimensions(Sprite* baseSprite);
@@ -64,6 +65,7 @@ public:
 	virtual void setRotation(const float rotation) override;
 	virtual void setTint(const XMFLOAT4 color) override;
 	virtual void setAlpha(const float alpha) override;
+	virtual void setLayerDepth(const float depth) override;
 
 	virtual void update(double deltaTime);
 	virtual void draw(SpriteBatch* batch) override;
@@ -81,7 +83,7 @@ protected:
 	Vector2 origin;
 	Color tint;
 	float rotation;
-	float layerDepth;
+	float layerDepth = 0.0f;
 
 	UINT width;
 	UINT height;

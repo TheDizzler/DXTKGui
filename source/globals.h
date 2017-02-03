@@ -14,7 +14,7 @@ namespace Globals {
 
 	
 
-	/* For reference purposes only. */
+	/* For reference purposes. */
 	/*wostringstream ws;
 	ws << "some writing here" << someVariable << "\n";
 	OutputDebugString(ws.str().c_str());*/

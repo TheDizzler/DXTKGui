@@ -1,7 +1,6 @@
 #include "GraphicsEngine.h"
 
-#include <DirectXColors.h>
-
+shared_ptr<Camera> camera;
 
 GraphicsEngine::GraphicsEngine() {
 
@@ -13,16 +12,9 @@ GraphicsEngine::~GraphicsEngine() {
 	if (swapChain.Get() != NULL)
 		swapChain->SetFullscreenState(false, NULL);
 
-
-	//deviceContexts.clear();
-	//swapChains.clear();
-	//devices.clear();
-	//renderTargetViews.clear();
-
 	adapters.clear();
 	displays.clear();
 	displayModeList.clear();
-
 
 }
 
@@ -47,7 +39,9 @@ bool GraphicsEngine::initD3D(HWND h) {
 
 	initializeViewport();
 
-
+	camera = make_shared<Camera>(Globals::WINDOW_WIDTH, Globals::WINDOW_HEIGHT);
+	camera->viewport = &viewport;
+	deviceContext->RSSetViewports(1, viewport.Get11());
 
 	// create SpriteBatch
 	batch.reset(new SpriteBatch(deviceContext.Get()));
@@ -82,11 +76,6 @@ bool GraphicsEngine::getDisplayAdapters() {
 
 	}
 
-	/*deviceContexts.resize(adapters.size());
-	swapChains.resize(adapters.size());
-	devices.resize(adapters.size());
-	renderTargetViews.resize(adapters.size());*/
-	//batches.resize(adapters.size());
 
 	int size = i - 1;
 
@@ -130,11 +119,6 @@ bool GraphicsEngine::initializeAdapter(int adapterIndex) {
 
 	selectedAdapterIndex = adapterIndex;
 	selectedAdapter = adapters[selectedAdapterIndex];
-	//device = devices[selectedAdapterIndex];
-	//deviceContext = deviceContexts[selectedAdapterIndex];
-	//swapChain = swapChains[selectedAdapterIndex];
-	//renderTargetView = renderTargetViews[selectedAdapterIndex];
-	//batch = batches[selectedAdapterIndex].get();
 
 	if (!populateDisplayModeList(selectedDisplay))
 		return false;
@@ -182,59 +166,10 @@ bool GraphicsEngine::initializeAdapter(int adapterIndex) {
 		L"Error creating Device and Swap Chain.", L"ERROR"))
 		return false;
 
+	device.Get()->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(debugDevice.GetAddressOf()));
+
 	verifyAdapter(device);
 
-
-	// create extra swapchain for creating textures from screen
-	/*ComPtr<IDXGIDevice> dxgiDevice;
-	if (GameEngine::reportError(
-		device.Get()->QueryInterface(
-			__uuidof(IDXGIDevice), (void**) dxgiDevice.GetAddressOf()),
-		L"Failed Querying interface.", L"WTF"))
-		return false;
-
-	ComPtr<IDXGIAdapter> dxgiAdapter;
-	if (GameEngine::reportError(
-		dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void**) dxgiAdapter.GetAddressOf()),
-		L"Failed to get DXGIAdapter from DXGIDevice."))
-		return false;
-	ComPtr<IDXGIFactory1> factory;
-	if (GameEngine::reportError(
-		dxgiAdapter->GetParent(__uuidof(IDXGIFactory1), (void**) factory.GetAddressOf()),
-		L"Failed to get IDXGIFactory from DXGIAdapter"))
-		return false;
-
-	if (GameEngine::reportError(
-		factory->CreateSwapChain(
-			device.Get(), &swapChainDesc, textureSwapChain.GetAddressOf()),
-		L"Failed to create textureSwapChain"))
-		return false;
-
-	ID3D11Texture2D* backBufferPtr;
-	if (GameEngine::reportError(
-		swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*) &backBufferPtr),
-		L"Could not get pointer to back buffer.", L"ERROR"))
-		return false;
-
-	if (GameEngine::reportError(
-		device->CreateRenderTargetView(backBufferPtr,
-			NULL, textureRenderTargetView.GetAddressOf()),
-		L"Could not create texture render target view.", L"ERROR"))
-		return false;
-
-	ComPtr<ID3D11ShaderResourceView> shaderResourceView;
-	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-	shaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-	shaderResourceViewDesc.Texture2D.MipLevels = 1;
-
-	if (GameEngine::reportError(
-		device->CreateShaderResourceView(backBufferPtr,
-			&shaderResourceViewDesc, shaderResourceView.GetAddressOf()),
-		L"Failed to create Shader Resource View for new texture."))
-		return false;
-	backBufferPtr->Release();*/
 
 	return true;
 }
@@ -264,18 +199,21 @@ bool GraphicsEngine::initializeRenderTarget() {
 
 void GraphicsEngine::initializeViewport() {
 
-	/** **** Create Viewport **** **/
-	D3D11_VIEWPORT viewport;
-	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+	/** **** Create D3D Viewport **** **/
+	/*ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
 
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.Width = Globals::WINDOW_WIDTH;
-	viewport.Height = Globals::WINDOW_HEIGHT;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
+	d3d_viewport.TopLeftX = 0;
+	d3d_viewport.TopLeftY = 0;
+	d3d_viewport.Width = Globals::WINDOW_WIDTH;
+	d3d_viewport.Height = Globals::WINDOW_HEIGHT;
+	d3d_viewport.MinDepth = 0.0f;
+	d3d_viewport.MaxDepth = 1.0f;
 
-	deviceContext->RSSetViewports(1, &viewport);
+	deviceContext->RSSetViewports(1, &d3d_viewport);*/
+
+
+	/** **** Create SimpleMath Viewport **** */
+	viewport = Viewport(0, 0, Globals::WINDOW_WIDTH, Globals::WINDOW_HEIGHT, 0, 1);
 
 }
 
@@ -411,9 +349,6 @@ vector<DXGI_MODE_DESC> GraphicsEngine::getDisplayModeList(
 bool GraphicsEngine::setAdapter(size_t newAdapterIndex) {
 
 	swapChain->SetFullscreenState(false, NULL);
-	//renderTargetView.Get()->Release();
-	//deviceContext.Get()->Release();
-	//device.Get()->Release();
 
 
 	if (!initializeAdapter(newAdapterIndex)) {
@@ -428,11 +363,6 @@ bool GraphicsEngine::setAdapter(size_t newAdapterIndex) {
 
 	// re-create SpriteBatch
 	batch.reset(new SpriteBatch(deviceContext.Get()));
-	//batch = new SpriteBatch(deviceContext.Get());
-
-	/*ComPtr<ID3D11Device> deviceCheck;
-	deviceContext->GetDevice(&deviceCheck);
-	verifyAdapter(deviceCheck);*/
 
 	return true;
 }
@@ -464,8 +394,6 @@ bool GraphicsEngine::setFullScreen(bool isFullScreen) {
 
 	if (swapChain.Get() == NULL)
 		return false;
-
-
 
 	if (isFullScreen) {
 		swapChain->SetFullscreenState(true, NULL);
@@ -532,8 +460,6 @@ ComPtr<ID3D11DeviceContext> GraphicsEngine::getDeviceContext() {
 	return deviceContext;
 }
 
-
-
 ComPtr<IDXGISwapChain> GraphicsEngine::getSwapChain() {
 	return swapChain;
 }
@@ -544,7 +470,7 @@ SpriteBatch* GraphicsEngine::getSpriteBatch() {
 
 
 /** A debug function to make sure we're using the correct graphics adapter.
-		Also because for fun.*/
+Also because fun.*/
 bool GraphicsEngine::verifyAdapter(ComPtr<ID3D11Device> deviceCheck) {
 
 	IDXGIDevice* dxgiDev;

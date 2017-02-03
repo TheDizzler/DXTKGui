@@ -77,7 +77,7 @@ void TextLabel::setText(string text) {
 
 	wostringstream wss;
 	wss << text.c_str();
-	setText(wss);
+	setText(wss.str());
 }
 
 void TextLabel::setText(wostringstream& text) {
@@ -158,6 +158,10 @@ void TextLabel::setTint(const XMFLOAT4 color) {
 
 void TextLabel::setScale(const Vector2 & scl) {
 	scale = scl;
+	Vector2 size = font->measureString(label.c_str());
+	size *= scale;
+	hitArea->position = position;
+	hitArea->size = size;
 }
 
 const Vector2& TextLabel::getPosition() const {
@@ -166,7 +170,6 @@ const Vector2& TextLabel::getPosition() const {
 
 
 int const TextLabel::getWidth() const {
-
 	return hitArea->size.x;
 }
 

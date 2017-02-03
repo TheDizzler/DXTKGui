@@ -1,17 +1,16 @@
 #pragma once
 
-//#include "../Controllers/MouseController.h"
 #include "TextLabel.h"
 #include "../BaseGraphics/PrimitiveShapes.h"
 
 
 /** A visual and logical representation of a button.
-		Now with ActionListeners!.*/
+		Now with ActionListeners! */
 class Button : public GUIControl {
 public:
 
 	Button(GraphicsAsset* pixelAsset, unique_ptr<FontSet> font);
-	virtual ~Button();
+	~Button();
 
 	/* position is topleft of button. */
 	void setDimensions(const Vector2& position, const Vector2& size,
@@ -131,10 +130,13 @@ public:
 		unique_ptr<Sprite> downButtonSprite, unique_ptr<FontSet> font);
 	~ImageButton();
 
-
 	virtual void draw(SpriteBatch* batch) override;
 
+	/* Changing size will change the scale.*/
+	void setDimensions(const Vector2& position, const Vector2& size);
+
 	virtual void setText(wstring text) override;
+
 	virtual void setPosition(const Vector2& position) override;
 	virtual void setScale(const Vector2 & scale) override;
 	/** Remember: Rotation is around the origin! */
@@ -166,7 +168,7 @@ public:
 	virtual void setText(wstring text) override;
 	
 	virtual const Vector2& XM_CALLCONV measureString() const override;
-	virtual const Vector2 & getPosition() const override;
+	virtual const Vector2& getPosition() const override;
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
 

@@ -6,7 +6,6 @@
 #include "../BaseGraphics/GraphicsAsset.h"
 #include "../Controllers/MouseController.h"
 
-
 interface GUIControl : public IElement2D {
 public:
 
@@ -14,6 +13,9 @@ public:
 		shared_ptr<MouseController> mouseController) {
 		guiFactory = factory;
 		mouse = mouseController;
+		projectedHitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
+
+		translationMatrix = [&]() -> Matrix { return Matrix::Identity; };
 	}
 
 	/* Deprecating */
@@ -21,6 +23,7 @@ public:
 		EXIT, PLAY, SETTINGS, CANCEL, OK, UP, DOWN, NONE, CONFIRM,
 		NEUTRAL, SELECTION_CHANGED
 	};
+	
 
 	virtual void update(double deltaTime) = 0;
 
@@ -38,6 +41,7 @@ public:
 	virtual void setRotation(const float rotation) override;
 	virtual void setTint(const XMFLOAT4 color) override;
 	virtual void setAlpha(const float alpha) override;
+	virtual void setLayerDepth (const float depth) override;
 
 	virtual const Vector2& getPosition() const = 0;
 	virtual const Vector2& getOrigin() const override;
@@ -47,6 +51,20 @@ public:
 	virtual const float getAlpha() const override;
 	virtual const int getWidth() const = 0;
 	virtual const int getHeight() const = 0;
+	virtual const float getLayerDepth() const override;
+	
+	const HitArea* getHitArea() const;
+
+	/* control->setMatrixFunction([&]() -> Matrix { return camera->translationMatrix(); }); */
+	void setMatrixFunction(function<Matrix ()> translationMat ) {
+		translationMatrix = translationMat;
+	}
+
+	virtual void updateProjectedHitArea();
+
+	virtual const Vector2& getScreenPosition(Matrix viewProjectionMatrix) const;
+	virtual unique_ptr<HitArea> getScreenHitArea(Matrix viewProjectionMatrix) const;
+
 	bool contains(const Vector2& point);
 
 	GraphicsAsset* createTexture();
@@ -61,7 +79,11 @@ public:
 
 
 protected:
+	function<Matrix ()> translationMatrix;
 	unique_ptr<HitArea> hitArea;
+
+	unique_ptr<HitArea> projectedHitArea;
+
 	Vector2 position = Vector2::Zero;
 	Vector2 scale = Vector2(1, 1);
 
@@ -69,7 +91,7 @@ protected:
 	Vector2 origin = Vector2(0, 0);
 	Color tint = DirectX::Colors::White;
 	float rotation = 0.0f;
-	float layerDepth = 0.0f;
+	float layerDepth = 1.0f;
 
 	bool isHover = false;
 	/** Button is held down over control but has not been released. */
@@ -89,7 +111,8 @@ protected:
 		Not actually implemented.... */
 interface GUIControlBox : public GUIControl {
 public:
-	virtual void addItem(unique_ptr<GUIControl> control) = 0;
-	virtual void addItems(vector<unique_ptr<GUIControl> > controls) = 0;
+	virtual size_t addControl(unique_ptr<GUIControl> control) = 0;
+	virtual void addControls(vector<unique_ptr<GUIControl> > controls) = 0;
 
+	virtual GUIControl* getControl(size_t controlPosition) const = 0;
 };

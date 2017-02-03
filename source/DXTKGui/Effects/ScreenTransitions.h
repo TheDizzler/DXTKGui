@@ -36,7 +36,8 @@ namespace ScreenTransitions {
 
 	class ScreenTransitionManager {
 	public:
-		ScreenTransitionManager(GUIFactory* guiFactory, const char_t* bgName);
+		ScreenTransitionManager(GUIFactory* guiFactory,
+			const char_t* bgName = "Default Transition BG");
 		~ScreenTransitionManager();
 
 		void setTransition(ScreenTransition* effect);

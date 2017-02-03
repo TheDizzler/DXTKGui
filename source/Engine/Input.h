@@ -4,7 +4,6 @@
 #include "../DXTKGui/Controllers/MouseController.h"
 #include "../DXTKGui/Controllers/KeyboardController.h"
 
-using namespace DirectX;
 
 
 class Input {
@@ -13,17 +12,12 @@ public:
 	virtual ~Input();
 
 	bool initRawInput(HWND hwnd);
-	/* Depracting. */
-	//void setRawInput(RAWINPUT* raw);
 
 
 protected:
 
-	std::unique_ptr<KeyboardController> keys;
-	std::unique_ptr<MouseController> mouse;
-	
+	unique_ptr<KeyboardController> keys;
+	shared_ptr<MouseController> mouse;
 
-	//RAWKEYBOARD* rawKeys;
-	//RAWMOUSE* rawMouse;
 };
 

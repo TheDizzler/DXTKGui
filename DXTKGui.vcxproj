@@ -167,10 +167,12 @@
     <ClCompile Include="source\DXTKGui\Controls\GUIFactory.cpp" />
     <ClCompile Include="source\DXTKGui\Controls\ListBox.cpp" />
     <ClCompile Include="source\DXTKGui\Controls\ScrollBar.cpp" />
+    <ClCompile Include="source\DXTKGui\Controls\Spinner.cpp" />
     <ClCompile Include="source\DXTKGui\Controls\TextLabel.cpp" />
     <ClCompile Include="source\DXTKGui\Controls\TexturePanel.cpp" />
     <ClCompile Include="source\DXTKGui\Effects\ScreenTransitions.cpp" />
     <ClCompile Include="source\DXTKGui\Effects\TransitionEffects.cpp" />
+    <ClCompile Include="source\Engine\Camera.cpp" />
     <ClCompile Include="Source\Engine\GameEngine.cpp" />
     <ClCompile Include="Source\Engine\GraphicsEngine.cpp" />
     <ClCompile Include="Source\Engine\Input.cpp" />
@@ -195,12 +197,14 @@
     <ClInclude Include="source\DXTKGui\Controls\GUIFactory.h" />
     <ClInclude Include="source\DXTKGui\Controls\ListBox.h" />
     <ClInclude Include="source\DXTKGui\Controls\ScrollBar.h" />
+    <ClInclude Include="source\DXTKGui\Controls\Spinner.h" />
     <ClInclude Include="source\DXTKGui\Controls\TextLabel.h" />
     <ClInclude Include="source\DXTKGui\Controls\TexturePanel.h" />
     <ClInclude Include="source\DXTKGui\Effects\ScreenTransitions.h" />
     <ClInclude Include="source\DXTKGui\Effects\TransitionEffects.h" />
     <ClInclude Include="source\DXTKGui\GuiAssets.h" />
     <ClInclude Include="source\DXTKGui\StringHelper.h" />
+    <ClInclude Include="source\Engine\Camera.h" />
     <ClInclude Include="Source\Engine\GameEngine.h" />
     <ClInclude Include="Source\Engine\GraphicsEngine.h" />
     <ClInclude Include="Source\Engine\Input.h" />
