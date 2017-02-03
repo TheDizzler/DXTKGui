@@ -33,13 +33,19 @@ Email: tgillon.sdk@gmail.com
 >- transition effects (tested on screens and dialog only)
 
 ##TODO:
->- add createRectangleSprite/Frame to GuiFactory
+>- ###BugFixes
+>- Button doesn't show hover again after click and release
+>- Dialog Box - allow hyphenating of words that can't fit on one line (line 139 - Elevator Project has an update)
+>- control contents should adjust for frame thickness
+>- Dialog Box buttons don't position properly when adding new buttons manually (only cancel button?)
+>- add createRectangleSprite to GuiFactory
 >- change static guiFactory to shared_ptr
 >- TexturePanel - add horizontal scrolling
 >- Dialog Box - allow custom bg image;
 >- Scrollbar - that can be slapped on to anything; horizontal scrolling
 >- List Box - multi-select; test adding, removing, clearing items live
 >- Radio Buttons
+>- spinner
 >- Slider
 >- add triggers for sfx (can use actionlisteners...good enough?)
 >- Combo Box - allow custom frame/bg image

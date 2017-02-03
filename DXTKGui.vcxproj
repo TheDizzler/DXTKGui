@@ -23,7 +23,7 @@
     <ProjectGuid>{97D0FD76-7605-4F5B-88D9-3EDB225D3A09}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DXTKGui</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
