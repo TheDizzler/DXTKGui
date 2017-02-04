@@ -6,20 +6,30 @@ GraphicsAsset::GraphicsAsset() {
 }
 GraphicsAsset::~GraphicsAsset() {
 
+	resource.Reset();
+
 }
 
 #include "../StringHelper.h"
 #include <DDSTextureLoader.h>
-bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const wchar_t* textureFile) {
+bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const wchar_t* textureFile, const Vector2& org) {
+
+	wostringstream wss;
+	wss << L"Unable to load texture file: " << textureFile;
 
 	if (StringHelper::reportError(
 		CreateDDSTextureFromFile(device.Get(), textureFile,
 			resource.GetAddressOf(), texture.GetAddressOf()),
-		L"Failed to load sprite", L"ERROR"))
+		wss.str(), L"ERROR"))
 		return false;
 
 
 	getTextureDimensions(resource.Get(), &width, &height);
+
+	if (org == Vector2(-1000, -1000))
+		origin = Vector2(width / 2, height / 2);
+	else
+		origin = org;
 
 	return true;
 }
@@ -27,7 +37,7 @@ bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const wchar_t* textureFile
 
 void GraphicsAsset::loadAsPartOfSheet(
 	ComPtr<ID3D11ShaderResourceView> spriteSheetTexture,
-	const Vector2& locationInSheet, const Vector2& size) {
+	const Vector2& locationInSheet, const Vector2& size, const Vector2& origin) {
 
 	texture = spriteSheetTexture;
 	position = locationInSheet;
@@ -73,7 +83,11 @@ const int GraphicsAsset::getHeight() const {
 	return height;
 }
 
-const Vector2 GraphicsAsset::getPosition() const {
+const Vector2 & GraphicsAsset::getOrigin() const {
+	return origin;
+}
+
+const Vector2& GraphicsAsset::getPosition() const {
 	return position;
 }
 

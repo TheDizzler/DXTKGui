@@ -1,4 +1,4 @@
-# DXTKGui v0.5b
+# DXTKGui v0.6b
 
 A GUI Framework for DirectX ToolKit.
 This developed out of one part not being able to find any existing frameworks and one part me procrastinating on developing the game I'm working on. I had some hacky GUI features (button, dialog box, listbox) and I was bothered by how inflexible and cumbersome they were. So I started this project to make an extensible, easy to use, and re-usable GUI toolkit.
@@ -20,39 +20,45 @@ Email: tgillon.sdk@gmail.com
 
 
 ##DONE:
->- Primitve Shapes - filled rectangle; un-filled rectangle; line
+>- Primitve Shapes - filled rectangle; un-filled rectangle; triangle (needs work); line
 >- Text Labels - normal and clickable
->- Button - text and image
+>- Button - text, image, animated
 >- TexturePanel - can take a ShaderResourceView, display it, and scroll vertically
 >- Dialog Box - draggable and non-draggable; implements TexturePanel to allow text scrolling; no image (bg) loading yet;
 >- Check Box - with onClickListener
 >- ListBox - with onClickListener; auto-size to content
 >- Scrollbar - now with customizable sprites!
 >- Combo Box
+>- Spinner - can take any vector of wstring
 >- can load images and animations from spritesheets
 >- transition effects (tested on screens and dialog only)
+>- controls can store a tranlsation matrix function to allow their use with a camera
+(world space vs screen space)
 
 ##TODO:
->- ###BugFixes
->- Button doesn't show hover again after click and release
->- Dialog Box - allow hyphenating of words that can't fit on one line (line 139 - Elevator Project has an update)
+>- !text in dialog doesn't center any more!
+>- Test using controls with layerdepth
+>- Button doesn't show hover again after click and release (fixed?)
+>- ImageButtons do not go back to hoverstate after press release
+>- Dialog Box - allow hyphenating of words that can't fit on one line with option to turn on/off
+(currently puts whole word on next line or puts break in word)
 >- control contents should adjust for frame thickness
->- Dialog Box buttons don't position properly when adding new buttons manually (only cancel button?)
->- add createRectangleSprite to GuiFactory
->- change static guiFactory to shared_ptr
+>- ~~Dialog Box buttons don't position properly when adding new buttons manually (only cancel button?)~~
 >- TexturePanel - add horizontal scrolling
+>- A Panel for adding controls?
 >- Dialog Box - allow custom bg image;
->- Scrollbar - that can be slapped on to anything; horizontal scrolling
+>- force minimum size for dialog box?
+>- Scrollbar that can be slapped on to anything; horizontal scrolling
 >- List Box - multi-select; test adding, removing, clearing items live
 >- Radio Buttons
->- spinner
 >- Slider
 >- add triggers for sfx (can use actionlisteners...good enough?)
 >- Combo Box - allow custom frame/bg image
 >- ListBox - allow custom frame/bg image
+>- put default images into a spritesheet
 >- tooltips?
 >- More Primitive Shapes - if I feel they might be useful
 >- Other stuff I can't think of at the moment
 >- demo and how-to videos
 >- Some kind of document to explain what's going on under the hood and how to use it effectivily....
-
+>- create .DLL version

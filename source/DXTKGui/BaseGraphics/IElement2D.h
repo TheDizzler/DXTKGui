@@ -24,6 +24,11 @@ public:
 	virtual const float getAlpha() const = 0;
 	virtual const int getWidth() const = 0;
 	virtual const int getHeight() const = 0;
+	virtual const float getLayerDepth() const = 0;
+
+	/** Get coordinates of object relative to screen. */
+	//virtual const Vector2& getScreenPosition() const = 0;
+	//virtual const HitArea& getScreenHitArea() const = 0;
 
 	virtual void moveBy(const Vector2& moveVector) = 0;
 	virtual void setPosition(const Vector2& position) = 0;
@@ -32,6 +37,7 @@ public:
 	virtual void setRotation(const float rotation) = 0;
 	virtual void setTint(const XMFLOAT4 color) = 0;
 	virtual void setAlpha(const float alpha) = 0;
+	virtual void setLayerDepth(const float depth) = 0;
 
 	virtual void draw(SpriteBatch* batch) = 0;
 

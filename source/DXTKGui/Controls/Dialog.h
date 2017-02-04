@@ -11,7 +11,7 @@
 class Dialog : public GUIControlBox {
 public:
 
-	Dialog(HWND hwnd, bool movable);
+	Dialog(HWND hwnd, bool movable, bool centerText);
 	~Dialog();
 
 	void initialize(GraphicsAsset* pixelAsset,
@@ -27,7 +27,7 @@ public:
 	void setCloseTransition(TransitionEffects::TransitionEffect* effect);
 
 	void setTitle(wstring text, const Vector2& scale = Vector2(1.5, 1.5),
-		const pugi::char_t* font = "Default Font", Color color = Color(0, 0, 0, 1));
+		const pugi::char_t* font = "Default Font", Color color = Color(1, .5, 0, 1));
 	virtual void setText(wstring text) override;
 
 	/* Works in the y dimension. x dimension gets uppity. */
@@ -54,10 +54,13 @@ public:
 	virtual void update(double deltaTime);
 	virtual void draw(SpriteBatch* batch);
 
+	/* Add other GUIControls to dialog. Control position should be relative to Dialog.
+		Returns the position of control in control list. */
+	virtual size_t addControl(unique_ptr<GUIControl> control) override;
 	/* Add other GUIControls to dialog. Not Implemented Yet. */
-	virtual void addItem(unique_ptr<GUIControl> control) override;
-	/* Add other GUIControls to dialog. Not Implemented Yet. */
-	virtual void addItems(vector<unique_ptr<GUIControl>> controls) override;
+	virtual void addControls(vector<unique_ptr<GUIControl>> controls) override;
+
+	virtual GUIControl* getControl(size_t controlPosition) const override;
 
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 	void setTextTint(const XMFLOAT4 color);
@@ -103,12 +106,12 @@ private:
 	//ClickAction result = NONE;
 
 	Vector2 size;
-	Vector2 titleFrameSize = Vector2(0, 40);
+	Vector2 titleFrameSize = Vector2(0, 0);
 	Vector2 titleFramePosition;
 	Vector2 dialogFrameSize;
 	Vector2 dialogFramePosition;
 	Vector2 buttonFramePosition;
-	Vector2 buttonFrameSize = Vector2(0, 50);
+	Vector2 buttonFrameSize = Vector2(0, 0);
 
 	int frameThickness = 2;
 	int buttonMargin = 10; // space between edge of dialog box and button edge
@@ -119,8 +122,6 @@ private:
 	//bool textFormated = false;
 
 	void calculateTitlePos();
-	// TODO:
-	//		If text to long, add scrollbar.
 	void calculateDialogTextPos();
 	bool calculateButtonPosition(Vector2& buttonPos);
 	int getMaxButtonHeight();
@@ -141,6 +142,7 @@ private:
 
 	Vector2 pressedPosition;
 	bool movable = false;
+	bool centerText = false;
 
 	TransitionEffects::TransitionEffect* openTransition = NULL;
 	TransitionEffects::TransitionEffect* closeTransition = NULL;

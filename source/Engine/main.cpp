@@ -19,7 +19,7 @@ __int64 counterStart = 0;
 int frameCount = 0;
 int fps = 0;
 __int64 frameTimeOld = 0;
-double frameTime;
+double frameTime = 0;
 
 
 
@@ -39,9 +39,6 @@ void releaseResources() {
 	if (Globals::FULL_SCREEN)
 		ChangeDisplaySettings(NULL, 0);
 
-	/*if (gameEngine)
-		delete gameEngine;*/
-
 	if (newAudio)
 		UnregisterDeviceNotification(newAudio);
 
@@ -50,7 +47,7 @@ void releaseResources() {
 
 
 /** Main windows function.
-	@nShowWnd how window should be displayed. Examples: SW_SHOWMAXIMIZED, SW_SHOW, SW_SHOWMINIMIZED. */
+@nShowWnd how window should be displayed. Examples: SW_SHOWMAXIMIZED, SW_SHOW, SW_SHOWMINIMIZED. */
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
 
 	gameEngine.reset(new GameEngine());
@@ -176,12 +173,12 @@ bool initWindow(HINSTANCE hInstance, int showWnd) {
 	AdjustWindowRect(&winRect, WS_OVERLAPPEDWINDOW, FALSE);
 	windowX = winRect.right - winRect.left;
 	windowY = winRect.bottom - winRect.top;
-		// If windowed then set it to global default resolution
-		// and place the window in the middle of the screen.
+	// If windowed then set it to global default resolution
+	// and place the window in the middle of the screen.
 	posX = (GetSystemMetrics(SM_CXSCREEN) - Globals::WINDOW_WIDTH) / 2;
 	posY = (GetSystemMetrics(SM_CYSCREEN) - Globals::WINDOW_HEIGHT) / 2;
 
-//}
+	//}
 
 	DWORD windowStyle = (WS_OVERLAPPEDWINDOW&~WS_THICKFRAME | /*WS_CAPTION | WS_SYSMENU | */WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
 	hwnd = CreateWindowEx(
@@ -246,7 +243,7 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_SYSKEYUP:
 			Keyboard::ProcessMessage(msg, wParam, lParam);
 			return 0;
-	
+
 
 		case WM_DEVICECHANGE:
 			if (wParam == DBT_DEVICEARRIVAL) {
@@ -264,13 +261,16 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			}
 			return 0;
 
+		case WM_NCLBUTTONDOWN:
+			gameEngine->suspend();
+			break;
 		case WM_KILLFOCUS:
 			gameEngine->suspend();
-			OutputDebugString(L"Lost Focus\n");
+			//OutputDebugString(L"Lost Focus\n");
 			return 0;
 
 		case WM_ACTIVATE:
-			OutputDebugString(L"Got Focus\n");
+			//OutputDebugString(L"Got Focus\n");
 			gameEngine->resume();
 			return 0;
 
@@ -278,9 +278,9 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			PostQuitMessage(0);
 			return 0;
 
-}
+	}
 
-return DefWindowProc(hwnd, msg, wParam, lParam);
+	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
 

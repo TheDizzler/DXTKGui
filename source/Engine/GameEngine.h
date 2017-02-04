@@ -17,6 +17,7 @@
 
 #include "../Managers/GameManager.h"
 
+extern unique_ptr<GUIFactory> guiFactory;
 
 /** The engine to connect higher level game code to the low level
 	graphic and OS software. This class should be reusable for any 2D game,
@@ -82,12 +83,16 @@ private:
 
 	void update(double time);
 
+	bool initGFXAssets();
 	bool initStage();
 
 
 
 	HWND hwnd;
 	bool retryAudio;
+
+	unique_ptr<pugi::xml_document> docAssMan;
+
 
 	/* Critical error dialog. Exits game when dismissed. */
 	static unique_ptr<Dialog> errorDialog;

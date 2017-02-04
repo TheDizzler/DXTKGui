@@ -8,6 +8,17 @@
 			<font name="BlackCloak" file="BlackCloak.spritefont" fontSize="32" />
 		</spritefonts>
 
+
+		<spritesheet name="Default GUI Sprites" file ="default gui spritesheet.dds">
+			<sprite name="Spinner Up Button" x="1" y="0" width="30" height="16" />
+			<sprite name="Spinner Down Button" x="33" y="0" width="30" height="16" />
+		</spritesheet>
+
+		<sprite name="Mouse Arrow" file="Mouse Arrow.dds">
+			<!-- Set origin to the point you want be the clicky part. -->
+			<origin x="2" y="2" />
+		</sprite>
+
 		<sprite name="Test BG" file="TestBG.dds" />
 		<sprite name="White Pixel" file="WhitePixel.dds" />
 		<sprite name="Mouse Icon" file="mouse icon.dds" />

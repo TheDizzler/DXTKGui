@@ -7,6 +7,8 @@
 // for error reporting
 #include <sstream>
 #include <comdef.h>
+
+#include "../globals.h"
 namespace StringHelper {
 
 	inline wchar_t* convertCharStarToWCharT(const char* text) {
@@ -47,10 +49,10 @@ namespace StringHelper {
 			wostringstream wss;
 			wss << failMessage;
 			wss << "\nHRESULT: " << err.ErrorMessage();
-			/*if (!Globals::FULL_SCREEN)
-			MessageBox(NULL, wss.str().c_str(), failTitle.c_str(), MB_OK | MB_ICONERROR);
-			else*/
-			OutputDebugString(wss.str().c_str());
+			if (!Globals::FULL_SCREEN)
+				MessageBox(NULL, wss.str().c_str(), failTitle.c_str(), MB_OK | MB_ICONERROR);
+			else
+				OutputDebugString(wss.str().c_str());
 			return true;
 		}
 

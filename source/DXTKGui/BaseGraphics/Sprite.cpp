@@ -25,7 +25,7 @@ Sprite::Sprite(const Vector2& pos) {
 }
 
 Sprite::~Sprite() {
-
+	texture.Reset();
 }
 
 void Sprite::load(GraphicsAsset* const graphicsAsset) {
@@ -97,6 +97,10 @@ const float Sprite::getAlpha() const {
 
 const RECT Sprite::getRect() const {
 	return sourceRect;
+}
+
+const float Sprite::getLayerDepth() const {
+	return layerDepth;
 }
 
 const int Sprite::getWidth() const {
@@ -173,6 +177,10 @@ void Sprite::setTint(const XMFLOAT4 colr) {
 
 void Sprite::setAlpha(const float alpha) {
 	tint.w = alpha;
+}
+
+void Sprite::setLayerDepth(const float depth) {
+	layerDepth = depth;
 }
 
 

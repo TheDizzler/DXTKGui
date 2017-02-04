@@ -7,6 +7,9 @@ ScreenTransitionManager::ScreenTransitionManager(GUIFactory* factory, const char
 
 	guiFactory = factory;
 	bg = move(guiFactory->getSpriteFromAsset(bgName));
+	if (bg == NULL) {
+		bg = guiFactory->getSpriteFromAsset("Default Transition BG");
+	}
 	bg->setPosition(Vector2(bg->getWidth() / 2, bg->getHeight() / 2));
 	bg->setOrigin(bg->getPosition());
 }
@@ -27,7 +30,7 @@ void ScreenTransitionManager::transitionBetween(
 	Screen* oldScreen, Screen* newScreen, float transitionTime) {
 
 	transition->setTransitionBetween(
-	guiFactory->createTextureFromScreen(oldScreen, Color(158, 0, 58)),
+		guiFactory->createTextureFromScreen(oldScreen, Color(158, 0, 58)),
 		guiFactory->createTextureFromScreen(newScreen, Color(0, 58, 158)), transitionTime);
 }
 

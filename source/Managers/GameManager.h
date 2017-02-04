@@ -16,10 +16,10 @@ public:
 	~GameManager();
 
 
-	bool initializeGame(HWND hwnd, ComPtr<ID3D11Device> device, MouseController* mouse);
+	bool initializeGame(HWND hwnd, ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse);
 
 
-	void update(double deltaTime, MouseController* mouse);
+	void update(double deltaTime, shared_ptr<MouseController> mouse);
 	void draw(SpriteBatch* batch);
 
 
@@ -46,11 +46,6 @@ public:
 	size_t getSelectedDisplayModeIndex();
 
 
-	//vector<wstring> getAdapterListDescriptions();
-	//vector<wstring> getDisplayModeListDescriptions(size_t adapterIndex);
-
-	static unique_ptr<GUIFactory> guiFactory;
-
 private:
 
 	Screen* currentScreen = 0;
@@ -59,10 +54,8 @@ private:
 
 	
 	GameEngine* gameEngine;
-	MouseController* mouse;
+	shared_ptr<MouseController> mouse;
 	ComPtr<ID3D11Device> device;
-	
-	//unique_ptr<pugi::xml_document> docAssMan;
 
 	
 };

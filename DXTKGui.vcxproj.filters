@@ -129,6 +129,12 @@
     <ClCompile Include="source\DXTKGui\Effects\TransitionEffects.cpp">
       <Filter>Source Files\DXTKGui\Effects</Filter>
     </ClCompile>
+    <ClCompile Include="source\Engine\Camera.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controls\Spinner.cpp">
+      <Filter>Source Files\DXTKGui\Controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\GameEngine.h">
@@ -209,11 +215,17 @@
     <ClInclude Include="Source\globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\DXTKGui\GuiAssets.h">
-      <Filter>Header Files\DXTKGui</Filter>
-    </ClInclude>
     <ClInclude Include="source\DXTKGui\StringHelper.h">
       <Filter>Header Files\DXTKGui</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Engine\Camera.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controls\Spinner.h">
+      <Filter>Header Files\DXTKGui\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\GuiAssets.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

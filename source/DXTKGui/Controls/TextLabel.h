@@ -1,8 +1,5 @@
 #pragma once
 
-//#include <tchar.h>
-//#include <strsafe.h>
-
 #include "GUIControl.h"
 
 

@@ -5,17 +5,18 @@ MouseController::MouseController(HWND hWnd) {
 	hwnd = hWnd;
 	mouse.reset(new Mouse());
 	mouse->SetWindow(hwnd);
+
 }
 
-MouseController::MouseController(HWND hWnd, Mouse& mse) {
-
-	hwnd = hWnd;
-
-	mouse.reset(&mse);
-	hitArea.reset(new HitArea(
-		Vector2(position.x - origin.x, position.y - origin.y),
-		Vector2(width, height)));
-}
+//MouseController::MouseController(HWND hWnd, Mouse& mse) {
+//
+//	hwnd = hWnd;
+//
+//	mouse.reset(&mse);
+//	hitArea.reset(new HitArea(
+//		Vector2(position.x/* - origin.x*/, position.y/* - origin.y*/),
+//		Vector2(width, height)));
+//}
 
 
 MouseController::~MouseController() {
@@ -40,11 +41,12 @@ bool MouseController::loadMouseIcon(GUIFactory* guiFactory,
 	}
 
 	Sprite::load(mouseAsset);
+	setOrigin(mouseAsset->getOrigin());
 
 	return true;
 }
 
-
+#include "../../Engine/GameEngine.h"
 void MouseController::saveMouseState() {
 
 	lastState = state;
@@ -56,14 +58,8 @@ void MouseController::saveMouseState() {
 
 	isPressed = !lastState.leftButton && state.leftButton;
 	isClicked = lastState.leftButton && !state.leftButton;
-}
 
-//const Vector2 MouseController::getMovement() const {
-	/*wostringstream ws;
-	ws << "MoveBy: " << raw->lLastX << ", " << raw->lLastY << "\n";
-	OutputDebugString(ws.str().c_str());
-	return Vector2(raw->lLastX, raw->lLastY);*/
-//}
+}
 
 
 int MouseController::scrollWheelValue() {
