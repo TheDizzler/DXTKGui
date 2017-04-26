@@ -5,9 +5,12 @@
 
 struct HitArea {
 
-	HitArea(Vector2 pos, Vector2 sz) : position(pos), size(sz) {
+	HitArea(Vector2 pos = Vector2::Zero, Vector2 sz = Vector2::Zero) : position(pos), size(sz) {
 	}
-
+	HitArea(const HitArea* toCopy) {
+		position = toCopy->position;
+		size = toCopy->size;
+	}
 
 	bool collision(_In_ const HitArea* other) const {
 
@@ -41,6 +44,7 @@ public:
 	Sprite(const Vector2& position);
 	virtual ~Sprite();
 
+	/* GraphicsAsset is not stored in Sprite. */
 	virtual void load(GraphicsAsset* const graphicsAsset);
 
 	const HitArea* getHitArea() const;
@@ -55,7 +59,7 @@ public:
 	virtual const RECT getRect() const;
 	virtual const float getLayerDepth() const override;
 
-	virtual void moveBy(const Vector2& moveVector);
+
 	virtual void setDimensions(Sprite* baseSprite);
 	virtual void setDimensions(const Vector2& position, const Vector2& size);
 	void setSize(const Vector2& size);
@@ -64,10 +68,16 @@ public:
 	virtual void setScale(const Vector2& scale) override;
 	virtual void setRotation(const float rotation) override;
 	virtual void setTint(const XMFLOAT4 color) override;
+	virtual void setTint(const Color& color) override;
+	virtual void setTint(const XMVECTORF32 color) override;
 	virtual void setAlpha(const float alpha) override;
-	virtual void setLayerDepth(const float depth) override;
+	/** bool frontToBack has no effect in Sprite. */
+	virtual void setLayerDepth(const float depth, bool frontToBack = true) override;
 
-	virtual void update(double deltaTime);
+	virtual void moveBy(const Vector2& moveVector);
+	virtual void rotateBy(float rotateAmount);
+	/* This only needs to be called when the sprites moves to update the hitbox location. */
+	//virtual void update(double deltaTime);
 	virtual void draw(SpriteBatch* batch) override;
 
 	ComPtr<ID3D11ShaderResourceView> getTexture();
@@ -77,18 +87,18 @@ public:
 
 protected:
 	ComPtr<ID3D11ShaderResourceView> texture;
-	
+
 	RECT sourceRect;
 
 	Vector2 origin;
 	Color tint;
 	float rotation;
-	float layerDepth = 0.0f;
+	float layerDepth;
 
 	UINT width;
 	UINT height;
 	Vector2 position;
-	
+
 	Vector2 scale;
 	unique_ptr<HitArea> hitArea;
 

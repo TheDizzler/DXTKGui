@@ -31,6 +31,7 @@ public:
 	virtual void setPosition(const Vector2& position) override;
 	virtual const Vector2& getPosition() const override;
 
+	virtual void setLayerDepth(float newDepth, bool frontToBack = true) override;
 	virtual void setScale(const Vector2& scale) override;
 	/** NOTE: This DOES NOT return scaled width!
 		Use getScaledWidth(). */
@@ -116,6 +117,11 @@ protected:
 	unique_ptr<RectangleSprite> rectSprite;
 	unique_ptr<RectangleFrame> frame;
 	int frameThickness = 2;
+
+	GraphicsAsset* pixelAsset;
+
+
+	bool resized = false;
 };
 
 
@@ -141,6 +147,7 @@ public:
 	virtual void setScale(const Vector2& scale) override;
 	/** Remember: Rotation is around the origin! */
 	virtual void setRotation(const float rotation) override;
+	virtual void setLayerDepth(float newDepth, bool frontToBack = true) override;
 
 protected:
 	virtual void setToUnpressedState() override;
@@ -171,6 +178,8 @@ public:
 	virtual const Vector2& getPosition() const override;
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
+
+	virtual void setLayerDepth(float newDepth, bool frontToBack = true) override;
 
 	virtual bool clicked() override;
 	virtual bool pressed() override;

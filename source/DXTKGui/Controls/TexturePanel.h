@@ -25,6 +25,7 @@ public:
 		area. */
 	void setTexturePosition(const Vector2& position);
 
+	virtual void setLayerDepth(const float depth, bool frontToBack = true) override;
 	virtual void setScale(const Vector2& newScale) override;
 	/* Font is not set here. The object that creates the texture sets the font. */
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
@@ -38,6 +39,8 @@ public:
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
 	const Vector2& getScrollBarSize() const;
+
+	bool scrollBarVisible() const;
 
 	virtual bool clicked() override;
 	virtual bool pressed() override;
@@ -55,4 +58,5 @@ private:
 	unique_ptr<ScrollBar> verticalScrollBar;
 	bool alwaysDisplayScrollBar = false;
 	bool showScrollBar = false;
+	bool neverShowScrollBar = false;
 };

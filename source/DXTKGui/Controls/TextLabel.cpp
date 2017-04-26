@@ -38,7 +38,7 @@ void TextLabel::update(double deltaTime) {
 			isHover = true;
 			if (!isPressed) {
 				onHover();
-				setToHoverState();
+				//setToHoverState();
 			}
 		} else
 			isHover = false;
@@ -46,15 +46,15 @@ void TextLabel::update(double deltaTime) {
 		if (isPressed && !mouse->leftButton()) {
 			isClicked = true;
 			onClick();
-			setToUnpressedState();
+			//setToUnpressedState();
 		} else {
 			isClicked = false;
 			if (!isHover) {
 				isPressed = false;
-				setToUnpressedState();
+				//setToUnpressedState();
 			} else if (mouse->clicked()) {
 				isPressed = true;
-				setToSelectedState();
+				//setToSelectedState();
 			}
 		}
 	}
@@ -64,12 +64,21 @@ void TextLabel::update(double deltaTime) {
 void TextLabel::draw(SpriteBatch* batch) {
 
 	font->draw(batch, label.c_str(), position, tint,
-		rotation, origin, scale);
+		rotation, origin, scale, layerDepth);
 }
 
 void TextLabel::draw(SpriteBatch* batch, Color color) {
 	font->draw(batch, label.c_str(), position, color,
-		rotation, origin, scale);
+		rotation, origin, scale, layerDepth);
+}
+
+GraphicsAsset* TextLabel::texturize() {
+	return guiFactory->createTextureFromIElement2D(this);
+}
+
+void TextLabel::textureDraw(SpriteBatch* batch) {
+	font->draw(batch, label.c_str(), position, tint,
+		rotation, origin, scale, layerDepth);
 }
 
 #include <sstream>
@@ -131,29 +140,18 @@ void TextLabel::setHoverable(bool hoverable) {
 	isHoverable = hoverable;
 }
 
-void TextLabel::setToUnpressedState() {
-	font->setTint(normalColorText);
-}
 
-void TextLabel::setToHoverState() {
-	font->setTint(hoverColorText);
-}
-
-void TextLabel::setToSelectedState() {
-	font->setTint(selectedColorText);
-}
 
 #include "GUIFactory.h"
+void TextLabel::setPosition(const Vector2& pos) {
+	position = pos;
+}
 void TextLabel::setFont(const pugi::char_t* fontName) {
 	font = guiFactory->getFont(fontName);
 }
 
 void TextLabel::setFont(shared_ptr<FontSet> newFont) {
 	font = newFont;
-}
-
-void TextLabel::setTint(const XMFLOAT4 color) {
-	tint = color;
 }
 
 void TextLabel::setScale(const Vector2 & scl) {
@@ -163,6 +161,12 @@ void TextLabel::setScale(const Vector2 & scl) {
 	hitArea->position = position;
 	hitArea->size = size;
 }
+
+void TextLabel::setLayerDepth(const float newDepth, bool frontToBack) {
+	layerDepth = newDepth;
+}
+
+
 
 const Vector2& TextLabel::getPosition() const {
 	return position;

@@ -9,8 +9,8 @@ public:
 		size_t itemHeight = 32, const int maxItemsShown = 7);
 	~ComboBox();
 
-	bool initialize(shared_ptr<FontSet> font, GraphicsAsset* pixelAsset,
-		ListBox* listbox, const pugi::char_t* buttonAsset = "Combo Button Closed",
+	bool initialize(shared_ptr<FontSet> font, ListBox* listbox,
+		const pugi::char_t* buttonAsset = "Combo Button Closed",
 		bool enumerateList = false);
 
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);

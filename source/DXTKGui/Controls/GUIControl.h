@@ -41,8 +41,12 @@ public:
 	/** Remember: Rotation is around the origin! */
 	virtual void setRotation(const float rotation) override;
 	virtual void setTint(const XMFLOAT4 color) override;
+	virtual void setTint(const Color& color) override;
+	virtual void setTint(const XMVECTORF32 color) override;
 	virtual void setAlpha(const float alpha) override;
-	virtual void setLayerDepth(const float depth) override;
+	virtual void setLayerDepth(const float depth, bool frontToBack = true) override;
+	/** Warning: calling setPosition() or setScale() will reset the HitArea! */
+	virtual void setHitArea(HitArea* newHitArea);
 
 	virtual const Vector2& getPosition() const = 0;
 	virtual const Vector2& getOrigin() const override;
@@ -56,7 +60,8 @@ public:
 
 	const HitArea* getHitArea() const;
 
-	/* control->setMatrixFunction([&]() -> Matrix { return camera->translationMatrix(); }); */
+	/* Use example:
+		control->setMatrixFunction([&]() -> Matrix { return camera->translationMatrix(); }); */
 	void setMatrixFunction(function<Matrix()> translationFunction) {
 		translationMatrix = translationFunction;
 	}
@@ -73,7 +78,7 @@ public:
 
 	bool contains(const Vector2& point);
 
-	GraphicsAsset* createTexture();
+	//GraphicsAsset* createTexture();
 
 	virtual bool clicked() = 0;
 	/* Is Mouse Button down over control? */
@@ -98,7 +103,7 @@ protected:
 	Vector2 origin = Vector2(0, 0);
 	Color tint = DirectX::Colors::White;
 	float rotation = 0.0f;
-	float layerDepth = 1.0f;
+	float layerDepth = 0.9f;
 
 	bool isHover = false;
 	/** Button is held down over control but has not been released. */

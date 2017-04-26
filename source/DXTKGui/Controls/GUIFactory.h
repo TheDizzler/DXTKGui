@@ -1,18 +1,16 @@
 #pragma once
 
-#include <pugixml.hpp>
-#include <map>
+
 
 #include "../BaseGraphics/screen.h"
 #include "../BaseGraphics/GraphicsAsset.h"
 #include "ComboBox.h"
-#include "Dialog.h"
+#include "DynamicDialog.h"
 #include "CheckBox.h"
 #include "Spinner.h"
 
 
 using namespace pugi;
-
 
 
 class GUIFactory {
@@ -21,6 +19,11 @@ public:
 	GUIFactory(HWND h);
 	GUIFactory(HWND hwnd, xml_node guiAssetsNode);
 	~GUIFactory();
+
+	/** Required if a user wants to create their own controls. */
+	HWND getHWND();
+	/** Required if a user wants to create their own controls. */
+	shared_ptr<MouseController> getMouseController();
 
 	/** DeviceContext and SpriteBatch references are required
 		to create textures from a GUIControl (will probably refactor this). */
@@ -33,13 +36,15 @@ public:
 	unique_ptr<Sprite> getSpriteFromAsset(const char_t* assetName);
 	shared_ptr<Animation> getAnimation(const char_t* animationName);
 	GraphicsAsset* const getAsset(const char_t* assetName);
-
+	shared_ptr<AssetSet> const getAssetSet(const char_t* setName);
 
 	Line* createLine(const Vector2& position, const Vector2& size, Color lineColor = Color(0, 0, 0, 1));
 
-	RectangleSprite* createRectangle(const Vector2& position, const Vector2& size);
-	RectangleFrame* createRectangleFrame(const Vector2& position,
-		const Vector2& size, USHORT frameThickness = 2,
+	RectangleSprite* createRectangle(const Vector2& position = Vector2::Zero,
+		const Vector2& size = Vector2::Zero);
+
+	RectangleFrame* createRectangleFrame(const Vector2& position = Vector2::Zero,
+		const Vector2& size = Vector2(10, 10), USHORT frameThickness = 2,
 		Color frameColor = Color(0, 0, 0, 1));
 
 	TriangleFrame* createTriangleFrame(const Vector2& point1,
@@ -88,23 +93,29 @@ public:
 		bool enumerateList = false, const char_t* buttonAsset = "Combo Button Closed",
 		const char_t* fontName = "Default Font");
 
-	Dialog* createDialog(bool movable = false, bool centerText = false, const char_t* fontName = "Default Font");
+	unique_ptr<PromptDialog> createDialog(
+		const Vector2& position = Vector2::Zero, const Vector2& size = Vector2::Zero,
+		bool movable = false, bool centerText = false, int frameThickness = 2,
+		const char_t* fontName = "Default Font");
+
+	unique_ptr<DynamicDialog> createDynamicDialog(shared_ptr<AssetSet> dialogImageSet,
+		const Vector2& position = Vector2::Zero, const Vector2& size = Vector2::Zero,
+		const char_t* fontName = "Default Font");
 
 	ScrollBar* createScrollBar(const Vector2& position, size_t barHeight);
 	ScrollBar* createScrollBar(const Vector2& position, size_t barHeight,
 		ScrollBarDesc& scrollBarDesc);
 
-	TexturePanel* createPanel(bool scrollBarAlwaysVisible = false);
+	TexturePanel* createPanel(bool neverShowScrollBar = true);
 
 	/* Creates a texture from a screen grab of an IElement2D object.
 		offset is the vector to bring object to top left corner of screen
 			in prep for its close up.*/
 	GraphicsAsset* createTextureFromIElement2D(
-		IElement2D* control, Color bgColor = {1, 1, 1, 1});
+		Texturizable* control, Color bgColor = {0, 0, 0, 0});
 
-	GraphicsAsset* createTextureFromScreen(Screen* screen, Color bgColor = {1, 1, 1, 1});
+	GraphicsAsset* createTextureFromScreen(Screen* screen, Color bgColor = {0, 0, 0, 0});
 
-	//void updateMouse();
 	static bool initialized;
 private:
 	HWND hwnd;
@@ -123,6 +134,9 @@ private:
 		const char_t* fontName = "Default Font");
 
 	bool getGUIAssetsFromXML();
+	unique_ptr<GraphicsAsset> parseSprite(xml_node spriteNode, ComPtr<ID3D11ShaderResourceView> sheetTexture,
+		int xOffset = 0, int yOffset = 0);
+
 	xml_node guiAssetsNode;
 
 	const char_t* defaultFontFile;
@@ -130,5 +144,6 @@ private:
 	map<string, string> fontMap;
 	map<string, unique_ptr<GraphicsAsset> > assetMap;
 	map<string, shared_ptr<Animation> > animationMap;
+	map<string, shared_ptr<AssetSet> > setMap;
 
 };

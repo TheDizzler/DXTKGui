@@ -4,27 +4,111 @@
 #include "../Effects/TransitionEffects.h"
 
 
-
-
-/** A pop-up Dialog Box. Title area and button area
-	automatically adjust to size of their components. */
-class Dialog : public GUIControlBox {
+class Dialog : public GUIControlBox, public Texturizable {
 public:
 
-	Dialog(HWND hwnd, bool movable, bool centerText);
-	~Dialog();
+	virtual void draw(SpriteBatch* batch) = 0;
 
-	void initialize(GraphicsAsset* pixelAsset,
-		const pugi::char_t* font = "Default Font");
-	
-	virtual void setScrollBar(ScrollBarDesc& scrollBarDesc);
-	virtual void alwaysShowScrollBar(bool alwaysShow);
 
-	void setDimensions(const Vector2& position, const Vector2& size,
-		const int frameThickness = 2);
+	virtual void show();
+	virtual void hide();
+
+	virtual bool isOpen();
+
+	virtual void setText(wstring text) override;
+	/** Returns non-formatted text. */
+	virtual const wchar_t* getText() override;
+
+	virtual void setFont(const pugi::char_t* font = "Default Font") override;
+	virtual void setTextTint(const XMFLOAT4 color);
 
 	void setOpenTransition(TransitionEffects::TransitionEffect* effect);
 	void setCloseTransition(TransitionEffects::TransitionEffect* effect);
+
+
+	virtual bool clicked() override;
+	virtual bool pressed() override;
+	virtual bool hovering() override;
+	
+	virtual const Vector2& getPosition() const override;
+	virtual const int getWidth() const override;
+	virtual const int getHeight() const override;
+
+	/** Could make this adaptable? */
+	Vector2 dialogTextMargin = Vector2(10, 10);
+
+	/** Not used in Dialog */
+	virtual const Vector2& XM_CALLCONV measureString() const override;
+
+	/* Trash? */
+	/* Add other GUIControls to dialog. Control position should be relative to Dialog.
+	Returns the position of control in control list. */
+	virtual size_t addControl(unique_ptr<GUIControl> control) override;
+	/* Trash? */
+	/* Add other GUIControls to dialog. Not Implemented Yet. */
+	virtual void addControls(vector<unique_ptr<GUIControl>> controls) override;
+	virtual GUIControl* getControl(size_t controlPosition) const override;
+
+	/** Required for some TransitionEffects. Bundle up all IElement2D to send for morphing time. */
+	virtual const vector<IElement2D*> getElements() const;
+protected:
+	bool isShowing = false;
+	bool isOpening = false;
+	bool isClosing = false;
+
+	Vector2 size;
+
+	
+
+	unique_ptr<TextLabel> dialogText;
+	
+
+
+	TransitionEffects::TransitionEffect* openTransition = NULL;
+	TransitionEffects::TransitionEffect* closeTransition = NULL;
+	TransitionEffects::Run runTransition;
+	TransitionEffects::Reset resetTransition;
+	TransitionEffects::Draw drawTransition;
+
+
+	/** Generic OnClick for Cancel Button. Closes the dialog. That's all. */
+	class OnClickListenerCancelButton : public Button::OnClickListener {
+	public:
+		OnClickListenerCancelButton(Dialog* dlg) : dialog(dlg) {
+		}
+		virtual void onClick(Button* button) override;
+	private:
+		Dialog* dialog;
+	};
+
+
+	
+};
+
+
+
+/** A pop-up Dialog Box with button options (optional - up to 3: Ok, Neutral, Cancel).
+	Title area and button area automatically adjust to size of their components.
+	NOTE: This control is fairly expensive. Use conservatively. */
+class PromptDialog : public Dialog {
+public:
+
+	PromptDialog(HWND hwnd, bool movable, bool centerText);
+	/* Used only for classes that extend this class */
+	PromptDialog();
+	~PromptDialog();
+
+	void initialize(GraphicsAsset* pixelAsset,
+		const pugi::char_t* font = "Default Font");
+
+	virtual void setScrollBar(ScrollBarDesc& scrollBarDesc);
+	virtual void alwaysShowScrollBar(bool alwaysShow);
+
+	virtual void setDimensions(const Vector2& position, const Vector2& size,
+		const int frameThickness = 2);
+
+	virtual GraphicsAsset* texturize() override;
+	virtual void textureDraw(SpriteBatch * batch) override;
 
 	void setTitle(wstring text, const Vector2& scale = Vector2(1.5, 1.5),
 		const pugi::char_t* font = "Default Font", Color color = Color(1, .5, 0, 1));
@@ -51,7 +135,9 @@ public:
 	has not already beeen created for it. */
 	void setCancelOnClickListener(Button::OnClickListener* iOnClickListener);
 
+	/* Dialog checks to see if it's open before performing any logic. */
 	virtual void update(double deltaTime);
+	/* Dialog checks to see if it's open before performing any logic. */
 	virtual void draw(SpriteBatch* batch);
 
 	/* Add other GUIControls to dialog. Control position should be relative to Dialog.
@@ -59,53 +145,34 @@ public:
 	virtual size_t addControl(unique_ptr<GUIControl> control) override;
 	/* Add other GUIControls to dialog. Not Implemented Yet. */
 	virtual void addControls(vector<unique_ptr<GUIControl>> controls) override;
-
 	virtual GUIControl* getControl(size_t controlPosition) const override;
 
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
-	void setTextTint(const XMFLOAT4 color);
+	void setTextTint(const XMFLOAT4 color) override;
 	virtual void setTint(const XMFLOAT4 color) override;
 	virtual void setScale(const Vector2& newScale) override;
 	virtual void setPosition(const Vector2& newPosition) override;
+	virtual void setLayerDepth(const float depth, bool frontToBack = true) override;
 
 	const Color& getPanelTint() const;
-	virtual const Vector2& getPosition() const override;
-	virtual const int getWidth() const override;
-	virtual const int getHeight() const override;
+	
+	
 
-	virtual const vector<IElement2D*> getElements() const;
+	virtual const vector<IElement2D*> getElements() const override;
 
-	virtual bool clicked() override;
-	virtual bool pressed() override;
-	virtual bool hovering() override;
-
-	/** Not used in DialogBox */
-	virtual const Vector2& XM_CALLCONV measureString() const override;
-
-	void open();
-	void close();
-	/* Deprecating. Use ActionListeners instead. */
-	//ClickAction getResult();
-
-	bool isOpen = false;
-	bool isOpening = false;
-	bool isClosing = false;
-
-	Vector2 dialogTextMargin = Vector2(10, 10);
+	
 	int titleTextMargin = 10;
-private:
+
+protected:
 
 	enum GUIControlLookUp {
-		TitleText, /*DialogText,*/ ButtonOK, ButtonNeutral, ButtonCancel, Other
+		TitleText, ButtonOK, ButtonNeutral, ButtonCancel, Other
 	};
 
 	HWND hwnd;
 	vector<unique_ptr<GUIControl> > controls;
-	unique_ptr<TextLabel> dialogText;
-	/* Deprecating. Use ActionListeners instead. */
-	//ClickAction result = NONE;
-
-	Vector2 size;
+	unique_ptr<TexturePanel> panel;
+	
 	Vector2 titleFrameSize = Vector2(0, 0);
 	Vector2 titleFramePosition;
 	Vector2 dialogFrameSize;
@@ -119,7 +186,8 @@ private:
 	Vector2 cancelButtonPosition;
 	Vector2 neutralButtonPosition;
 
-	//bool textFormated = false;
+	wstring reformatText(size_t* scrollBarBuffer);
+	void testMinimumSize();
 
 	void calculateTitlePos();
 	void calculateDialogTextPos();
@@ -136,7 +204,6 @@ private:
 	unique_ptr<RectangleFrame> frame;
 	unique_ptr<RectangleSprite> titleSprite;
 	unique_ptr<RectangleSprite> buttonFrameSprite;
-	unique_ptr<TexturePanel> panel;
 
 	Vector2 standardButtonSize = Vector2(150, 35);
 
@@ -144,21 +211,6 @@ private:
 	bool movable = false;
 	bool centerText = false;
 
-	TransitionEffects::TransitionEffect* openTransition = NULL;
-	TransitionEffects::TransitionEffect* closeTransition = NULL;
-	TransitionEffects::Run runTransition;
-	TransitionEffects::Reset resetTransition;
-	TransitionEffects::Draw drawTransition;
-
-	/** Generic OnClick for Cancel Button. */
-	class OnClickListenerCancelButton : public Button::OnClickListener {
-	public:
-		OnClickListenerCancelButton(Dialog* dlg) : dialog(dlg) {
-		}
-		virtual void onClick(Button * button) override;
-	private:
-		Dialog* dialog;
-	};
 
 };
 

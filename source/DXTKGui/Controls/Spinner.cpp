@@ -14,7 +14,7 @@ Spinner::~Spinner() {
 }
 
 #include <sstream>
-void Spinner::initialize(const pugi::char_t* fontName, GraphicsAsset* pixelAsset,
+void Spinner::initialize(const pugi::char_t* fontName,
 	const pugi::char_t* upButtonName, const pugi::char_t* downButtonName) {
 
 
@@ -38,9 +38,9 @@ void Spinner::initialize(const pugi::char_t* fontName, GraphicsAsset* pixelAsset
 	downButton->setPosition(Vector2(position.x + width, position.y + (itemHeight - upButton->getHeight())));
 	downButton->setOnClickListener(new SpinnerDownButtonListener(this));
 
-	frame = make_unique<RectangleFrame>(pixelAsset);
-	frame->setDimensions(position, Vector2(width/* + upButton->getWidth()*/, itemHeight));
-	rectangle = make_unique<RectangleSprite>(pixelAsset);
+	frame.reset(guiFactory->createRectangleFrame());
+	frame->setDimensions(position, Vector2(width, itemHeight));
+	rectangle.reset(guiFactory->createRectangle());
 	rectangle->setDimensions(position, Vector2(width, itemHeight));
 
 

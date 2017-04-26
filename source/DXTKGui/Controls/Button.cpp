@@ -1,22 +1,18 @@
 #include "Button.h"
 
 
-Button::Button(GraphicsAsset* pixelAsset,
-	unique_ptr<FontSet> font) {
+Button::Button(GraphicsAsset* px, unique_ptr<FontSet> font) {
 
-	if (pixelAsset != NULL) {
-		// this stops errors when coming from ImageButton
-		frame.reset(new RectangleFrame(pixelAsset));
-		rectSprite.reset(new RectangleSprite(pixelAsset));
-	}
-	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
-	buttonLabel.reset(new TextLabel(Vector2(0, 0), L"", move(font)));
+	pixelAsset = px;
+	//if (pixelAsset != NULL) {
+	//	// this stops errors when coming from ImageButton
+	//	frame.reset(new RectangleFrame(pixelAsset));
+	//	rectSprite.reset(new RectangleSprite(pixelAsset));
+	//}
+	hitArea = make_unique<HitArea>();
+	buttonLabel.reset(new TextLabel(Vector2::Zero, L"", move(font)));
 
 	position = Vector2(-1, -1);
-
-	if (pixelAsset != NULL)
-		setToUnpressedState();	// this always calls Button::setToUnpressedState
-								// even if it is an ImageButton
 }
 
 
@@ -28,8 +24,8 @@ Button::~Button() {
 }
 
 
-int textMargin = 10;
-bool resized = false;
+const int textMargin = 10;
+
 void Button::setDimensions(const Vector2& pos, const Vector2& size,
 	const int frmThcknss) {
 
@@ -37,6 +33,11 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 
 	Vector2 labelSize = measureString();
 	Vector2 newSize = size;
+
+
+	frame.reset(guiFactory->createRectangleFrame(pos, size));
+	rectSprite.reset(guiFactory->createRectangle());
+
 
 	if ((labelSize.x + textMargin * 2) > size.x) {
 		newSize.x = labelSize.x + textMargin * 2;
@@ -53,6 +54,9 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 	height = newSize.y;
 
 	setPosition(pos);
+	setLayerDepth(.9);
+
+	setToUnpressedState();
 
 }
 
@@ -86,11 +90,13 @@ void Button::update(double deltaTime) {
 	}
 }
 
+// this function is not cheap. I suspect the frame is most costly.
+//	EDIT: bit better now
 void Button::draw(SpriteBatch* batch) {
 
 	rectSprite->draw(batch);
-	frame->draw(batch);
 	buttonLabel->draw(batch);
+	frame->draw(batch);
 }
 
 
@@ -119,6 +125,21 @@ void Button::setToSelectedState() {
 void Button::setText(wstring text) {
 
 	buttonLabel->setText(text);
+
+	Vector2 labelSize = measureString();
+
+	if ((labelSize.x + textMargin * 2) > hitArea->size.x) {
+		hitArea->size.x = labelSize.x + textMargin * 2;
+		resized = true;
+	}
+	if ((labelSize.y + textMargin * 2) > hitArea->size.y) {
+		hitArea->size.y = labelSize.y + textMargin * 2;
+		resized = true;
+	}
+
+	projectedHitArea->size = hitArea->size;
+	width = hitArea->size.x;
+	height = hitArea->size.y;
 
 	// SET POSITION if dimensions have been set
 	if (position != Vector2(-1, -1))
@@ -160,12 +181,12 @@ void Button::positionText() {
 	if (textsize.x > 0) {
 
 		Vector2 newPos;
-		if (resized) {
-			newPos = Vector2(
-				position.x + (getScaledWidth() - textsize.x) / 2 /*+ textMargin*/,
-				position.y + (getScaledHeight() - textsize.y) / 2 /*+ textMargin*/);
-			resized = false;
-		} else
+		//if (resized) {
+		//	newPos = Vector2(
+		//		position.x + (getScaledWidth() - textsize.x) / 2 ,
+		//		position.y + (getScaledHeight() - textsize.y) / 2 /*+ textMargin*/);
+		//	resized = false;
+		//} else
 			newPos = Vector2(
 				position.x + (getScaledWidth() - textsize.x) / 2,
 				position.y + (getScaledHeight() - textsize.y) / 2);
@@ -182,6 +203,23 @@ void Button::positionText() {
 
 const Vector2& Button::getPosition() const {
 	return position;
+}
+
+void Button::setLayerDepth(float newDepth, bool frontToBack) {
+
+	layerDepth = newDepth - .00001;
+	if (layerDepth < 0) {
+		if (!frontToBack)
+			layerDepth = .00001;
+		else
+			layerDepth = 0;
+	}
+	float nudge = .00000001;
+	if (!frontToBack)
+		nudge *= -1;
+	rectSprite->setLayerDepth(layerDepth + nudge, frontToBack);
+	buttonLabel->setLayerDepth(layerDepth + nudge * 2, frontToBack);
+	frame->setLayerDepth(layerDepth + nudge * 3, frontToBack);
 }
 
 void Button::setScale(const Vector2& scl) {
@@ -295,7 +333,6 @@ void ImageButton::setDimensions(const Vector2& pos, const Vector2& size) {
 
 	setScale(Vector2(size.x / getWidth(), size.y / getHeight()));
 	Vector2 newpos = pos;
-	//newpos.x += hitArea->
 	setPosition(newpos);
 }
 
@@ -324,6 +361,15 @@ void ImageButton::setScale(const Vector2& scl) {
 
 void ImageButton::setRotation(const float rot) {
 	rotation = rot;
+}
+
+void ImageButton::setLayerDepth(float newDepth, bool frontToBack) {
+
+	layerDepth = newDepth;
+	float nudge = .00000001;
+	if (!frontToBack)
+		nudge *= -1;
+	buttonLabel->setLayerDepth(newDepth + nudge, frontToBack);
 }
 
 void ImageButton::setToUnpressedState() {
@@ -466,6 +512,10 @@ const int AnimatedButton::getWidth() const {
 const int AnimatedButton::getHeight() const {
 	return animation->animationFrames[currentFrameIndex]->sourceRect.bottom
 		- animation->animationFrames[currentFrameIndex]->sourceRect.top;
+}
+
+void AnimatedButton::setLayerDepth(float newDepth, bool frontToBack) {
+	layerDepth = newDepth;
 }
 
 bool AnimatedButton::clicked() {

@@ -18,11 +18,11 @@ ComboBox::~ComboBox() {
 }
 
 #include "GUIFactory.h"
-bool ComboBox::initialize(shared_ptr<FontSet> fnt, GraphicsAsset* pixelAsset,
+bool ComboBox::initialize(shared_ptr<FontSet> fnt,/* GraphicsAsset* pixelAsset,*/
 	ListBox* lstBx, const pugi::char_t* buttonName, bool enumerateList) {
 
 
-	frame.reset(new RectangleFrame(pixelAsset));
+	frame.reset(guiFactory->createRectangleFrame());
 
 	comboListButton.reset(
 		(ImageButton*) guiFactory->createImageButton(buttonName));

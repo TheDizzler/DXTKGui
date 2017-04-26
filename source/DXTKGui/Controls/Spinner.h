@@ -13,7 +13,7 @@ public:
 
 	/* Note, if itemHeight is smaller than the font height and/or the button heights (combined)
 		this controller will grow to fit everything. */
-	void initialize(const pugi::char_t* fontName, GraphicsAsset* pixelAsset,
+	void initialize(const pugi::char_t* fontName,
 		const pugi::char_t* upButtonName, const pugi::char_t* downButtonName);
 
 	virtual void update(double deltaTime) override;

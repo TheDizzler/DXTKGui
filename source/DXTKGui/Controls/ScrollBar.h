@@ -101,6 +101,7 @@ public:
 
 	double percentScroll = 0;
 
+	virtual void setLayerDepth(const float depth, bool frontToBack = true) override;
 	virtual void setScale(const Vector2& newScale) override;
 	/* Unused in ScrollBar. */
 	virtual void setFont(const pugi::char_t * font = "Default Font") override;

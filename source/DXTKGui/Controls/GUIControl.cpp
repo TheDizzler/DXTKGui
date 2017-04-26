@@ -68,7 +68,7 @@ void GUIControl::updateProjectedHitArea() {
 
 const Vector2& GUIControl::getScreenPosition(Matrix viewProjectionMatrix) const {
 
-	Vector2 screenCords = XMVector2Transform(position, viewProjectionMatrix);
+	Vector2 screenCords = XMVector2Transform(hitArea->position, viewProjectionMatrix);
 	return screenCords;
 
 }
@@ -82,10 +82,10 @@ unique_ptr<HitArea> GUIControl::getScreenHitArea(Matrix viewProjectionMatrix) co
 }
 
 
-GraphicsAsset* GUIControl::createTexture() {
-	return guiFactory->createTextureFromIElement2D(this);
-
-}
+//GraphicsAsset* GUIControl::createTexture() {
+//	Color rgba = {0 , 0 , 0 , 0};
+//	return guiFactory->createTextureFromIElement2D(this, rgba);
+//}
 
 void GUIControl::setOrigin(const Vector2 & org) {
 	origin = org;
@@ -99,11 +99,23 @@ void GUIControl::setTint(const XMFLOAT4 color) {
 	tint = color;
 }
 
+void GUIControl::setTint(const Color & color) {
+	tint = color;
+}
+
+void GUIControl::setTint(const XMVECTORF32 color) {
+	tint = color;
+}
+
 void GUIControl::setAlpha(const float alpha) {
 	tint.w = alpha;
 }
 
-void GUIControl::setLayerDepth(const float depth) {
+void GUIControl::setLayerDepth(const float depth, bool frontToBack) {
 	layerDepth = depth;
+}
+
+void GUIControl::setHitArea(HitArea* newHitArea) {
+	hitArea.reset(newHitArea);
 }
 

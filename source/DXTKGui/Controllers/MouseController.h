@@ -13,7 +13,7 @@ class GUIFactory;
 /** A mouse controller that gets rawinput from WM_INPUT in the windows
 		message pump. Because the message pump doesn't send mouse rawinput
 		when there is no mouse action, the current and last button states
-		will freeze in that state. */
+		will freeze in that state (not true any more??). */
 class MouseController : public Sprite {
 public:
 
@@ -28,6 +28,7 @@ public:
 	mean dealing with the error handling every time that the mouse
 	icon changes. Alternatively, could load all needed sprites before hand. */
 	bool loadMouseIcon(GUIFactory* guiFactory, const  pugi::char_t* spriteName);
+	void loadMouseIcon(GraphicsAsset* iconAsset);
 
 	void saveMouseState();
 
@@ -43,6 +44,12 @@ public:
 	bool clicked();
 	bool pressed();
 
+	bool rightClicked();
+	bool rightPressed();
+
+	bool middleClicked();
+	bool middlePressed();
+
 private:
 
 	HWND hwnd;
@@ -56,4 +63,8 @@ private:
 
 	bool isClicked = false;
 	bool isPressed = false;
+	bool isRightClicked = false;
+	bool isRightPressed = false;
+	bool isMiddleClicked = false;
+	bool isMiddlePressed = false;
 };

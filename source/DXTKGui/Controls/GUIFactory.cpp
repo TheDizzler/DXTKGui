@@ -14,8 +14,19 @@ GUIFactory::GUIFactory(HWND h, pugi::xml_node guiAssets) {
 }
 
 GUIFactory::~GUIFactory() {
+	mouseController.reset();
 	assetMap.clear();
 	fontMap.clear();
+	animationMap.clear();
+	setMap.clear();
+}
+
+HWND GUIFactory::getHWND() {
+	return hwnd;
+}
+
+shared_ptr<MouseController> GUIFactory::getMouseController() {
+	return mouseController;
 }
 
 #include "../GuiAssets.h"
@@ -47,6 +58,10 @@ bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 		return false;
 	}
 
+	if (mouse.get() == NULL) {
+		mouse = make_shared<MouseController>(hwnd); // for some reason hwnd is unusable here!
+		mouse->loadMouseIcon(this, "Mouse Icon");
+	}
 	mouseController = mouse;
 
 	initialized = true;
@@ -77,7 +92,7 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 	unique_ptr<FontSet> font;
 	font.reset(new FontSet());
 	font->load(device, StringHelper::convertCharStarToWCharT(fontFile));
-	font->setTint(Color(1, 1, 1, 1));
+	//font->setTint(Color(1, 1, 1, 1));
 	return move(font);
 }
 
@@ -92,6 +107,19 @@ GraphicsAsset* const GUIFactory::getAsset(const char_t* assetName) {
 	}
 
 	return assetMap[assetName].get();
+}
+
+
+shared_ptr<AssetSet> const GUIFactory::getAssetSet(const char_t* setName) {
+
+	if (setMap.find(setName) == setMap.end()) {
+		wostringstream ws;
+		ws << "Cannot find asset set: " << setName << "\n";
+		OutputDebugString(ws.str().c_str());
+		return NULL;
+	}
+
+	return setMap[setName];
 }
 
 
@@ -140,7 +168,7 @@ RectangleSprite* GUIFactory::createRectangle(
 RectangleFrame* GUIFactory::createRectangleFrame(const Vector2& position,
 	const Vector2& size, USHORT frameThickness, Color frameColor) {
 
-	RectangleFrame* frame = new RectangleFrame(getAsset("White Pixel"));
+	RectangleFrame* frame = new RectangleFrame(getAsset("White Pixel"), this);
 	frame->setDimensions(position, size, frameThickness);
 	frame->setTint(frameColor);
 
@@ -317,7 +345,7 @@ Spinner* GUIFactory::createSpinner(const Vector2& position, const size_t width,
 
 	Spinner* spinner = new Spinner(position, width, itemHeight, autoSize);
 	spinner->initializeControl(this, mouseController);
-	spinner->initialize(fontName, getAsset("White Pixel"), upButtonAsset, downButtonAsset);
+	spinner->initialize(fontName, upButtonAsset, downButtonAsset);
 	return spinner;
 }
 
@@ -368,9 +396,12 @@ ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight
 	return scrollBar;
 }
 
-TexturePanel* GUIFactory::createPanel(bool scrollBarAlwaysVisible) {
+TexturePanel* GUIFactory::createPanel(bool neverShowScrollBar) {
 
-	TexturePanel* panel = new TexturePanel(getAsset("White Pixel"), createScrollBar(Vector2::Zero, 10));
+	ScrollBar* scrllbar = NULL;
+	if (!neverShowScrollBar)
+		scrllbar = createScrollBar(Vector2::Zero, 10);
+	TexturePanel* panel = new TexturePanel(getAsset("White Pixel"), scrllbar);
 	panel->initializeControl(this, mouseController);
 	return panel;
 }
@@ -398,7 +429,7 @@ ComboBox* GUIFactory::createComboBox(const Vector2& position,
 	ComboBox* combobox = new ComboBox(position, width, itemHeight, maxItemsShown);
 	combobox->initializeControl(this, mouseController);
 
-	combobox->initialize(getFont(fontName), getAsset("White Pixel"),
+	combobox->initialize(getFont(fontName),
 		createListBox(
 			Vector2(position.x, position.y + itemHeight),
 			width, itemHeight, maxItemsShown, enumerateList, fontName),
@@ -407,18 +438,30 @@ ComboBox* GUIFactory::createComboBox(const Vector2& position,
 	return combobox;
 }
 
-Dialog* GUIFactory::createDialog(bool movable, bool centerText, const char_t* fontName) {
+unique_ptr<PromptDialog> GUIFactory::createDialog(const Vector2& position, const Vector2& size,
+	bool movable, bool centerText, int frameThickness, const char_t* fontName) {
 
-	Dialog* dialog = new Dialog(hwnd, movable, centerText);
+	unique_ptr<PromptDialog> dialog = make_unique<PromptDialog>(hwnd, movable, centerText);
 	dialog->initializeControl(this, mouseController);
 	dialog->initialize(getAsset("White Pixel"), fontName);
-	return dialog;
+	dialog->setDimensions(position, size, frameThickness);
+	return move(dialog);
+}
+
+unique_ptr<DynamicDialog> GUIFactory::createDynamicDialog(shared_ptr<AssetSet> dialogImageSet,
+	const Vector2& position, const Vector2& size, const char_t* fontName) {
+
+	unique_ptr<DynamicDialog> dialog = make_unique<DynamicDialog>();
+	dialog->initializeControl(this, mouseController);
+	dialog->initialize(dialogImageSet, fontName);
+	dialog->setDimensions(position, size);
+	return move(dialog);
 }
 
 
 
 GraphicsAsset* GUIFactory::createTextureFromIElement2D(
-	IElement2D* control, Color bgColor) {
+	Texturizable* control, Color bgColor) {
 
 	int buffer = 20; // padding to give a bit of lee-way to prevent tearing
 
@@ -508,9 +551,10 @@ GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 
 	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), bgColor);
 
+
 	batch->Begin(SpriteSortMode_Immediate);
 	{
-		control->draw(batch);
+		control->textureDraw(batch);
 	}
 	batch->End();
 
@@ -520,7 +564,7 @@ GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 	control->setPosition(oldPos);
 	GraphicsAsset* gfxAsset = new GraphicsAsset();
 	gfxAsset->loadAsPartOfSheet(shaderResourceView, Vector2(0, 0),
-		Vector2(width - widthPadding - buffer, height - heightPadding - buffer));
+		Vector2(width - widthPadding - buffer, height - heightPadding - buffer), Vector2::Zero);
 	return gfxAsset;
 }
 
@@ -596,11 +640,11 @@ GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, Color bgColor
 
 	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), bgColor);
 
-	batch->Begin(SpriteSortMode_Immediate);
-	{
-		screen->draw(batch);
-	}
-	batch->End();
+	/*batch->Begin(SpriteSortMode_Immediate);
+	{*/
+	screen->draw(batch);
+/*}
+batch->End();*/
 
 
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
@@ -687,11 +731,63 @@ bool GUIFactory::getGUIAssetsFromXML() {
 			return false;
 
 
-		// parse all animations from spritesheet
+		for (xml_node spritesetNode : spritesheetNode.children("spriteset")) {
+
+			const char_t* setName = spritesetNode.attribute("name").as_string();
+
+			if (spritesetNode.attribute("repeat")) {
+				// if repeat
+				int rows, cols;
+				string repeatStr = spritesetNode.attribute("repeat").as_string();
+
+				string substr = repeatStr.substr(0, 1);
+				istringstream(substr) >> cols;
+				substr = repeatStr.substr(2, 1);
+				istringstream(substr) >> rows;
+
+				int offset = spritesetNode.attribute("offset").as_int();
+				int subNum = 0;
+				for (int i = 0; i < rows; ++i) {
+					for (int j = 0; j < cols; ++j) {
+						ostringstream oss;
+						oss << setName << " " << subNum;
+						string subsetName(oss.str());
+						if (setMap.find(subsetName) == setMap.end()) {
+							// new set
+							setMap[subsetName] = make_shared<AssetSet>(subsetName.c_str());
+						}
+
+						for (xml_node spriteNode : spritesetNode.children("sprite")) {
+							setMap[subsetName]->addAsset(spriteNode.attribute("name").as_string(),
+								parseSprite(spriteNode, masterAsset->getTexture(), offset * j, offset * i));
+						}
+						++subNum;
+					}
+				}
+			} else {
+			// if not repeat
+				for (xml_node spriteNode : spritesetNode.children("sprite")) {
+
+					const char_t* spriteName = spriteNode.attribute("name").as_string();
+					//assetMap[spriteName] = parseSprite(spriteNode, masterAsset->getTexture());
+					if (setMap.find(setName) == setMap.end()) {
+						// new set
+						setMap[setName] = make_shared<AssetSet>(setName);
+					}
+					setMap[setName]->addAsset(spriteNode.attribute("name").as_string(),
+						parseSprite(spriteNode, masterAsset->getTexture()));
+				}
+			}
+
+		}
+
+	// parse all animations from spritesheet
 		for (xml_node animationNode = spritesheetNode.child("animation");
 			animationNode; animationNode = animationNode.next_sibling("animation")) {
 
 			const char_t* name = animationNode.attribute("name").as_string();
+
+			float timePerFrame = animationNode.attribute("timePerFrame").as_float();
 
 			vector<shared_ptr<Frame>> frames;
 			for (xml_node spriteNode = animationNode.child("sprite"); spriteNode;
@@ -704,13 +800,16 @@ bool GUIFactory::getGUIAssetsFromXML() {
 				rect.right = rect.left + spriteNode.attribute("width").as_int();
 				rect.bottom = rect.top + spriteNode.attribute("height").as_int();
 				shared_ptr<Frame> frame;
-				frame.reset(new Frame(rect));
+				if (spriteNode.attribute("frameTime"))
+					frame.reset(new Frame(rect, spriteNode.attribute("frameTime").as_float()));
+				else
+					frame.reset(new Frame(rect, timePerFrame));
 				frames.push_back(move(frame));
 
 			}
-			float frameTime = animationNode.attribute("timePerFrame").as_float();
+
 			shared_ptr<Animation> animationAsset;
-			animationAsset.reset(new Animation(masterAsset->getTexture(), frames, frameTime));
+			animationAsset.reset(new Animation(masterAsset->getTexture(), frames));
 			animationMap[name] = animationAsset;
 		}
 
@@ -719,27 +818,32 @@ bool GUIFactory::getGUIAssetsFromXML() {
 			spriteNode = spriteNode.next_sibling("sprite")) {
 
 			const char_t* name = spriteNode.attribute("name").as_string();
-			// pos in spritesheet
-			Vector2 position = Vector2(spriteNode.attribute("x").as_int(),
-				spriteNode.attribute("y").as_int());
-			// dimensions in spritesheet
-			Vector2 size = Vector2(spriteNode.attribute("width").as_int(),
-				spriteNode.attribute("height").as_int());
-
-			Vector2 origin = Vector2(-1000, -1000);
-			xml_node originNode = spriteNode.child("origin");
-			if (originNode) {
-				origin.x = originNode.attribute("x").as_int();
-				origin.y = originNode.attribute("y").as_int();
-			}
-
-			unique_ptr<GraphicsAsset> spriteAsset;
-			spriteAsset.reset(new GraphicsAsset());
-			spriteAsset->loadAsPartOfSheet(masterAsset->getTexture(), position, size, origin);
-
-			assetMap[name] = move(spriteAsset);
+			assetMap[name] = parseSprite(spriteNode, masterAsset->getTexture());
 		}
 
 	}
 	return true;
+}
+
+unique_ptr<GraphicsAsset> GUIFactory::parseSprite(xml_node spriteNode,
+	ComPtr<ID3D11ShaderResourceView> sheetTexture, int xOffset, int yOffset) {
+
+	//const char_t* name = spriteNode.attribute("name").as_string();
+	// pos in spritesheet
+	Vector2 position = Vector2(spriteNode.attribute("x").as_int() + xOffset,
+		spriteNode.attribute("y").as_int() + yOffset);
+	// dimensions in spritesheet
+	Vector2 size = Vector2(spriteNode.attribute("width").as_int(),
+		spriteNode.attribute("height").as_int());
+
+	Vector2 origin = Vector2(-1000, -1000); // this indicates to GfxAsset that origin should be center
+	xml_node originNode = spriteNode.child("origin");
+	if (originNode) {
+		origin.x = originNode.attribute("x").as_int();
+		origin.y = originNode.attribute("y").as_int();
+	}
+
+	unique_ptr<GraphicsAsset> spriteAsset = make_unique<GraphicsAsset>();
+	spriteAsset->loadAsPartOfSheet(sheetTexture, position, size, origin);
+	return move(spriteAsset);
 }

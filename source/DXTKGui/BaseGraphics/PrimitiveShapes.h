@@ -2,6 +2,8 @@
 
 #include "Sprite.h"
 
+
+
 /** For drawing a primitive, filled rectangle.
 	Unlike other sprites, the origin of a Rectangle Sprite is the top left
 	corner (0, 0) to be consistent with GUIControls. */
@@ -17,12 +19,14 @@ public:
 	virtual void moveBy(const Vector2& moveVector);
 };
 
+
+class TexturePanel;
+class GUIFactory;
 /** A primitive, non-filled rectangle. */
-class RectangleFrame : public IElement2D {
+class RectangleFrame : public IElement2D, public Texturizable {
 public:
-	RectangleFrame(GraphicsAsset* pixelAsset);
-	//RectangleFrame(ComPtr<ID3D11ShaderResourceView> pixel,
-		//const Vector2& pos, const Vector2& size, int frameThickness);
+	/* GUIFactory is optional. */
+	RectangleFrame(GraphicsAsset* pixelAsset, _In_opt_ GUIFactory* guifactory);
 	~RectangleFrame();
 
 	void setDimensions(const Vector2& position, const Vector2& size,
@@ -30,18 +34,23 @@ public:
 	void setSize(const Vector2& size);
 	void refreshDimensions();
 
-	void setPosition(const Vector2& newPosition);
-	void moveBy(const Vector2& moveVector);
+	virtual GraphicsAsset* texturize() override;
+	virtual void textureDraw(SpriteBatch* batch) override;
 
-	void setTint(const XMFLOAT4 color);
+	virtual void setPosition(const Vector2& newPosition) override;
+	virtual void moveBy(const Vector2& moveVector) override;
+
+	virtual void setTint(const XMFLOAT4 color) override;
+	virtual void setTint(const Color& color) override;
+	virtual void setTint(const XMVECTORF32 color) override;
 
 	void draw(SpriteBatch* batch);
 
-	const Vector2& getPosition() const;
-	const int getWidth() const;
-	const int getHeight() const;
-	const int getThickness() const;
+	virtual const Vector2& getPosition() const override;
+	virtual const int getWidth() const override;
+	virtual const int getHeight() const override;
 	virtual const float getLayerDepth() const override;
+	const int getThickness() const;
 
 	virtual const Vector2& getOrigin() const override;
 	virtual const Vector2& getScale() const override;
@@ -52,12 +61,15 @@ public:
 	virtual void setScale(const Vector2& scale) override;
 	virtual void setRotation(const float rotation) override;
 	virtual void setAlpha(const float alpha) override;
-	virtual void setLayerDepth(const float depth) override;
+	/* bool frontToBack has no effect in RectangleFrame. */
+	virtual void setLayerDepth(const float depth, bool frontToBack = true) override;
 
 	bool contains(const Vector2& point);
 private:
 	ComPtr<ID3D11ShaderResourceView> pixel;
 
+	bool useTexture = true;
+	unique_ptr<TexturePanel> texturePanel;
 
 	RECT frameHorizontal;
 	RECT frameVertical;
@@ -71,12 +83,16 @@ private:
 	float rotation = 0.0f;
 	Color tint = Colors::Black;
 	int frameThickness;
-	float layerDepth = 1.0f;
+	float layerDepth = .9f;
 	unique_ptr<HitArea> hitArea;
+
+	GUIFactory* guiFactory;
+
 };
 
 
-/** Lines don't cross so it looks a little funny...*/
+/** Still just a proto-type. Not recommended for real life.
+	Lines don't cross so it looks a little funny...*/
 class TriangleFrame : public IElement2D {
 public:
 	TriangleFrame(GraphicsAsset* pixelAsset);
@@ -97,22 +113,24 @@ public:
 	virtual const int getHeight() const override;
 	virtual const float getLayerDepth() const override;
 
-	virtual void moveBy(const Vector2 & moveVector) override;
+	virtual void moveBy(const Vector2& moveVector) override;
 	/* Returns position of point1. */
-	virtual void setPosition(const Vector2 & position) override;
-	virtual void setOrigin(const Vector2 & origin) override;
-	virtual void setScale(const Vector2 & scale) override;
+	virtual void setPosition(const Vector2& position) override;
+	virtual void setOrigin(const Vector2& origin) override;
+	virtual void setScale(const Vector2& scale) override;
 	virtual void setRotation(const float rotation) override;
 	virtual void setTint(const XMFLOAT4 color) override;
+	virtual void setTint(const Color& color) override;
+	virtual void setTint(const XMVECTORF32 color) override;
 	virtual void setAlpha(const float alpha) override;
-	virtual void setLayerDepth(const float depth) override;
+	/* bool frontToBack has no effect in TriangleFrame. */
+	virtual void setLayerDepth(const float depth, bool frontToBack = true) override;
 
 	virtual void draw(SpriteBatch * batch) override;
 
 private:
 	ComPtr<ID3D11ShaderResourceView> pixel;
 
-	//Vector2 centerPoint;
 	Vector2 origin;
 	Vector2 originLine1, originLine2, originLine3;
 	Vector2 point1, point2, point3;
@@ -121,7 +139,7 @@ private:
 
 	float rotation = 0.0f;
 	int lengthBuffer;
-	float layerDepth = 1.0;
+	float layerDepth = .9f;
 	Vector2 scale = Vector2(1, 1);
 	Color tint;
 };
@@ -141,6 +159,9 @@ public:
 
 	void setRotation(const float rotation);
 	void setTint(const Color& color);
+	void setTint(const XMVECTORF32 color);
+	/* bool frontToBack has no effect in Line. */
+	virtual void setLayerDepth(const float depth, bool frontToBack = true);
 
 	void draw(SpriteBatch* batch);
 
@@ -151,6 +172,6 @@ private:
 	Vector2 position;
 	Vector2 scale = Vector2(1, 1);
 	float rotation = 0.0f;
-	float layerDepth = 1;
+	float layerDepth = .9f;
 	Color tint;
 };

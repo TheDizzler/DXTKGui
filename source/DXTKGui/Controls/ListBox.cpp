@@ -34,7 +34,7 @@ void ListBox::initialize(shared_ptr<FontSet> fnt, GraphicsAsset* pixelAsset,
 
 	scrollBar.reset(scrllbr);
 
-	frame.reset(new RectangleFrame(pixelAsset));
+	frame.reset(guiFactory->createRectangleFrame());
 
 	hitArea.reset(new HitArea(position, Vector2(frame->getWidth(), frame->getHeight())));
 
