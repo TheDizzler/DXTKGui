@@ -1,5 +1,7 @@
 #include "GameManager.h"
 
+unique_ptr<GUIOverlay> guiOverlay;
+
 
 GameManager::GameManager(GameEngine* gmngn) {
 
@@ -33,6 +35,7 @@ bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc, shared_ptr
 		return false;
 	}*/
 
+	guiOverlay = make_unique<GUIOverlay>();
 
 	menuScreen.reset(new MenuManager());
 	menuScreen->setGameManager(this);
@@ -47,17 +50,18 @@ bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc, shared_ptr
 }
 
 
-void GameManager::update(double deltaTime, shared_ptr<MouseController> mouse) {
+void GameManager::update(double deltaTime) {
 
-	currentScreen->update(deltaTime, mouse);
-
+	
+	currentScreen->update(deltaTime);
+	guiOverlay->update(deltaTime);
 }
 
 
-void GameManager::draw(SpriteBatch * batch) {
+void GameManager::draw(SpriteBatch* batch) {
 
 	currentScreen->draw(batch);
-
+	guiOverlay->draw(batch);
 }
 
 

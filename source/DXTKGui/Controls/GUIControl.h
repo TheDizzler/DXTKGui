@@ -6,6 +6,7 @@
 #include "../BaseGraphics/GraphicsAsset.h"
 #include "../Controllers/MouseController.h"
 
+class GUIFactory;
 interface GUIControl : public IElement2D {
 public:
 

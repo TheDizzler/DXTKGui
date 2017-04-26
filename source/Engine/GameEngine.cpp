@@ -2,8 +2,8 @@
 
 unique_ptr<GUIFactory> guiFactory;
 
-unique_ptr<Dialog> GameEngine::errorDialog;
-unique_ptr<Dialog> GameEngine::warningDialog;
+unique_ptr<PromptDialog> GameEngine::errorDialog;
+unique_ptr<PromptDialog> GameEngine::warningDialog;
 Dialog* GameEngine::showDialog = NULL;
 
 GameEngine::GameEngine() {
@@ -107,13 +107,14 @@ bool GameEngine::initStage() {
 		return false;
 	}
 
-	errorDialog.reset(guiFactory->createDialog(false, true));
+
 	Vector2 dialogPos, dialogSize;
 	dialogSize = Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2);
 	dialogPos = dialogSize;
 	dialogPos.x -= dialogSize.x / 2;
 	dialogPos.y -= dialogSize.y / 2;
-	errorDialog->setDimensions(dialogPos, dialogSize);
+	errorDialog.reset(guiFactory->createDialog(dialogPos, dialogSize, false, true));
+	//errorDialog->setDimensions(dialogPos, dialogSize);
 	errorDialog->setTint(Color(0, 120, 207));
 	unique_ptr<Button> quitButton;
 	quitButton.reset(guiFactory->createButton());
@@ -126,9 +127,9 @@ bool GameEngine::initStage() {
 	scrollBarDesc.upPressedButtonImage = "ScrollBar Up Pressed Custom";
 	scrollBarDesc.trackImage = "ScrollBar Track Custom";
 	scrollBarDesc.scrubberImage = "Scrubber Custom";
-	warningDialog.reset(guiFactory->createDialog(true, true));
+	warningDialog.reset(guiFactory->createDialog(dialogPos, dialogSize, true, true));
 
-	warningDialog->setDimensions(dialogPos, dialogSize);
+	//warningDialog->setDimensions(dialogPos, dialogSize);
 	warningDialog->setScrollBar(scrollBarDesc);
 	warningDialog->setTint(Color(0, 120, 207));
 	warningDialog->setCancelButton(L"Continue");
@@ -142,8 +143,9 @@ bool GameEngine::initStage() {
 	return true;
 }
 
+
 bool warningCanceled = false;
-void GameEngine::run(double deltaTime, int fps) {
+void GameEngine::run(double deltaTime) {
 
 	update(deltaTime);
 	render(deltaTime);
@@ -170,11 +172,11 @@ void GameEngine::run(double deltaTime, int fps) {
 void GameEngine::update(double deltaTime) {
 
 	mouse->saveMouseState();
-	keys->saveKeyboardState();
-	if (showDialog->isOpen)
+
+	if (showDialog->isOpen())
 		showDialog->update(deltaTime);
 	else
-		game->update(deltaTime, mouse);
+		game->update(deltaTime);
 }
 
 
@@ -215,6 +217,13 @@ void GameEngine::exit() {
 	if (swapChain.Get() != NULL)
 		swapChain->SetFullscreenState(false, NULL);
 	DestroyWindow(hwnd);
+}
+
+
+void GameEngine::newController(HANDLE joyHandle) {
+}
+
+void GameEngine::controllerRemoved(size_t controllerSlot) {
 }
 
 

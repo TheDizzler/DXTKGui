@@ -17,8 +17,8 @@ struct Frame {
 
 struct Animation {
 
-	Animation(ComPtr<ID3D11ShaderResourceView> tex, vector<shared_ptr<Frame>> frames/*, float frameTime*/)
-		: texture(tex), animationFrames(frames)/*, timePerFrame(frameTime)*/ {
+	Animation(ComPtr<ID3D11ShaderResourceView> tex, vector<shared_ptr<Frame>> frames)
+		: texture(tex), animationFrames(frames) {
 	}
 	~Animation() {
 		animationFrames.clear();
@@ -26,8 +26,6 @@ struct Animation {
 
 	vector<shared_ptr<Frame>> animationFrames;
 	ComPtr<ID3D11ShaderResourceView> texture;
-	//float timePerFrame;
-
 };
 
 

@@ -26,12 +26,14 @@ void ScreenTransitionManager::setTransition(ScreenTransition* effect) {
 	transition = effect;
 }
 
+#include "../BaseGraphics/screen.h"
 void ScreenTransitionManager::transitionBetween(
 	Screen* oldScreen, Screen* newScreen, float transitionTime) {
-
+	
+	Color wipeColor = Colors::PeachPuff;
 	transition->setTransitionBetween(
-		guiFactory->createTextureFromScreen(oldScreen, Color(158, 0, 58)),
-		guiFactory->createTextureFromScreen(newScreen, Color(0, 58, 158)), transitionTime);
+		guiFactory->createTextureFromScreen(oldScreen, Color(158, 0, 58)/*, wipeColor*/),
+		guiFactory->createTextureFromScreen(newScreen, Color(0, 58, 158)/*, wipeColor*/), transitionTime);
 }
 
 bool ScreenTransitionManager::runTransition(double deltaTime) {
@@ -45,7 +47,7 @@ void ScreenTransitionManager::drawTransition(SpriteBatch* batch) {
 
 
 
-#include "../BaseGraphics/screen.h"
+
 void ScreenTransition::setTransitionBetween(
 	GraphicsAsset* oldScreen, GraphicsAsset* newScreen, float time) {
 

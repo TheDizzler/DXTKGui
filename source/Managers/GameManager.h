@@ -2,11 +2,12 @@
 
 
 #include "MenuManager.h"
-#include "../DXTKGui/Controls/GUIFactory.h"
+#include "../DXTKGui/GUIFactory.h"
+#include "../Screens/GUIOverlay.h"
 
 class GameEngine;
 
-
+extern unique_ptr<GUIOverlay> guiOverlay;
 
 /** The lowest level of class where game code should be included.
 	Everything below this (GameEngine downward) should generally go unmodified. */
@@ -19,7 +20,7 @@ public:
 	bool initializeGame(HWND hwnd, ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse);
 
 
-	void update(double deltaTime, shared_ptr<MouseController> mouse);
+	void update(double deltaTime);
 	void draw(SpriteBatch* batch);
 
 
@@ -29,7 +30,7 @@ public:
 	void pause();
 	void exit();
 
-	
+
 	vector<ComPtr<IDXGIAdapter> > getAdapterList();
 	vector<ComPtr<IDXGIOutput> > getDisplayList();
 	vector<ComPtr<IDXGIOutput> > getDisplayListFor(size_t displayIndex);
@@ -52,10 +53,10 @@ private:
 	Screen* lastScreen = 0;
 	unique_ptr<MenuManager> menuScreen;
 
-	
+
 	GameEngine* gameEngine;
 	shared_ptr<MouseController> mouse;
 	ComPtr<ID3D11Device> device;
 
-	
+
 };

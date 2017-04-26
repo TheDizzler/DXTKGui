@@ -62,7 +62,6 @@ public:
 
 /** A simple control to display various (text) items. */
 class ListBox : public GUIControl {
-	//friend class ComboBox;
 public:
 	ListBox(const Vector2& position, const int width,
 		size_t itemHeight = 32, const int maxItemsShown = 7);

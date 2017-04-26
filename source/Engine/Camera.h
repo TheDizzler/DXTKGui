@@ -1,6 +1,5 @@
 #pragma once
 
-//#include <wrl.h>
 #include <d3d11_1.h>
 #include <SimpleMath.h>
 
@@ -20,7 +19,7 @@ public:
 
 
 	Viewport* viewport;
-	
+
 
 	float rotation = 0.0f;
 
@@ -54,5 +53,5 @@ private:
 	float viewY = (viewportHeight / zoom / 2);
 
 	Vector2* screenToWorld(Vector2 screenPosition);
-	
+
 };

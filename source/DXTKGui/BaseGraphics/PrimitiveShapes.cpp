@@ -28,7 +28,7 @@ void RectangleSprite::moveBy(const Vector2& moveVector) {
 	hitArea->position = position;
 }
 
-#include "../Controls/GUIFactory.h"
+#include "../GUIFactory.h"
 #include "../Controls/TexturePanel.h"
 /**** ***** RECTANGLE FRAME START ***** ****/
 RectangleFrame::RectangleFrame(GraphicsAsset* pixelAsset, GUIFactory* gui) {

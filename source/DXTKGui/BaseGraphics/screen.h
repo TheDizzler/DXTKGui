@@ -17,6 +17,12 @@ public:
 	/** Action to perform when a joystick has been deregistered.
 		Controller socket is virtual, used to track controllers in some sort of list.*/
 	virtual void controllerRemoved(size_t controllerSlot) = 0;
+	/** Actionto perform when a new joystick has been registered. */
 	virtual void newController(HANDLE joyHandle) = 0;
-	
+
+	/** Override this function to get funky with your screen transitions. */ 
+	virtual void textureDraw(SpriteBatch* batch) {
+		draw(batch);
+	};
+
 };

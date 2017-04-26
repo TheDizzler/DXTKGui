@@ -105,9 +105,6 @@
     <ClCompile Include="source\DXTKGui\Controls\GUIControl.cpp">
       <Filter>Source Files\DXTKGui\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="source\DXTKGui\Controls\GUIFactory.cpp">
-      <Filter>Source Files\DXTKGui\Controls</Filter>
-    </ClCompile>
     <ClCompile Include="source\DXTKGui\Controls\ListBox.cpp">
       <Filter>Source Files\DXTKGui\Controls</Filter>
     </ClCompile>
@@ -120,9 +117,6 @@
     <ClCompile Include="source\DXTKGui\Controls\TexturePanel.cpp">
       <Filter>Source Files\DXTKGui\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="source\DXTKGui\Controllers\KeyboardController.cpp">
-      <Filter>Source Files\DXTKGui\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="source\DXTKGui\Controllers\MouseController.cpp">
       <Filter>Source Files\DXTKGui\Controllers</Filter>
     </ClCompile>
@@ -133,6 +127,21 @@
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
     <ClCompile Include="source\DXTKGui\Controls\Spinner.cpp">
+      <Filter>Source Files\DXTKGui\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Screens\GUIOverlay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Engine\Joystick.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Managers\PlayerSlot.cpp">
+      <Filter>Source Files\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\GUIFactory.cpp">
+      <Filter>Source Files\DXTKGui</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controls\DynamicDialog.cpp">
       <Filter>Source Files\DXTKGui\Controls</Filter>
     </ClCompile>
   </ItemGroup>
@@ -185,9 +194,6 @@
     <ClInclude Include="source\DXTKGui\Controls\GUIControl.h">
       <Filter>Header Files\DXTKGui\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="source\DXTKGui\Controls\GUIFactory.h">
-      <Filter>Header Files\DXTKGui\Controls</Filter>
-    </ClInclude>
     <ClInclude Include="source\DXTKGui\Controls\ListBox.h">
       <Filter>Header Files\DXTKGui\Controls</Filter>
     </ClInclude>
@@ -205,9 +211,6 @@
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Effects\TransitionEffects.h">
       <Filter>Header Files\DXTKGui\Effects</Filter>
-    </ClInclude>
-    <ClInclude Include="source\DXTKGui\Controllers\KeyboardController.h">
-      <Filter>Header Files\DXTKGui\Controllers</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Controllers\MouseController.h">
       <Filter>Header Files\DXTKGui\Controllers</Filter>
@@ -227,11 +230,26 @@
     <ClInclude Include="source\DXTKGui\GuiAssets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <ClInclude Include="source\Screens\GUIOverlay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Engine\Joystick.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Managers\PlayerSlot.h">
+      <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\GUIFactory.h">
+      <Filter>Header Files\DXTKGui</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controls\DynamicDialog.h">
+      <Filter>Header Files\DXTKGui\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="assets\AssetManifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

@@ -388,6 +388,7 @@ bool GraphicsEngine::stopFullScreen() {
 		return false;
 
 	swapChain->SetFullscreenState(false, NULL);
+	return true;
 }
 
 bool GraphicsEngine::setFullScreen(bool isFullScreen) {
@@ -504,5 +505,7 @@ bool GraphicsEngine::verifyAdapter(ComPtr<ID3D11Device> deviceCheck) {
 	dxgiDev->Release();
 	dxgiAdapter->Release();
 	factory->Release();
+
+	return true;
 }
 

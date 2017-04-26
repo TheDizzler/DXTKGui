@@ -1,6 +1,6 @@
 #include "Spinner.h"
 
-#include "GUIFactory.h"
+#include "../GUIFactory.h"
 Spinner::Spinner(const Vector2& pos, const size_t len, const size_t itmHght, bool autoSz) {
 
 	position = pos;

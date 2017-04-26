@@ -260,10 +260,8 @@ private:
 
 
 
-
-	/** Because frames of animation aren't always the same size... */
-
 	/** The origin point for adjusting position of animated frames. */
+	/** Because frames of animation aren't always the same size... */
 	Vector2 center;
 
 

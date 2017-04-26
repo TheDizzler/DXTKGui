@@ -1,12 +1,12 @@
 #pragma once
 
-
+#include "../DXTKGui/GUIFactory.h"
 
 #include "../DXTKGui/BaseGraphics/Screen.h"
-#include "../DXTKGui/Controls/Dialog.h"
-#include "../DXTKGui/Controls/ComboBox.h"
-#include "../DXTKGui/Controls/Button.h"
-#include "../DXTKGui/Controls/CheckBox.h"
+//#include "../DXTKGui/Controls/Dialog.h"
+//#include "../DXTKGui/Controls/ComboBox.h"
+//#include "../DXTKGui/Controls/Button.h"
+//#include "../DXTKGui/Controls/CheckBox.h"
 #include "../DXTKGUI/Effects/ScreenTransitions.h"
 
 class MenuScreen;
@@ -104,11 +104,13 @@ public:
 	virtual void setGameManager(GameManager* game);
 
 	virtual bool initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse);
-	virtual void update(double deltaTime, shared_ptr<MouseController> mouse);
+	virtual void update(double deltaTime);
 	virtual void draw(SpriteBatch* batch);
 
 	virtual void pause() override;
 
+	virtual void controllerRemoved(size_t controllerSlot);
+	virtual void newController(HANDLE joyHandle);
 
 	unique_ptr<ScreenTransitions::ScreenTransitionManager> transitionManager;
 
@@ -116,7 +118,7 @@ public:
 	void openConfigMenu();
 
 private:
-
+	shared_ptr<MouseController> mouse;
 	Screen* currentScreen = NULL;
 	Screen* switchTo = NULL;
 	unique_ptr<MainScreen> mainScreen;
@@ -140,12 +142,17 @@ public:
 	virtual void setGameManager(GameManager* game) override;
 	virtual void pause() override;
 
+	virtual void controllerRemoved(size_t controllerSlot);
+	virtual void newController(HANDLE joyHandle);
+
 protected:
 
 	GameManager* game;
 	MenuManager* menuManager;
 
 	vector<GUIControl*> guiControls;
+
+
 };
 
 
@@ -169,7 +176,7 @@ public:
 	~ConfigScreen();
 
 	virtual bool initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse) override;
-	virtual void update(double deltaTime, shared_ptr<MouseController> mouse) override;
+	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
 private:
@@ -197,12 +204,13 @@ public:
 	~MainScreen();
 
 	virtual bool initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse) override;
-	virtual void update(double deltaTime, shared_ptr<MouseController> mouse) override;
+	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
 	void confirmExit();
 private:
-	unique_ptr<Dialog> exitDialog;
+	shared_ptr<MouseController> mouse;
+	unique_ptr<PromptDialog> exitDialog;
 	TextLabel* test;
 	TextLabel* mouseLabel;
 	TextLabel* fpsLabel;

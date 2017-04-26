@@ -54,7 +54,7 @@ void CheckBox::draw(SpriteBatch* batch) {
 }
 
 
-#include "GUIFactory.h"
+#include "../GUIFactory.h"
 void CheckBox::setFont(const pugi::char_t* font) {
 	label->setFont(guiFactory->getFont(font));
 }

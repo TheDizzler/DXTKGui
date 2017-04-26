@@ -54,7 +54,7 @@ public:
 protected:
 	HWND hwnd;
 	unique_ptr<SpriteBatch> batch;
-	
+
 	/* Adapter currently being used. */
 	ComPtr<IDXGIAdapter> selectedAdapter;
 	/* Monitor being used. */

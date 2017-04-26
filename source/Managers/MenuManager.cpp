@@ -15,9 +15,9 @@ void MenuManager::setGameManager(GameManager* gm) {
 }
 
 #include "../Engine/GameEngine.h"
-bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse) {
+bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mc) {
 
-
+	mouse = mc;
 	if (!mouse->loadMouseIcon(guiFactory.get(), "Mouse Reticle"))
 		return false;
 
@@ -31,7 +31,7 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContro
 	configScreen->setGameManager(game);
 	if (!configScreen->initialize(device, mouse))
 		return false;
-	configScreen->update(0, mouse);
+	configScreen->update(0);
 
 	currentScreen = mainScreen.get();
 
@@ -49,7 +49,7 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContro
 
 
 #include "../globals.h"
-void MenuManager::update(double deltaTime, shared_ptr<MouseController> mouse) {
+void MenuManager::update(double deltaTime) {
 
 
 	if (switchTo != NULL) {
@@ -58,7 +58,7 @@ void MenuManager::update(double deltaTime, shared_ptr<MouseController> mouse) {
 			switchTo = NULL;
 		}
 	} else
-		currentScreen->update(deltaTime, mouse);
+		currentScreen->update(deltaTime);
 
 }
 
@@ -74,6 +74,12 @@ void MenuManager::draw(SpriteBatch* batch) {
 
 void MenuManager::pause() {
 	// do nothing?
+}
+
+void MenuManager::controllerRemoved(size_t controllerSlot) {
+}
+
+void MenuManager::newController(HANDLE joyHandle) {
 }
 
 void MenuManager::openMainMenu() {
@@ -116,6 +122,13 @@ void MenuScreen::pause() {
 	// do nothing??
 }
 
+void MenuScreen::newController(HANDLE joyHandle) {
+}
+
+void MenuScreen::controllerRemoved(size_t controllerSlot) {
+}
+
+
 
 
 /** **** MainMenuScreen **** **/
@@ -128,7 +141,9 @@ MainScreen::~MainScreen() {
 }
 
 #include <sstream>
-bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse) {
+bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mc) {
+
+	mouse = mc;
 
 	AnimatedButton* animButton =
 		guiFactory->createAnimatedButton("Launch Button");
@@ -174,24 +189,17 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	mouseLabel->setAlpha(.1);
 	guiControls.push_back(mouseLabel);
 
-	fpsLabel = guiFactory->createTextLabel(Vector2(Globals::WINDOW_WIDTH - 250, 20));
-	fpsLabel->setTint(Colors::Black);
-	fpsLabel->setScale(Vector2(.5, .5));
-	fpsLabel->setLayerDepth(1);
-	guiControls.push_back(fpsLabel);
 
 
 	{
-		exitDialog.reset(guiFactory->createDialog(true, true));
 		Vector2 dialogPos, dialogSize;
 		dialogSize = Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2);
 		dialogPos = dialogSize;
 		dialogPos.x -= dialogSize.x / 2;
 		dialogPos.y -= dialogSize.y / 2;
-		exitDialog->setDimensions(dialogPos, dialogSize);
+		exitDialog.reset(guiFactory->createDialog(dialogPos, dialogSize, true, true));
 		exitDialog->setTint(Color(0, .5, 1, 1));
 		exitDialog->setTitle(L"Exit Test?", Vector2(1, 1), "BlackCloak");
-		//exitDialog->setTitleAreaDimensions(Vector2(0, 150));
 		exitDialog->setText(L"Really Quit The Test Project?");
 		unique_ptr<Button> quitButton;
 		quitButton.reset(guiFactory->createButton());
@@ -199,13 +207,12 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 		quitButton->setText(L"Quit");
 		exitDialog->setConfirmButton(move(quitButton));
 		exitDialog->setCancelButton(L"Keep Testing!");
-		exitDialog->open();
+
 		exitDialog->setOpenTransition(
-			/*new TransitionEffects::SpinGrowTransition(exitDialog.get(), .5));*/
-			//new TransitionEffects::SplitTransition(exitDialog.get(), 25));
-			new TransitionEffects::BlindsTransition(exitDialog.get(), .5, false, true));
-			/*new TransitionEffects::TrueGrowTransition(exitDialog.get(),
-				Vector2(.001, .001), Vector2(1, 1)));*/
+			//new TransitionEffects::SpinGrowTransition(.5));
+			 new TransitionEffects::SplitTransition(exitDialog.get(), 25));
+			//new TransitionEffects::BlindsTransition(.5, false, true));
+			//new TransitionEffects::TrueGrowTransition(exitDialog.get(), Vector2(.001, .001), Vector2(1, 1)));
 			/*new TransitionEffects::SlideAndGrowTransition(
 				Vector2(-200, -200), exitDialog->getPosition(),
 				Vector2(.001, .001), Vector2(1, 1)));*/
@@ -214,10 +221,10 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 			/*new TransitionEffects::SlideTransition(
 				Vector2(-200, -200), exitDialog->getPosition()));*/
 
-		//exitDialog->setCloseTransition(
-			/*new TransitionEffects::ShrinkTransition(
-				Vector2(1, 1), Vector2(.001, .001)));*/
-		exitDialog->close();
+		exitDialog->setCloseTransition(
+			new TransitionEffects::ShrinkTransition(exitDialog.get(),
+				Vector2(1, 1), Vector2(.001, .001)));
+
 	}
 
 
@@ -226,7 +233,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 }
 
 Keyboard::KeyboardStateTracker keyTracker;
-void MainScreen::update(double deltaTime, shared_ptr<MouseController> mouse) {
+void MainScreen::update(double deltaTime) {
 
 	wostringstream ws;
 	ws << "Mouse: " << mouse->getPosition().x << ", " << mouse->getPosition().y;
@@ -236,14 +243,14 @@ void MainScreen::update(double deltaTime, shared_ptr<MouseController> mouse) {
 	auto state = Keyboard::Get().GetState();
 	keyTracker.Update(state);
 	if (keyTracker.IsKeyReleased(Keyboard::Escape)) {
-		if (exitDialog->isOpen)
-			exitDialog->close();
+		if (exitDialog->isOpen())
+			exitDialog->hide();
 		else
-			exitDialog->open();
+			exitDialog->show();
 	}
 
 
-	if (exitDialog->isOpen) {
+	if (exitDialog->isOpen()) {
 		exitDialog->update(deltaTime);
 	} else {
 		for (auto const& control : guiControls)
@@ -300,7 +307,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 		item->adapter = adap;
 		adapterItems.push_back(item);
 	}
-	
+
 	adapterListbox->addItems(adapterItems);
 	adapterListbox->setSelected(game->getSelectedAdapterIndex());
 
@@ -328,7 +335,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	displayLabel->setText(displayListbox->getSelected()->toString());
 
 	// setup label for Display Mode
-	
+
 	controlPos.y += 50;
 
 	testSpinner = guiFactory->createSpinner(controlPos, 25, itemHeight);
@@ -407,7 +414,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 }
 
 
-void ConfigScreen::update(double deltaTime, shared_ptr<MouseController> mouse) {
+void ConfigScreen::update(double deltaTime) {
 
 	auto state = Keyboard::Get().GetState();
 	keyTracker.Update(state);
@@ -543,12 +550,12 @@ void OnClickListenerSettingsButton::onClick(Button* button) {
 }
 
 void OnClickListenerDialogQuitButton::onClick(Button* button) {
-	main->exitDialog->close();
+	main->exitDialog->hide();
 	main->confirmExit();
 }
 
 void OnClickListenerExitButton::onClick(Button* button) {
-	main->exitDialog->open();
+	main->exitDialog->show();
 }
 
 void BackButtonListener::onClick(Button* button) {

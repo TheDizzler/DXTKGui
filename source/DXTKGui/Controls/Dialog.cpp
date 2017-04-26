@@ -94,10 +94,7 @@ void Dialog::setOpenTransition(TransitionEffects::TransitionEffect* effect) {
 		drawTransition = &TransitionEffects::TransitionEffect::draw;
 	}
 
-	bool originalState = isShowing;
-	isShowing = true;
 	effect->initializeEffect(this);
-	isShowing = originalState;
 
 	openTransition = effect;
 }
@@ -113,10 +110,7 @@ void Dialog::setCloseTransition(TransitionEffects::TransitionEffect* effect) {
 		drawTransition = &TransitionEffects::TransitionEffect::draw;
 	}
 
-	bool originalState = isShowing;
-	isShowing = true;
 	effect->initializeEffect(this);
-	isShowing = originalState;
 
 	closeTransition = effect;
 }
@@ -164,7 +158,7 @@ PromptDialog::~PromptDialog() {
 		delete closeTransition;
 }
 
-#include "GUIFactory.h"
+#include "../GUIFactory.h"
 void PromptDialog::initialize(GraphicsAsset* pixelAsset, const pugi::char_t* font) {
 
 	panel.reset(guiFactory->createPanel(false));
@@ -227,15 +221,6 @@ void PromptDialog::setDimensions(const Vector2& pos, const Vector2& sz,
 	calculateDialogTextPos();
 }
 
-
-GraphicsAsset* PromptDialog::texturize() {
-	return guiFactory->createTextureFromIElement2D(this);
-}
-
-void PromptDialog::textureDraw(SpriteBatch* batch) {
-
-	//formattedText->draw(batch);
-}
 
 
 wstring PromptDialog::reformatText(size_t* scrollBarBuffer) {
@@ -638,6 +623,28 @@ void PromptDialog::draw(SpriteBatch* batch) {
 
 		frame->draw(batch);
 	}
+}
+
+GraphicsAsset* PromptDialog::texturize() {
+	return guiFactory->createTextureFromIElement2D(this);
+}
+
+
+void PromptDialog::textureDraw(SpriteBatch* batch) {
+
+	bgSprite->draw(batch);
+	panel->draw(batch);
+	titleSprite->draw(batch);
+	buttonFrameSprite->draw(batch);
+
+	for (auto const& control : controls) {	// this definitely takes most of the CPU time
+		if (control == NULL)				// finding a way to optimize this would be ideal
+			continue;
+		control->draw(batch);
+	}
+
+
+	frame->draw(batch);
 }
 
 

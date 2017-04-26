@@ -7,7 +7,7 @@ DynamicDialog::DynamicDialog() {
 DynamicDialog::~DynamicDialog() {
 }
 
-#include "GUIFactory.h"
+#include "../GUIFactory.h"
 void DynamicDialog::initializeControl(GUIFactory* factory,
 	shared_ptr<MouseController> mouseController) {
 	GUIControl::initializeControl(factory, mouseController);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Controls/GUIFactory.h"
+#include "../GUIFactory.h"
 
 class Screen;
 namespace ScreenTransitions {

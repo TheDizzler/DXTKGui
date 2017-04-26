@@ -23,7 +23,7 @@ ListBox::~ListBox() {
 	delete emptyListItem;
 }
 
-
+#include "../GUIFactory.h"
 void ListBox::initialize(shared_ptr<FontSet> fnt, GraphicsAsset* pixelAsset,
 	ScrollBar* scrllbr, bool enumerateList) {
 
@@ -46,7 +46,7 @@ void ListBox::initialize(shared_ptr<FontSet> fnt, GraphicsAsset* pixelAsset,
 	emptyListItem->setText();
 }
 
-#include "GUIFactory.h"
+
 void ListBox::setScrollBar(ScrollBarDesc& scrollBarDesc) {
 
 	scrollBar.reset(guiFactory->createScrollBar(

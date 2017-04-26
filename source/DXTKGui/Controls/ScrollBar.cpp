@@ -11,7 +11,7 @@ ScrollBar::ScrollBar(const Vector2& pos) {
 ScrollBar::~ScrollBar() {
 }
 
-#include "GUIFactory.h"
+#include "../GUIFactory.h"
 bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 	size_t barHght, ImageButton* scrollButtons[2], unique_ptr<Sprite> scrllBrTrck,
 	GraphicsAsset* scrbbr) {

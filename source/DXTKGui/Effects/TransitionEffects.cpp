@@ -1,8 +1,8 @@
 #include "TransitionEffects.h"
 
 
-TransitionEffects::GrowTransition::GrowTransition(const Vector2& strt,
-	const Vector2& end, float speed) {
+TransitionEffects::GrowTransition::GrowTransition(IElement2D* cntrl, const Vector2& strt,
+	const Vector2& end, float speed) : TransitionEffect(cntrl) {
 
 	startScale = strt;
 	endScale = end;
@@ -33,9 +33,9 @@ void TransitionEffects::GrowTransition::reset() {
 
 
 
-TransitionEffects::ShrinkTransition::ShrinkTransition(
+TransitionEffects::ShrinkTransition::ShrinkTransition(IElement2D* cntrl,
 	const Vector2& startScale, const Vector2& endScale, float speed)
-	: GrowTransition(startScale, endScale, speed) {
+	: GrowTransition(cntrl, startScale, endScale, speed) {
 }
 
 bool TransitionEffects::ShrinkTransition::run(double deltaTime) {
@@ -57,8 +57,8 @@ bool TransitionEffects::ShrinkTransition::run(double deltaTime) {
 
 
 
-TransitionEffects::SlideTransition::SlideTransition(const Vector2& startPos,
-	const Vector2& endPos, float speed) {
+TransitionEffects::SlideTransition::SlideTransition(IElement2D* cntrl,
+	const Vector2& startPos, const Vector2& endPos, float speed) : TransitionEffect(cntrl) {
 
 	startPosition = startPos;
 	endPosition = endPos;
@@ -87,8 +87,9 @@ void TransitionEffects::SlideTransition::reset() {
 
 
 TransitionEffects::SlideAndGrowTransition::SlideAndGrowTransition(
-	const Vector2& startPos, const Vector2& endPos,
-	const Vector2& startScl, const Vector2& endScl, float speed) {
+	IElement2D* cntrl, const Vector2& startPos, const Vector2& endPos,
+	const Vector2& startScl, const Vector2& endScl, float speed)
+	: TransitionEffect(cntrl) {
 
 	startPosition = startPos;
 	endPosition = endPos;
@@ -137,10 +138,10 @@ void TransitionEffects::SlideAndGrowTransition::reset() {
 
 #include "../Controls/Dialog.h"
 TransitionEffects::TrueGrowTransition::TrueGrowTransition(
-	Dialog* cntr, const Vector2& startScl,
-	const Vector2& endScl, float speed) {
+	Dialog* cntrl, const Vector2& startScl,
+	const Vector2& endScl, float speed) : TransitionEffect(cntrl) {
 
-	containerControl = cntr;
+	containerControl = cntrl;
 	startScale = startScl;
 	endScale = endScl;
 	transitionSpeed = speed;
@@ -222,7 +223,7 @@ void TransitionEffects::TrueGrowTransition::reset() {
 
 /******* TexturedTransitions ******/
 TransitionEffects::TexturedTransition::TexturedTransition(
-	float speed) {
+	IElement2D* cntrl, float speed) : TransitionEffect(cntrl) {
 
 
 
@@ -232,7 +233,7 @@ TransitionEffects::TexturedTransition::TexturedTransition(
 
 void TransitionEffects::TexturedTransition::initializeEffect(Texturizable* cntrl) {
 
-	TransitionEffect::initializeEffect((IElement2D*)cntrl); // should be safe to cast this
+	TransitionEffect::initializeEffect(cntrl);
 
 
 	gfxAsset.reset(cntrl->texturize());
@@ -260,9 +261,9 @@ bool TransitionEffects::TexturedTransition::draw(SpriteBatch* batch) {
 
 
 /******* */
-TransitionEffects::BlindsTransition::BlindsTransition(
+TransitionEffects::BlindsTransition::BlindsTransition(IElement2D* cntrl,
 	float time, bool vertical, bool horizontal)
-	: TexturedTransition(time) {
+	: TexturedTransition(cntrl, time) {
 
 
 	if (vertical) {
@@ -272,7 +273,7 @@ TransitionEffects::BlindsTransition::BlindsTransition(
 		startScale.y = 0;
 	}
 
-	
+
 }
 
 TransitionEffects::BlindsTransition::~BlindsTransition() {
@@ -344,10 +345,10 @@ void TransitionEffects::BlindsTransition::reset() {
 
 
 /******* START SpinGrowTransition *******/
-TransitionEffects::SpinGrowTransition::SpinGrowTransition(
-	float transitionTime) : TexturedTransition(transitionTime) {
+TransitionEffects::SpinGrowTransition::SpinGrowTransition(IElement2D* cntrl,
+	float transitionTime) : TexturedTransition(cntrl, transitionTime) {
 
-	
+
 }
 
 void TransitionEffects::SpinGrowTransition::initializeEffect(Texturizable* cntrl) {
@@ -390,13 +391,13 @@ void TransitionEffects::SpinGrowTransition::reset() {
 
 
 
-TransitionEffects::SplitTransition::SplitTransition(
-	int sWidth, float speed) : TexturedTransition(speed) {
+TransitionEffects::SplitTransition::SplitTransition(IElement2D* cntrl,
+	int sWidth, float speed) : TexturedTransition(cntrl, speed) {
 
 	screenWidth = sWidth;
 
 
-	
+
 }
 
 void TransitionEffects::SplitTransition::initializeEffect(Texturizable* cntrl) {

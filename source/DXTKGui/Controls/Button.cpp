@@ -1,6 +1,6 @@
 #include "Button.h"
 
-
+#include "../GUIFactory.h"
 Button::Button(GraphicsAsset* px, unique_ptr<FontSet> font) {
 
 	pixelAsset = px;
@@ -272,7 +272,6 @@ bool Button::hovering() {
 	return isHover;
 }
 
-#include "GUIFactory.h"
 void Button::setFont(const pugi::char_t* font) {
 
 	buttonLabel->setFont(guiFactory->getFont(font));

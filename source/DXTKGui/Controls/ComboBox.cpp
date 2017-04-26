@@ -17,7 +17,7 @@ ComboBox::~ComboBox() {
 	delete onClickListener;
 }
 
-#include "GUIFactory.h"
+#include "../GUIFactory.h"
 bool ComboBox::initialize(shared_ptr<FontSet> fnt,/* GraphicsAsset* pixelAsset,*/
 	ListBox* lstBx, const pugi::char_t* buttonName, bool enumerateList) {
 

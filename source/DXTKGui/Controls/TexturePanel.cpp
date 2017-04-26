@@ -1,6 +1,6 @@
 #include "TexturePanel.h"
 
-#include "GUIFactory.h"
+#include "../GUIFactory.h"
 TexturePanel::TexturePanel(GraphicsAsset* pixelAsset, ScrollBar* scrllbr) {
 
 	hitArea = make_unique<HitArea>(Vector2::Zero, Vector2::Zero);

@@ -29,7 +29,7 @@ shared_ptr<MouseController> GUIFactory::getMouseController() {
 	return mouseController;
 }
 
-#include "../GuiAssets.h"
+#include "GuiAssets.h"
 bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 	ComPtr<ID3D11DeviceContext> devCon, ComPtr<IDXGISwapChain> sChain,
 	SpriteBatch* sBatch, shared_ptr<MouseController> mouse, const char_t* assetManifestFile) {
@@ -69,8 +69,7 @@ bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 }
 
 
-#include "../StringHelper.h"
-#include <sstream>
+#include "StringHelper.h"
 unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 
 	if (fontMap.find(fontName) == fontMap.end()) {
@@ -438,30 +437,30 @@ ComboBox* GUIFactory::createComboBox(const Vector2& position,
 	return combobox;
 }
 
-unique_ptr<PromptDialog> GUIFactory::createDialog(const Vector2& position, const Vector2& size,
+PromptDialog* GUIFactory::createDialog(const Vector2& position, const Vector2& size,
 	bool movable, bool centerText, int frameThickness, const char_t* fontName) {
 
-	unique_ptr<PromptDialog> dialog = make_unique<PromptDialog>(hwnd, movable, centerText);
+	PromptDialog* dialog = new PromptDialog(hwnd, movable, centerText);
 	dialog->initializeControl(this, mouseController);
 	dialog->initialize(getAsset("White Pixel"), fontName);
 	dialog->setDimensions(position, size, frameThickness);
-	return move(dialog);
+	return dialog;
 }
 
-unique_ptr<DynamicDialog> GUIFactory::createDynamicDialog(shared_ptr<AssetSet> dialogImageSet,
+DynamicDialog* GUIFactory::createDynamicDialog(shared_ptr<AssetSet> dialogImageSet,
 	const Vector2& position, const Vector2& size, const char_t* fontName) {
 
-	unique_ptr<DynamicDialog> dialog = make_unique<DynamicDialog>();
+	DynamicDialog* dialog = new DynamicDialog();
 	dialog->initializeControl(this, mouseController);
 	dialog->initialize(dialogImageSet, fontName);
 	dialog->setDimensions(position, size);
-	return move(dialog);
+	return dialog;
 }
 
 
 
 GraphicsAsset* GUIFactory::createTextureFromIElement2D(
-	Texturizable* control, Color bgColor) {
+	Texturizable* control, bool autoBatchDraw, Color bgColor) {
 
 	int buffer = 20; // padding to give a bit of lee-way to prevent tearing
 
@@ -551,13 +550,13 @@ GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 
 	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), bgColor);
 
-
-	batch->Begin(SpriteSortMode_Immediate);
-	{
-		control->textureDraw(batch);
+	if (autoBatchDraw) {
+		batch->Begin(SpriteSortMode_Immediate);
+		{
+			control->textureDraw(batch);
+		}
+		batch->End();
 	}
-	batch->End();
-
 
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
 
@@ -568,7 +567,7 @@ GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 	return gfxAsset;
 }
 
-GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, Color bgColor) {
+GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, bool autoBatchDraw, Color bgColor) {
 
 	int buffer = 5; // padding to give a bit of lee-way to prevent tearing
 
@@ -640,11 +639,13 @@ GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, Color bgColor
 
 	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), bgColor);
 
-	/*batch->Begin(SpriteSortMode_Immediate);
-	{*/
-	screen->draw(batch);
-/*}
-batch->End();*/
+	if (autoBatchDraw) {
+		batch->Begin(SpriteSortMode_Immediate);
+		{
+			screen->textureDraw(batch);
+		}
+		batch->End();
+	}
 
 
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);

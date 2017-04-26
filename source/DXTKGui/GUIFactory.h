@@ -2,12 +2,12 @@
 
 
 
-#include "../BaseGraphics/screen.h"
-#include "../BaseGraphics/GraphicsAsset.h"
-#include "ComboBox.h"
-#include "DynamicDialog.h"
-#include "CheckBox.h"
-#include "Spinner.h"
+#include "BaseGraphics/screen.h"
+#include "BaseGraphics/GraphicsAsset.h"
+#include "Controls/ComboBox.h"
+#include "Controls/DynamicDialog.h"
+#include "Controls/CheckBox.h"
+#include "Controls/Spinner.h"
 
 
 using namespace pugi;
@@ -93,12 +93,12 @@ public:
 		bool enumerateList = false, const char_t* buttonAsset = "Combo Button Closed",
 		const char_t* fontName = "Default Font");
 
-	unique_ptr<PromptDialog> createDialog(
+	PromptDialog* createDialog(
 		const Vector2& position = Vector2::Zero, const Vector2& size = Vector2::Zero,
 		bool movable = false, bool centerText = false, int frameThickness = 2,
 		const char_t* fontName = "Default Font");
 
-	unique_ptr<DynamicDialog> createDynamicDialog(shared_ptr<AssetSet> dialogImageSet,
+	DynamicDialog* createDynamicDialog(shared_ptr<AssetSet> dialogImageSet,
 		const Vector2& position = Vector2::Zero, const Vector2& size = Vector2::Zero,
 		const char_t* fontName = "Default Font");
 
@@ -112,9 +112,9 @@ public:
 		offset is the vector to bring object to top left corner of screen
 			in prep for its close up.*/
 	GraphicsAsset* createTextureFromIElement2D(
-		Texturizable* control, Color bgColor = {0, 0, 0, 0});
+		Texturizable* control, bool autoBatchDraw = true, Color bgColor = {0, 0, 0, 0});
 
-	GraphicsAsset* createTextureFromScreen(Screen* screen, Color bgColor = {0, 0, 0, 0});
+	GraphicsAsset* createTextureFromScreen(Screen* screen, bool autoBatchDraw = true, Color bgColor = {0, 0, 0, 0});
 
 	static bool initialized;
 private:

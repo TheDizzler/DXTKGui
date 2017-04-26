@@ -89,7 +89,7 @@ protected:
 
 /** A pop-up Dialog Box with button options (optional - up to 3: Ok, Neutral, Cancel).
 	Title area and button area automatically adjust to size of their components.
-	NOTE: This control is fairly expensive. Use conservatively. */
+	NOTE: This control is fairly expensive. Use conservatively. EDIT: It's a bit better now. */
 class PromptDialog : public Dialog {
 public:
 
@@ -107,8 +107,6 @@ public:
 	virtual void setDimensions(const Vector2& position, const Vector2& size,
 		const int frameThickness = 2);
 
-	virtual GraphicsAsset* texturize() override;
-	virtual void textureDraw(SpriteBatch * batch) override;
 
 	void setTitle(wstring text, const Vector2& scale = Vector2(1.5, 1.5),
 		const pugi::char_t* font = "Default Font", Color color = Color(1, .5, 0, 1));
@@ -139,6 +137,9 @@ public:
 	virtual void update(double deltaTime);
 	/* Dialog checks to see if it's open before performing any logic. */
 	virtual void draw(SpriteBatch* batch);
+
+	virtual GraphicsAsset* texturize() override;
+	virtual void textureDraw(SpriteBatch* batch) override;
 
 	/* Add other GUIControls to dialog. Control position should be relative to Dialog.
 		Returns the position of control in control list. */

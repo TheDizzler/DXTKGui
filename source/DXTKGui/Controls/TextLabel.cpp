@@ -72,6 +72,7 @@ void TextLabel::draw(SpriteBatch* batch, Color color) {
 		rotation, origin, scale, layerDepth);
 }
 
+#include "../GUIFactory.h"
 GraphicsAsset* TextLabel::texturize() {
 	return guiFactory->createTextureFromIElement2D(this);
 }
@@ -141,8 +142,6 @@ void TextLabel::setHoverable(bool hoverable) {
 }
 
 
-
-#include "GUIFactory.h"
 void TextLabel::setPosition(const Vector2& pos) {
 	position = pos;
 }
