@@ -41,18 +41,18 @@ namespace StringHelper {
 
 	static inline bool reportError(HRESULT hr,
 		wstring failMessage = L"This is SRS Error",
-		wstring failTitle = L"Fatal Error") {
+		wstring failTitle = L"Fatal Error", bool showMessageBox = false) {
 
 		if (FAILED(hr)) {
 
 			_com_error err(hr);
 			wostringstream wss;
 			wss << failMessage;
-			wss << "\nHRESULT: " << err.ErrorMessage();
-			if (!Globals::FULL_SCREEN)
+			wss << "\nHRESULT: " << err.ErrorMessage() << endl;
+			if (!Globals::FULL_SCREEN && showMessageBox)
 				MessageBox(NULL, wss.str().c_str(), failTitle.c_str(), MB_OK | MB_ICONERROR);
-			else
-				OutputDebugString(wss.str().c_str());
+
+			OutputDebugString(wss.str().c_str());
 			return true;
 		}
 

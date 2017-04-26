@@ -10,7 +10,14 @@ interface GUIControl : public IElement2D {
 public:
 
 	void initializeControl(GUIFactory* factory,
-		shared_ptr<MouseController> mouseController);
+		shared_ptr<MouseController> mouseController) {
+		guiFactory = factory;
+		mouse = mouseController;
+		projectedHitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
+
+		translationMatrix = [&]() -> Matrix { return Matrix::Identity; };
+		cameraZoom = [&]() -> float { return 1;};
+	}
 
 	/* Deprecating */
 	enum ClickAction {
@@ -49,11 +56,15 @@ public:
 
 	const HitArea* getHitArea() const;
 
-	/* example of use:
-		control->setMatrixFunction([&]() -> Matrix { return camera->translationMatrix(); }); */
-	void setMatrixFunction(function<Matrix()> translationMat) {
-		translationMatrix = translationMat;
+	/* control->setMatrixFunction([&]() -> Matrix { return camera->translationMatrix(); }); */
+	void setMatrixFunction(function<Matrix()> translationFunction) {
+		translationMatrix = translationFunction;
 	}
+	void setCameraZoom(function<float()> zoomFunction) {
+		cameraZoom = zoomFunction;
+	}
+
+
 
 	virtual void updateProjectedHitArea();
 
@@ -75,6 +86,7 @@ public:
 
 protected:
 	function<Matrix()> translationMatrix;
+	function<float()> cameraZoom;
 	unique_ptr<HitArea> hitArea;
 
 	unique_ptr<HitArea> projectedHitArea;

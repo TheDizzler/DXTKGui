@@ -205,5 +205,6 @@ private:
 	unique_ptr<Dialog> exitDialog;
 	TextLabel* test;
 	TextLabel* mouseLabel;
+	TextLabel* fpsLabel;
 };
 

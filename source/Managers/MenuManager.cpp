@@ -174,6 +174,13 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	mouseLabel->setAlpha(.1);
 	guiControls.push_back(mouseLabel);
 
+	fpsLabel = guiFactory->createTextLabel(Vector2(Globals::WINDOW_WIDTH - 250, 20));
+	fpsLabel->setTint(Colors::Black);
+	fpsLabel->setScale(Vector2(.5, .5));
+	fpsLabel->setLayerDepth(1);
+	guiControls.push_back(fpsLabel);
+
+
 	{
 		exitDialog.reset(guiFactory->createDialog(true, true));
 		Vector2 dialogPos, dialogSize;

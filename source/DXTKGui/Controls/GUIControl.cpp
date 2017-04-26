@@ -1,12 +1,5 @@
 #include "GUIControl.h"
 
-void GUIControl::initializeControl(GUIFactory* factory, shared_ptr<MouseController> mouseController) {
-	guiFactory = factory;
-	mouse = mouseController;
-	projectedHitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
-
-	translationMatrix = [&]() -> Matrix { return Matrix::Identity; };
-}
 
 void GUIControl::moveBy(const Vector2& moveVector) {
 
@@ -18,6 +11,7 @@ void GUIControl::setPosition(const Vector2& pos) {
 	hitArea->position = Vector2(position.x, position.y);
 	hitArea->size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
 }
+
 
 const wchar_t* GUIControl::getText() {
 	return L"";
@@ -69,7 +63,7 @@ void GUIControl::updateProjectedHitArea() {
 
 	Vector2 screenCords = getScreenPosition(translationMatrix());
 	projectedHitArea->position = screenCords;
-	projectedHitArea->size = hitArea->size;
+	projectedHitArea->size = hitArea->size * cameraZoom();
 }
 
 const Vector2& GUIControl::getScreenPosition(Matrix viewProjectionMatrix) const {
@@ -90,6 +84,7 @@ unique_ptr<HitArea> GUIControl::getScreenHitArea(Matrix viewProjectionMatrix) co
 
 GraphicsAsset* GUIControl::createTexture() {
 	return guiFactory->createTextureFromIElement2D(this);
+
 }
 
 void GUIControl::setOrigin(const Vector2 & org) {

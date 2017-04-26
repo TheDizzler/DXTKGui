@@ -35,7 +35,14 @@ Email: tgillon.sdk@gmail.com
 >- controls can store a tranlsation matrix function to allow their use with a camera
 (world space vs screen space)
 
+##KNOWN ISSUES:
+>- controls overlapping each other may all call their onClick functions instead of the just the topmost
+>- when a control with a scrollbar has items removed from it dynamically, the scrubber doesn't resize properly
+
 ##TODO:
+>- Need to go check for circular shared_ptr references
+>- Controller controlled controls (joysticks)
+>- TransitionEffect::SplitTransition not rendering texture?
 >- !text in dialog doesn't center any more!
 >- Test using controls with layerdepth
 >- Button doesn't show hover again after click and release (fixed?)
