@@ -80,6 +80,9 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	frameRightPos.x += size.x - frameThickness;
 	// frame sticks out passed rectangle area; (-frameThickness) pulls it back in
 
+	hitArea->position = pos;
+	hitArea->size = size * scale;
+
 	if (useTexture) {
 
 		texturePanel.reset(guiFactory->createPanel());
@@ -91,8 +94,7 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 
 		texturePanel->setTexturePosition(position);*/
 	}
-	hitArea->position = pos;
-	hitArea->size = size * scale;
+	
 
 }
 
@@ -121,11 +123,7 @@ void RectangleFrame::refreshDimensions() {
 
 void RectangleFrame::draw(SpriteBatch* batch) {
 
-	//if (useTexture) {
 	texturePanel->draw(batch);
-/*	return;
-}*/
-
 }
 
 GraphicsAsset* RectangleFrame::texturize() {
@@ -135,11 +133,12 @@ GraphicsAsset* RectangleFrame::texturize() {
 
 	GraphicsAsset* gfxAsset = guiFactory->createTextureFromIElement2D(this);
 	texturePanel->setTexturePosition(frameTopPos);
+	texturePanel->setLayerDepth(layerDepth);
 
 	return	gfxAsset;
 }
 
-void RectangleFrame::textureDraw(SpriteBatch * batch) {
+void RectangleFrame::textureDraw(SpriteBatch* batch) {
 
 	// draw top horizontal bar
 	batch->Draw(pixel.Get(), frameTopPos, &frameHorizontal,
@@ -192,11 +191,11 @@ const Vector2& RectangleFrame::getPosition() const {
 }
 
 const int RectangleFrame::getWidth() const {
-	return frameHorizontal.right;
+	return hitArea->size.x;
 }
 
 const int RectangleFrame::getHeight() const {
-	return frameVertical.bottom;
+	return hitArea->size.y;
 }
 
 const float RectangleFrame::getLayerDepth() const {

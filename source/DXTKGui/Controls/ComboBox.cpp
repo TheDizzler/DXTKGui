@@ -22,15 +22,14 @@ bool ComboBox::initialize(shared_ptr<FontSet> fnt,/* GraphicsAsset* pixelAsset,*
 	ListBox* lstBx, const pugi::char_t* buttonName, bool enumerateList) {
 
 
-	frame.reset(guiFactory->createRectangleFrame());
-
 	comboListButton.reset(
 		(ImageButton*) guiFactory->createImageButton(buttonName));
 
 	comboListButton->setPosition(
 		Vector2(position.x + width - comboListButton->getWidth(), position.y));
 	comboListButton->setOnClickListener(new ShowListBoxListener(this));
-	frame->setDimensions(position, Vector2(width, comboListButton->getScaledHeight()));
+	frame.reset(guiFactory->createRectangleFrame(
+		position, Vector2(width, comboListButton->getScaledHeight())));
 
 	listBox.reset(lstBx);
 	listBox->setOnClickListener(new ListBoxListener(this));
@@ -54,7 +53,7 @@ void ComboBox::update(double deltaTime) {
 	selectedLabel->update(deltaTime);
 	comboListButton->update(deltaTime);
 
-	
+
 
 	if (isOpen) {
 		listBox->update(deltaTime);
@@ -77,7 +76,7 @@ void ComboBox::draw(SpriteBatch* batch) {
 void ComboBox::open() {
 
 	isOpen = !isOpen;
-	
+
 }
 
 void ComboBox::close() {

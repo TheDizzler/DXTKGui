@@ -367,8 +367,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	displayModeCombobox =
 		guiFactory->createComboBox(controlPos, 75, itemHeight, 10, true);
 
-	populateDisplayModeList(
-		game->getDisplayModeList(0));
+	populateDisplayModeList(game->getDisplayModeList(0));
 	displayModeCombobox->setScrollBar(scrollBarDesc);
 	displayModeCombobox->setSelected(game->getSelectedDisplayModeIndex());
 	guiControls.push_back(displayModeCombobox);

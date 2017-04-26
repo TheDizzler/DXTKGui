@@ -61,7 +61,7 @@ public:
 
 
 /** A simple control to display various (text) items. */
-class ListBox : public GUIControl {
+class ListBox : public GUIControl, public Texturizable {
 public:
 	ListBox(const Vector2& position, const int width,
 		size_t itemHeight = 32, const int maxItemsShown = 7);
@@ -70,6 +70,7 @@ public:
 	void initialize(shared_ptr<FontSet> font,
 		GraphicsAsset* pixelAsset, ScrollBar* scrollBar,
 		bool enumerateList = false);
+
 
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);
 	void alwaysShowScrollBar(bool alwaysShow);
@@ -81,6 +82,8 @@ public:
 	virtual void update(double deltaTime) override;
 	void draw(SpriteBatch* batch);
 
+	virtual GraphicsAsset* texturize() override;
+	virtual void textureDraw(SpriteBatch* batch) override;
 
 	void setSelected(size_t newIndex);
 	const int getSelectedIndex() const;
@@ -99,6 +102,7 @@ public:
 	size_t maxDisplayItems = 7;
 
 
+	virtual void setPosition(const Vector2 & position) override;
 
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 	virtual const Vector2 & getPosition() const override;

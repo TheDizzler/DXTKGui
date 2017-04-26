@@ -30,10 +30,11 @@ void ScreenTransitionManager::setTransition(ScreenTransition* effect) {
 void ScreenTransitionManager::transitionBetween(
 	Screen* oldScreen, Screen* newScreen, float transitionTime) {
 	
-	Color wipeColor = Colors::PeachPuff;
+	Color purple = Color(158, 0, 58);
+	Color blue = Color(0, 58, 158);
 	transition->setTransitionBetween(
-		guiFactory->createTextureFromScreen(oldScreen, Color(158, 0, 58)/*, wipeColor*/),
-		guiFactory->createTextureFromScreen(newScreen, Color(0, 58, 158)/*, wipeColor*/), transitionTime);
+		guiFactory->createTextureFromScreen(oldScreen, true, Color(158, 0, 58)),
+		guiFactory->createTextureFromScreen(newScreen, true, Color(0, 58, 158)), transitionTime);
 }
 
 bool ScreenTransitionManager::runTransition(double deltaTime) {

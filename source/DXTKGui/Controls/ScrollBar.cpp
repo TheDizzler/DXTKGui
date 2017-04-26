@@ -355,7 +355,7 @@ void Scrubber::setDimensions(const Sprite* scrollBarTrack,
 
 
 
-	minPosition = maxPosition/* = position*/ = scrollBarTrack->getPosition();
+	minPosition = maxPosition = position = scrollBarTrack->getPosition();
 	if (max != -1)
 		maxPercent = max;
 	percentDifference = 1 / maxPercent;

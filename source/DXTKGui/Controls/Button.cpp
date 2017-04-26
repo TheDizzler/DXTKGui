@@ -235,12 +235,10 @@ void Button::setScale(const Vector2& scl) {
 
 
 const int Button::getWidth() const {
-
 	return width;
 }
 
 const int Button::getHeight() const {
-
 	return height;
 }
 
@@ -264,7 +262,6 @@ bool Button::clicked() {
 }
 
 bool Button::pressed() {
-
 	return isPressed;
 }
 
@@ -280,7 +277,7 @@ void Button::setFont(const pugi::char_t* font) {
 
 
 
-
+/** **** ImageButton **** **/
 ImageButton::ImageButton(unique_ptr<Sprite> buttonSprite,
 	unique_ptr<FontSet> font) : Button(NULL, move(font)) {
 
@@ -297,7 +294,7 @@ ImageButton::ImageButton(unique_ptr<Sprite> buttonSprite,
 	setToUnpressedState();
 }
 
-/** **** ImageButton **** **/
+
 ImageButton::ImageButton(unique_ptr<Sprite> upButtonSprite,
 	unique_ptr<Sprite> downButtonSprite, unique_ptr<FontSet> font)
 	: Button(NULL, move(font)) {

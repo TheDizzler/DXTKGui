@@ -9,6 +9,8 @@ GraphicsEngine::GraphicsEngine() {
 
 GraphicsEngine::~GraphicsEngine() {
 
+	debugDevice->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+
 	if (swapChain.Get() != NULL)
 		swapChain->SetFullscreenState(false, NULL);
 

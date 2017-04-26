@@ -551,7 +551,7 @@ GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), bgColor);
 
 	if (autoBatchDraw) {
-		batch->Begin(SpriteSortMode_Immediate);
+		batch->Begin(SpriteSortMode_Deferred);
 		{
 			control->textureDraw(batch);
 		}
@@ -566,6 +566,7 @@ GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 		Vector2(width - widthPadding - buffer, height - heightPadding - buffer), Vector2::Zero);
 	return gfxAsset;
 }
+
 
 GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, bool autoBatchDraw, Color bgColor) {
 
@@ -640,7 +641,7 @@ GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, bool autoBatc
 	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), bgColor);
 
 	if (autoBatchDraw) {
-		batch->Begin(SpriteSortMode_Immediate);
+		batch->Begin(SpriteSortMode_Deferred);
 		{
 			screen->textureDraw(batch);
 		}

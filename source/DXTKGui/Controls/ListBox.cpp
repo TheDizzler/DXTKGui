@@ -107,6 +107,10 @@ void ListBox::resizeBox() {
 	hitArea->size = frameSize;
 }
 
+void ListBox::setPosition(const Vector2& position) {
+	GUIControl::setPosition(position);
+}
+
 void ListBox::alwaysShowScrollBar(bool alwaysShow) {
 	alwaysDisplayScrollBar = alwaysShow;
 }
@@ -144,8 +148,7 @@ void ListBox::update(double deltaTime) {
 			firstItemToDisplay = listItems.size() - maxDisplayItems;*/
 	}
 
-	for (int j = firstItemToDisplay;
-		j < firstItemToDisplay + itemsToDisplay; ++j) {
+	for (int j = firstItemToDisplay; j < firstItemToDisplay + itemsToDisplay; ++j) {
 		if (listItems[j]->update(deltaTime, mouse.get())) {
 			if (!multiSelect) {
 				for (int i = 0; i < listItems.size(); ++i) {
@@ -190,6 +193,14 @@ void ListBox::draw(SpriteBatch* batch) {
 		frame->draw(batch);
 	}
 
+}
+
+
+GraphicsAsset* ListBox::texturize() {
+	return nullptr;
+}
+
+void ListBox::textureDraw(SpriteBatch* batch) {
 }
 
 

@@ -25,6 +25,7 @@ Email: tgillon.sdk@gmail.com
 >- Button - text, image, animated
 >- TexturePanel - can take a ShaderResourceView, display it, and scroll vertically
 >- Dialog Box - draggable and non-draggable; implements TexturePanel to allow text scrolling; no image (bg) loading yet;
+>- Dynamic Dialog that takes 9 images to make a variable sized dialog box
 >- Check Box - with onClickListener
 >- ListBox - with onClickListener; auto-size to content
 >- Scrollbar - now with customizable sprites!
@@ -42,9 +43,6 @@ Email: tgillon.sdk@gmail.com
 ##TODO:
 >- Need to go check for circular shared_ptr references
 >- Controller controlled controls (joysticks)
->- TransitionEffect::SplitTransition not rendering texture?
->- !text in dialog doesn't center any more!
->- Test using controls with layerdepth
 >- Button doesn't show hover again after click and release (fixed?)
 >- ImageButtons do not go back to hoverstate after press release
 >- Dialog Box - allow hyphenating of words that can't fit on one line with option to turn on/off
@@ -54,7 +52,6 @@ Email: tgillon.sdk@gmail.com
 >- TexturePanel - add horizontal scrolling
 >- A Panel for adding controls?
 >- Dialog Box - allow custom bg image;
->- force minimum size for dialog box?
 >- Scrollbar that can be slapped on to anything; horizontal scrolling
 >- List Box - multi-select; test adding, removing, clearing items live
 >- Radio Buttons

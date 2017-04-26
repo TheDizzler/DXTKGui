@@ -111,10 +111,11 @@ public:
 	/* Creates a texture from a screen grab of an IElement2D object.
 		offset is the vector to bring object to top left corner of screen
 			in prep for its close up.*/
-	GraphicsAsset* createTextureFromIElement2D(
-		Texturizable* control, bool autoBatchDraw = true, Color bgColor = {0, 0, 0, 0});
+	GraphicsAsset* createTextureFromIElement2D(Texturizable* control,
+		bool autoBatchDraw = true, Color bgColor = {0, 0, 0, 0});
 
-	GraphicsAsset* createTextureFromScreen(Screen* screen, bool autoBatchDraw = true, Color bgColor = {0, 0, 0, 0});
+	GraphicsAsset* createTextureFromScreen(Screen* screen,
+		bool autoBatchDraw = true, Color bgColor = {0, 0, 0, 0});
 
 	static bool initialized;
 private:
