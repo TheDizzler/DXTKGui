@@ -2,8 +2,8 @@
 
 A GUI Framework for DirectX ToolKit.
 This developed out of one part not being able to find any existing frameworks and one part me procrastinating on developing the game I'm working on. I had some hacky GUI features (button, dialog box, listbox) and I was bothered by how inflexible and cumbersome they were. So I started this project to make an extensible, easy to use, and re-usable GUI toolkit.
-I have tried to prioritize run-time efficiency over start-up, so at times a lot of redundant functions will be called multiple times when constructing new controls. The best work around to the redundancy (that I can think of) would put more work on the end-user; however, reducing work for the end-user has been my number one goal for this project, so decreasing control construction time will remain a mission for the future (perhaps).
-Just keep that in mind if you are trying to create a couple dozen controls in real-time! :)
+I have tried to prioritize run-time efficiency over start-up, so at times a lot of redundant functions will be called multiple times when constructing and updating new controls. The best work around to these redundancies (that I can think of) would put more work on the end-user; however, reducing work for the end-user has been my number one goal for this project, so decreasing control construction/manipulate time will remain a mission for the future (perhaps).
+Just keep that in mind if you are trying to create and manipulate a couple dozen controls in real-time! :)
 
 This tool kit requires DirectXTK.
 
