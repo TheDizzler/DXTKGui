@@ -192,13 +192,6 @@ TriangleFrame* GUIFactory::createTriangleFrame(const Vector2& pt1, const Vector2
 	return triangle;
 }
 
-//TextLabel* GUIFactory::createTextLabel(const Vector2& position,
-//	const char_t* fontName) {
-//
-//	TextLabel* label = new TextLabel(position, getFont(fontName));
-//	label->initializeControl(this, mouseController);
-//	return label;
-//}
 
 TextLabel* GUIFactory::createTextLabel(const Vector2& position,
 	wstring text, const char_t* fontName, bool useTexture) {
@@ -281,7 +274,6 @@ Button* GUIFactory::createImageButton(const char_t* upImageName,
 
 	ImageButton* button = new ImageButton(this, mouseController,
 		getSpriteFromAsset(upImageName), getSpriteFromAsset(downImageName), fontName);
-		//button->initializeControl(this, mouseController);
 
 	return button;
 }
@@ -298,7 +290,6 @@ Button* GUIFactory::createImageButton(unique_ptr<Sprite> upSprite, const char_t*
 
 	ImageButton* button = new ImageButton(this,
 		mouseController, move(upSprite), fontName);
-		//button->initializeControl(this, mouseController);
 	return button;
 }
 
@@ -307,7 +298,6 @@ AnimatedButton* GUIFactory::createAnimatedButton(const char_t* animatedButtonNam
 
 	AnimatedButton* button = new AnimatedButton(this, mouseController,
 		getAnimation(animatedButtonName), position);
-		//button->initializeControl(this, mouseController);
 	return button;
 }
 
@@ -318,7 +308,7 @@ CheckBox* GUIFactory::createCheckBox(const Vector2& position,
 	CheckBox* check = new CheckBox(this, mouseController,
 		getSpriteFromAsset("CheckBox Unchecked"),
 		getSpriteFromAsset("CheckBox Checked"), fontName);
-	//check->initializeControl(this, mouseController);
+
 	check->setText(text);
 	check->setPosition(position);
 	return check;
@@ -343,7 +333,6 @@ CheckBox* GUIFactory::createCheckBox(const Vector2& position,
 	CheckBox* check = new CheckBox(this, mouseController,
 		getSpriteFromAsset(uncheckedImage), getSpriteFromAsset(checkedImage),
 		fontName);
-	//check->initializeControl(this, mouseController);
 	check->setText(text);
 	check->setPosition(position);
 	return check;
@@ -356,7 +345,6 @@ Spinner* GUIFactory::createSpinner(const Vector2& position, const size_t width,
 	const char_t* downButtonAsset, const char_t* fontName) {
 
 	Spinner* spinner = new Spinner(this, mouseController, position, width, itemHeight, autoSize);
-	//spinner->initializeControl(this, mouseController);
 	spinner->initialize(fontName, upButtonAsset, downButtonAsset);
 	return spinner;
 }
@@ -365,7 +353,6 @@ Spinner* GUIFactory::createSpinner(const Vector2& position, const size_t width,
 ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight) {
 
 	ScrollBar* scrollBar = new ScrollBar(this, mouseController, position);
-	//scrollBar->initializeControl(this, mouseController);
 
 	if (!scrollBar->initialize(getAsset("White Pixel"), barHeight)) {
 
@@ -381,7 +368,6 @@ ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight
 	ScrollBarDesc& scrollBarDesc) {
 
 	ScrollBar* scrollBar = new ScrollBar(this, mouseController, position);
-	//scrollBar->initializeControl(this, mouseController);
 
 	ImageButton* buttons[2] = {NULL, NULL};
 	buttons[0] = (ImageButton*) createImageButton(scrollBarDesc.upButtonImage.c_str(),
@@ -391,7 +377,6 @@ ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight
 		buttons[1] = (ImageButton*) createImageButton(scrollBarDesc.upButtonImage.c_str(),
 			scrollBarDesc.upPressedButtonImage.c_str());
 		buttons[1]->setRotation(XM_PI);
-		//buttons[1]->setPosition(
 	} else {
 		buttons[1] = (ImageButton*) createImageButton(scrollBarDesc.downButtonImage.c_str(),
 			scrollBarDesc.downPressedButtonImage.c_str());
@@ -425,7 +410,7 @@ ListBox* GUIFactory::createListBox(const Vector2& position,
 
 	ListBox* listbox = new ListBox(this, mouseController,
 		position, width, itemHeight, maxItemsShown);
-	//listbox->initializeControl(this, mouseController);
+
 	Vector2 scrollBarPos(position.x + width, position.y);
 	listbox->initialize(fontName, getAsset("White Pixel"),
 		createScrollBar(scrollBarPos, itemHeight * maxItemsShown), enumerateList);
@@ -440,7 +425,6 @@ ComboBox* GUIFactory::createComboBox(const Vector2& position,
 
 	ComboBox* combobox = new ComboBox(this, mouseController,
 		position, width, itemHeight, maxItemsShown);
-	//combobox->initializeControl(this, mouseController);
 
 	combobox->initialize(getFont(fontName),
 		createListBox(
@@ -456,7 +440,7 @@ PromptDialog* GUIFactory::createDialog(const Vector2& position, const Vector2& s
 
 	PromptDialog* dialog = new PromptDialog(this, mouseController,
 		hwnd, movable, centerText);
-		//dialog->initializeControl(this, mouseController);
+
 	dialog->initialize(getAsset("White Pixel"), fontName);
 	dialog->setDimensions(position, size, frameThickness);
 	return dialog;
@@ -466,7 +450,6 @@ DynamicDialog* GUIFactory::createDynamicDialog(shared_ptr<AssetSet> dialogImageS
 	const Vector2& position, const Vector2& size, const char_t* fontName) {
 
 	DynamicDialog* dialog = new DynamicDialog(this, mouseController);
-	//dialog->initializeControl(this, mouseController);
 	dialog->initialize(dialogImageSet, fontName);
 	dialog->setDimensions(position, size);
 	return dialog;
