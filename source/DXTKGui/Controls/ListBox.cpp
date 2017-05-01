@@ -145,10 +145,9 @@ void ListBox::update(double deltaTime) {
 
 		scrollBar->update(deltaTime);
 
-		double dif = listItems.size() /*- maxDisplayItems*/;
+		double dif = listItems.size();
 		firstItemToDisplay = round(scrollBar->percentScroll * (double) dif);
-		/*if (firstItemToDisplay > listItems.size() - maxDisplayItems)
-			firstItemToDisplay = listItems.size() - maxDisplayItems;*/
+
 	}
 
 	for (int j = firstItemToDisplay; j < firstItemToDisplay + itemsToDisplay; ++j) {
@@ -159,7 +158,8 @@ void ListBox::update(double deltaTime) {
 						selectedIndex = i;
 						continue;
 					}
-					listItems[i]->isPressed = false;
+					if (listItems[i]->isSelected)
+						listItems[i]->setSelected(false);
 				}
 			}
 
@@ -199,14 +199,6 @@ void ListBox::draw(SpriteBatch* batch) {
 }
 
 
-//unique_ptr<GraphicsAsset> ListBox::texturize() {
-//	return guiFactory->createTextureFromIElement2D(this);
-//}
-//
-//void ListBox::textureDraw(SpriteBatch* batch) {
-//}
-
-
 void ListBox::setSelected(size_t newIndex) {
 
 	if (listItems.size() <= 0)
@@ -215,11 +207,12 @@ void ListBox::setSelected(size_t newIndex) {
 	selectedIndex = newIndex;
 	if (!multiSelect) {
 		for (ListItem* unselect : listItems) {
-			unselect->isPressed = false;
+			if (unselect->isSelected)
+				unselect->setSelected(false);
 		}
 	}
-	listItems[selectedIndex]->isPressed = true;
-
+	
+	listItems[selectedIndex]->setSelected(true);
 	// Adjust starting position of list to place the pressed item into view.
 	// Should only be relevant when the list is setup with an item pressed.
 	if (abs((float) firstItemToDisplay - selectedIndex) > maxDisplayItems) {
@@ -284,7 +277,6 @@ const int ListBox::getHeight() const {
 bool ListBox::clicked() {
 
 	if (isClicked) {
-		//action = ClickAction::NONE;
 		isClicked = isPressed = false;
 		return true;
 	}
@@ -305,10 +297,8 @@ bool ListBox::hovering() {
 
 
 /** **** ListItem **** **/
-ListItem::ListItem() {
-}
-
 ListItem::~ListItem() {
+	pixel.Reset();
 }
 
 void ListItem::initialize(const int width, const int height,
@@ -325,10 +315,13 @@ void ListItem::initialize(const int width, const int height,
 	pixel = pixelTexture;
 	itemPosition = Vector2::Zero;
 
+	normalFontColor = label->getTint();
 	textLabel.reset(label);
+	
 
 	isEnumerated = enumerateList;
 	listPosition = listPos;
+
 	setText();
 }
 
@@ -358,7 +351,8 @@ bool ListItem::update(double deltaTime, MouseController* mouse) {
 			buttonDownLast = true;
 
 		else if (!mouse->leftButton() && buttonDownLast) {
-			isPressed = true;
+			isSelected = true;
+			textLabel->setTint(selectedFontColor);
 			buttonDownLast = false;
 			return true;
 		}
@@ -383,12 +377,12 @@ void ListItem::updatePosition(const Vector2& pos) {
 
 void ListItem::draw(SpriteBatch* batch) {
 
-	if (isPressed) {// draw pressed color bg
+	if (isSelected) {// draw pressed color bg
 
 		batch->Draw(pixel.Get(), itemPosition, &itemRect,
 			::DirectX::Colors::White, 0.0f, Vector2(0, 0), Vector2(1, 1),
 			SpriteEffects_None, 0.0f);
-		textLabel->draw(batch, Color(0, 0, 0, 1));
+		textLabel->draw(batch/*, Color(0, 0, 0, 1)*/);
 
 	} else if (isHover) { // draw hover color bg
 
@@ -404,6 +398,16 @@ void ListItem::draw(SpriteBatch* batch) {
 			SpriteEffects_None, 0.0f);
 		textLabel->draw(batch);
 	}
+}
+
+
+void ListItem::setSelected(bool select) {
+
+	isSelected = select;
+	if (isSelected)
+		textLabel->setTint(selectedFontColor);
+	else
+		textLabel->setTint(normalFontColor);
 }
 /** **** ListItem END **** **/
 

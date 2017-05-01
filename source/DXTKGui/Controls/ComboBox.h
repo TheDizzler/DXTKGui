@@ -80,7 +80,7 @@ private:
 	unique_ptr<ImageButton> comboListButton;
 
 	unique_ptr<TextLabel> selectedLabel;
-	//Vector2 selectedDisplayPosition;
+	unique_ptr<RectangleSprite> selectedBackgroundSprite;
 
 	/* width of combobox */
 	int width;

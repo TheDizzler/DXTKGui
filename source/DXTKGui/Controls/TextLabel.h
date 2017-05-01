@@ -15,7 +15,8 @@ public:
 
 	virtual void update(double deltaTime) override;
 	void draw(SpriteBatch* batch);
-	/* Draw with an alternate color. */
+	/* Draw with an alternate color.
+		NOTE: This draws using the SpriteFont, which is highly inefficient. */
 	void draw(SpriteBatch* batch, Color tint);
 
 	virtual unique_ptr<GraphicsAsset> texturize() override;

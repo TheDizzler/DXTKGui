@@ -5,8 +5,6 @@
 
 class ListItem {
 public:
-
-	ListItem();
 	~ListItem();
 
 	void initialize(const int width, const int height,
@@ -24,10 +22,13 @@ public:
 	virtual void draw(SpriteBatch* batch);
 
 
-
-	bool isPressed = false;
+	void setSelected(bool isSelected);
+	bool isSelected = false;
 
 protected:
+
+	Color selectedFontColor = Color(0, 0, 0, 1);
+	Color normalFontColor = Color(1, 1, 1, 1);
 
 	virtual void setText() = 0;
 	unique_ptr<TextLabel> textLabel;

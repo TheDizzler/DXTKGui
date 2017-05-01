@@ -9,11 +9,12 @@
 	corner (0, 0) to be consistent with GUIControls. */
 class RectangleSprite : public Sprite {
 public:
-	RectangleSprite(GraphicsAsset* const graphicsAsset);
-	RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel,
-		const Vector2& position, const Vector2& size);
+	RectangleSprite(GraphicsAsset* const graphicsAsset, Color color = Color(1, 1, 1, 1));
+	/*RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel,
+		const Vector2& position, const Vector2& size, Color color);*/
 	~RectangleSprite();
 
+	virtual void setSize(const Vector2& size) override;
 	const Vector2 getSize() const;
 	/* position is top left corner. */
 	virtual void moveBy(const Vector2& moveVector);

@@ -62,7 +62,7 @@ public:
 
 	virtual void setDimensions(Sprite* baseSprite);
 	virtual void setDimensions(const Vector2& position, const Vector2& size);
-	void setSize(const Vector2& size);
+	virtual void setSize(const Vector2& size);
 	virtual void setPosition(const Vector2& position) override;
 	virtual void setOrigin(const Vector2& origin) override;
 	virtual void setScale(const Vector2& scale) override;

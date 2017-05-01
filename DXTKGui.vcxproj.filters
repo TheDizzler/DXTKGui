@@ -55,6 +55,12 @@
     <Filter Include="Header Files\DXTKGui\Controllers">
       <UniqueIdentifier>{3531ea5a-d5d2-4dd1-8c1d-6b6f2a3c6641}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Screens">
+      <UniqueIdentifier>{c383fec0-8bcc-4d72-81d4-f920aef91068}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Screens">
+      <UniqueIdentifier>{4d0aa3dd-16f3-49c9-8f33-55f27ab4bbcd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\main.cpp">
@@ -129,9 +135,6 @@
     <ClCompile Include="source\DXTKGui\Controls\Spinner.cpp">
       <Filter>Source Files\DXTKGui\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="source\Screens\GUIOverlay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\Engine\Joystick.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
@@ -143,6 +146,9 @@
     </ClCompile>
     <ClCompile Include="source\DXTKGui\Controls\DynamicDialog.cpp">
       <Filter>Source Files\DXTKGui\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Screens\GUIOverlay.cpp">
+      <Filter>Source Files\Screens</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -230,9 +236,6 @@
     <ClInclude Include="source\DXTKGui\GuiAssets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\Screens\GUIOverlay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\Engine\Joystick.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
@@ -244,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Controls\DynamicDialog.h">
       <Filter>Header Files\DXTKGui\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Screens\GUIOverlay.h">
+      <Filter>Header Files\Screens</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

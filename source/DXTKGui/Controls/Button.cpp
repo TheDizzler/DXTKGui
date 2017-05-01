@@ -95,7 +95,7 @@ void Button::update(double deltaTime) {
 }
 
 // this function is not cheap. I suspect the frame is most costly.
-//	EDIT: bit better now
+//	EDIT: bit better now. It was the button label.
 void Button::draw(SpriteBatch* batch) {
 
 	rectSprite->draw(batch);

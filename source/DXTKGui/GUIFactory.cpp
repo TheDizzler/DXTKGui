@@ -165,9 +165,9 @@ Line* GUIFactory::createLine(const Vector2& position, const Vector2& size, Color
 }
 
 RectangleSprite* GUIFactory::createRectangle(
-	const Vector2& position, const Vector2& size) {
+	const Vector2& position, const Vector2& size, Color color) {
 
-	RectangleSprite* rect = new RectangleSprite(getAsset("White Pixel"));
+	RectangleSprite* rect = new RectangleSprite(getAsset("White Pixel"), color);
 	rect->setDimensions(position, size);
 
 	return rect;

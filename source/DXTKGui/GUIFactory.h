@@ -41,7 +41,7 @@ public:
 	Line* createLine(const Vector2& position, const Vector2& size, Color lineColor = Color(0, 0, 0, 1));
 
 	RectangleSprite* createRectangle(const Vector2& position = Vector2::Zero,
-		const Vector2& size = Vector2::Zero);
+		const Vector2& size = Vector2::Zero, Color color = Color(1, 1, 1, 1));
 
 	RectangleFrame* createRectangleFrame(const Vector2& position = Vector2::Zero,
 		const Vector2& size = Vector2(10, 10), USHORT frameThickness = 2,

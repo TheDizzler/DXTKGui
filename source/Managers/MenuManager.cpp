@@ -293,13 +293,13 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	// Labels for displaying pressed info
 	adapterLabel = guiFactory->createTextLabel(controlPos, L"Test");
 	adapterLabel->setHoverable(true);
-	guiControls.push_back(adapterLabel);
+	//guiControls.push_back(adapterLabel);
 
 	controlPos.y += adapterLabel->getHeight() + MARGIN;
 
 	// create listbox of gfx cards
 	adapterListbox = guiFactory->createListBox(controlPos, 400, itemHeight);
-	guiControls.push_back(adapterListbox);
+	//guiControls.push_back(adapterListbox);
 	vector<ListItem*> adapterItems;
 	for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
 		AdapterItem* item = new AdapterItem();
@@ -319,13 +319,13 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 
 	controlPos.y += adapterListbox->getHeight() + MARGIN * 2;
 	displayLabel = guiFactory->createTextLabel(controlPos, L"A");
-	guiControls.push_back(displayLabel);
+	//guiControls.push_back(displayLabel);
 
 	controlPos.y += displayLabel->getHeight() + MARGIN;
 
 	// create listbox of monitors available to pressed gfx card
 	displayListbox = guiFactory->createListBox(controlPos, 400, itemHeight);
-	guiControls.push_back(displayListbox);
+	//guiControls.push_back(displayListbox);
 	// because only the one adapter has displays on my laptop
 	// this has to be grab the first (and only) display.
 	populateDisplayList(game->getDisplayListFor(0));
@@ -349,7 +349,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	}
 
 	testSpinner->addItems(items);
-	guiControls.push_back(testSpinner);
+	//guiControls.push_back(testSpinner);
 
 
 	// Setup display mode combobox
@@ -367,7 +367,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 		guiFactory->createComboBox(controlPos, 75, itemHeight, 10, true);
 
 	populateDisplayModeList(game->getDisplayModeList(0));
-	displayModeCombobox->setScrollBar(scrollBarDesc);
+	//displayModeCombobox->setScrollBar(scrollBarDesc);
 	displayModeCombobox->setSelected(game->getSelectedDisplayModeIndex());
 	guiControls.push_back(displayModeCombobox);
 
@@ -382,11 +382,11 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 		= new OnClickListenerFullScreenCheckBox(this);
 	check->setChecked(Globals::FULL_SCREEN);
 	check->setOnClickListener(onClickFullScreen);
-	guiControls.push_back(check);
+	//guiControls.push_back(check);
 
 	testLabel = guiFactory->createTextLabel(
 		Vector2(250, 450), L"Test Messages here");
-	guiControls.push_back(testLabel);
+	//guiControls.push_back(testLabel);
 
 	// Create Apply and Cancel Buttons
 	ImageButton* button = (ImageButton*) guiFactory->
@@ -397,7 +397,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 		Vector2(Globals::WINDOW_WIDTH / 2 - button->getWidth(),
 			Globals::WINDOW_HEIGHT - button->getHeight() - 25));
 	button->setOnClickListener(new BackButtonListener(this));
-	guiControls.push_back(button);
+	//guiControls.push_back(button);
 
 	button = (ImageButton*) guiFactory->createImageButton("Button Up", "Button Down");
 	button->action = Button::ClickAction::OK;
@@ -405,7 +405,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	button->setPosition(
 		Vector2(Globals::WINDOW_WIDTH / 2,
 			Globals::WINDOW_HEIGHT - button->getHeight() - 25));
-	guiControls.push_back(button);
+	//guiControls.push_back(button);
 
 
 	return true;

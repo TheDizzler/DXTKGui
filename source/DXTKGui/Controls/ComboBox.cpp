@@ -19,7 +19,7 @@ ComboBox::~ComboBox() {
 }
 
 #include "../GUIFactory.h"
-bool ComboBox::initialize(shared_ptr<FontSet> fnt,/* GraphicsAsset* pixelAsset,*/
+bool ComboBox::initialize(shared_ptr<FontSet> fnt,
 	ListBox* lstBx, const pugi::char_t* buttonName, bool enumerateList) {
 
 
@@ -38,6 +38,10 @@ bool ComboBox::initialize(shared_ptr<FontSet> fnt,/* GraphicsAsset* pixelAsset,*
 	selectedLabel.reset(guiFactory->createTextLabel(
 		Vector2(position.x + textMarginX, position.y + textMarginY)));
 	selectedLabel->setOnClickListener(new SelectedOnClick(this));
+
+	selectedBackgroundSprite.reset(guiFactory->createRectangle(position,
+		Vector2(width, comboListButton->getScaledHeight()), Color(.5, .5, .5, 1)));
+
 	return true;
 }
 
@@ -68,6 +72,7 @@ void ComboBox::draw(SpriteBatch* batch) {
 		listBox->draw(batch);
 	}
 
+	selectedBackgroundSprite->draw(batch);
 	selectedLabel->draw(batch);
 	comboListButton->draw(batch);
 	frame->draw(batch);
@@ -89,6 +94,8 @@ void ComboBox::resizeBox() {
 	comboListButton->setPosition(
 		Vector2(position.x + width - comboListButton->getWidth(), position.y));
 	frame->setDimensions(position, Vector2(width, comboListButton->getHeight()));
+	selectedBackgroundSprite->setDimensions(position,
+		Vector2(width, comboListButton->getHeight()));
 }
 
 void ComboBox::alwaysShowScrollBar(bool alwaysShow) {

@@ -1,21 +1,36 @@
 #include "PrimitiveShapes.h"
 
-RectangleSprite::RectangleSprite(GraphicsAsset* const graphicsAsset)
+RectangleSprite::RectangleSprite(GraphicsAsset* const graphicsAsset, Color color)
 	: Sprite() {
 
 	Sprite::load(graphicsAsset);
 	origin = Vector2(0, 0);
+	tint = color;
 }
 
-RectangleSprite::RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel,
-	const Vector2& pos, const Vector2 & size) : Sprite() {
-
-	texture = pixel;
-	setDimensions(pos, size);
-}
+//RectangleSprite::RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel,
+//	const Vector2& pos, const Vector2 & size, Color color) : Sprite() {
+//
+//	texture = pixel;
+//	tint = color;
+//	setDimensions(pos, size);
+//}
 
 RectangleSprite::~RectangleSprite() {
 	texture.Reset();
+}
+
+void RectangleSprite::setSize(const Vector2 & size) {
+Sprite::setSize(size);
+
+	/*sourceRect.left = 0;
+	sourceRect.top = 0;
+	sourceRect.bottom = height;
+	sourceRect.right = width;*/
+
+	/*hitArea.reset(new HitArea(
+		Vector2(position.x - origin.x *scale.x, position.y - origin.y*scale.y),
+		Vector2(size.x*scale.x, size.y*scale.y)));*/
 }
 
 const Vector2 RectangleSprite::getSize() const {
