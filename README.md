@@ -44,10 +44,10 @@ Email: tgillon.sdk@gmail.com
 >- when a control with a scrollbar has items removed from it dynamically, the scrubber doesn't resize properly
 
 ##TODO:
+>- find out how to purge all the reported live objects ':/
 >- Need to go check for circular shared_ptr references
 >- Controller controlled controls (joysticks)
 >- Button doesn't show hover again after click and release (fixed?)
->- ImageButtons do not go back to hoverstate after press release
 >- Dialog Box - allow hyphenating of words that can't fit on one line with option to turn on/off
 (currently puts whole word on next line or puts break in word)
 >- ~~control contents should adjust for frame thickness~~

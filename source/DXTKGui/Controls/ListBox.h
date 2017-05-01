@@ -40,6 +40,8 @@ protected:
 			position: for text only. */
 	Vector2 itemPosition;
 
+	float layerDepth = 1;
+
 	size_t textMarginX = 10;
 	size_t textMarginY = 5;
 

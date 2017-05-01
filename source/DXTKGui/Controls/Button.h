@@ -122,7 +122,8 @@ protected:
 
 	GraphicsAsset* pixelAsset;
 
-	bool hasBeenSetOnce = false;
+	bool hasBeenSetUnpressed = false;
+	bool hasBeenSetHover = false;
 	//bool resized = false;
 };
 

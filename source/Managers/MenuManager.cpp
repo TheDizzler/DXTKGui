@@ -391,21 +391,20 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	// Create Apply and Cancel Buttons
 	ImageButton* button = (ImageButton*) guiFactory->
 		createImageButton("Button Up", "Button Down");
-	button->action = Button::ClickAction::CANCEL;
 	button->setText(L"Back");
 	button->setPosition(
 		Vector2(Globals::WINDOW_WIDTH / 2 - button->getWidth(),
 			Globals::WINDOW_HEIGHT - button->getHeight() - 25));
-	button->setOnClickListener(new BackButtonListener(this));
+	//button->setOnClickListener(new BackButtonListener(this));
 	//guiControls.push_back(button);
 
 	button = (ImageButton*) guiFactory->createImageButton("Button Up", "Button Down");
-	button->action = Button::ClickAction::OK;
 	button->setText(L"Apply");
 	button->setPosition(
 		Vector2(Globals::WINDOW_WIDTH / 2,
 			Globals::WINDOW_HEIGHT - button->getHeight() - 25));
 	//guiControls.push_back(button);
+
 
 
 	return true;
@@ -486,6 +485,7 @@ void DisplayItem::setText() {
 	wss << desc.DeviceName;
 	textLabel->setText(wss);
 }
+
 
 void DisplayModeItem::setText() {
 

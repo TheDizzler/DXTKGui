@@ -65,9 +65,12 @@ void Button::update(double deltaTime) {
 	if (projectedHitArea->contains(mouse->getPosition())) {
 		isHover = true;
 		if (!isPressed) {
-			onHover();
-			setToHoverState();
-			hasBeenSetOnce = false;
+			if (!hasBeenSetHover) {
+				onHover();
+				setToHoverState();
+				hasBeenSetHover = true;
+				hasBeenSetUnpressed = false;
+			}
 		}
 	} else
 		isHover = false;
@@ -77,19 +80,22 @@ void Button::update(double deltaTime) {
 		isPressed = false;
 		onClick();
 		setToUnpressedState();
-		hasBeenSetOnce = false;
+		hasBeenSetUnpressed = false;
+		hasBeenSetHover = false;
 	} else {
 		isClicked = false;
 		if (!isHover) {
-			if (!hasBeenSetOnce) {
+			if (!hasBeenSetUnpressed) {
 				isPressed = false;
 				setToUnpressedState();
-				hasBeenSetOnce = true;
+				hasBeenSetUnpressed = true;
+				hasBeenSetHover = false;
 			}
 		} else if (mouse->pressed()) {
 			isPressed = true;
 			setToSelectedState();
-			hasBeenSetOnce = false;
+			hasBeenSetUnpressed = false;
+			hasBeenSetHover = false;
 		}
 	}
 }
@@ -177,7 +183,6 @@ void Button::setPosition(const Vector2& pos) {
 
 	buttonLabel->setPosition(position);
 	if (frame != NULL)
-		//frame->setDimensions(position, hitArea->size, frameThickness);
 		frame->setPosition(position);
 	if (rectSprite != NULL)
 		rectSprite->setDimensions(position, hitArea->size);

@@ -182,15 +182,16 @@ void ListBox::update(double deltaTime) {
 void ListBox::draw(SpriteBatch* batch) {
 
 	size_t shown = 0;
-	for (int i = firstItemToDisplay;
+	/*for (int i = firstItemToDisplay;
 		i < firstItemToDisplay + itemsToDisplay; ++i) {
 
 		listItems[i]->draw(batch);
 
-	}
+	}*/
 
-	if (itemsToDisplay == maxDisplayItems || alwaysDisplayScrollBar)
+	if (itemsToDisplay == maxDisplayItems || alwaysDisplayScrollBar) {
 		scrollBar->draw(batch);
+	}
 
 	if (listItems.size() > 0) { // draw frame
 		frame->draw(batch);
@@ -211,7 +212,7 @@ void ListBox::setSelected(size_t newIndex) {
 				unselect->setSelected(false);
 		}
 	}
-	
+
 	listItems[selectedIndex]->setSelected(true);
 	// Adjust starting position of list to place the pressed item into view.
 	// Should only be relevant when the list is setup with an item pressed.
@@ -317,7 +318,7 @@ void ListItem::initialize(const int width, const int height,
 
 	normalFontColor = label->getTint();
 	textLabel.reset(label);
-	
+
 
 	isEnumerated = enumerateList;
 	listPosition = listPos;
@@ -381,21 +382,21 @@ void ListItem::draw(SpriteBatch* batch) {
 
 		batch->Draw(pixel.Get(), itemPosition, &itemRect,
 			::DirectX::Colors::White, 0.0f, Vector2(0, 0), Vector2(1, 1),
-			SpriteEffects_None, 0.0f);
-		textLabel->draw(batch/*, Color(0, 0, 0, 1)*/);
+			SpriteEffects_None, layerDepth);
+		textLabel->draw(batch);
 
 	} else if (isHover) { // draw hover color bg
 
 		batch->Draw(pixel.Get(), itemPosition, &itemRect,
 			::DirectX::Colors::Aqua, 0.0f, Vector2(0, 0), Vector2(1, 1),
-			SpriteEffects_None, 0.0f);
+			SpriteEffects_None, layerDepth);
 		textLabel->draw(batch);
 
 	} else { // draw basic bg
 
 		batch->Draw(pixel.Get(), itemPosition, &itemRect,
 			::DirectX::Colors::BurlyWood, 0.0f, Vector2(0, 0), Vector2(1, 1),
-			SpriteEffects_None, 0.0f);
+			SpriteEffects_None, layerDepth);
 		textLabel->draw(batch);
 	}
 }
