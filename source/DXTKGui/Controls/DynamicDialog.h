@@ -11,17 +11,15 @@
 class DynamicDialog : public Dialog {
 public:
 	/** Movable and centerText not yet implemented). */
-	DynamicDialog();
+	DynamicDialog(GUIFactory* factory,
+		shared_ptr<MouseController> mouseController);
 	~DynamicDialog();
 
-
-	virtual void initializeControl(GUIFactory* factory,
-		shared_ptr<MouseController> mouseController);
 
 	void initialize(shared_ptr<AssetSet> assetSet,
 		const pugi::char_t* font = "Default Font");
 
-	virtual GraphicsAsset* texturize() override;
+	virtual unique_ptr<GraphicsAsset> texturize() override;
 	virtual void textureDraw(SpriteBatch * batch) override;
 
 	virtual void setText(wstring text) override;

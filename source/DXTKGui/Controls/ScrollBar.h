@@ -72,7 +72,8 @@ struct ScrollBarDesc {
 /** Do not use this classes HitArea - it is NULL. */
 class ScrollBar : public GUIControl {
 public:
-	ScrollBar(const Vector2& position);
+	ScrollBar(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+		const Vector2& position);
 	~ScrollBar();
 
 	/* scrollBarButtons[0] = Up Button

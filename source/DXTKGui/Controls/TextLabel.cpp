@@ -1,29 +1,32 @@
 #include "TextLabel.h"
 
-
-TextLabel::TextLabel(Vector2 pos, wstring text, shared_ptr<FontSet> fnt) {
+#include "../GUIFactory.h"
+TextLabel::TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	Vector2 pos, wstring text, const pugi::char_t* fontName, bool texture)
+	: GUIControl(factory, mouseController) {
 
 	position = pos;
-	font = fnt;
-	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
+	font = guiFactory->getFont(fontName);
+	hitArea = make_unique<HitArea>(position, Vector2::Zero);
+
+	useTexture = texture;
+
 	setText(text);
 }
 
-TextLabel::TextLabel(Vector2 pos, shared_ptr<FontSet> fnt) {
-
-	position = pos;
-	font = fnt;
-	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
-}
-
-
-TextLabel::TextLabel(shared_ptr<FontSet> fnt) {
+TextLabel::TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	wstring text, shared_ptr<FontSet> fnt, bool texture) : GUIControl(factory, mouseController) {
 
 	font = fnt;
-	hitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
+	hitArea = make_unique<HitArea>(position, Vector2::Zero);
+	useTexture = texture;
+
+	setText(text);
 }
 
 TextLabel::~TextLabel() {
+
+	texturePanel.reset();
 	if (onClickListener != NULL)
 		delete onClickListener;
 	if (onHoverListener != NULL)
@@ -63,8 +66,11 @@ void TextLabel::update(double deltaTime) {
 
 void TextLabel::draw(SpriteBatch* batch) {
 
-	font->draw(batch, label.c_str(), position, tint,
-		rotation, origin, scale, layerDepth);
+	if (!useTexture)
+		font->draw(batch, label.c_str(), position, tint,
+			rotation, origin, scale, layerDepth);
+	else
+		texturePanel->draw(batch);
 }
 
 void TextLabel::draw(SpriteBatch* batch, Color color) {
@@ -72,8 +78,8 @@ void TextLabel::draw(SpriteBatch* batch, Color color) {
 		rotation, origin, scale, layerDepth);
 }
 
-#include "../GUIFactory.h"
-GraphicsAsset* TextLabel::texturize() {
+
+unique_ptr<GraphicsAsset> TextLabel::texturize() {
 	return guiFactory->createTextureFromIElement2D(this);
 }
 
@@ -94,6 +100,7 @@ void TextLabel::setText(wostringstream& text) {
 	setText(text.str());
 }
 
+
 void TextLabel::setText(wstring text) {
 
 	label = text;
@@ -101,6 +108,13 @@ void TextLabel::setText(wstring text) {
 	size *= scale;
 	hitArea->position = position;
 	hitArea->size = size;
+
+	if (useTexture) {
+		/*if (texturePanel.get())
+			delete texturePanel.release();*/ // useless
+		texturePanel.reset(guiFactory->createPanel());
+		texturePanel->setTexture(texturize());
+	}
 }
 
 const Vector2& XM_CALLCONV TextLabel::measureString() const {
@@ -142,15 +156,55 @@ void TextLabel::setHoverable(bool hoverable) {
 }
 
 
-void TextLabel::setPosition(const Vector2& pos) {
-	position = pos;
+void TextLabel::moveBy(const Vector2& moveVector) {
+	setPosition(position + moveVector);
 }
+
+void TextLabel::setPosition(const Vector2& pos) {
+	GUIControl::setPosition(pos);
+
+	if (useTexture)
+		texturePanel->setPosition(position);
+}
+
 void TextLabel::setFont(const pugi::char_t* fontName) {
 	font = guiFactory->getFont(fontName);
+	if (useTexture) {
+		texturePanel.reset(guiFactory->createPanel());
+		texturePanel->setTexture(texturize());
+	}
 }
 
 void TextLabel::setFont(shared_ptr<FontSet> newFont) {
 	font = newFont;
+	if (useTexture) {
+		texturePanel.reset(guiFactory->createPanel());
+		texturePanel->setTexture(texturize());
+	}
+}
+
+void TextLabel::setTint(const XMFLOAT4 color) {
+	tint = color;
+	if (useTexture) {
+		texturePanel.reset(guiFactory->createPanel());
+		texturePanel->setTexture(texturize());
+	}
+}
+
+void TextLabel::setTint(const Color& color) {
+	tint = color;
+	if (useTexture) {
+		texturePanel.reset(guiFactory->createPanel());
+		texturePanel->setTexture(texturize());
+	}
+}
+
+void TextLabel::setTint(const XMVECTORF32 color) {
+	tint = color;
+	if (useTexture) {
+		texturePanel.reset(guiFactory->createPanel());
+		texturePanel->setTexture(texturize());
+	}
 }
 
 void TextLabel::setScale(const Vector2 & scl) {
@@ -159,6 +213,10 @@ void TextLabel::setScale(const Vector2 & scl) {
 	size *= scale;
 	hitArea->position = position;
 	hitArea->size = size;
+	if (useTexture) {
+		texturePanel.reset(guiFactory->createPanel());
+		texturePanel->setTexture(texturize());
+	}
 }
 
 void TextLabel::setLayerDepth(const float newDepth, bool frontToBack) {
@@ -173,11 +231,11 @@ const Vector2& TextLabel::getPosition() const {
 
 
 int const TextLabel::getWidth() const {
-	return hitArea->size.x;
+	return ceil(hitArea->size.x);
 }
 
 int const TextLabel::getHeight() const {
-	return hitArea->size.y;
+	return ceil(hitArea->size.y);
 }
 
 const shared_ptr<FontSet> TextLabel::getFont() const {

@@ -25,7 +25,7 @@ public:
 
 protected:
 
-	std::unique_ptr<SpriteFont> font;
+	unique_ptr<SpriteFont> font;
 
 	wchar_t* defaultText = L"You are calling the wrong draw function, sire.";
 

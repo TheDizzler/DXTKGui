@@ -236,7 +236,7 @@ void TransitionEffects::TexturedTransition::initializeEffect(Texturizable* cntrl
 	TransitionEffect::initializeEffect(cntrl);
 
 
-	gfxAsset.reset(cntrl->texturize());
+	gfxAsset = move(cntrl->texturize());
 	texture = gfxAsset->getTexture();
 	position = control->getPosition();
 

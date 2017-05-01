@@ -6,8 +6,9 @@
 class CheckBox : public GUIControl {
 public:
 
-	CheckBox(unique_ptr<Sprite> uncheckedSprite,
-		unique_ptr<Sprite> checkedSprite, unique_ptr<FontSet> font);
+	CheckBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+		unique_ptr<Sprite> uncheckedSprite, unique_ptr<Sprite> checkedSprite,
+		const pugi::char_t* font);
 	~CheckBox();
 
 	virtual void update(double deltaTime) override;
@@ -55,7 +56,7 @@ public:
 	}
 
 	void onClick() {
-		if (onClickListener != NULL) 
+		if (onClickListener != NULL)
 			(onClickListener->*onClickFunction)(this, isClicked);
 
 		if (isClicked)
@@ -68,7 +69,7 @@ private:
 
 	OnClickFunction onClickFunction;
 	OnClickListener* onClickListener = NULL;
-	
+
 	ID3D11ShaderResourceView* texture;
 	/** Helper function to center text in check sprite. */
 	void centerText();

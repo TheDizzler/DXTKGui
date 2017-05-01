@@ -6,15 +6,16 @@
 class TexturePanel : public GUIControl {
 public:
 
-	TexturePanel(GraphicsAsset* pixelAsset, ScrollBar* scrllbr);
+	TexturePanel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+		ScrollBar* scrllbr);
 	~TexturePanel();
 
 
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);
 	void alwaysShowScrollBar(bool alwaysShow);
 
-	void setTexture(GraphicsAsset* gfxAsset);
-	
+	void setTexture(unique_ptr<GraphicsAsset> gfxAsset);
+
 
 	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;

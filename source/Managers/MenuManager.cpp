@@ -172,8 +172,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	guiControls.push_back(button);
 
 
-	button = guiFactory->createImageButton(
-		"Button Up", "Button Down");
+	button = guiFactory->createImageButton("Button Up", "Button Down");
 	button->setOnClickListener(new OnClickListenerExitButton(this));
 	button->setText(L"Exit");
 	buttonpos.x = (Globals::WINDOW_WIDTH - button->getScaledWidth()) / 2;
@@ -185,7 +184,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	test = guiFactory->createTextLabel(Vector2(10, 10));
 	guiControls.push_back(test);
 
-	mouseLabel = guiFactory->createTextLabel(Vector2(10, 100));
+	mouseLabel = guiFactory->createTextLabel(Vector2(10, 100), L"", "Default Font", false);
 	mouseLabel->setAlpha(.1);
 	guiControls.push_back(mouseLabel);
 
@@ -202,10 +201,10 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 		exitDialog->setTitle(L"Exit Test?", Vector2(1, 1), "BlackCloak");
 		exitDialog->setText(L"Really Quit The Test Project?");
 		unique_ptr<Button> quitButton;
-		quitButton.reset(guiFactory->createButton());
+		quitButton.reset(guiFactory->createImageButton("Button Up", "Button Down"));
 		quitButton->setOnClickListener(new OnClickListenerDialogQuitButton(this));
 		quitButton->setText(L"Quit");
-		exitDialog->setConfirmButton(move(quitButton));
+		exitDialog->setConfirmButton(move(quitButton), true, false);
 		exitDialog->setCancelButton(L"Keep Testing!");
 
 		exitDialog->setOpenTransition(

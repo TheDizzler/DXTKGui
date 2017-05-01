@@ -9,15 +9,27 @@ GraphicsEngine::GraphicsEngine() {
 
 GraphicsEngine::~GraphicsEngine() {
 
-	debugDevice->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	batch.reset();
+
+	
+	
 
 	if (swapChain.Get() != NULL)
 		swapChain->SetFullscreenState(false, NULL);
+
+	
 
 	adapters.clear();
 	displays.clear();
 	displayModeList.clear();
 
+
+	device.Reset();
+	swapChain.Reset();
+	deviceContext.Reset();
+	renderTargetView.Reset();
+	debugDevice->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	debugDevice.Reset();
 }
 
 

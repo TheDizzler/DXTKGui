@@ -10,7 +10,7 @@ public:
 	~ListItem();
 
 	void initialize(const int width, const int height,
-		shared_ptr<FontSet> fnt, ComPtr<ID3D11ShaderResourceView> pixelTexture,
+		TextLabel* label, ComPtr<ID3D11ShaderResourceView> pixelTexture,
 		size_t listPosition = 0, bool enumerateList = false);
 
 	void setWidth(int newWidth);
@@ -49,6 +49,8 @@ protected:
 
 	bool isEnumerated;
 	size_t listPosition = 0;
+
+	GUIFactory* guiFactory;
 };
 
 class EmptyListItem : public ListItem {
@@ -61,13 +63,14 @@ public:
 
 
 /** A simple control to display various (text) items. */
-class ListBox : public GUIControl, public Texturizable {
+class ListBox : public GUIControl/*, public Texturizable*/ {
 public:
-	ListBox(const Vector2& position, const int width,
+	ListBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+		const Vector2& position, const int width,
 		size_t itemHeight = 32, const int maxItemsShown = 7);
 	~ListBox();
 
-	void initialize(shared_ptr<FontSet> font,
+	void initialize(const pugi::char_t* fontName,
 		GraphicsAsset* pixelAsset, ScrollBar* scrollBar,
 		bool enumerateList = false);
 
@@ -82,8 +85,8 @@ public:
 	virtual void update(double deltaTime) override;
 	void draw(SpriteBatch* batch);
 
-	virtual GraphicsAsset* texturize() override;
-	virtual void textureDraw(SpriteBatch* batch) override;
+	/*virtual unique_ptr<GraphicsAsset> texturize() override;
+	virtual void textureDraw(SpriteBatch* batch) override;*/
 
 	void setSelected(size_t newIndex);
 	const int getSelectedIndex() const;
@@ -97,7 +100,7 @@ public:
 	virtual const Vector2& XM_CALLCONV measureString() const;
 
 	bool multiSelect = false;
-	
+
 	/* Max items to display before showing scroll bar. */
 	size_t maxDisplayItems = 7;
 
@@ -147,7 +150,7 @@ private:
 	boolean isEnumerated = false;
 	bool alwaysDisplayScrollBar = false;
 
-	shared_ptr<FontSet> font;
+	const pugi::char_t* fontName;
 	vector<ListItem*> listItems;
 	size_t selectedIndex = 0;
 

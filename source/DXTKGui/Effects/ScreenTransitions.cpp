@@ -50,10 +50,10 @@ void ScreenTransitionManager::drawTransition(SpriteBatch* batch) {
 
 
 void ScreenTransition::setTransitionBetween(
-	GraphicsAsset* oldScreen, GraphicsAsset* newScreen, float time) {
+	unique_ptr<GraphicsAsset> oldScreen, unique_ptr<GraphicsAsset> newScreen, float time) {
 
-	oldScreenAsset.reset(oldScreen);
-	newScreenAsset.reset(newScreen);
+	oldScreenAsset = move(oldScreen);
+	newScreenAsset = move(newScreen);
 
 	oldTexture = oldScreenAsset->getTexture();
 	newTexture = newScreenAsset->getTexture();
@@ -134,8 +134,8 @@ SquareFlipScreenTransition::~SquareFlipScreenTransition() {
 }
 
 void SquareFlipScreenTransition::setTransitionBetween(
-	GraphicsAsset* oldScreen, GraphicsAsset* newScreen, float time) {
-	ScreenTransition::setTransitionBetween(oldScreen, newScreen, time);
+	unique_ptr<GraphicsAsset> oldScreen, unique_ptr<GraphicsAsset> newScreen, float time) {
+	ScreenTransition::setTransitionBetween(move(oldScreen), move(newScreen), time);
 
 	int squareSize = 64;
 	int row = ceil((float) oldScreenAsset->getWidth() / squareSize) + 1;
@@ -258,8 +258,8 @@ ScreenTransitions::LineWipeScreenTransition::~LineWipeScreenTransition() {
 }
 
 void LineWipeScreenTransition::setTransitionBetween(
-	GraphicsAsset* oldScreen, GraphicsAsset* newScreen, float time) {
-	ScreenTransition::setTransitionBetween(oldScreen, newScreen, time);
+	unique_ptr<GraphicsAsset> oldScreen, unique_ptr<GraphicsAsset> newScreen, float time) {
+	ScreenTransition::setTransitionBetween(move(oldScreen), move(newScreen), time);
 
 	int rows = 7;
 	int rowHeight = ceil((float) oldScreenAsset->getHeight() / rows);
@@ -273,7 +273,7 @@ void LineWipeScreenTransition::setTransitionBetween(
 		Line* line = new Line();
 		RECT rect;
 		rect.left = 0;
-		rect.right = oldScreen->getWidth();
+		rect.right = oldScreenAsset->getWidth();
 		rect.top = i*rowHeight;
 		rect.bottom = rect.top + rowHeight;
 		line->rect = rect;

@@ -1,16 +1,12 @@
 #include "DynamicDialog.h"
 
-DynamicDialog::DynamicDialog() {
+#include "../GUIFactory.h"
+DynamicDialog::DynamicDialog(GUIFactory* factory,
+	shared_ptr<MouseController> mouseController) : Dialog(factory, mouseController) {
 
 }
 
 DynamicDialog::~DynamicDialog() {
-}
-
-#include "../GUIFactory.h"
-void DynamicDialog::initializeControl(GUIFactory* factory,
-	shared_ptr<MouseController> mouseController) {
-	GUIControl::initializeControl(factory, mouseController);
 }
 
 
@@ -19,7 +15,7 @@ void DynamicDialog::initialize(shared_ptr<AssetSet> set, const pugi::char_t* fon
 	assetSet = set;
 
 	hitArea = make_unique<HitArea>(Vector2::Zero, Vector2::Zero);
-	dialogText = make_unique<TextLabel>(guiFactory->getFont(font));
+	dialogText.reset(guiFactory->createTextLabel(Vector2::Zero, L"", font));
 
 	setLayerDepth(.95);
 
@@ -33,14 +29,11 @@ void DynamicDialog::setText(wstring text) {
 
 #include <sstream>
 #include <comdef.h>
-
-
-
 void DynamicDialog::setDimensions(const Vector2& posit, const Vector2& sz) {
 
 	size = sz;
 	position = posit;
-	
+
 	topLeftCorner = assetSet->getAsset("Top Left Corner");
 	topCenter = assetSet->getAsset("Top Center");
 	topRightCorner = assetSet->getAsset("Top Right Corner");
@@ -80,27 +73,19 @@ void DynamicDialog::setDimensions(const Vector2& posit, const Vector2& sz) {
 
 	Vector2 textPos = position + dialogTextMargin;
 	dialogText->setPosition(textPos);
+
+	texturePanel->setTexture(texturize());
 }
 
 
-GraphicsAsset* DynamicDialog::texturize() {
+unique_ptr<GraphicsAsset> DynamicDialog::texturize() {
 
 	texturePanel.reset(guiFactory->createPanel());
-	//texturePanel->setTint(Color(0, 1, 1, 1));
 	texturePanel->setDimensions(position, size);
-	bool originalStatus = isShowing;
-	isShowing = true;
-	bool original = useTexture;
-	useTexture = false;
-
-	GraphicsAsset* gfxAss = guiFactory->createTextureFromIElement2D(this);
-	texturePanel->setTexture(gfxAss);
-	useTexture = original;
-	isShowing = originalStatus;
-
+	unique_ptr<GraphicsAsset> gfxAss = guiFactory->createTextureFromIElement2D(this);
 	texturePanel->setTexturePosition(position);
 
-	return gfxAss;
+	return move(gfxAss);
 }
 
 
@@ -204,11 +189,8 @@ void DynamicDialog::draw(SpriteBatch* batch) {
 	if (!isShowing)
 		return;
 
-	//if (useTexture) {
-		texturePanel->draw(batch);
-	//} else {
-	//	
-	//}
+	texturePanel->draw(batch);
+
 	dialogText->draw(batch);
 }
 
@@ -218,7 +200,7 @@ void DynamicDialog::setPosition(const Vector2& newPosition) {
 	Vector2 moveBy = newPosition - position;
 	dialogText->moveBy(moveBy);
 	GUIControl::setPosition(newPosition);
-	//panel->setPosition(newPosition);
+
 	texturePanel->setTexturePosition(position);
 }
 

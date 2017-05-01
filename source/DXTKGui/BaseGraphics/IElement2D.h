@@ -46,7 +46,7 @@ class GraphicsAsset;
 interface Texturizable {
 public:
 
-	virtual GraphicsAsset* texturize() = 0;
+	virtual unique_ptr<GraphicsAsset> texturize() = 0;
 	virtual void textureDraw(SpriteBatch* batch) = 0;
 
 	virtual void setPosition(const Vector2& position) = 0;

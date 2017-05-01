@@ -1,7 +1,9 @@
 #include "CheckBox.h"
 
-CheckBox::CheckBox(unique_ptr<Sprite> unchkdSprite,
-	unique_ptr<Sprite> chckdSprite, unique_ptr<FontSet> font) {
+#include "../GUIFactory.h"
+CheckBox::CheckBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	unique_ptr<Sprite> unchkdSprite, unique_ptr<Sprite> chckdSprite,
+	const pugi::char_t* font) : GUIControl(factory, mouseController) {
 
 	uncheckedSprite = move(unchkdSprite);
 	checkedSprite = move(chckdSprite);
@@ -12,8 +14,7 @@ CheckBox::CheckBox(unique_ptr<Sprite> unchkdSprite,
 
 	hitArea.reset(new HitArea(Vector2::Zero, size));
 
-	label.reset(new TextLabel(move(font)));
-	label->setText(L"");
+	label.reset(guiFactory->createTextLabel(Vector2::Zero, L"", font));
 
 	texture = uncheckedSprite->getTexture().Get();
 }

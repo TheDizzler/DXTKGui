@@ -1,8 +1,9 @@
 #include "ListBox.h"
 
 
-ListBox::ListBox(const Vector2& pos, const int len,
-	size_t itmHght, const int maxItemsShown) {
+ListBox::ListBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	const Vector2& pos, const int len, size_t itmHght, const int maxItemsShown)
+	: GUIControl(factory, mouseController) {
 
 	position = pos;
 	width = len;
@@ -24,10 +25,10 @@ ListBox::~ListBox() {
 }
 
 #include "../GUIFactory.h"
-void ListBox::initialize(shared_ptr<FontSet> fnt, GraphicsAsset* pixelAsset,
+void ListBox::initialize(const pugi::char_t* fnt, GraphicsAsset* pixelAsset,
 	ScrollBar* scrllbr, bool enumerateList) {
 
-	font = fnt;
+	fontName = fnt;
 	pixel = pixelAsset->getTexture();
 
 	firstItemPos = Vector2(position.x, position.y);
@@ -42,7 +43,8 @@ void ListBox::initialize(shared_ptr<FontSet> fnt, GraphicsAsset* pixelAsset,
 
 	emptyListItem = new EmptyListItem();
 	emptyListItem->initialize(width - scrollBar->getWidth(), itemHeight,
-		font, pixel, listItems.size(), isEnumerated);
+		guiFactory->createTextLabel(Vector2::Zero, L"", fontName),
+		pixel, listItems.size(), isEnumerated);
 	emptyListItem->setText();
 }
 
@@ -70,7 +72,8 @@ void ListBox::addItems(vector<ListItem* > items) {
 
 	for (ListItem* item : items) {
 		item->initialize(width - scrollBar->getWidth(), itemHeight,
-			font, pixel, listItems.size(), isEnumerated);
+			guiFactory->createTextLabel(Vector2::Zero, L"", fontName),
+			pixel, listItems.size(), isEnumerated);
 		listItems.push_back(item);
 		if (item->measureString().x + scrollBar->getWidth() > longestLabelLength)
 			longestLabelLength = item->measureString().x;
@@ -196,12 +199,12 @@ void ListBox::draw(SpriteBatch* batch) {
 }
 
 
-GraphicsAsset* ListBox::texturize() {
-	return nullptr;
-}
-
-void ListBox::textureDraw(SpriteBatch* batch) {
-}
+//unique_ptr<GraphicsAsset> ListBox::texturize() {
+//	return guiFactory->createTextureFromIElement2D(this);
+//}
+//
+//void ListBox::textureDraw(SpriteBatch* batch) {
+//}
 
 
 void ListBox::setSelected(size_t newIndex) {
@@ -256,9 +259,9 @@ const Vector2& XM_CALLCONV ListBox::measureString() const {
 }
 
 
-void ListBox::setFont(const pugi::char_t* fontName) {
+void ListBox::setFont(const pugi::char_t* fnt) {
 
-	font = guiFactory->getFont(fontName);
+	fontName = fnt;
 }
 
 
@@ -309,7 +312,7 @@ ListItem::~ListItem() {
 }
 
 void ListItem::initialize(const int width, const int height,
-	shared_ptr<FontSet> fnt, ComPtr<ID3D11ShaderResourceView> pixelTexture,
+	TextLabel* label, ComPtr<ID3D11ShaderResourceView> pixelTexture,
 	size_t listPos, bool enumerateList) {
 
 	itemRect.left = 0;
@@ -317,13 +320,12 @@ void ListItem::initialize(const int width, const int height,
 	itemRect.bottom = height;
 	itemRect.right = width;
 
-	hitArea.reset(new HitArea(
-		Vector2::Zero, Vector2(width, height)));
+	hitArea.reset(new HitArea(Vector2::Zero, Vector2(width, height)));
 
 	pixel = pixelTexture;
 	itemPosition = Vector2::Zero;
 
-	textLabel.reset(new TextLabel(fnt));
+	textLabel.reset(label);
 
 	isEnumerated = enumerateList;
 	listPosition = listPos;

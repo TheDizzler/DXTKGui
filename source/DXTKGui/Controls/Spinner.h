@@ -8,7 +8,8 @@ class Spinner : public GUIControl {
 	friend class SpinnerDownButtonListener;
 public:
 	/** Width does not include buttons. */
-	Spinner(const Vector2& pos, const size_t width, const size_t itemHeight, bool autoSize);
+	Spinner(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+		const Vector2& pos, const size_t width, const size_t itemHeight, bool autoSize);
 	~Spinner();
 
 	/* Note, if itemHeight is smaller than the font height and/or the button heights (combined)

@@ -13,12 +13,23 @@ GUIFactory::GUIFactory(HWND h, pugi::xml_node guiAssets) {
 	guiAssetsNode = guiAssets;
 }
 
+
 GUIFactory::~GUIFactory() {
+	// on or off, none of these have an effect on live objects
+
 	mouseController.reset();
 	assetMap.clear();
 	fontMap.clear();
+	for (auto& anim : animationMap) {
+		anim.second.reset();
+	}
 	animationMap.clear();
+
+	for (auto& set : setMap)
+		set.second.reset();
 	setMap.clear();
+	whitePixel.Reset();
+
 }
 
 HWND GUIFactory::getHWND() {
@@ -81,7 +92,6 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 		unique_ptr<FontSet> defaultFont;
 		defaultFont.reset(new FontSet());
 		defaultFont->load(device, StringHelper::convertCharStarToWCharT(defaultFontFile));
-		//defaultFont->setTint(Color(1, 1, 1, 1));
 
 		return move(defaultFont);
 	}
@@ -91,7 +101,6 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 	unique_ptr<FontSet> font;
 	font.reset(new FontSet());
 	font->load(device, StringHelper::convertCharStarToWCharT(fontFile));
-	//font->setTint(Color(1, 1, 1, 1));
 	return move(font);
 }
 
@@ -183,27 +192,27 @@ TriangleFrame* GUIFactory::createTriangleFrame(const Vector2& pt1, const Vector2
 	return triangle;
 }
 
+//TextLabel* GUIFactory::createTextLabel(const Vector2& position,
+//	const char_t* fontName) {
+//
+//	TextLabel* label = new TextLabel(position, getFont(fontName));
+//	label->initializeControl(this, mouseController);
+//	return label;
+//}
+
 TextLabel* GUIFactory::createTextLabel(const Vector2& position,
-	const char_t* fontName) {
+	wstring text, const char_t* fontName, bool useTexture) {
 
-	TextLabel* label = new TextLabel(position, getFont(fontName));
-	label->initializeControl(this, mouseController);
-	return label;
-}
-
-TextLabel* GUIFactory::createTextLabel(const Vector2& position,
-	wstring text, const char_t* fontName) {
-
-	TextLabel* label = new TextLabel(position, text, getFont(fontName));
-	label->initializeControl(this, mouseController);
+	TextLabel* label = new TextLabel(this, mouseController, position, text, fontName, useTexture);
 	return label;
 }
 
 
 Button* GUIFactory::createButton(const char_t* fontName) {
 
-	Button* button = new Button(getAsset("White Pixel"), getFont(fontName));
-	button->initializeControl(this, mouseController);
+	Button* button = new Button(this, mouseController,
+		getAsset("White Pixel"), fontName);
+
 	return button;
 }
 
@@ -211,8 +220,9 @@ Button* GUIFactory::createButton(const char_t* fontName) {
 Button* GUIFactory::createButton(const Vector2& position, const Vector2& size,
 	wstring text, const char_t* fontName, const int frameThickness) {
 
-	Button* button = new Button(getAsset("White Pixel"), getFont(fontName));
-	button->initializeControl(this, mouseController);
+	Button* button = new Button(this, mouseController,
+		getAsset("White Pixel"), fontName);
+
 	button->setDimensions(position, size, frameThickness);
 	button->setText(text);
 	return button;
@@ -236,9 +246,8 @@ Button* GUIFactory::createOneImageButton(const char_t* buttonImage, const char_t
 
 	}
 
-	ImageButton* button = new ImageButton(getSpriteFromAsset(buttonImage),
-		getFont(fontName));
-	button->initializeControl(this, mouseController);
+	ImageButton* button = new ImageButton(this, mouseController,
+		getSpriteFromAsset(buttonImage), fontName);
 	return button;
 }
 
@@ -270,9 +279,9 @@ Button* GUIFactory::createImageButton(const char_t* upImageName,
 		return button;
 	}
 
-	ImageButton* button = new ImageButton(getSpriteFromAsset(upImageName),
-		getSpriteFromAsset(downImageName), getFont(fontName));
-	button->initializeControl(this, mouseController);
+	ImageButton* button = new ImageButton(this, mouseController,
+		getSpriteFromAsset(upImageName), getSpriteFromAsset(downImageName), fontName);
+		//button->initializeControl(this, mouseController);
 
 	return button;
 }
@@ -287,16 +296,18 @@ Button* GUIFactory::createImageButton(const Vector2& position,
 
 Button* GUIFactory::createImageButton(unique_ptr<Sprite> upSprite, const char_t* fontName) {
 
-	ImageButton* button = new ImageButton(move(upSprite), getFont(fontName));
-	button->initializeControl(this, mouseController);
+	ImageButton* button = new ImageButton(this,
+		mouseController, move(upSprite), fontName);
+		//button->initializeControl(this, mouseController);
 	return button;
 }
 
 AnimatedButton* GUIFactory::createAnimatedButton(const char_t* animatedButtonName,
 	Vector2 position) {
 
-	AnimatedButton* button = new AnimatedButton(getAnimation(animatedButtonName), position);
-	button->initializeControl(this, mouseController);
+	AnimatedButton* button = new AnimatedButton(this, mouseController,
+		getAnimation(animatedButtonName), position);
+		//button->initializeControl(this, mouseController);
 	return button;
 }
 
@@ -304,9 +315,10 @@ AnimatedButton* GUIFactory::createAnimatedButton(const char_t* animatedButtonNam
 CheckBox* GUIFactory::createCheckBox(const Vector2& position,
 	wstring text, const char_t* fontName) {
 
-	CheckBox* check = new CheckBox(getSpriteFromAsset("CheckBox Unchecked"),
-		getSpriteFromAsset("CheckBox Checked"), getFont(fontName));
-	check->initializeControl(this, mouseController);
+	CheckBox* check = new CheckBox(this, mouseController,
+		getSpriteFromAsset("CheckBox Unchecked"),
+		getSpriteFromAsset("CheckBox Checked"), fontName);
+	//check->initializeControl(this, mouseController);
 	check->setText(text);
 	check->setPosition(position);
 	return check;
@@ -328,9 +340,10 @@ CheckBox* GUIFactory::createCheckBox(const Vector2& position,
 		return createCheckBox(position, text, fontName);
 	}
 
-	CheckBox* check = new CheckBox(getSpriteFromAsset(uncheckedImage),
-		getSpriteFromAsset(checkedImage), getFont(fontName));
-	check->initializeControl(this, mouseController);
+	CheckBox* check = new CheckBox(this, mouseController,
+		getSpriteFromAsset(uncheckedImage), getSpriteFromAsset(checkedImage),
+		fontName);
+	//check->initializeControl(this, mouseController);
 	check->setText(text);
 	check->setPosition(position);
 	return check;
@@ -342,8 +355,8 @@ Spinner* GUIFactory::createSpinner(const Vector2& position, const size_t width,
 	const size_t itemHeight, bool autoSize, const char_t* upButtonAsset,
 	const char_t* downButtonAsset, const char_t* fontName) {
 
-	Spinner* spinner = new Spinner(position, width, itemHeight, autoSize);
-	spinner->initializeControl(this, mouseController);
+	Spinner* spinner = new Spinner(this, mouseController, position, width, itemHeight, autoSize);
+	//spinner->initializeControl(this, mouseController);
 	spinner->initialize(fontName, upButtonAsset, downButtonAsset);
 	return spinner;
 }
@@ -351,8 +364,8 @@ Spinner* GUIFactory::createSpinner(const Vector2& position, const size_t width,
 
 ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight) {
 
-	ScrollBar* scrollBar = new ScrollBar(position);
-	scrollBar->initializeControl(this, mouseController);
+	ScrollBar* scrollBar = new ScrollBar(this, mouseController, position);
+	//scrollBar->initializeControl(this, mouseController);
 
 	if (!scrollBar->initialize(getAsset("White Pixel"), barHeight)) {
 
@@ -367,8 +380,8 @@ ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight
 ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight,
 	ScrollBarDesc& scrollBarDesc) {
 
-	ScrollBar* scrollBar = new ScrollBar(position);
-	scrollBar->initializeControl(this, mouseController);
+	ScrollBar* scrollBar = new ScrollBar(this, mouseController, position);
+	//scrollBar->initializeControl(this, mouseController);
 
 	ImageButton* buttons[2] = {NULL, NULL};
 	buttons[0] = (ImageButton*) createImageButton(scrollBarDesc.upButtonImage.c_str(),
@@ -400,8 +413,7 @@ TexturePanel* GUIFactory::createPanel(bool neverShowScrollBar) {
 	ScrollBar* scrllbar = NULL;
 	if (!neverShowScrollBar)
 		scrllbar = createScrollBar(Vector2::Zero, 10);
-	TexturePanel* panel = new TexturePanel(getAsset("White Pixel"), scrllbar);
-	panel->initializeControl(this, mouseController);
+	TexturePanel* panel = new TexturePanel(this, mouseController, scrllbar);
 	return panel;
 }
 
@@ -411,10 +423,11 @@ ListBox* GUIFactory::createListBox(const Vector2& position,
 	bool enumerateList, const char_t* fontName) {
 
 
-	ListBox* listbox = new ListBox(position, width, itemHeight, maxItemsShown);
-	listbox->initializeControl(this, mouseController);
+	ListBox* listbox = new ListBox(this, mouseController,
+		position, width, itemHeight, maxItemsShown);
+	//listbox->initializeControl(this, mouseController);
 	Vector2 scrollBarPos(position.x + width, position.y);
-	listbox->initialize(getFont(fontName), getAsset("White Pixel"),
+	listbox->initialize(fontName, getAsset("White Pixel"),
 		createScrollBar(scrollBarPos, itemHeight * maxItemsShown), enumerateList);
 
 	return listbox;
@@ -425,8 +438,9 @@ ComboBox* GUIFactory::createComboBox(const Vector2& position,
 	const int width, const int itemHeight, const int maxItemsShown,
 	bool enumerateList, const char_t* buttonAsset, const char_t* fontName) {
 
-	ComboBox* combobox = new ComboBox(position, width, itemHeight, maxItemsShown);
-	combobox->initializeControl(this, mouseController);
+	ComboBox* combobox = new ComboBox(this, mouseController,
+		position, width, itemHeight, maxItemsShown);
+	//combobox->initializeControl(this, mouseController);
 
 	combobox->initialize(getFont(fontName),
 		createListBox(
@@ -440,8 +454,9 @@ ComboBox* GUIFactory::createComboBox(const Vector2& position,
 PromptDialog* GUIFactory::createDialog(const Vector2& position, const Vector2& size,
 	bool movable, bool centerText, int frameThickness, const char_t* fontName) {
 
-	PromptDialog* dialog = new PromptDialog(hwnd, movable, centerText);
-	dialog->initializeControl(this, mouseController);
+	PromptDialog* dialog = new PromptDialog(this, mouseController,
+		hwnd, movable, centerText);
+		//dialog->initializeControl(this, mouseController);
 	dialog->initialize(getAsset("White Pixel"), fontName);
 	dialog->setDimensions(position, size, frameThickness);
 	return dialog;
@@ -450,8 +465,8 @@ PromptDialog* GUIFactory::createDialog(const Vector2& position, const Vector2& s
 DynamicDialog* GUIFactory::createDynamicDialog(shared_ptr<AssetSet> dialogImageSet,
 	const Vector2& position, const Vector2& size, const char_t* fontName) {
 
-	DynamicDialog* dialog = new DynamicDialog();
-	dialog->initializeControl(this, mouseController);
+	DynamicDialog* dialog = new DynamicDialog(this, mouseController);
+	//dialog->initializeControl(this, mouseController);
 	dialog->initialize(dialogImageSet, fontName);
 	dialog->setDimensions(position, size);
 	return dialog;
@@ -459,7 +474,7 @@ DynamicDialog* GUIFactory::createDynamicDialog(shared_ptr<AssetSet> dialogImageS
 
 
 
-GraphicsAsset* GUIFactory::createTextureFromIElement2D(
+unique_ptr<GraphicsAsset> GUIFactory::createTextureFromIElement2D(
 	Texturizable* control, bool autoBatchDraw, Color bgColor) {
 
 	int buffer = 20; // padding to give a bit of lee-way to prevent tearing
@@ -561,14 +576,15 @@ GraphicsAsset* GUIFactory::createTextureFromIElement2D(
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
 
 	control->setPosition(oldPos);
-	GraphicsAsset* gfxAsset = new GraphicsAsset();
+	unique_ptr<GraphicsAsset> gfxAsset = make_unique<GraphicsAsset>();
 	gfxAsset->loadAsPartOfSheet(shaderResourceView, Vector2(0, 0),
 		Vector2(width - widthPadding - buffer, height - heightPadding - buffer), Vector2::Zero);
-	return gfxAsset;
+	return move(gfxAsset);
 }
 
 
-GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, bool autoBatchDraw, Color bgColor) {
+unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
+	Screen* screen, bool autoBatchDraw, Color bgColor) {
 
 	int buffer = 5; // padding to give a bit of lee-way to prevent tearing
 
@@ -651,10 +667,10 @@ GraphicsAsset* GUIFactory::createTextureFromScreen(Screen* screen, bool autoBatc
 
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
 
-	GraphicsAsset* gfxAsset = new GraphicsAsset();
+	unique_ptr<GraphicsAsset> gfxAsset = make_unique<GraphicsAsset>();
 	gfxAsset->loadAsPartOfSheet(shaderResourceView, Vector2(0, 0),
 		Vector2(screenWidth - buffer, screenHeight - buffer));
-	return gfxAsset;
+	return move(gfxAsset);
 }
 
 

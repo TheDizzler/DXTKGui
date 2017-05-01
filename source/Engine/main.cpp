@@ -139,7 +139,7 @@ int messageLoop() {
 
 int Globals::WINDOW_WIDTH = 800;
 int Globals::WINDOW_HEIGHT = 600;
-int Globals::vsync_enabled = 1;
+int Globals::vsync_enabled = 0;
 bool Globals::FULL_SCREEN = false;
 // SNES resolution 512x448 max (256x224 normally)
 
@@ -324,10 +324,9 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				PDEV_BROADCAST_DEVICEINTERFACE deviceInterface
 					= reinterpret_cast<const PDEV_BROADCAST_DEVICEINTERFACE>(pDev);
 				switch (wParam) {
+
 					case DBT_DEVICEARRIVAL:
 					{
-
-
 						if (deviceInterface->dbcc_classguid == KSCATEGORY_AUDIO) {
 							//OutputDebugString(L"Audio interface added!\n");
 							if (gameEngine)
@@ -354,7 +353,6 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 						if (deviceInterface->dbcc_classguid == guidHid) {
 							// remove joysticks
 							registerControllers();
-							//gameEngine->controllerRemoved();
 							return 0;
 						}
 						break;

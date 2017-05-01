@@ -8,13 +8,14 @@ RectangleSprite::RectangleSprite(GraphicsAsset* const graphicsAsset)
 }
 
 RectangleSprite::RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel,
-	const Vector2& pos, const Vector2 & size) : Sprite(pos) {
+	const Vector2& pos, const Vector2 & size) : Sprite() {
 
 	texture = pixel;
 	setDimensions(pos, size);
 }
 
 RectangleSprite::~RectangleSprite() {
+	texture.Reset();
 }
 
 const Vector2 RectangleSprite::getSize() const {
@@ -43,6 +44,7 @@ RectangleFrame::RectangleFrame(GraphicsAsset* pixelAsset, GUIFactory* gui) {
 
 
 RectangleFrame::~RectangleFrame() {
+	pixel.Reset();
 }
 
 //#include "../Controls/GUIFactory.h"
@@ -84,15 +86,8 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	hitArea->size = size * scale;
 
 	if (useTexture) {
-
 		texturePanel.reset(guiFactory->createPanel());
 		texturePanel->setTexture(texturize());
-		/*texturePanel->setTint(Color(0, 1, 1, 1));
-		texturePanel->setDimensions(position, size);
-		texturePanel->setTexture(
-			guiFactory->createTextureFromIElement2D(this, rgba));
-
-		texturePanel->setTexturePosition(position);*/
 	}
 	
 
@@ -100,7 +95,7 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 
 void RectangleFrame::setSize(const Vector2& size) {
 
-	setDimensions(frameTopPos, size);
+	setDimensions(frameTopPos, size, frameThickness);
 }
 
 bool cyberGrow = true; // cybergrow will only function if not using texture to draw
@@ -126,16 +121,16 @@ void RectangleFrame::draw(SpriteBatch* batch) {
 	texturePanel->draw(batch);
 }
 
-GraphicsAsset* RectangleFrame::texturize() {
+unique_ptr<GraphicsAsset> RectangleFrame::texturize() {
 
 	texturePanel->setTint(Color(0, 1, 1, 1));
 	texturePanel->setDimensions(frameTopPos, hitArea->size);
 
-	GraphicsAsset* gfxAsset = guiFactory->createTextureFromIElement2D(this);
+	unique_ptr<GraphicsAsset> gfxAsset = guiFactory->createTextureFromIElement2D(this);
 	texturePanel->setTexturePosition(frameTopPos);
 	texturePanel->setLayerDepth(layerDepth);
 
-	return	gfxAsset;
+	return move(gfxAsset);
 }
 
 void RectangleFrame::textureDraw(SpriteBatch* batch) {
@@ -294,6 +289,7 @@ Line::Line(GraphicsAsset* pixelAsset,
 }
 
 Line::~Line() {
+	pixel.Reset();
 }
 
 const float Line::getRotation() const {
@@ -344,6 +340,7 @@ TriangleFrame::TriangleFrame(GraphicsAsset* pixelAsset) {
 }
 
 TriangleFrame::~TriangleFrame() {
+	pixel.Reset();
 }
 
 void TriangleFrame::setDimensions(const Vector2& p1, const Vector2& p2,

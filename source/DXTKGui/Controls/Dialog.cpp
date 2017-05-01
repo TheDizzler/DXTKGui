@@ -1,6 +1,10 @@
 #include "Dialog.h"
 
 
+Dialog::Dialog(GUIFactory* factory, shared_ptr<MouseController> mouseController)
+	: GUIControlBox(factory, mouseController) {
+}
+
 void Dialog::show() {
 	isShowing = true;
 	isClosing = false;
@@ -138,13 +142,12 @@ void Dialog::OnClickListenerCancelButton::onClick(Button* button) {
 
 
 /** ******* PromptDialog START ******** **/
-PromptDialog::PromptDialog(HWND h, bool canMove, bool centerTxt) {
+PromptDialog::PromptDialog(GUIFactory* factory,
+	shared_ptr<MouseController> mouseController, HWND h, bool canMove, bool centerTxt)
+	: Dialog(factory, mouseController) {
 	hwnd = h;
 	movable = canMove;
 	centerText = centerTxt;
-}
-
-PromptDialog::PromptDialog() {
 }
 
 PromptDialog::~PromptDialog() {
@@ -176,7 +179,7 @@ void PromptDialog::initialize(GraphicsAsset* pixelAsset, const pugi::char_t* fon
 
 	unique_ptr<GUIControl> titleText;
 
-	dialogText = make_unique<TextLabel>(guiFactory->getFont(font));
+	dialogText.reset(guiFactory->createTextLabel(Vector2::Zero, L"", font, false));
 	dialogText->setTint(Color(0, 0, 0, 1));
 
 	setLayerDepth(.95);
@@ -353,8 +356,7 @@ void PromptDialog::calculateTitlePos() {
 void PromptDialog::setTitle(wstring text, const Vector2& scale,
 	const pugi::char_t* font, Color color) {
 
-	controls[TitleText] = make_unique<TextLabel>(guiFactory->getFont(font));
-	controls[TitleText]->setText(text);
+	controls[TitleText].reset(guiFactory->createTextLabel(Vector2::Zero, text, font));
 	controls[TitleText]->setScale(scale);
 	controls[TitleText]->setTint(color);
 	calculateTitlePos();
@@ -369,8 +371,8 @@ void PromptDialog::calculateDialogTextPos() {
 		return;
 	}
 
-	TextLabel formattedText(Vector2::Zero, dialogText->getText(), dialogText->getFont());
-	formattedText.initializeControl(guiFactory, NULL);
+	TextLabel formattedText(guiFactory, NULL, dialogText->getText(), dialogText->getFont(), false);
+	//formattedText.initializeControl(guiFactory, NULL);
 	size_t scrollBarBuffer = 0;
 
 	if (dialogtextsize.x + dialogTextMargin.x * 2 > dialogFrameSize.x) {
@@ -625,7 +627,7 @@ void PromptDialog::draw(SpriteBatch* batch) {
 	}
 }
 
-GraphicsAsset* PromptDialog::texturize() {
+unique_ptr<GraphicsAsset> PromptDialog::texturize() {
 	return guiFactory->createTextureFromIElement2D(this);
 }
 

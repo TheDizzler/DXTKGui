@@ -5,7 +5,8 @@
 
 class ComboBox : public GUIControl {
 public:
-	ComboBox(const Vector2& position, const int width,
+	ComboBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+		const Vector2& position, const int width,
 		size_t itemHeight = 32, const int maxItemsShown = 7);
 	~ComboBox();
 

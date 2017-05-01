@@ -7,8 +7,8 @@ namespace ScreenTransitions {
 
 	class ScreenTransition {
 	public:
-		virtual void setTransitionBetween(GraphicsAsset* oldScreenAsset,
-			GraphicsAsset* newScreenAsset, float transitionTime);
+		virtual void setTransitionBetween(unique_ptr<GraphicsAsset> oldScreenAsset,
+			unique_ptr<GraphicsAsset> newScreenAsset, float transitionTime);
 
 		/* Returns true when transition effect is finished. */
 		virtual bool run(double deltaTime) = 0;
@@ -84,8 +84,8 @@ namespace ScreenTransitions {
 	public:
 		~SquareFlipScreenTransition();
 
-		virtual void setTransitionBetween(GraphicsAsset* oldScreenAsset,
-			GraphicsAsset* newScreenAsset, float transitionTime) override;
+		virtual void setTransitionBetween(unique_ptr<GraphicsAsset> oldScreenAsset,
+			unique_ptr<GraphicsAsset> newScreenAsset, float transitionTime) override;
 
 		virtual bool run(double deltaTime) override;
 		virtual void draw(SpriteBatch* batch) override;
@@ -118,8 +118,8 @@ namespace ScreenTransitions {
 	class LineWipeScreenTransition : public ScreenTransition {
 	public:
 		~LineWipeScreenTransition();
-		virtual void setTransitionBetween(GraphicsAsset* oldScreenAsset,
-			GraphicsAsset* newScreenAsset, float transitionTime) override;
+		virtual void setTransitionBetween(unique_ptr<GraphicsAsset> oldScreenAsset,
+			unique_ptr<GraphicsAsset> newScreenAsset, float transitionTime) override;
 		virtual bool run(double deltaTime) override;
 		virtual void draw(SpriteBatch * batch) override;
 		virtual void reset() override;

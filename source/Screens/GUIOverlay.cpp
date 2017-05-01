@@ -5,19 +5,11 @@ const int TEST_BOX_MARGIN = 16;
 #include "../Engine/GameEngine.h"
 GUIOverlay::GUIOverlay() {
 
-
-	unique_ptr<TextLabel> textLabel;
-	textLabel.reset(guiFactory->createTextLabel(Vector2(-100, -100)));
-
-
-
-
-	fpsLabel.reset(guiFactory->createTextLabel(Vector2(Globals::WINDOW_WIDTH - 250, 20)));
+	fpsLabel.reset(guiFactory->createTextLabel(Vector2(Globals::WINDOW_WIDTH - 250, 20),
+		L"", "Default Font", true));
 	fpsLabel->setTint(Colors::Black);
 	fpsLabel->setScale(Vector2(.5, .5));
 	fpsLabel->setLayerDepth(1);
-
-
 }
 
 
@@ -25,7 +17,6 @@ GUIOverlay::~GUIOverlay() {
 
 
 	lostJoyDialogs.clear();
-
 
 }
 
@@ -42,7 +33,7 @@ void GUIOverlay::update(double deltaTime) {
 		wostringstream wss;
 		wss << "frameCount: " << frameCount << " fpsUpdateTime: " << fpsUpdateTime << endl;
 		wss << "fps: " << frameCount / fpsUpdateTime;
-		fpsLabel->setText(wss);
+		fpsLabel->setText(wss.str());
 
 		fpsUpdateTime = 0;
 		frameCount = 0;
@@ -122,9 +113,8 @@ void GUIOverlay::reportLostJoystick(size_t playerSlotNumber) {
 
 
 ControllerDialog::ControllerDialog(GUIFactory* guiF)
-	: PromptDialog(guiF->getHWND(), false, true) {
+	: PromptDialog(guiF, guiF->getMouseController(), guiF->getHWND(), false, true) {
 
-	initializeControl(guiF, guiF->getMouseController());
 	initialize(guiFactory->getAsset("White Pixel"));
 
 }

@@ -1,7 +1,8 @@
 #include "TexturePanel.h"
 
 #include "../GUIFactory.h"
-TexturePanel::TexturePanel(GraphicsAsset* pixelAsset, ScrollBar* scrllbr) {
+TexturePanel::TexturePanel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	ScrollBar* scrllbr) : GUIControl(factory, mouseController) {
 
 	hitArea = make_unique<HitArea>(Vector2::Zero, Vector2::Zero);
 	if (scrllbr == NULL)
@@ -12,13 +13,20 @@ TexturePanel::TexturePanel(GraphicsAsset* pixelAsset, ScrollBar* scrllbr) {
 
 
 TexturePanel::~TexturePanel() {
+	verticalScrollBar.reset();
+	texture.Reset();
+	gfxAsset.reset();
 }
 
 
-void TexturePanel::setTexture(GraphicsAsset* gfx) {
+void TexturePanel::setTexture(unique_ptr<GraphicsAsset> gfx) {
 
-	gfxAsset.reset(gfx);
+	gfxAsset = move(gfx);
 	texture = gfxAsset->getTexture();
+	viewRect.left = 0;
+	viewRect.top = 0;
+	viewRect.right = gfxAsset->getWidth();
+	viewRect.bottom = gfxAsset->getHeight();
 
 	if (neverShowScrollBar)
 		return;
@@ -81,8 +89,8 @@ void TexturePanel::setDimensions(const Vector2& pos, const Vector2& size) {
 void TexturePanel::setTexturePosition(const Vector2& texPos) {
 
 	Vector2 diff = texPos - position;
-	viewRect.right -= diff.x;
-	viewRect.bottom -= diff.y;
+	viewRect.right += diff.x;
+	viewRect.bottom += diff.y;
 
 	setPosition(texPos);
 }
@@ -110,8 +118,11 @@ void TexturePanel::setScale(const Vector2& newScale) {
 }
 
 
-void TexturePanel::moveBy(const Vector2 & moveVector) {
-	GUIControl::moveBy(moveVector);
+void TexturePanel::moveBy(const Vector2& moveVector) {
+	//GUIControl::moveBy(moveVector);
+
+	setPosition(position + moveVector);
+
 	if (neverShowScrollBar)
 		return;
 	verticalScrollBar->moveBy(moveVector);

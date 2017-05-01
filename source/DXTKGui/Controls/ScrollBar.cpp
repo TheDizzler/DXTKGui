@@ -2,7 +2,8 @@
 
 
 /** **** SCROLLBAR **** **/
-ScrollBar::ScrollBar(const Vector2& pos) {
+ScrollBar::ScrollBar(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	const Vector2& pos) : GUIControl(factory, mouseController) {
 
 	position = pos;
 
@@ -379,7 +380,7 @@ void Scrubber::setDimensions(const Sprite* scrollBarTrack,
 
 	minMaxDifference = maxPosition.y - minPosition.y;
 	setScrollPositionByPercent(currentpercent);
-	
+
 	hitArea->position = position;
 	hitArea->size = Vector2(width*scale.x, height*scale.y);
 

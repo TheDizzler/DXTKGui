@@ -1,8 +1,9 @@
 #include "ComboBox.h"
 
 
-ComboBox::ComboBox(const Vector2& pos, const int len,
-	size_t itemHeight, const int maxItemsShown) {
+ComboBox::ComboBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	const Vector2& pos, const int len, size_t itemHeight, const int maxItemsShown)
+	: GUIControl(factory, mouseController) {
 
 	position = pos;
 	width = len;

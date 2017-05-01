@@ -34,7 +34,7 @@ public:
 	void setSize(const Vector2& size);
 	void refreshDimensions();
 
-	virtual GraphicsAsset* texturize() override;
+	virtual unique_ptr<GraphicsAsset> texturize() override;
 	virtual void textureDraw(SpriteBatch* batch) override;
 
 	virtual void setPosition(const Vector2& newPosition) override;
@@ -82,7 +82,7 @@ private:
 	Vector2 scale = Vector2(1, 1);
 	float rotation = 0.0f;
 	Color tint = Colors::Black;
-	int frameThickness;
+	int frameThickness = 2;
 	float layerDepth = .9f;
 	unique_ptr<HitArea> hitArea;
 

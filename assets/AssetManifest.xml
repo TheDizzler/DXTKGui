@@ -12,6 +12,16 @@
 		<spritesheet name="Default GUI Sprites" file ="default gui spritesheet.dds">
 			<sprite name="Spinner Up Button" x="1" y="0" width="30" height="16" />
 			<sprite name="Spinner Down Button" x="33" y="0" width="30" height="16" />
+
+			<sprite name="Top Left Corner" set="Dynamic Dialog" x="0" y="17" width="16" height="16" />
+			<sprite name="Top Center" set="Dynamic Dialog" x="20" y="17" width="16" height="16" />
+			<sprite name="Top Right Corner" set="Dynamic Dialog" x="40" y="17" width="16" height="16" />
+			<sprite name="Left Center" set="Dynamic Dialog" x="0" y="37" width="16" height="16" />
+			<sprite name="Center" set="Dynamic Dialog" x="20" y="37" width="16" height="16" />
+			<sprite name="Right Center" set="Dynamic Dialog" x="40" y="37" width="16" height="16" />
+			<sprite name="Bottom Left Corner" set="Dynamic Dialog" x="0" y="57" width="16" height="16" />
+			<sprite name="Bottom Center" set="Dynamic Dialog" x="20" y="57" width="16" height="16" />
+			<sprite name="Bottom Right Corner" set="Dynamic Dialog" x="40" y="57" width="16" height="16" />
 		</spritesheet>
 
 		<sprite name="Mouse Arrow" file="Mouse Arrow.dds">

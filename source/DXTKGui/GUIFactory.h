@@ -32,7 +32,7 @@ public:
 		SpriteBatch* batch, shared_ptr<MouseController> mouse,
 		const char_t* assetManifestFile = NULL);
 
-	unique_ptr<FontSet> getFont(const char_t* fontName);
+	unique_ptr<FontSet> getFont(const char_t* fontName = "Default Font");
 	unique_ptr<Sprite> getSpriteFromAsset(const char_t* assetName);
 	shared_ptr<Animation> getAnimation(const char_t* animationName);
 	GraphicsAsset* const getAsset(const char_t* assetName);
@@ -50,10 +50,15 @@ public:
 	TriangleFrame* createTriangleFrame(const Vector2& point1,
 		const Vector2& point2, const Vector2& point3, USHORT thickness = 2);
 
+	/** @useTexture - drawing fonts is expensive so the complete text is
+			turned into a texture to cut down on draw time. This is far more efficient
+			even if the text is updating every second (have not tested it at more than 1 update
+			a second but it should remain more efficient as long as the changes made
+			to the text is less frequent than the amount of draw commands.)
+			Only set to false if using a throw away text that won't be drawn. */
 	TextLabel* createTextLabel(const Vector2& position,
-		const char_t* fontName = "Default Font");
-	TextLabel* createTextLabel(const Vector2& position,
-		wstring text, const char_t* fontName = "Default Font");
+		wstring text = L"", const char_t* fontName = "Default Font",
+		bool useTexture = true);
 
 	/** Creates a button with no set text or position. */
 	Button* createButton(const char_t* fontName = "Default Font");
@@ -111,10 +116,10 @@ public:
 	/* Creates a texture from a screen grab of an IElement2D object.
 		offset is the vector to bring object to top left corner of screen
 			in prep for its close up.*/
-	GraphicsAsset* createTextureFromIElement2D(Texturizable* control,
+	unique_ptr<GraphicsAsset> createTextureFromIElement2D(Texturizable* control,
 		bool autoBatchDraw = true, Color bgColor = {0, 0, 0, 0});
 
-	GraphicsAsset* createTextureFromScreen(Screen* screen,
+	unique_ptr<GraphicsAsset> createTextureFromScreen(Screen* screen,
 		bool autoBatchDraw = true, Color bgColor = {0, 0, 0, 0});
 
 	static bool initialized;

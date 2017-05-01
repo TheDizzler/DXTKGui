@@ -13,6 +13,14 @@ void GUIControl::setPosition(const Vector2& pos) {
 }
 
 
+GUIControl::~GUIControl() {
+
+	mouse.reset();
+	projectedHitArea.reset();
+	hitArea.reset();
+	mouse.reset();
+}
+
 const wchar_t* GUIControl::getText() {
 	return L"";
 }

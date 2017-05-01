@@ -7,7 +7,7 @@ GraphicsAsset::GraphicsAsset() {
 GraphicsAsset::~GraphicsAsset() {
 
 	resource.Reset();
-
+	texture.Reset();
 }
 
 #include "../StringHelper.h"

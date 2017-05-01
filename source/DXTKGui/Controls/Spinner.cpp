@@ -1,7 +1,9 @@
 #include "Spinner.h"
 
 #include "../GUIFactory.h"
-Spinner::Spinner(const Vector2& pos, const size_t len, const size_t itmHght, bool autoSz) {
+Spinner::Spinner(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	const Vector2& pos, const size_t len, const size_t itmHght, bool autoSz)
+	: GUIControl(factory, mouseController) {
 
 	position = pos;
 	width = len + textBuffer * 2;
@@ -18,7 +20,7 @@ void Spinner::initialize(const pugi::char_t* fontName,
 	const pugi::char_t* upButtonName, const pugi::char_t* downButtonName) {
 
 
-	label.reset(guiFactory->createTextLabel(Vector2::Zero, fontName));
+	label.reset(guiFactory->createTextLabel(Vector2::Zero, L"", fontName));
 	label->setTint(Vector4(0, 0, 0, 1));
 	label->setText("100");
 	if (label->getHeight() > itemHeight)

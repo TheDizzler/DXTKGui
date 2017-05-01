@@ -7,6 +7,8 @@
 class Dialog : public GUIControlBox, public Texturizable {
 public:
 
+	Dialog(GUIFactory* factory, shared_ptr<MouseController> mouseController);
+
 	virtual void draw(SpriteBatch* batch) = 0;
 
 
@@ -29,7 +31,7 @@ public:
 	virtual bool clicked() override;
 	virtual bool pressed() override;
 	virtual bool hovering() override;
-	
+
 	virtual const Vector2& getPosition() const override;
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
@@ -58,10 +60,10 @@ protected:
 
 	Vector2 size;
 
-	
+
 
 	unique_ptr<TextLabel> dialogText;
-	
+
 
 
 	TransitionEffects::TransitionEffect* openTransition = NULL;
@@ -82,7 +84,7 @@ protected:
 	};
 
 
-	
+
 };
 
 
@@ -93,9 +95,10 @@ protected:
 class PromptDialog : public Dialog {
 public:
 
-	PromptDialog(HWND hwnd, bool movable, bool centerText);
+	PromptDialog(GUIFactory* factory,
+		shared_ptr<MouseController> mouseController, HWND hwnd, bool movable, bool centerText);
 	/* Used only for classes that extend this class */
-	PromptDialog();
+	//PromptDialog();
 	~PromptDialog();
 
 	void initialize(GraphicsAsset* pixelAsset,
@@ -116,7 +119,8 @@ public:
 	void setTitleAreaDimensions(const Vector2& newSize);
 
 	/** Adds pre-created button to dialog as confirm button.
-		Note: user must initalize everything except for position. */
+		Note: user must initalize everything except for position.
+		Set autoSize to false if using an ImageButton. */
 	void setConfirmButton(unique_ptr<Button> okButton,
 		bool autoPosition = true, bool autoSize = true);
 	/** Creates a Button that does nothing until OnClickListener is set. */
@@ -138,7 +142,7 @@ public:
 	/* Dialog checks to see if it's open before performing any logic. */
 	virtual void draw(SpriteBatch* batch);
 
-	virtual GraphicsAsset* texturize() override;
+	virtual unique_ptr<GraphicsAsset> texturize() override;
 	virtual void textureDraw(SpriteBatch* batch) override;
 
 	/* Add other GUIControls to dialog. Control position should be relative to Dialog.
@@ -156,12 +160,12 @@ public:
 	virtual void setLayerDepth(const float depth, bool frontToBack = true) override;
 
 	const Color& getPanelTint() const;
-	
-	
+
+
 
 	virtual const vector<IElement2D*> getElements() const override;
 
-	
+
 	int titleTextMargin = 10;
 
 protected:
@@ -173,7 +177,7 @@ protected:
 	HWND hwnd;
 	vector<unique_ptr<GUIControl> > controls;
 	unique_ptr<TexturePanel> panel;
-	
+
 	Vector2 titleFrameSize = Vector2(0, 0);
 	Vector2 titleFramePosition;
 	Vector2 dialogFrameSize;
