@@ -20,12 +20,10 @@ CheckBox::CheckBox(GUIFactory* factory, shared_ptr<MouseController> mouseControl
 }
 
 CheckBox::~CheckBox() {
-	texture = NULL;
-	uncheckedSprite.reset();
-	checkedSprite.reset();
 
 	if (onClickListener != NULL)
 		delete onClickListener;
+
 }
 
 

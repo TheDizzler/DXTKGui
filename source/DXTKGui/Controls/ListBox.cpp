@@ -15,11 +15,6 @@ ListBox::ListBox(GUIFactory* factory, shared_ptr<MouseController> mouseControlle
 #include "../StringHelper.h"
 ListBox::~ListBox() {
 
-	wostringstream woo;
-	woo << L"ListBox Pixel:" << endl;
-	woo << "\t\tResource release #: " << pixel.Reset() << endl;
-	OutputDebugString(woo.str().c_str());
-
 	if (onClickListener != NULL)
 		delete onClickListener;
 
@@ -36,6 +31,8 @@ void ListBox::initialize(const pugi::char_t* fnt, GraphicsAsset* pixelAsset,
 
 	fontName = fnt;
 	pixel = pixelAsset->getTexture();
+
+	texturePanel.reset(guiFactory->createPanel(false));
 
 	firstItemPos = Vector2(position.x, position.y);
 
@@ -84,6 +81,7 @@ void ListBox::addItems(vector<ListItem* > items) {
 		if (item->measureString().x + scrollBar->getWidth() > longestLabelLength)
 			longestLabelLength = item->measureString().x;
 	}
+
 	items.clear();
 
 	resizeBox();
@@ -114,7 +112,11 @@ void ListBox::resizeBox() {
 	Vector2 frameSize = Vector2(frameWidth, frameHeight);
 	frame->setDimensions(position, frameSize, frameThickness);
 	hitArea->size = frameSize;
+
+	texturePanel->setTexture(texturize());
+	texturePanel->setPosition(firstItemPos);
 }
+
 
 void ListBox::setPosition(const Vector2& position) {
 	GUIControl::setPosition(position);
@@ -171,6 +173,8 @@ void ListBox::update(double deltaTime) {
 
 			isClicked = true;
 			onClick();
+			texturePanel->setTexture(texturize());
+			//texturePanel->setPosition(firstItemPos);
 		}
 	}
 
@@ -187,13 +191,14 @@ void ListBox::update(double deltaTime) {
 
 void ListBox::draw(SpriteBatch* batch) {
 
-	size_t shown = 0;
 	/*for (int i = firstItemToDisplay;
 		i < firstItemToDisplay + itemsToDisplay; ++i) {
 
 		listItems[i]->draw(batch);
 
 	}*/
+
+	texturePanel->draw(batch);
 
 	if (itemsToDisplay == maxDisplayItems || alwaysDisplayScrollBar) {
 		scrollBar->draw(batch);
@@ -202,7 +207,22 @@ void ListBox::draw(SpriteBatch* batch) {
 	if (listItems.size() > 0) { // draw frame
 		frame->draw(batch);
 	}
+	
+}
 
+
+void ListBox::textureDraw(SpriteBatch* batch) {
+	for (int i = firstItemToDisplay;
+		i < firstItemToDisplay + itemsToDisplay; ++i) {
+
+		listItems[i]->draw(batch);
+
+	}
+}
+
+
+unique_ptr<GraphicsAsset> ListBox::texturize() {
+	return guiFactory->createTextureFromIElement2D(this);
 }
 
 
@@ -305,10 +325,11 @@ bool ListBox::hovering() {
 
 /** **** ListItem **** **/
 ListItem::~ListItem() {
+	/*guiFactory = NULL;
 	wostringstream woo;
-	woo << L"ListItem Pixel:" << endl;
-	woo << "\t\tResource release #: " << pixel.Reset() << endl;
-	OutputDebugString(woo.str().c_str());
+	woo << L"\n\n*** ListItem Pixel *** " << endl;
+	woo << "\t\tResource release #: " <<*/ pixel.Reset() /*<< endl*/;
+	//OutputDebugString(woo.str().c_str());
 
 }
 

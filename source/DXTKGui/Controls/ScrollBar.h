@@ -7,7 +7,7 @@ class Scrubber : public RectangleSprite {
 public:
 	/* If using an image file instead of a pixel, set staticImage to true. */
 	Scrubber(GraphicsAsset* const graphicsAsset, bool assetIsPixel = true);
-	~Scrubber();
+	virtual ~Scrubber();
 
 	/*void setDimensions(const Vector2& startPosition,
 		const Vector2& size, const int scrollBarHeight);*/
@@ -73,7 +73,7 @@ class ScrollBar : public GUIControl {
 public:
 	ScrollBar(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 		const Vector2& position);
-	~ScrollBar();
+	virtual ~ScrollBar();
 
 	/* scrollBarButtons[0] = Up Button
 		scrollBarButtons[1] = Down Button */

@@ -11,7 +11,7 @@ public:
 
 	Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 		const pugi::char_t* font);
-	~Button();
+	virtual ~Button();
 
 	/* position is topleft of button. */
 	void setDimensions(const Vector2& position, const Vector2& size,
@@ -135,7 +135,7 @@ public:
 	ImageButton(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 		unique_ptr<Sprite> upButtonSprite,
 		unique_ptr<Sprite> downButtonSprite, const pugi::char_t* font);
-	~ImageButton();
+	virtual ~ImageButton();
 
 	virtual void draw(SpriteBatch* batch) override;
 
@@ -166,7 +166,7 @@ class AnimatedButton : public GUIControl {
 public:
 	AnimatedButton(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 		shared_ptr<Animation> animation, Vector2 position);
-	~AnimatedButton();
+	virtual ~AnimatedButton();
 
 	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;

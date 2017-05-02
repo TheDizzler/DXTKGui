@@ -13,6 +13,14 @@ Spinner::Spinner(GUIFactory* factory, shared_ptr<MouseController> mouseControlle
 }
 
 Spinner::~Spinner() {
+	//OutputDebugString(L"\n\n*** Spinner Release ***\n\t ->");
+	list.clear();
+	//label.reset();
+	//frame.reset();
+	//rectangle.reset();
+	//upButton.reset();
+	//downButton.reset();
+	//OutputDebugString(L"*** Spinner Release ***\n");
 }
 
 #include <sstream>
@@ -28,15 +36,13 @@ void Spinner::initialize(const pugi::char_t* fontName,
 
 
 	upButton.reset((ImageButton*) guiFactory->createImageButton(upButtonName));
-	/*upButton->setDimensions(Vector2(position.x + width, position.y), Vector2(upButton->getWidth(), itemHeight / 2));*/
 	if (upButton->getHeight() * 2 > itemHeight)
 		itemHeight = upButton->getHeight() * 2;
-
-	upButton->setPosition(Vector2(position.x + width, position.y));
 	upButton->setOnClickListener(new SpinnerUpButtonListener(this));
+	upButton->setPosition(Vector2(position.x + width, position.y));
+	
+	
 	downButton.reset((ImageButton*) guiFactory->createImageButton(downButtonName));
-	/*downButton->setDimensions(Vector2(position.x + width, position.y + (itemHeight - upButton->getHeight())),
-		Vector2(upButton->getWidth(), itemHeight / 2));*/
 	downButton->setPosition(Vector2(position.x + width, position.y + (itemHeight - upButton->getHeight())));
 	downButton->setOnClickListener(new SpinnerDownButtonListener(this));
 
@@ -90,6 +96,7 @@ void Spinner::addItems(vector<wstring> items) {
 	}
 
 	label->setText(list[selected]);
+	items.clear();
 }
 
 const wstring Spinner::getSelected() const {
@@ -121,7 +128,7 @@ void Spinner::setText(wstring text) {
 }
 
 const Vector2 &XM_CALLCONV Spinner::measureString() const {
-	return Vector2(longestStringLength, frame->getHeight());
+	return Vector2(longestStringLength, itemHeight);
 }
 
 void Spinner::moveBy(const Vector2& moveVector) {
@@ -149,7 +156,7 @@ const int Spinner::getWidth() const {
 }
 
 const int Spinner::getHeight() const {
-	return frame->getHeight();
+	return itemHeight;
 }
 
 bool Spinner::clicked() {

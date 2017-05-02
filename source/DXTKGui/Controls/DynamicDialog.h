@@ -13,7 +13,7 @@ public:
 	/** Movable and centerText not yet implemented). */
 	DynamicDialog(GUIFactory* factory,
 		shared_ptr<MouseController> mouseController);
-	~DynamicDialog();
+	virtual ~DynamicDialog();
 
 
 	void initialize(shared_ptr<AssetSet> assetSet,

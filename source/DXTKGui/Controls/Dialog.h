@@ -8,7 +8,7 @@ class Dialog : public GUIControlBox, public Texturizable {
 public:
 
 	Dialog(GUIFactory* factory, shared_ptr<MouseController> mouseController);
-
+	virtual ~Dialog();
 	virtual void draw(SpriteBatch* batch) = 0;
 
 
@@ -99,7 +99,7 @@ public:
 		shared_ptr<MouseController> mouseController, HWND hwnd, bool movable, bool centerText);
 	/* Used only for classes that extend this class */
 	//PromptDialog();
-	~PromptDialog();
+	virtual ~PromptDialog();
 
 	void initialize(const pugi::char_t* font = "Default Font");
 

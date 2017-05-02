@@ -14,7 +14,7 @@ extern unique_ptr<GUIOverlay> guiOverlay;
 class GameManager {
 public:
 	GameManager(GameEngine* gameEngine);
-	~GameManager();
+	virtual ~GameManager();
 
 
 	bool initializeGame(HWND hwnd, ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse);

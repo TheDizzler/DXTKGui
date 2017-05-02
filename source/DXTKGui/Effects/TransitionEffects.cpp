@@ -230,6 +230,9 @@ TransitionEffects::TexturedTransition::TexturedTransition(
 	transitionSpeed = speed;
 }
 
+TransitionEffects::TexturedTransition::~TexturedTransition() {
+}
+
 
 void TransitionEffects::TexturedTransition::initializeEffect(Texturizable* cntrl) {
 
@@ -395,9 +398,16 @@ TransitionEffects::SplitTransition::SplitTransition(IElement2D* cntrl,
 	int sWidth, float speed) : TexturedTransition(cntrl, speed) {
 
 	screenWidth = sWidth;
+}
 
+#include "../StringHelper.h"
+TransitionEffects::SplitTransition::~SplitTransition() {
 
-
+	wostringstream woo;
+	woo << L"\n\n***TexturePanel Release ***" << endl;
+	woo << "\t\tResource release #: " << texture.Reset() << "\n\t ->";
+	OutputDebugString(woo.str().c_str());
+	gfxAsset.reset();
 }
 
 void TransitionEffects::SplitTransition::initializeEffect(Texturizable* cntrl) {
@@ -455,3 +465,6 @@ bool TransitionEffects::SplitTransition::draw(SpriteBatch* batch) {
 	return true;
 }
 
+TransitionEffects::TransitionEffect::~TransitionEffect() {
+	control = NULL;
+}

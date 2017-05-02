@@ -66,12 +66,12 @@ public:
 
 
 /** A simple control to display various (text) items. */
-class ListBox : public GUIControl {
+class ListBox : public GUIControl, public Texturizable {
 public:
 	ListBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 		const Vector2& position, const int width,
 		size_t itemHeight = 32, const int maxItemsShown = 7);
-	~ListBox();
+	virtual ~ListBox();
 
 	void initialize(const pugi::char_t* fontName,
 		GraphicsAsset* pixelAsset, ScrollBar* scrollBar,
@@ -88,8 +88,9 @@ public:
 	virtual void update(double deltaTime) override;
 	void draw(SpriteBatch* batch);
 
-	/*virtual unique_ptr<GraphicsAsset> texturize() override;
-	virtual void textureDraw(SpriteBatch* batch) override;*/
+	virtual unique_ptr<GraphicsAsset> texturize() override;
+	virtual void textureDraw(SpriteBatch * batch) override;
+
 
 	void setSelected(size_t newIndex);
 	const int getSelectedIndex() const;
@@ -146,7 +147,6 @@ private:
 
 	/* width of listbox */
 	int width;
-	Vector2 position;
 	/* Always smaller or equal to maxDisplayItems. */
 	size_t itemsToDisplay = 0;
 
@@ -167,6 +167,7 @@ private:
 
 	/** ID3D11ShaderResourceView is a ComPtr! */
 	ComPtr<ID3D11ShaderResourceView> pixel;
+	unique_ptr<TexturePanel> texturePanel;
 
 	int frameThickness = 2;
 
@@ -177,5 +178,6 @@ private:
 
 	void setWidth(int newWidth);
 	void resizeBox();
+
 
 };

@@ -7,7 +7,10 @@ DynamicDialog::DynamicDialog(GUIFactory* factory,
 }
 
 DynamicDialog::~DynamicDialog() {
+
+	/*OutputDebugString(L"\n\n*** Dynamic Dialog Release ***\n\t");
 	assetSet.reset();
+	texturePanel.reset();
 
 	topLeftCorner = NULL;
 	topCenter = NULL;
@@ -20,6 +23,8 @@ DynamicDialog::~DynamicDialog() {
 	bottomLeftCorner = NULL;
 	bottomCenter = NULL;
 	bottomRightCorner = NULL;
+
+	OutputDebugString(L"\n*** Dynamic Dialog Done ***");*/
 }
 
 

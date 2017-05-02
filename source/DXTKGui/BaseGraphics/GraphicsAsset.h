@@ -20,7 +20,7 @@ struct Animation {
 	Animation(ComPtr<ID3D11ShaderResourceView> tex, vector<shared_ptr<Frame>> frames)
 		: texture(tex), animationFrames(frames) {
 	}
-	~Animation();
+	virtual ~Animation();
 
 	vector<shared_ptr<Frame>> animationFrames;
 	ComPtr<ID3D11ShaderResourceView> texture;
@@ -33,7 +33,7 @@ public:
 
 
 	GraphicsAsset();
-	~GraphicsAsset();
+	virtual ~GraphicsAsset();
 
 	bool load(ComPtr<ID3D11Device> device, const wchar_t* file,
 		const Vector2& origin = Vector2(-1000, -1000),
@@ -76,7 +76,7 @@ protected:
 class AssetSet {
 public:
 	AssetSet(const pugi::char_t* setName);
-	~AssetSet();
+	virtual ~AssetSet();
 
 	void addAsset(string assetName, unique_ptr<GraphicsAsset> asset);
 	void addAsset(string assetName, shared_ptr<Animation> asset);

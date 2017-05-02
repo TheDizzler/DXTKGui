@@ -1,4 +1,4 @@
-# DXTKGui v0.8b
+# DXTKGui v1.0b
 
 A GUI Framework for DirectX ToolKit.
 This developed out of one part not being able to find any existing frameworks and one part me procrastinating on developing the game I'm working on. I had some hacky GUI features (button, dialog box, listbox) and I was bothered by how inflexible and cumbersome they were. So I started this project to make an extensible, easy to use, and re-usable GUI toolkit.
@@ -22,7 +22,7 @@ Email: tgillon.sdk@gmail.com
 
 
 ##DONE:
->- Optimized draw speed for most controls
+>- Optimized draw speed for most controls (ListBox needs improvement)
 >- Primitve Shapes - filled rectangle; un-filled rectangle; triangle (needs work); line
 >- Text Labels - normal and clickable
 >- Button - text, image, animated
@@ -46,8 +46,8 @@ Email: tgillon.sdk@gmail.com
 ##TODO:
 >- ~~find out how to purge all the reported live objects ':/~~ 
 Live objects ARE being released but after the debug report. <- FIXED
-Still have some outstanding internal refernces.
->- Need to go check for circular shared_ptr references
+~~Still have some outstanding internal refernces.~~ Most appear gone
+>- ListBox draw speed can be improved greatly (too much text)
 >- Controller controlled controls (joysticks)
 >- Dialog Box - allow hyphenating of words that can't fit on one line with option to turn on/off
 (currently puts whole word on next line or puts break in word)

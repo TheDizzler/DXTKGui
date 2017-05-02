@@ -5,6 +5,14 @@ Dialog::Dialog(GUIFactory* factory, shared_ptr<MouseController> mouseController)
 	: GUIControlBox(factory, mouseController) {
 }
 
+Dialog::~Dialog() {
+
+	if (openTransition)
+		delete openTransition;
+	if (closeTransition)
+		delete closeTransition;
+}
+
 void Dialog::show() {
 	isShowing = true;
 	isClosing = false;
@@ -151,15 +159,7 @@ PromptDialog::PromptDialog(GUIFactory* factory,
 }
 
 PromptDialog::~PromptDialog() {
-
-	std::vector<unique_ptr<GUIControl>> empty;
-	swap(controls, empty);
-
-	panel.reset();
-	if (openTransition != NULL)
-		delete openTransition;
-	if (closeTransition != NULL)
-		delete closeTransition;
+	controls.clear();
 }
 
 #include "../GUIFactory.h"

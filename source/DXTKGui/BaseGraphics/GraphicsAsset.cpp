@@ -8,10 +8,10 @@ GraphicsAsset::GraphicsAsset() {
 GraphicsAsset::~GraphicsAsset() {
 
 	wostringstream woo;
-	woo << "Destroying: " << textureFile << endl;
+	woo << "\n\n*** GraphicsAsset: " << textureFile << endl;
 	woo << "\t\tID3D11Resource release #: " << resource.Reset() << endl;
 	woo << "\t\tResource release #: " << texture.Reset() << endl;
-	OutputDebugString(woo.str().c_str());
+	//OutputDebugString(woo.str().c_str());
 }
 
 
@@ -136,8 +136,10 @@ AssetSet::AssetSet(const pugi::char_t* name) {
 }
 
 AssetSet::~AssetSet() {
+	OutputDebugString(L"\n\n*** Asset Set Release ***\n\t ->");
 	assetMap.clear();
 	animationMap.clear();
+	OutputDebugString(L"*** Asset Set Done ***\n");
 }
 
 void AssetSet::addAsset(string assetName, unique_ptr<GraphicsAsset> asset) {
@@ -172,9 +174,15 @@ shared_ptr<Animation> AssetSet::getAnimation(const pugi::char_t* animationName) 
 }
 
 Animation::~Animation() {
-	animationFrames.clear();
+
 	wostringstream woo;
-	woo << "Animation" << endl;
-	woo << "\t\tTexture release #: " << texture.Reset() << endl;
-	OutputDebugString(woo.str().c_str());
+	woo << L"\n\n*** Animation Release ***\n\t" << endl;
+	woo << "\t\tTexture release #: " << texture.Reset() << "\n\t ->";
+	//OutputDebugString(woo.str().c_str());
+
+	for (auto& frame : animationFrames)
+		frame.reset();
+	animationFrames.clear();
+
+	//OutputDebugString(L"*** Animation Done ***\n");
 }

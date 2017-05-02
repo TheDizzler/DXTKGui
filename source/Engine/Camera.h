@@ -13,7 +13,7 @@ class Camera {
 public:
 	Camera(int viewportWidth, int viewportHeight);
 	Camera(const Vector2& viewport);
-	~Camera();
+	virtual ~Camera();
 
 	void updateViewport(const Vector2& viewportArea, const Vector2& viewportPosition, bool zoomToFit = false);
 

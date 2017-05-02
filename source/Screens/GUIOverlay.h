@@ -9,7 +9,7 @@
 class GUIOverlay {
 public:
 	GUIOverlay();
-	~GUIOverlay();
+	virtual ~GUIOverlay();
 
 
 	void update(double deltaTime);

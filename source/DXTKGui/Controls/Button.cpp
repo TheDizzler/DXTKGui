@@ -16,10 +16,16 @@ Button::Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 
 Button::~Button() {
 
+	//OutputDebugString(L"\n\n*** Button Release ***\n\t ->");
+	/*buttonLabel.reset();
+	rectSprite.reset();
+	frame.reset();*/
 	if (onClickListener != NULL)
 		delete onClickListener;
 	if (onHoverListener != NULL)
 		delete onHoverListener;
+
+	//OutputDebugString(L"\n*** Button Done ***");
 }
 
 
@@ -331,10 +337,11 @@ ImageButton::ImageButton(GUIFactory* factory, shared_ptr<MouseController> mouseC
 
 
 ImageButton::~ImageButton() {
-
-	texture = NULL;
-	normalSprite.reset();
-	pressedSprite.reset();
+	//OutputDebugString(L"\n\n*** ImageButton Release ***\n\t =>");
+	//texture = NULL;
+	//normalSprite.reset();
+	//pressedSprite.reset();
+	//OutputDebugString(L"*** ImageButton Done ***\n");
 }
 
 
@@ -430,8 +437,14 @@ AnimatedButton::AnimatedButton(GUIFactory* factory, shared_ptr<MouseController> 
 }
 
 AnimatedButton::~AnimatedButton() {
+	//OutputDebugString(L"\n\n*** AnimatedButton Release ***\n\t ->");
+
+	//animation.reset();
 	if (onClickListener != NULL)
 		delete onClickListener;
+
+
+	//OutputDebugString(L"*** AnimatedButton Release ***\n");
 
 }
 

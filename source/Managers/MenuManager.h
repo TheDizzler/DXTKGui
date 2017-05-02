@@ -173,7 +173,7 @@ class ConfigScreen : public MenuScreen {
 	friend class BackButtonListener;
 public:
 	ConfigScreen(MenuManager* manager);
-	~ConfigScreen();
+	virtual ~ConfigScreen();
 
 	virtual bool initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse) override;
 	virtual void update(double deltaTime) override;
@@ -201,7 +201,7 @@ class MainScreen : public MenuScreen {
 	friend class OnClickListenerDialogQuitButton;
 public:
 	MainScreen(MenuManager* manager);
-	~MainScreen();
+	virtual ~MainScreen();
 
 	virtual bool initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse) override;
 	virtual void update(double deltaTime) override;
@@ -211,8 +211,6 @@ public:
 private:
 	shared_ptr<MouseController> mouse;
 	unique_ptr<PromptDialog> exitDialog;
-	TextLabel* test;
 	TextLabel* mouseLabel;
-	TextLabel* fpsLabel;
 };
 

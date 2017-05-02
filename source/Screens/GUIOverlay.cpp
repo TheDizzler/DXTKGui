@@ -15,9 +15,9 @@ GUIOverlay::GUIOverlay() {
 
 GUIOverlay::~GUIOverlay() {
 
-
+	fpsLabel.reset();
 	lostJoyDialogs.clear();
-
+	displayingLostJoys.clear();
 }
 
 
@@ -55,7 +55,6 @@ void GUIOverlay::draw(SpriteBatch* batch) {
 
 
 	fpsLabel->draw(batch);
-	//fps2Label->draw(batch);
 }
 
 void GUIOverlay::setDialogText(USHORT playerSlotNumber, wstring text) {

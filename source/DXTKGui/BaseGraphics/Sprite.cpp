@@ -27,17 +27,29 @@ Sprite::Sprite(const Vector2& pos) {
 
 Sprite::~Sprite() {
 	wostringstream woo;
-	woo << L"Sprite Release:" << endl;
-	woo << L"\tIs pixel: " << (isPixel ? L"True" : L"False") << endl;
+	woo << L"\n\n *** Sprite Release *** " << endl;
+	if (isPixel)
+		woo << L"\tIs pixel: " << L"True" << endl;
+	else
+		woo << L"\tIs pixel: " << L"False" << endl;
+
 	woo << "\t\tResource release #: " << texture.Reset() << endl;
-	OutputDebugString(woo.str().c_str());
+	//OutputDebugString(woo.str().c_str());
 
 }
 
 /* GraphicsAsset is not stored in Sprite. */
 void Sprite::load(GraphicsAsset* const graphicsAsset) {
 
-	texture.Reset();
+	wostringstream woo;
+	woo << L"\n\n *** Sprite Load *** " << endl;
+	if (isPixel)
+		woo << L"\tIs pixel: " << L"True" << endl;
+	else
+		woo << L"\tIs pixel: " << L"False" << endl;
+	woo << "\t\tResource release #: " << texture.Reset() << "\n\t";
+	//OutputDebugString(woo.str().c_str());
+
 	texture = graphicsAsset->getTexture();
 	width = graphicsAsset->getWidth();
 	height = graphicsAsset->getHeight();

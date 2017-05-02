@@ -12,7 +12,7 @@ public:
 	RectangleSprite(GraphicsAsset* const graphicsAsset, Color color = Color(1, 1, 1, 1));
 	/*RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel,
 		const Vector2& position, const Vector2& size, Color color);*/
-	//~RectangleSprite();
+	virtual ~RectangleSprite();
 
 	virtual void setSize(const Vector2& size) override;
 	const Vector2 getSize() const;

@@ -11,7 +11,7 @@
 class FontSet {
 public:
 	FontSet();
-	~FontSet();
+	virtual ~FontSet();
 
 	virtual void load(ComPtr<ID3D11Device> device, const wchar_t* file);
 

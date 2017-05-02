@@ -15,7 +15,9 @@ ComboBox::ComboBox(GUIFactory* factory, shared_ptr<MouseController> mouseControl
 
 ComboBox::~ComboBox() {
 
-	delete onClickListener;
+	if (onClickListener)
+		delete onClickListener;
+
 }
 
 #include "../GUIFactory.h"

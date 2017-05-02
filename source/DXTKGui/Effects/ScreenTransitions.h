@@ -9,6 +9,7 @@ namespace ScreenTransitions {
 	public:
 		virtual void setTransitionBetween(unique_ptr<GraphicsAsset> oldScreenAsset,
 			unique_ptr<GraphicsAsset> newScreenAsset, float transitionTime);
+		virtual ~ScreenTransition();
 
 		/* Returns true when transition effect is finished. */
 		virtual bool run(double deltaTime) = 0;
@@ -38,7 +39,7 @@ namespace ScreenTransitions {
 	public:
 		ScreenTransitionManager(GUIFactory* guiFactory,
 			const char_t* bgName = "Default Transition BG");
-		~ScreenTransitionManager();
+		virtual ~ScreenTransitionManager();
 
 		void setTransition(ScreenTransition* effect);
 		void transitionBetween(Screen* oldScreen, Screen* newScreen,
@@ -82,7 +83,7 @@ namespace ScreenTransitions {
 
 	class SquareFlipScreenTransition : public ScreenTransition {
 	public:
-		~SquareFlipScreenTransition();
+		virtual ~SquareFlipScreenTransition();
 
 		virtual void setTransitionBetween(unique_ptr<GraphicsAsset> oldScreenAsset,
 			unique_ptr<GraphicsAsset> newScreenAsset, float transitionTime) override;
@@ -117,7 +118,7 @@ namespace ScreenTransitions {
 
 	class LineWipeScreenTransition : public ScreenTransition {
 	public:
-		~LineWipeScreenTransition();
+		virtual ~LineWipeScreenTransition();
 		virtual void setTransitionBetween(unique_ptr<GraphicsAsset> oldScreenAsset,
 			unique_ptr<GraphicsAsset> newScreenAsset, float transitionTime) override;
 		virtual bool run(double deltaTime) override;

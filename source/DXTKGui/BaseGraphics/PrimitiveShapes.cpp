@@ -18,13 +18,10 @@ RectangleSprite::RectangleSprite(GraphicsAsset* const graphicsAsset, Color color
 //	setDimensions(pos, size);
 //}
 
-//RectangleSprite::~RectangleSprite() {
-//
-//	wostringstream woo;
-//	woo << L"RectSprite Texture:" << endl;
-//	woo << "\t\tResource release #: " << texture.Reset() << endl;
-//	OutputDebugString(woo.str().c_str());
-//}
+RectangleSprite::~RectangleSprite() {
+
+	//OutputDebugString(L"\n*** RectSprite Release ***\n");
+}
 
 void RectangleSprite::setSize(const Vector2 & size) {
 Sprite::setSize(size);
@@ -66,10 +63,16 @@ RectangleFrame::RectangleFrame(GraphicsAsset* pixelAsset, GUIFactory* gui) {
 
 RectangleFrame::~RectangleFrame() {
 
-	wostringstream woo;
-	woo << L"RectFrame Pixel:" << endl;
-	woo << "\t\tResource release #: " << pixel.Reset() << endl;
-	OutputDebugString(woo.str().c_str());
+	
+	//wostringstream woo;
+	//woo << L"\n\n***RectFrame Pixel ***" << endl;
+	///*woo << "\t\tResource release #: " << */pixel.Reset() /*<< "\n\t"*/;
+	//OutputDebugString(woo.str().c_str());
+
+	/*texturePanel.reset();
+	hitArea.reset();
+	guiFactory = NULL;
+	OutputDebugString(L"\n*** RectFrame Done ***");*/
 }
 
 
@@ -314,10 +317,10 @@ Line::Line(GraphicsAsset* pixelAsset,
 }
 
 Line::~Line() {
-	wostringstream woo;
-	woo << L"Line Pixel:" << endl;
+	/*wostringstream woo;
+	woo << L"\n\n*** Line Pixel ***\n" << endl;
 	woo << "\t\tResource release #: " << pixel.Reset() << endl;
-	OutputDebugString(woo.str().c_str());
+	OutputDebugString(woo.str().c_str());*/
 }
 
 const float Line::getRotation() const {
@@ -368,10 +371,13 @@ TriangleFrame::TriangleFrame(GraphicsAsset* pixelAsset) {
 }
 
 TriangleFrame::~TriangleFrame() {
-	wostringstream woo;
-	woo << L"TriangleFrame Pixel:" << endl;
+
+	/*wostringstream woo;
+	woo << L"\n\n*** TriangleFrame Pixel:" << endl;
 	woo << "\t\tResource release #: " << pixel.Reset() << endl;
-	OutputDebugString(woo.str().c_str());
+	OutputDebugString(woo.str().c_str());*/
+
+	
 }
 
 void TriangleFrame::setDimensions(const Vector2& p1, const Vector2& p2,

@@ -13,12 +13,15 @@ TexturePanel::TexturePanel(GUIFactory* factory, shared_ptr<MouseController> mous
 
 #include "../StringHelper.h"
 TexturePanel::~TexturePanel() {
-	gfxAsset.reset();
-	verticalScrollBar.reset();
-	wostringstream woo;
-	woo << L"TexturePanel:" << endl;
-	woo << "\t\tResource release #: " << texture.Reset() << endl;
-	OutputDebugString(woo.str().c_str());
+	/*wostringstream woo;
+	woo << L"\n\n***TexturePanel Release ***" << endl;*/
+	/*woo << "\t\tResource release #: " << */texture.Reset()/* << "\n\t ->"*/;
+	//OutputDebugString(woo.str().c_str());
+
+	//gfxAsset.reset();
+	//verticalScrollBar.reset();
+	
+	//OutputDebugString(L"\n*** TexturePanel Done ***");
 }
 
 

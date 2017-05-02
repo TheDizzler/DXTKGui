@@ -12,8 +12,10 @@ namespace TransitionEffects {
 	class TransitionEffect {
 	public:
 		TransitionEffect(IElement2D* cntrl) {
-		control = cntrl;
+			control = cntrl;
 		}
+		virtual ~TransitionEffect();
+
 		/** This must be run in Set Transition Function. */
 		virtual void initializeEffect(Texturizable* cntrl) {
 		};
@@ -93,7 +95,7 @@ namespace TransitionEffects {
 		TrueGrowTransition(Dialog* containerControl,
 			const Vector2& startScale, const Vector2& endScale,
 			float transitionSpeed = 20);
-		~TrueGrowTransition();
+		virtual ~TrueGrowTransition();
 
 		virtual bool run(double deltaTime) override;
 		virtual void reset() override;
@@ -110,11 +112,12 @@ namespace TransitionEffects {
 
 
 	/* A base class for transitions that require advanced graphical features.
-	WARNING: Every Texturizable needs to be an IElement2D as well. 
+	WARNING: Every Texturizable needs to be an IElement2D as well.
 	(They should be anyway, but yeah, you know, I'm just saying). */
 	class TexturedTransition : public TransitionEffect {
 	public:
 		TexturedTransition(IElement2D* cntrl, float transitionSpeed);
+		virtual ~TexturedTransition();
 
 		virtual void initializeEffect(Texturizable* control) override;
 		virtual bool draw(SpriteBatch* batch) override;
@@ -136,7 +139,7 @@ namespace TransitionEffects {
 	public:
 		BlindsTransition(IElement2D* cntrl, float transitionTime = .5,
 			bool vertical = true, bool horizontal = false);
-		~BlindsTransition();
+		virtual ~BlindsTransition();
 
 		virtual void initializeEffect(Texturizable* control) override;
 
@@ -175,6 +178,7 @@ namespace TransitionEffects {
 	class SplitTransition : public TexturedTransition {
 	public:
 		SplitTransition(IElement2D* cntrl, int screenWidth, float transitionSpeed = 150.0);
+		virtual ~SplitTransition();
 
 		virtual void initializeEffect(Texturizable* control) override;
 

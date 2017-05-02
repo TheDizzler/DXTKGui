@@ -25,7 +25,7 @@ class GameEngine : public GraphicsEngine, public Input {
 public:
 
 	GameEngine();
-	~GameEngine();
+	virtual ~GameEngine();
 
 	bool initEngine(HWND hwnd, HINSTANCE hInstance);
 	void onAudioDeviceChange();

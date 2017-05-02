@@ -8,7 +8,7 @@ public:
 
 	TexturePanel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 		ScrollBar* scrllbr);
-	~TexturePanel();
+	virtual ~TexturePanel();
 
 
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);

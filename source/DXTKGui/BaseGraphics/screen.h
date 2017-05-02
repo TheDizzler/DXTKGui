@@ -20,7 +20,7 @@ public:
 	/** Actionto perform when a new joystick has been registered. */
 	virtual void newController(HANDLE joyHandle) = 0;
 
-	/** Override this function to get funky with your screen transitions. */ 
+	/** Override this function to get funky with your screen transitions. */
 	virtual void textureDraw(SpriteBatch* batch) {
 		draw(batch);
 	};

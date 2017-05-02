@@ -11,8 +11,9 @@ GameEngine::GameEngine() {
 
 
 GameEngine::~GameEngine() {
-	mouse.reset();
+	
 	game.reset();
+	showDialog = NULL;
 	errorDialog.reset();
 	warningDialog.reset();
 	guiFactory.reset();

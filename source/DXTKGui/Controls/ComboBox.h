@@ -8,7 +8,7 @@ public:
 	ComboBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 		const Vector2& position, const int width,
 		size_t itemHeight = 32, const int maxItemsShown = 7);
-	~ComboBox();
+	virtual ~ComboBox();
 
 	bool initialize(shared_ptr<FontSet> font, ListBox* listbox,
 		const pugi::char_t* buttonAsset = "Combo Button Closed",

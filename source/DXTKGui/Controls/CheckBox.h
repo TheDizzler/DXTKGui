@@ -9,7 +9,7 @@ public:
 	CheckBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 		unique_ptr<Sprite> uncheckedSprite, unique_ptr<Sprite> checkedSprite,
 		const pugi::char_t* font);
-	~CheckBox();
+	virtual ~CheckBox();
 
 	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;

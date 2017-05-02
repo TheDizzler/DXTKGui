@@ -14,7 +14,7 @@ class Joystick {
 public:
 
 	Joystick(size_t controllerSlot);
-	~Joystick();
+	virtual ~Joystick();
 
 	void registerNewHandle(HANDLE handle);
 	HANDLE getHandle();

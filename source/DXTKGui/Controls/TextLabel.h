@@ -11,7 +11,7 @@ public:
 	TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 		wstring text, shared_ptr<FontSet> font, bool useTexture = true);
 
-	~TextLabel();
+	virtual ~TextLabel();
 
 	virtual void update(double deltaTime) override;
 	void draw(SpriteBatch* batch);

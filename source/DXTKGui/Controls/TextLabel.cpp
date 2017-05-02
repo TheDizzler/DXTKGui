@@ -26,11 +26,15 @@ TextLabel::TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseContr
 
 TextLabel::~TextLabel() {
 
+	//OutputDebugString(L"\n\n*** TextLabel Release ***\n\t ->");
 	texturePanel.reset();
+	font.reset();
 	if (onClickListener != NULL)
 		delete onClickListener;
 	if (onHoverListener != NULL)
 		delete onHoverListener;
+
+	//OutputDebugString(L"\n*** TextLabel Done ***");
 }
 
 

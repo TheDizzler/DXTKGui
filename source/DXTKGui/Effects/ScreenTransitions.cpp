@@ -29,7 +29,7 @@ void ScreenTransitionManager::setTransition(ScreenTransition* effect) {
 #include "../BaseGraphics/screen.h"
 void ScreenTransitionManager::transitionBetween(
 	Screen* oldScreen, Screen* newScreen, float transitionTime) {
-	
+
 	Color purple = Color(158, 0, 58);
 	Color blue = Color(0, 58, 158);
 	transition->setTransitionBetween(
@@ -48,9 +48,14 @@ void ScreenTransitionManager::drawTransition(SpriteBatch* batch) {
 
 
 
-
+#include "../StringHelper.h"
 void ScreenTransition::setTransitionBetween(
 	unique_ptr<GraphicsAsset> oldScreen, unique_ptr<GraphicsAsset> newScreen, float time) {
+
+	wostringstream woo;
+	woo << L"\n\n *** ScreenTransition Release *** " << endl;
+	woo << "\t\oldTexture release #: " << oldTexture.Reset() << endl;
+	woo << "\t\newTexture release #: " << newTexture.Reset() << endl;
 
 	oldScreenAsset = move(oldScreen);
 	newScreenAsset = move(newScreen);
@@ -67,6 +72,18 @@ void ScreenTransition::setTransitionBetween(
 	transitionTime = time;
 
 	reset();
+}
+
+
+ScreenTransitions::ScreenTransition::~ScreenTransition() {
+
+	wostringstream woo;
+	woo << L"\n\n *** ScreenTransition Release *** " << endl;
+	woo << "\t\oldTexture release #: " << oldTexture.Reset() << endl;
+	woo << "\t\newTexture release #: " << newTexture.Reset() << endl;
+	oldScreenAsset.reset();
+	newScreenAsset.reset();
+	OutputDebugString(L"\n*** ScreenTransition Done ***");
 }
 
 
