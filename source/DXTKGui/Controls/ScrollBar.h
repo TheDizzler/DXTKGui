@@ -35,7 +35,6 @@ public:
 	double percentAt = 0;
 
 private:
-	bool assetIsPixel;
 	Vector2 minPosition;
 	Vector2 maxPosition;
 
@@ -117,9 +116,6 @@ public:
 	virtual bool hovering() override;
 
 private:
-
-	/* Position of entire scrollbar area. */
-	//Vector2 position;
 
 	unique_ptr<Sprite> scrollBarTrack;
 	unique_ptr<Scrubber> scrubber;

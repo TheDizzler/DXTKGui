@@ -11,11 +11,14 @@ TexturePanel::TexturePanel(GUIFactory* factory, shared_ptr<MouseController> mous
 		verticalScrollBar.reset(scrllbr);
 }
 
-
+#include "../StringHelper.h"
 TexturePanel::~TexturePanel() {
-	verticalScrollBar.reset();
-	texture.Reset();
 	gfxAsset.reset();
+	verticalScrollBar.reset();
+	wostringstream woo;
+	woo << L"TexturePanel:" << endl;
+	woo << "\t\tResource release #: " << texture.Reset() << endl;
+	OutputDebugString(woo.str().c_str());
 }
 
 

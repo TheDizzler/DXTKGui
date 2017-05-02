@@ -20,7 +20,7 @@ public:
 		cameraZoom = [&]() -> float { return 1; };
 	}
 
-	~GUIControl();
+	virtual ~GUIControl();
 
 	/* Deprecating */
 	enum ClickAction {

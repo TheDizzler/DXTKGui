@@ -44,14 +44,13 @@ Email: tgillon.sdk@gmail.com
 >- when a control with a scrollbar has items removed from it dynamically, the scrubber doesn't resize properly
 
 ##TODO:
->- find out how to purge all the reported live objects ':/
+>- ~~find out how to purge all the reported live objects ':/~~ 
+Live objects ARE being released but after the debug report. <- FIXED
+Still have some outstanding internal refernces.
 >- Need to go check for circular shared_ptr references
 >- Controller controlled controls (joysticks)
->- Button doesn't show hover again after click and release (fixed?)
 >- Dialog Box - allow hyphenating of words that can't fit on one line with option to turn on/off
 (currently puts whole word on next line or puts break in word)
->- ~~control contents should adjust for frame thickness~~
->- ~~Dialog Box buttons don't position properly when adding new buttons manually (only cancel button?)~~
 >- TexturePanel - add horizontal scrolling
 >- A Panel for adding controls?
 >- Dialog Box - allow custom bg image;
@@ -59,7 +58,6 @@ Email: tgillon.sdk@gmail.com
 >- List Box - multi-select; test adding, removing, clearing items live
 >- Radio Buttons
 >- Slider
->- add triggers for sfx (can use actionlisteners...good enough?)
 >- Combo Box - allow custom frame/bg image
 >- ListBox - allow custom frame/bg image
 >- put default images into a spritesheet

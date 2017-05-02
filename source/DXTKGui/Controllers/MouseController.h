@@ -18,7 +18,7 @@ public:
 
 
 	MouseController(HWND hwnd);
-	~MouseController();
+	//~MouseController();
 
 	/* MODE_ABSOLUTE (default) or MODE_RELATIVE (cannot handle relative mode yet). */
 	void setState(Mouse::Mode mode);

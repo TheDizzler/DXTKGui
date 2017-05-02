@@ -15,10 +15,10 @@ void GUIControl::setPosition(const Vector2& pos) {
 
 GUIControl::~GUIControl() {
 
+	guiFactory = NULL;
 	mouse.reset();
 	projectedHitArea.reset();
 	hitArea.reset();
-	mouse.reset();
 }
 
 const wchar_t* GUIControl::getText() {

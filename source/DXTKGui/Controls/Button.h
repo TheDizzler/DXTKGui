@@ -10,7 +10,7 @@ class Button : public GUIControl {
 public:
 
 	Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
-		GraphicsAsset* pixelAsset, const pugi::char_t* font);
+		const pugi::char_t* font);
 	~Button();
 
 	/* position is topleft of button. */
@@ -120,11 +120,8 @@ protected:
 	unique_ptr<RectangleFrame> frame;
 	int frameThickness = 2;
 
-	GraphicsAsset* pixelAsset;
-
 	bool hasBeenSetUnpressed = false;
 	bool hasBeenSetHover = false;
-	//bool resized = false;
 };
 
 

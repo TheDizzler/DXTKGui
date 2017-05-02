@@ -7,6 +7,19 @@ DynamicDialog::DynamicDialog(GUIFactory* factory,
 }
 
 DynamicDialog::~DynamicDialog() {
+	assetSet.reset();
+
+	topLeftCorner = NULL;
+	topCenter = NULL;
+	topRightCorner = NULL;
+
+	centerLeft = NULL;
+	middle = NULL;
+	centerRight = NULL;
+
+	bottomLeftCorner = NULL;
+	bottomCenter = NULL;
+	bottomRightCorner = NULL;
 }
 
 

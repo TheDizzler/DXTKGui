@@ -1,6 +1,6 @@
 #include "Sprite.h"
 
-
+#include "../StringHelper.h"
 Sprite::Sprite() {
 
 	rotation = 0.0f;
@@ -26,7 +26,12 @@ Sprite::Sprite(const Vector2& pos) {
 
 
 Sprite::~Sprite() {
-	texture.Reset();
+	wostringstream woo;
+	woo << L"Sprite Release:" << endl;
+	woo << L"\tIs pixel: " << (isPixel ? L"True" : L"False") << endl;
+	woo << "\t\tResource release #: " << texture.Reset() << endl;
+	OutputDebugString(woo.str().c_str());
+
 }
 
 /* GraphicsAsset is not stored in Sprite. */

@@ -2,13 +2,14 @@
 
 unique_ptr<GUIOverlay> guiOverlay;
 
-
+#include "../Engine/GameEngine.h"
 GameManager::GameManager(GameEngine* gmngn) {
 
 	gameEngine = gmngn;
 }
 
 GameManager::~GameManager() {
+	
 }
 
 
@@ -17,25 +18,11 @@ bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc, shared_ptr
 	device = dvc;
 	mouse = ms;
 
-	//// get graphical assets from xml file
-	//docAssMan.reset(new pugi::xml_document());
-	//if (!docAssMan->load_file(Assets::assetManifestFile)) {
-	//	MessageBox(0, L"Could not read AssetManifest file!",
-	//		L"Fatal Read Error!", MB_OK);
-	//	return false;
-	//}
-
-	//pugi::xml_node guiNode = docAssMan->child("root").child("gui");
-
-	/*guiFactory.reset(new GUIFactory(hwnd));
-	if (!guiFactory->initialize(device, gameEngine->getDeviceContext(),
-		gameEngine->getSwapChain(), gameEngine->getSpriteBatch(), mouse)) {
-
-		MessageBox(0, L"Failed to load GUIFactory", L"Fatal Error", MB_OK);
-		return false;
-	}*/
 
 	guiOverlay = make_unique<GUIOverlay>();
+
+	if (!mouse->loadMouseIcon(guiFactory.get(), "Mouse Reticle"))
+		return false;
 
 	menuScreen.reset(new MenuManager());
 	menuScreen->setGameManager(this);
@@ -52,7 +39,7 @@ bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc, shared_ptr
 
 void GameManager::update(double deltaTime) {
 
-	
+
 	currentScreen->update(deltaTime);
 	guiOverlay->update(deltaTime);
 }
@@ -83,7 +70,7 @@ void GameManager::pause() {
 		currentScreen->pause();
 }
 
-#include "../Engine/GameEngine.h"
+
 void GameManager::exit() {
 	gameEngine->exit();
 }

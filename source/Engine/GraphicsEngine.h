@@ -21,7 +21,7 @@ using namespace Microsoft::WRL;
 class GraphicsEngine {
 public:
 	GraphicsEngine();
-	~GraphicsEngine();
+	virtual ~GraphicsEngine();
 
 	bool initD3D(HWND hwnd);
 

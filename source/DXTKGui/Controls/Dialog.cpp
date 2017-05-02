@@ -155,6 +155,7 @@ PromptDialog::~PromptDialog() {
 	std::vector<unique_ptr<GUIControl>> empty;
 	swap(controls, empty);
 
+	panel.reset();
 	if (openTransition != NULL)
 		delete openTransition;
 	if (closeTransition != NULL)
@@ -162,16 +163,16 @@ PromptDialog::~PromptDialog() {
 }
 
 #include "../GUIFactory.h"
-void PromptDialog::initialize(GraphicsAsset* pixelAsset, const pugi::char_t* font) {
+void PromptDialog::initialize(const pugi::char_t* font) {
 
 	panel.reset(guiFactory->createPanel(false));
 	panel->setTint(Color(0, 1, 1, 1));
 	frame.reset(guiFactory->createRectangleFrame());
-	bgSprite = make_unique<RectangleSprite>(pixelAsset);
+	bgSprite.reset(guiFactory->createRectangle());
 	bgSprite->setTint(panel->getTint());
-	titleSprite = make_unique<RectangleSprite>(pixelAsset);
+	titleSprite.reset(guiFactory->createRectangle());
 	titleSprite->setTint(Color(1, 1, 1, 1));
-	buttonFrameSprite = make_unique< RectangleSprite>(pixelAsset);
+	buttonFrameSprite.reset(guiFactory->createRectangle());
 	buttonFrameSprite->setTint(Color(1, 1, 1, 1));
 	hitArea = make_unique<HitArea>(Vector2::Zero, Vector2::Zero);
 

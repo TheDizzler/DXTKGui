@@ -5,7 +5,7 @@
 
 class ListItem {
 public:
-	~ListItem();
+	virtual ~ListItem();
 
 	void initialize(const int width, const int height,
 		TextLabel* label, ComPtr<ID3D11ShaderResourceView> pixelTexture,
@@ -66,7 +66,7 @@ public:
 
 
 /** A simple control to display various (text) items. */
-class ListBox : public GUIControl/*, public Texturizable*/ {
+class ListBox : public GUIControl {
 public:
 	ListBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 		const Vector2& position, const int width,

@@ -12,7 +12,7 @@ public:
 	RectangleSprite(GraphicsAsset* const graphicsAsset, Color color = Color(1, 1, 1, 1));
 	/*RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel,
 		const Vector2& position, const Vector2& size, Color color);*/
-	~RectangleSprite();
+	//~RectangleSprite();
 
 	virtual void setSize(const Vector2& size) override;
 	const Vector2 getSize() const;
@@ -28,7 +28,7 @@ class RectangleFrame : public IElement2D, public Texturizable {
 public:
 	/* GUIFactory is optional. */
 	RectangleFrame(GraphicsAsset* pixelAsset, _In_opt_ GUIFactory* guifactory);
-	~RectangleFrame();
+	virtual ~RectangleFrame();
 
 	void setDimensions(const Vector2& position, const Vector2& size,
 		int frameThickness = 2);
@@ -97,7 +97,7 @@ private:
 class TriangleFrame : public IElement2D {
 public:
 	TriangleFrame(GraphicsAsset* pixelAsset);
-	~TriangleFrame();
+	virtual ~TriangleFrame();
 
 	void setDimensions(const Vector2& point1, const Vector2& point2, const Vector2& point3,
 		USHORT thickness);
@@ -152,7 +152,7 @@ public:
 	Line(GraphicsAsset* pixelAsset);
 	Line(GraphicsAsset* pixelAsset,
 		const Vector2& pos, const Vector2& size);
-	~Line();
+	virtual ~Line();
 
 	const float getRotation() const;
 

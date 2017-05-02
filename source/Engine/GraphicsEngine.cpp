@@ -3,21 +3,21 @@
 shared_ptr<Camera> camera;
 
 GraphicsEngine::GraphicsEngine() {
-
+	int i = 8;
 }
 
 
 GraphicsEngine::~GraphicsEngine() {
 
 	batch.reset();
+	camera.reset();
 
-	
-	
+
 
 	if (swapChain.Get() != NULL)
 		swapChain->SetFullscreenState(false, NULL);
 
-	
+
 
 	adapters.clear();
 	displays.clear();
@@ -26,9 +26,12 @@ GraphicsEngine::~GraphicsEngine() {
 
 	device.Reset();
 	swapChain.Reset();
-	deviceContext.Reset();
 	renderTargetView.Reset();
-	debugDevice->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	deviceContext->Flush();
+	deviceContext.Reset();
+
+	debugDevice->ReportLiveDeviceObjects(D3D11_RLDO_FLAGS::D3D11_RLDO_DETAIL
+		| D3D11_RLDO_FLAGS::D3D11_RLDO_SUMMARY);
 	debugDevice.Reset();
 }
 

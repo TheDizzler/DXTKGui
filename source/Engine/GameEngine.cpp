@@ -11,6 +11,11 @@ GameEngine::GameEngine() {
 
 
 GameEngine::~GameEngine() {
+	mouse.reset();
+	game.reset();
+	errorDialog.reset();
+	warningDialog.reset();
+	guiFactory.reset();
 
 	if (audioEngine != NULL)
 		audioEngine->Suspend();
@@ -99,7 +104,6 @@ bool GameEngine::initGFXAssets() {
 }
 
 bool GameEngine::initStage() {
-
 
 	game.reset(new GameManager(this));
 	if (!game->initializeGame(hwnd, device, mouse)) {

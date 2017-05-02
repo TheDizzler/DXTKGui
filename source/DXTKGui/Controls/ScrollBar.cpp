@@ -17,7 +17,6 @@ bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 	size_t barHght, ImageButton* scrollButtons[2], unique_ptr<Sprite> scrllBrTrck,
 	GraphicsAsset* scrbbr) {
 
-	//pixel = pixelAsset->getTexture();
 	barHeight = barHght;
 
 	if (scrollButtons == NULL || scrollButtons[0] == NULL) {
@@ -73,11 +72,9 @@ bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 		scrollBarPosition.y);
 
 	if (scrbbr == NULL) {
-		//scrubber.reset(new Scrubber(pixelAsset, false));
 		scrubber = make_unique<Scrubber>(pixelAsset, false);
 
 	} else {
-		//scrubber.reset(new Scrubber(scrbbr, true));
 		scrubber = make_unique<Scrubber>(scrbbr, true);
 	}
 
@@ -336,10 +333,11 @@ const Vector2& XM_CALLCONV ScrollBar::measureString() const {
 
 
 /** **** Scrubber **** **/
-Scrubber::Scrubber(GraphicsAsset* const graphicsAsset, bool isPixel)
+Scrubber::Scrubber(GraphicsAsset* const graphicsAsset, bool pixel)
 	: RectangleSprite(graphicsAsset) {
 
-	assetIsPixel = isPixel;
+	//assetIsPixel = pixel;
+	isPixel = pixel;
 	hitArea = make_unique<HitArea>(Vector2::Zero, Vector2::Zero);
 }
 
@@ -365,7 +363,7 @@ void Scrubber::setDimensions(const Sprite* scrollBarTrack,
 		scrollBarTrack->getWidth(), scrollBarTrack->getHeight() * percentShowing);
 	scrollBarHeight = scrollBarTrack->getHeight();
 
-	if (!assetIsPixel) {
+	if (!isPixel) {
 		width = size.x;
 		height = size.y;
 	}

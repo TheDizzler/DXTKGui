@@ -1,25 +1,31 @@
 #include "GraphicsAsset.h"
 
 
-
+#include "../StringHelper.h"
 GraphicsAsset::GraphicsAsset() {
 }
+
 GraphicsAsset::~GraphicsAsset() {
 
-	resource.Reset();
-	texture.Reset();
+	wostringstream woo;
+	woo << "Destroying: " << textureFile << endl;
+	woo << "\t\tID3D11Resource release #: " << resource.Reset() << endl;
+	woo << "\t\tResource release #: " << texture.Reset() << endl;
+	OutputDebugString(woo.str().c_str());
 }
 
-#include "../StringHelper.h"
+
 #include <DDSTextureLoader.h>
-bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const wchar_t* textureFile, const Vector2& org,
+bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const wchar_t* texFile, const Vector2& org,
 	bool showMessageBox) {
 
+	textureFile = texFile;
+
 	wostringstream wss;
-	wss << L"Unable to load texture file: " << textureFile << " in GraphicsAsset::load().";
+	wss << L"Unable to load texture file: " << texFile << " in GraphicsAsset::load().";
 
 	if (StringHelper::reportError(
-		CreateDDSTextureFromFile(device.Get(), textureFile,
+		CreateDDSTextureFromFile(device.Get(), texFile,
 			resource.GetAddressOf(), texture.GetAddressOf()),
 		wss.str(), L"ERROR", showMessageBox))
 		return false;
@@ -43,7 +49,10 @@ bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const wchar_t* textureFile
 
 void GraphicsAsset::loadAsPartOfSheet(
 	ComPtr<ID3D11ShaderResourceView> spriteSheetTexture,
-	const Vector2& locationInSheet, const Vector2& size, const Vector2& org) {
+	const Vector2& locationInSheet, const Vector2& size, const Vector2& org,
+	const wchar_t* texFile) {
+
+	textureFile = texFile;
 
 	texture = spriteSheetTexture;
 	position = locationInSheet;
@@ -160,4 +169,12 @@ shared_ptr<Animation> AssetSet::getAnimation(const pugi::char_t* animationName) 
 		return NULL;
 	}
 	return animationMap[animationName];
+}
+
+Animation::~Animation() {
+	animationFrames.clear();
+	wostringstream woo;
+	woo << "Animation" << endl;
+	woo << "\t\tTexture release #: " << texture.Reset() << endl;
+	OutputDebugString(woo.str().c_str());
 }

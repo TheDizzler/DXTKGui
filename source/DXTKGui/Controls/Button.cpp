@@ -2,10 +2,9 @@
 
 #include "../GUIFactory.h"
 Button::Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
-	GraphicsAsset* px, const pugi::char_t* font)
+	const pugi::char_t* font)
 	: GUIControl(factory, mouseController) {
 
-	pixelAsset = px;
 
 	hitArea = make_unique<HitArea>();
 
@@ -17,7 +16,6 @@ Button::Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 
 Button::~Button() {
 
-	delete pixelAsset;
 	if (onClickListener != NULL)
 		delete onClickListener;
 	if (onHoverListener != NULL)
@@ -296,7 +294,7 @@ void Button::setFont(const pugi::char_t* font) {
 /** **** ImageButton **** **/
 ImageButton::ImageButton(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 	unique_ptr<Sprite> buttonSprite, const pugi::char_t* font)
-	: Button(factory, mouseController, NULL, font) {
+	: Button(factory, mouseController, font) {
 
 	// a rough guesstimate
 	setTextOffset(Vector2(0, -5), Vector2(0, 0));
@@ -315,7 +313,7 @@ ImageButton::ImageButton(GUIFactory* factory, shared_ptr<MouseController> mouseC
 ImageButton::ImageButton(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 	unique_ptr<Sprite> upButtonSprite, unique_ptr<Sprite> downButtonSprite,
 	const pugi::char_t* font)
-	: Button(factory, mouseController, NULL, font) {
+	: Button(factory, mouseController, font) {
 
 	// a rough guesstimate
 	setTextOffset(Vector2(0, -5), Vector2(0, 0));
@@ -333,6 +331,10 @@ ImageButton::ImageButton(GUIFactory* factory, shared_ptr<MouseController> mouseC
 
 
 ImageButton::~ImageButton() {
+
+	texture = NULL;
+	normalSprite.reset();
+	pressedSprite.reset();
 }
 
 

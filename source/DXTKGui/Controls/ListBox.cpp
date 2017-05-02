@@ -12,7 +12,13 @@ ListBox::ListBox(GUIFactory* factory, shared_ptr<MouseController> mouseControlle
 	itemHeight = itmHght;
 }
 
+#include "../StringHelper.h"
 ListBox::~ListBox() {
+
+	wostringstream woo;
+	woo << L"ListBox Pixel:" << endl;
+	woo << "\t\tResource release #: " << pixel.Reset() << endl;
+	OutputDebugString(woo.str().c_str());
 
 	if (onClickListener != NULL)
 		delete onClickListener;
@@ -299,7 +305,11 @@ bool ListBox::hovering() {
 
 /** **** ListItem **** **/
 ListItem::~ListItem() {
-	pixel.Reset();
+	wostringstream woo;
+	woo << L"ListItem Pixel:" << endl;
+	woo << "\t\tResource release #: " << pixel.Reset() << endl;
+	OutputDebugString(woo.str().c_str());
+
 }
 
 void ListItem::initialize(const int width, const int height,

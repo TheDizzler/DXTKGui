@@ -101,8 +101,7 @@ public:
 	//PromptDialog();
 	~PromptDialog();
 
-	void initialize(GraphicsAsset* pixelAsset,
-		const pugi::char_t* font = "Default Font");
+	void initialize(const pugi::char_t* font = "Default Font");
 
 	virtual void setScrollBar(ScrollBarDesc& scrollBarDesc);
 	virtual void alwaysShowScrollBar(bool alwaysShow);

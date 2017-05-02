@@ -1,9 +1,11 @@
 #include "PrimitiveShapes.h"
 
+#include "../StringHelper.h"
 RectangleSprite::RectangleSprite(GraphicsAsset* const graphicsAsset, Color color)
 	: Sprite() {
 
 	Sprite::load(graphicsAsset);
+	isPixel = true;
 	origin = Vector2(0, 0);
 	tint = color;
 }
@@ -16,9 +18,13 @@ RectangleSprite::RectangleSprite(GraphicsAsset* const graphicsAsset, Color color
 //	setDimensions(pos, size);
 //}
 
-RectangleSprite::~RectangleSprite() {
-	texture.Reset();
-}
+//RectangleSprite::~RectangleSprite() {
+//
+//	wostringstream woo;
+//	woo << L"RectSprite Texture:" << endl;
+//	woo << "\t\tResource release #: " << texture.Reset() << endl;
+//	OutputDebugString(woo.str().c_str());
+//}
 
 void RectangleSprite::setSize(const Vector2 & size) {
 Sprite::setSize(size);
@@ -59,10 +65,14 @@ RectangleFrame::RectangleFrame(GraphicsAsset* pixelAsset, GUIFactory* gui) {
 
 
 RectangleFrame::~RectangleFrame() {
-	pixel.Reset();
+
+	wostringstream woo;
+	woo << L"RectFrame Pixel:" << endl;
+	woo << "\t\tResource release #: " << pixel.Reset() << endl;
+	OutputDebugString(woo.str().c_str());
 }
 
-//#include "../Controls/GUIFactory.h"
+
 void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	int frmThcknss) {
 
@@ -304,7 +314,10 @@ Line::Line(GraphicsAsset* pixelAsset,
 }
 
 Line::~Line() {
-	pixel.Reset();
+	wostringstream woo;
+	woo << L"Line Pixel:" << endl;
+	woo << "\t\tResource release #: " << pixel.Reset() << endl;
+	OutputDebugString(woo.str().c_str());
 }
 
 const float Line::getRotation() const {
@@ -355,7 +368,10 @@ TriangleFrame::TriangleFrame(GraphicsAsset* pixelAsset) {
 }
 
 TriangleFrame::~TriangleFrame() {
-	pixel.Reset();
+	wostringstream woo;
+	woo << L"TriangleFrame Pixel:" << endl;
+	woo << "\t\tResource release #: " << pixel.Reset() << endl;
+	OutputDebugString(woo.str().c_str());
 }
 
 void TriangleFrame::setDimensions(const Vector2& p1, const Vector2& p2,

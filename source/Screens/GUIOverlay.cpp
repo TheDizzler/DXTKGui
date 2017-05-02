@@ -115,7 +115,7 @@ void GUIOverlay::reportLostJoystick(size_t playerSlotNumber) {
 ControllerDialog::ControllerDialog(GUIFactory* guiF)
 	: PromptDialog(guiF, guiF->getMouseController(), guiF->getHWND(), false, true) {
 
-	initialize(guiFactory->getAsset("White Pixel"));
+	initialize();
 
 }
 

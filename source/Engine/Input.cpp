@@ -6,12 +6,12 @@ bool endAllThreadsNow = false;
 
 
 Input::Input() {
-
+	int in = 9;
 }
 
 
 Input::~Input() {
-
+	mouse.reset();
 	ReleaseCapture();
 	ShowCursor(true);
 }
@@ -45,7 +45,7 @@ ControllerListener::~ControllerListener() {
 
 	for (int i = 0; i < MAX_PLAYERS; ++i)
 		joystickPorts[i].reset();
-	
+
 
 	endAllThreadsNow = true;
 	joystickMap.clear();

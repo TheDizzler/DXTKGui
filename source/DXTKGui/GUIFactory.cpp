@@ -16,8 +16,12 @@ GUIFactory::GUIFactory(HWND h, pugi::xml_node guiAssets) {
 
 GUIFactory::~GUIFactory() {
 	// on or off, none of these have an effect on live objects
-
+	device.Reset();
+	deviceContext.Reset();
+	docAssMan.reset();
 	mouseController.reset();
+	for (auto& asset : assetMap)
+		asset.second.reset();
 	assetMap.clear();
 	fontMap.clear();
 	for (auto& anim : animationMap) {
@@ -203,8 +207,7 @@ TextLabel* GUIFactory::createTextLabel(const Vector2& position,
 
 Button* GUIFactory::createButton(const char_t* fontName) {
 
-	Button* button = new Button(this, mouseController,
-		getAsset("White Pixel"), fontName);
+	Button* button = new Button(this, mouseController, fontName);
 
 	return button;
 }
@@ -213,8 +216,7 @@ Button* GUIFactory::createButton(const char_t* fontName) {
 Button* GUIFactory::createButton(const Vector2& position, const Vector2& size,
 	wstring text, const char_t* fontName, const int frameThickness) {
 
-	Button* button = new Button(this, mouseController,
-		getAsset("White Pixel"), fontName);
+	Button* button = new Button(this, mouseController, fontName);
 
 	button->setDimensions(position, size, frameThickness);
 	button->setText(text);
@@ -441,7 +443,7 @@ PromptDialog* GUIFactory::createDialog(const Vector2& position, const Vector2& s
 	PromptDialog* dialog = new PromptDialog(this, mouseController,
 		hwnd, movable, centerText);
 
-	dialog->initialize(getAsset("White Pixel"), fontName);
+	dialog->initialize(fontName);
 	dialog->setDimensions(position, size, frameThickness);
 	return dialog;
 }
@@ -456,7 +458,7 @@ DynamicDialog* GUIFactory::createDynamicDialog(shared_ptr<AssetSet> dialogImageS
 }
 
 
-
+int elementCounter = 0;
 unique_ptr<GraphicsAsset> GUIFactory::createTextureFromIElement2D(
 	Texturizable* control, bool autoBatchDraw, Color bgColor) {
 
@@ -539,6 +541,9 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromIElement2D(
 	// get normal rendertargetview and switch to temp one
 	ComPtr<ID3D11RenderTargetView> oldRenderTargetView;
 	deviceContext->OMGetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
+	ID3D11RenderTargetView* nullViews[] = {nullptr};
+	deviceContext->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
+	deviceContext->Flush();
 	deviceContext->OMSetRenderTargets(1, textureRenderTargetView.GetAddressOf(), nullptr);
 
 
@@ -556,16 +561,28 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromIElement2D(
 		batch->End();
 	}
 
+	deviceContext->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
+	textureRenderTargetView.Reset();
+	deviceContext->Flush();
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
+
+	textureRenderTargetView.Reset();
+	oldRenderTargetView.Reset();
 
 	control->setPosition(oldPos);
 	unique_ptr<GraphicsAsset> gfxAsset = make_unique<GraphicsAsset>();
-	gfxAsset->loadAsPartOfSheet(shaderResourceView, Vector2(0, 0),
-		Vector2(width - widthPadding - buffer, height - heightPadding - buffer), Vector2::Zero);
+
+	wostringstream woo;
+	woo << L"Texturized Element #" << elementCounter++;
+	gfxAsset->loadAsPartOfSheet(shaderResourceView, Vector2::Zero,
+		Vector2(width - widthPadding - buffer, height - heightPadding - buffer), Vector2::Zero,
+		woo.str().c_str());
+
+	shaderResourceView.Reset();
 	return move(gfxAsset);
 }
 
-
+int screenCounter = 0;
 unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 	Screen* screen, bool autoBatchDraw, Color bgColor) {
 
@@ -634,6 +651,9 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 	// get normal rendertargetview and switch to temp one
 	ComPtr<ID3D11RenderTargetView> oldRenderTargetView;
 	deviceContext->OMGetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
+	ID3D11RenderTargetView* nullViews[] = {nullptr};
+	deviceContext->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
+	deviceContext->Flush();
 	deviceContext->OMSetRenderTargets(1, textureRenderTargetView.GetAddressOf(), nullptr);
 
 
@@ -647,12 +667,21 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 		batch->End();
 	}
 
-
+	deviceContext->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
+	textureRenderTargetView.Reset();
+	deviceContext->Flush();
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
 
+	const wchar_t* name;
+	wostringstream woo;
+	woo << L"Texturized Screen #" << screenCounter++;
+	name = woo.str().c_str();
 	unique_ptr<GraphicsAsset> gfxAsset = make_unique<GraphicsAsset>();
-	gfxAsset->loadAsPartOfSheet(shaderResourceView, Vector2(0, 0),
-		Vector2(screenWidth - buffer, screenHeight - buffer));
+	gfxAsset->loadAsPartOfSheet(shaderResourceView, Vector2::Zero,
+		Vector2(screenWidth - buffer, screenHeight - buffer), Vector2::Zero,
+		name);
+
+	shaderResourceView.Reset();
 	return move(gfxAsset);
 }
 
@@ -724,6 +753,7 @@ bool GUIFactory::getGUIAssetsFromXML() {
 
 		string file_s = guiDir + spritesheetNode.attribute("file").as_string();
 		const char_t* file = file_s.c_str();
+		const char_t* masterAssetName = spritesheetNode.attribute("name").as_string();
 
 		// the spritesheet itself is never saved into the map
 		unique_ptr<GraphicsAsset> masterAsset;
@@ -779,7 +809,6 @@ bool GUIFactory::getGUIAssetsFromXML() {
 						parseSprite(spriteNode, masterAsset->getTexture()));
 				}
 			}
-
 		}
 
 	// parse all animations from spritesheet
@@ -821,7 +850,7 @@ bool GUIFactory::getGUIAssetsFromXML() {
 			const char_t* name = spriteNode.attribute("name").as_string();
 			assetMap[name] = parseSprite(spriteNode, masterAsset->getTexture());
 		}
-
+		assetMap[masterAssetName] = move(masterAsset);
 	}
 	return true;
 }
@@ -829,7 +858,8 @@ bool GUIFactory::getGUIAssetsFromXML() {
 unique_ptr<GraphicsAsset> GUIFactory::parseSprite(xml_node spriteNode,
 	ComPtr<ID3D11ShaderResourceView> sheetTexture, int xOffset, int yOffset) {
 
-	//const char_t* name = spriteNode.attribute("name").as_string();
+	const char_t* spritename = spriteNode.attribute("name").as_string();
+
 	// pos in spritesheet
 	Vector2 position = Vector2(spriteNode.attribute("x").as_int() + xOffset,
 		spriteNode.attribute("y").as_int() + yOffset);
@@ -845,6 +875,7 @@ unique_ptr<GraphicsAsset> GUIFactory::parseSprite(xml_node spriteNode,
 	}
 
 	unique_ptr<GraphicsAsset> spriteAsset = make_unique<GraphicsAsset>();
-	spriteAsset->loadAsPartOfSheet(sheetTexture, position, size, origin);
+	spriteAsset->loadAsPartOfSheet(sheetTexture, position, size, origin,
+		StringHelper::convertCharStarToWCharT(spritename));
 	return move(spriteAsset);
 }

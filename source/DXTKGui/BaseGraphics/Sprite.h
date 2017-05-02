@@ -87,6 +87,7 @@ public:
 
 protected:
 	ComPtr<ID3D11ShaderResourceView> texture;
+	bool isPixel = false;
 
 	RECT sourceRect;
 
