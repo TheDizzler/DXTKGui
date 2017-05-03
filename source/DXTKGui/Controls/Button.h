@@ -59,47 +59,42 @@ public:
 	virtual bool pressed() override;
 	virtual bool hovering() override;
 
-	class OnClickListener {
+	class ActionListener {
 	public:
 		virtual void onClick(Button* button) = 0;
+		virtual void onPress(Button* button) = 0;
+		virtual void onHover(Button* button) = 0;
 	};
 
 
-	void setOnClickListener(OnClickListener* iOnC) {
-		if (onClickListener != NULL)
-			delete onClickListener;
-		onClickFunction = &OnClickListener::onClick;
-		onClickListener = iOnC;
+	void setActionListener(ActionListener* iOnC) {
+		if (actionListener != NULL)
+			delete actionListener;
+		onClickFunction = &ActionListener::onClick;
+		onHoverFunction = &ActionListener::onHover;
+		onPressFunction = &ActionListener::onPress;
+		actionListener = iOnC;
 	}
 
 	void onClick() {
-		if (onClickListener != NULL) {
+		if (actionListener != NULL) {
 			isClicked = isPressed = false;
-			(onClickListener->*onClickFunction)(this);
+			(actionListener->*onClickFunction)(this);
 		}
 	}
 
-
-	void setOnHoverListener(OnClickListener* iOnC) {
-		if (!onHoverListener != NULL)
-			delete onHoverListener;
-		onHoverFunction = &OnClickListener::onClick;
-		onHoverListener = iOnC;
-
-	}
-
 	void onHover() {
-		if (onHoverListener != NULL) {
-			(onHoverListener->*onHoverFunction)(this);
+		if (actionListener != NULL) {
+			(actionListener->*onHoverFunction)(this);
 		}
 	}
 
 protected:
-	typedef void (OnClickListener::*OnClickFunction) (Button*);
+	typedef void (ActionListener::*OnClickFunction) (Button*);
+	ActionListener* actionListener = NULL;
 	OnClickFunction onClickFunction;
-	OnClickListener* onClickListener = NULL;
 	OnClickFunction onHoverFunction;
-	OnClickListener* onHoverListener = NULL;
+	OnClickFunction onPressFunction;
 
 	void positionText();
 	int width = 0;
@@ -191,7 +186,7 @@ public:
 	virtual void setToHoverState();
 	virtual void setToSelectedState();
 
-	class ButtonActionListener {
+	class ActionListener {
 	public:
 		virtual void onClick(AnimatedButton* button) = 0;
 		virtual void onPress(AnimatedButton* button) = 0;
@@ -201,18 +196,18 @@ public:
 	};
 
 
-	void setActionListener(ButtonActionListener* iOnC) {
-		if (onClickListener != NULL)
-			delete onClickListener;
-		onClickFunction = &ButtonActionListener::onClick;
-		onHoverFunction = &ButtonActionListener::onHover;
-		onPressFunction = &ButtonActionListener::onPress;
-		onClickListener = iOnC;
+	void setActionListener(ActionListener* iOnC) {
+		if (actionListener != NULL)
+			delete actionListener;
+		onClickFunction = &ActionListener::onClick;
+		onHoverFunction = &ActionListener::onHover;
+		onPressFunction = &ActionListener::onPress;
+		actionListener = iOnC;
 	}
 
 	void onClick() {
-		if (onClickListener != NULL) {
-			(onClickListener->*onClickFunction)(this);
+		if (actionListener != NULL) {
+			(actionListener->*onClickFunction)(this);
 		} else {
 			currentFrameIndex = animation->animationFrames.size() - 1;
 		}
@@ -221,8 +216,8 @@ public:
 	}
 
 	void onPress() {
-		if (onClickListener != NULL) {
-			(onClickListener->*onPressFunction)(this);
+		if (actionListener != NULL) {
+			(actionListener->*onPressFunction)(this);
 		} else
 			currentFrameIndex = animation->animationFrames.size() - 2;
 	}
@@ -230,8 +225,8 @@ public:
 	void onHover(double deltaTime) {
 		timeHovering += deltaTime;
 
-		if (onClickListener != NULL) {
-			(onClickListener->*onHoverFunction)(this);
+		if (actionListener != NULL) {
+			(actionListener->*onHoverFunction)(this);
 		} else {
 			if (timeHovering > timePerFrame) {
 				timeHovering = 0;
@@ -254,8 +249,8 @@ public:
 	shared_ptr<Animation> animation;
 	void adjustPosition(int lastFrame);
 private:
-	typedef void (ButtonActionListener::*OnClickFunction) (AnimatedButton*);
-	ButtonActionListener* onClickListener = NULL;
+	typedef void (ActionListener::*OnClickFunction) (AnimatedButton*);
+	ActionListener* actionListener = NULL;
 	OnClickFunction onClickFunction;
 	OnClickFunction onPressFunction;
 	OnClickFunction onHoverFunction;

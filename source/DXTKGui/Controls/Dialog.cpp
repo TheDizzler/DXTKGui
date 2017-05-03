@@ -142,8 +142,13 @@ bool Dialog::hovering() {
 
 
 void Dialog::OnClickListenerCancelButton::onClick(Button* button) {
-
 	dialog->hide();
+}
+
+void Dialog::OnClickListenerCancelButton::onPress(Button * button) {
+}
+
+void Dialog::OnClickListenerCancelButton::onHover(Button * button) {
 }
 
 
@@ -463,13 +468,13 @@ void PromptDialog::setConfirmButton(wstring text, const pugi::char_t* font) {
 	controls[ButtonOK]->setPosition(okButtonPosition);
 }
 
-void PromptDialog::setConfirmOnClickListener(Button::OnClickListener* iOnClickListener) {
+void PromptDialog::setConfirmOnClickListener(Button::ActionListener* iOnClickListener) {
 
 	if (controls[ButtonOK].get() == NULL) {
 		setConfirmButton(L"OK");
 	}
 
-	((Button*) controls[ButtonOK].get())->setOnClickListener(iOnClickListener);
+	((Button*) controls[ButtonOK].get())->setActionListener(iOnClickListener);
 }
 
 void PromptDialog::setCancelButton(unique_ptr<Button> cancelButton,
@@ -501,7 +506,7 @@ void PromptDialog::setCancelButton(wstring text, const pugi::char_t * font) {
 	unique_ptr<Button> cancelButton;
 	cancelButton.reset(guiFactory->createButton(font));
 	cancelButton->setDimensions(cancelButtonPosition, standardButtonSize, 3);
-	cancelButton->setOnClickListener(new OnClickListenerCancelButton(this));
+	cancelButton->setActionListener(new OnClickListenerCancelButton(this));
 	controls[ButtonCancel].reset();
 	controls[ButtonCancel] = move(cancelButton);
 	controls[ButtonCancel]->action = ClickAction::CANCEL;
@@ -513,13 +518,13 @@ void PromptDialog::setCancelButton(wstring text, const pugi::char_t * font) {
 	controls[ButtonCancel]->setPosition(cancelButtonPosition);
 }
 
-void PromptDialog::setCancelOnClickListener(Button::OnClickListener* iOnClickListener) {
+void PromptDialog::setCancelOnClickListener(Button::ActionListener* iOnClickListener) {
 
 	if (controls[ButtonCancel].get() == NULL) {
 		setCancelButton(L"OK");
 	}
 
-	((Button*) controls[ButtonCancel].get())->setOnClickListener(iOnClickListener);
+	((Button*) controls[ButtonCancel].get())->setActionListener(iOnClickListener);
 }
 
 bool PromptDialog::calculateButtonPosition(Vector2& buttonPos) {
@@ -820,6 +825,8 @@ void PromptDialog::setDraggedPosition(Vector2& newPosition) {
 	}
 
 	Vector2 moveBy = newPosition - position;
+	if (moveBy == Vector2::Zero)
+		return;
 	GUIControl::setPosition(newPosition);
 	dialogFramePosition += moveBy;
 	titleFramePosition += moveBy;

@@ -103,6 +103,9 @@ public:
 		bool movable = false, bool centerText = false, int frameThickness = 2,
 		const char_t* fontName = "Default Font");
 
+	DynamicDialog* createDynamicDialog(const char_t* imageSet,
+		const Vector2& position = Vector2::Zero, const Vector2& size = Vector2::Zero,
+		const char_t* fontName = "Default Font");
 	DynamicDialog* createDynamicDialog(shared_ptr<AssetSet> dialogImageSet,
 		const Vector2& position = Vector2::Zero, const Vector2& size = Vector2::Zero,
 		const char_t* fontName = "Default Font");

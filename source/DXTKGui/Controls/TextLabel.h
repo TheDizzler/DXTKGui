@@ -62,42 +62,43 @@ public:
 	Color hoverColorText = Color(Vector3(.5, .75, 1));
 	Color selectedColorText = Color(Vector3(0, .5, 1));
 
-	class OnClickListener {
+	class ActionListener {
 	public:
 		virtual void onClick(TextLabel* button) = 0;
+		virtual void onPress(TextLabel* button) = 0;
+		virtual void onHover(TextLabel* button) = 0;
 	};
 
 
-	void setOnClickListener(OnClickListener* iOnC) {
-		if (onClickListener != NULL)
-			delete onClickListener;
+	void setActionListener(ActionListener* iOnC) {
+		if (actionListener != NULL)
+			delete actionListener;
 		isHoverable = true;
-		onClickFunction = &OnClickListener::onClick;
-		onClickListener = iOnC;
+		onClickFunction = &ActionListener::onClick;
+		onHoverFunction = &ActionListener::onHover;
+		onPressFunction = &ActionListener::onPress;
+		actionListener = iOnC;
 	}
 
 	void onClick() {
-		if (onClickListener != NULL) {
+		if (actionListener != NULL) {
 			isClicked = isPressed = false;
-			(onClickListener->*onClickFunction)(this);
+			(actionListener->*onClickFunction)(this);
 		}
 	}
 
-	void setOnHoverListener(OnClickListener* iOnC) {
-		if (!onHoverListener != NULL)
-			delete onHoverListener;
-		onHoverFunction = &OnClickListener::onClick;
-		onHoverListener = iOnC;
-
-	}
-
 	void onHover() {
-		if (onHoverListener != NULL) {
-			(onHoverListener->*onHoverFunction)(this);
+		if (actionListener != NULL) {
+			(actionListener->*onHoverFunction)(this);
 		}
 	}
 
 private:
+	typedef void (ActionListener::*OnClickFunction) (TextLabel*);
+	ActionListener* actionListener = NULL;
+	OnClickFunction onClickFunction;
+	OnClickFunction onHoverFunction;
+	OnClickFunction onPressFunction;
 
 	wstring label;
 	shared_ptr<FontSet> font;
@@ -114,11 +115,5 @@ private:
 	bool hasBeenSetUnpressed = false;
 	bool hasBeenSetHover = false;
 
-	typedef void (OnClickListener::*OnClickFunction) (TextLabel*);
-	OnClickFunction onClickFunction;
-	OnClickListener* onClickListener = NULL;
-	OnClickFunction onHoverFunction;
-	OnClickListener* onHoverListener = NULL;
-	// to do: tooltips
-
+	
 };

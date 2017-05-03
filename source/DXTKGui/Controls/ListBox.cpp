@@ -15,8 +15,8 @@ ListBox::ListBox(GUIFactory* factory, shared_ptr<MouseController> mouseControlle
 #include "../StringHelper.h"
 ListBox::~ListBox() {
 
-	if (onClickListener != NULL)
-		delete onClickListener;
+	if (actionListener != NULL)
+		delete actionListener;
 
 	for (ListItem* listItem : listItems)
 		delete listItem;

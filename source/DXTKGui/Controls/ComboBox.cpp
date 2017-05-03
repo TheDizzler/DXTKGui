@@ -15,8 +15,8 @@ ComboBox::ComboBox(GUIFactory* factory, shared_ptr<MouseController> mouseControl
 
 ComboBox::~ComboBox() {
 
-	if (onClickListener)
-		delete onClickListener;
+	if (actionListener)
+		delete actionListener;
 
 }
 
@@ -30,16 +30,16 @@ bool ComboBox::initialize(shared_ptr<FontSet> fnt,
 
 	comboListButton->setPosition(
 		Vector2(position.x + width - comboListButton->getWidth(), position.y));
-	comboListButton->setOnClickListener(new ShowListBoxListener(this));
+	comboListButton->setActionListener(new ShowListBoxListener(this));
 	frame.reset(guiFactory->createRectangleFrame(
 		position, Vector2(width, comboListButton->getScaledHeight())));
 
 	listBox.reset(lstBx);
-	listBox->setOnClickListener(new ListBoxListener(this));
+	listBox->setActionListener(new ListBoxListener(this));
 
 	selectedLabel.reset(guiFactory->createTextLabel(
 		Vector2(position.x + textMarginX, position.y + textMarginY)));
-	selectedLabel->setOnClickListener(new SelectedOnClick(this));
+	selectedLabel->setActionListener(new SelectedOnClick(this));
 
 	selectedBackgroundSprite.reset(guiFactory->createRectangle(position,
 		Vector2(width, comboListButton->getScaledHeight()), Color(.5, .5, .5, 1)));
@@ -169,8 +169,14 @@ void ComboBox::clear() {
 	resizeBox();
 }
 
-void ComboBox::ShowListBoxListener::onClick(Button * button) {
+void ComboBox::ShowListBoxListener::onClick(Button* button) {
 	comboBox->show();
+}
+
+void ComboBox::ShowListBoxListener::onPress(Button* button) {
+}
+
+void ComboBox::ShowListBoxListener::onHover(Button* button) {
 }
 
 void ComboBox::ListBoxListener::onClick(ListBox* listbox, int selectedItemIndex) {

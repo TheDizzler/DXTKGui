@@ -49,26 +49,26 @@ public:
 	void hide();
 	bool isOpen = false;
 
-	class OnClickListener {
+	class ActionListener {
 	public:
-		/** combobox: The ComboBox this OnClickListener is attached to.
+		/** combobox: The ComboBox this ActionListener is attached to.
 		selectedItemIndex: index of item in ListBox.*/
 		virtual void onClick(ComboBox* combobox, int selectedItemIndex) = 0;
 	};
 
-	typedef void (OnClickListener::*OnClickFunction) (ComboBox*, int);
+	typedef void (ActionListener::*OnClickFunction) (ComboBox*, int);
 
 
-	void setOnClickListener(OnClickListener* iOnC) {
-		if (onClickListener != NULL)
-			delete onClickListener;
-		onClickFunction = &OnClickListener::onClick;
-		onClickListener = iOnC;
+	void setActionListener(ActionListener* iOnC) {
+		if (actionListener != NULL)
+			delete actionListener;
+		onClickFunction = &ActionListener::onClick;
+		actionListener = iOnC;
 	}
 
 	void onClick() {
-		if (onClickListener != NULL)
-			(onClickListener->*onClickFunction)(this, listBox->getSelectedIndex());
+		if (actionListener != NULL)
+			(actionListener->*onClickFunction)(this, listBox->getSelectedIndex());
 		selectedLabel->setText(listBox->getSelected()->toString());
 	}
 
@@ -93,9 +93,9 @@ private:
 	void resizeBox();
 
 	OnClickFunction onClickFunction;
-	OnClickListener* onClickListener = NULL;
+	ActionListener* actionListener = NULL;
 
-	class ListBoxListener : public ListBox::OnClickListener {
+	class ListBoxListener : public ListBox::ActionListener {
 	public:
 		ListBoxListener(ComboBox* combo) : comboBox(combo) {
 		}
@@ -105,16 +105,18 @@ private:
 		virtual void onClick(ListBox * listbox, int selectedItemIndex) override;
 	};
 
-	class ShowListBoxListener : public Button::OnClickListener {
+	class ShowListBoxListener : public Button::ActionListener {
 	public:
 		ShowListBoxListener(ComboBox* combo) : comboBox(combo) {
 		};
 		virtual void onClick(Button* button) override;
+		virtual void onPress(Button* button) override;
+		virtual void onHover(Button* button) override;
 	private:
 		ComboBox* comboBox;
 	};
 
-	class SelectedOnClick : public TextLabel::OnClickListener {
+	class SelectedOnClick : public TextLabel::ActionListener {
 	public:
 		SelectedOnClick(ComboBox* combobox) : comboBox(combobox) {
 		}
@@ -122,6 +124,8 @@ private:
 		virtual void onClick(TextLabel* button) override {
 			comboBox->show();
 		}
+		virtual void onPress(TextLabel* button) override{}
+		virtual void onHover(TextLabel* button) override{}
 	private:
 		ComboBox* comboBox;
 	};

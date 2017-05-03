@@ -11,7 +11,7 @@ GameEngine::GameEngine() {
 
 
 GameEngine::~GameEngine() {
-	
+
 	game.reset();
 	showDialog = NULL;
 	errorDialog.reset();
@@ -70,16 +70,21 @@ void GameEngine::onAudioDeviceChange() {
 }
 
 
-class QuitButtonListener : public Button::OnClickListener {
+class QuitButtonListener : public Button::ActionListener {
 public:
 	QuitButtonListener(GameEngine* eng) : engine(eng) {
 	}
 	virtual void onClick(Button * button) override {
 		engine->exit();
 	}
+	virtual void onPress(Button * button) override {
+	}
+	virtual void onHover(Button * button) override {
+	}
 
 	GameEngine* engine;
 };
+
 
 #include "../DXTKGui/GuiAssets.h"
 bool GameEngine::initGFXAssets() {
@@ -124,7 +129,7 @@ bool GameEngine::initStage() {
 	unique_ptr<Button> quitButton;
 	quitButton.reset(guiFactory->createButton());
 	quitButton->setText(L"Exit Program");
-	quitButton->setOnClickListener(new QuitButtonListener(this));
+	quitButton->setActionListener(new QuitButtonListener(this));
 	errorDialog->setCancelButton(move(quitButton));
 
 	ScrollBarDesc scrollBarDesc;
@@ -141,7 +146,7 @@ bool GameEngine::initStage() {
 	unique_ptr<Button> quitButton2;
 	quitButton2.reset(guiFactory->createButton());
 	quitButton2->setText(L"Exit Program");
-	quitButton2->setOnClickListener(new QuitButtonListener(this));
+	quitButton2->setActionListener(new QuitButtonListener(this));
 	warningDialog->setConfirmButton(move(quitButton2));
 
 	showDialog = warningDialog.get();

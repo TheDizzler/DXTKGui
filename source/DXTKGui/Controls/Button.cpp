@@ -15,10 +15,8 @@ Button::Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 
 
 Button::~Button() {
-	if (onClickListener != NULL)
-		delete onClickListener;
-	if (onHoverListener != NULL)
-		delete onHoverListener;
+	if (actionListener != NULL)
+		delete actionListener;
 }
 
 
@@ -433,15 +431,8 @@ AnimatedButton::AnimatedButton(GUIFactory* factory, shared_ptr<MouseController> 
 }
 
 AnimatedButton::~AnimatedButton() {
-	//OutputDebugString(L"\n\n*** AnimatedButton Release ***\n\t ->");
-
-	//animation.reset();
-	if (onClickListener != NULL)
-		delete onClickListener;
-
-
-	//OutputDebugString(L"*** AnimatedButton Release ***\n");
-
+	if (actionListener != NULL)
+		delete actionListener;
 }
 
 

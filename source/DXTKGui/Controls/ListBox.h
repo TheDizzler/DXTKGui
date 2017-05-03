@@ -121,31 +121,33 @@ public:
 	virtual bool pressed() override;
 	virtual bool hovering() override;
 
-	class OnClickListener {
+	class ActionListener {
 	public:
-		/** listbox: The ListBox this OnClickListener is attached to.
+		/** listbox: The ListBox this ActionListener is attached to.
 		selectedItemIndex: index of item in ListBox.*/
 		virtual void onClick(ListBox* listbox, int selectedItemIndex) = 0;
 	};
 
-	typedef void (OnClickListener::*OnClickFunction) (ListBox*, int);
+	
 
 
-	void setOnClickListener(OnClickListener* iOnC) {
-		if (onClickListener != NULL)
-			delete onClickListener;
-		onClickFunction = &OnClickListener::onClick;
-		onClickListener = iOnC;
+	void setActionListener(ActionListener* iOnC) {
+		if (actionListener != NULL)
+			delete actionListener;
+		onClickFunction = &ActionListener::onClick;
+		actionListener = iOnC;
 	}
 
 	void onClick() {
-		if (onClickListener != NULL)
-			(onClickListener->*onClickFunction)(this, selectedIndex);
+		if (actionListener != NULL)
+			(actionListener->*onClickFunction)(this, selectedIndex);
 	}
 
 
 private:
-
+	typedef void (ActionListener::*OnClickFunction) (ListBox*, int);
+	OnClickFunction onClickFunction;
+	ActionListener* actionListener = NULL;
 	/* width of listbox */
 	int width;
 	/* Always smaller or equal to maxDisplayItems. */
@@ -174,9 +176,6 @@ private:
 	int frameThickness = 2;
 
 	EmptyListItem* emptyListItem;
-
-	OnClickFunction onClickFunction;
-	OnClickListener* onClickListener = NULL;
 
 	void setWidth(int newWidth);
 	void resizeBox();

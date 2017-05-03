@@ -25,12 +25,8 @@ TextLabel::TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseContr
 }
 
 TextLabel::~TextLabel() {
-
-	if (onClickListener != NULL)
-		delete onClickListener;
-	if (onHoverListener != NULL)
-		delete onHoverListener;
-
+	if (actionListener != NULL)
+		delete actionListener;
 }
 
 

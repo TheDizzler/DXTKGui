@@ -448,6 +448,15 @@ PromptDialog* GUIFactory::createDialog(const Vector2& position, const Vector2& s
 	return dialog;
 }
 
+DynamicDialog * GUIFactory::createDynamicDialog(const char_t* imageSet,
+	const Vector2& position, const Vector2& size, const char_t* fontName) {
+
+	DynamicDialog* dialog = new DynamicDialog(this, mouseController);
+	dialog->initialize(getAssetSet(imageSet), fontName);
+	dialog->setDimensions(position, size);
+	return dialog;
+}
+
 DynamicDialog* GUIFactory::createDynamicDialog(shared_ptr<AssetSet> dialogImageSet,
 	const Vector2& position, const Vector2& size, const char_t* fontName) {
 
@@ -748,16 +757,13 @@ bool GUIFactory::getGUIAssetsFromXML() {
 		assetMap[check] = move(guiAsset);
 	}
 
-	for (xml_node spritesheetNode = guiAssetsNode.child("spritesheet");
-		spritesheetNode; spritesheetNode = spritesheetNode.next_sibling("spritesheet")) {
+	for (xml_node spritesheetNode : guiAssetsNode.children("spritesheet")) {
 
 		string file_s = guiDir + spritesheetNode.attribute("file").as_string();
 		const char_t* file = file_s.c_str();
 		const char_t* masterAssetName = spritesheetNode.attribute("name").as_string();
 
-		// the spritesheet itself is never saved into the map
-		unique_ptr<GraphicsAsset> masterAsset;
-		masterAsset.reset(new GraphicsAsset());
+		unique_ptr<GraphicsAsset> masterAsset = make_unique<GraphicsAsset>();
 		if (!masterAsset->load(device, StringHelper::convertCharStarToWCharT(file), Vector2::Zero))
 			return false;
 
@@ -800,7 +806,6 @@ bool GUIFactory::getGUIAssetsFromXML() {
 				for (xml_node spriteNode : spritesetNode.children("sprite")) {
 
 					const char_t* spriteName = spriteNode.attribute("name").as_string();
-					//assetMap[spriteName] = parseSprite(spriteNode, masterAsset->getTexture());
 					if (setMap.find(setName) == setMap.end()) {
 						// new set
 						setMap[setName] = make_shared<AssetSet>(setName);
@@ -811,9 +816,8 @@ bool GUIFactory::getGUIAssetsFromXML() {
 			}
 		}
 
-	// parse all animations from spritesheet
-		for (xml_node animationNode = spritesheetNode.child("animation");
-			animationNode; animationNode = animationNode.next_sibling("animation")) {
+		// parse all animations from spritesheet
+		for (xml_node animationNode : spritesheetNode.children("animation")) {
 
 			const char_t* name = animationNode.attribute("name").as_string();
 
@@ -848,8 +852,27 @@ bool GUIFactory::getGUIAssetsFromXML() {
 			spriteNode = spriteNode.next_sibling("sprite")) {
 
 			const char_t* name = spriteNode.attribute("name").as_string();
-			assetMap[name] = parseSprite(spriteNode, masterAsset->getTexture());
+			if (spriteNode.attribute("set")) {
+				string setName = spriteNode.attribute("set").as_string();
+				if (setMap.find(setName) == setMap.end()) {
+					// new set
+					setMap[setName] = make_shared<AssetSet>(setName.c_str());
+				}
+				setMap[setName]->addAsset(name,
+					parseSprite(spriteNode, masterAsset->getTexture()));
+			} else if (spritesheetNode.attribute("set")) {
+				string setName = spritesheetNode.attribute("set").as_string();
+				if (setMap.find(setName) == setMap.end()) {
+					// new set
+					setMap[setName] = make_shared<AssetSet>(setName.c_str());
+				}
+				setMap[setName]->addAsset(name,
+					parseSprite(spriteNode, masterAsset->getTexture()));
+			} else
+				assetMap[name] = parseSprite(spriteNode, masterAsset->getTexture());
 		}
+
+
 		assetMap[masterAssetName] = move(masterAsset);
 	}
 	return true;

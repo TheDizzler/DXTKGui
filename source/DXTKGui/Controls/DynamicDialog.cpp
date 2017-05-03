@@ -52,13 +52,17 @@ void DynamicDialog::setDimensions(const Vector2& posit, const Vector2& sz) {
 	size = sz;
 	position = posit;
 
+	if (assetSet == NULL) {
+		OutputDebugString(L"\n\t!!Critical Failure in Dynamic Dialog: asset set is NULL!!\n\n");
+		return;
+	}
 	topLeftCorner = assetSet->getAsset("Top Left Corner");
 	topCenter = assetSet->getAsset("Top Center");
 	topRightCorner = assetSet->getAsset("Top Right Corner");
 
-	centerLeft = assetSet->getAsset("Center Left");
-	middle = assetSet->getAsset("Middle");
-	centerRight = assetSet->getAsset("Center Right");
+	centerLeft = assetSet->getAsset("Left Center");
+	middle = assetSet->getAsset("Center");
+	centerRight = assetSet->getAsset("Right Center");
 
 	bottomLeftCorner = assetSet->getAsset("Bottom Left Corner");
 	bottomCenter = assetSet->getAsset("Bottom Center");
@@ -199,6 +203,8 @@ void DynamicDialog::textureDraw(SpriteBatch* batch) {
 
 
 void DynamicDialog::update(double deltaTime) {
+
+	dialogText->update(deltaTime);
 }
 
 

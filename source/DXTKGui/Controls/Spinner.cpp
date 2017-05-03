@@ -31,13 +31,13 @@ void Spinner::initialize(const pugi::char_t* fontName,
 	upButton.reset((ImageButton*) guiFactory->createImageButton(upButtonName));
 	if (upButton->getHeight() * 2 > itemHeight)
 		itemHeight = upButton->getHeight() * 2;
-	upButton->setOnClickListener(new SpinnerUpButtonListener(this));
+	upButton->setActionListener(new SpinnerUpButtonListener(this));
 	upButton->setPosition(Vector2(position.x + width, position.y));
 	
 	
 	downButton.reset((ImageButton*) guiFactory->createImageButton(downButtonName));
 	downButton->setPosition(Vector2(position.x + width, position.y + (itemHeight - upButton->getHeight())));
-	downButton->setOnClickListener(new SpinnerDownButtonListener(this));
+	downButton->setActionListener(new SpinnerDownButtonListener(this));
 
 	frame.reset(guiFactory->createRectangleFrame());
 	frame->setDimensions(position, Vector2(width, itemHeight));
@@ -164,4 +164,24 @@ bool Spinner::pressed() {
 
 bool Spinner::hovering() {
 	return false;
+}
+
+void SpinnerUpButtonListener::onClick(Button* button) {
+	spinner->increase();
+}
+
+void SpinnerUpButtonListener::onPress(Button* button) {
+}
+
+void SpinnerUpButtonListener::onHover(Button* button) {
+}
+
+void SpinnerDownButtonListener::onClick(Button* button) {
+	spinner->decrease();
+}
+
+void SpinnerDownButtonListener::onPress(Button* button) {
+}
+
+void SpinnerDownButtonListener::onHover(Button* button) {
 }

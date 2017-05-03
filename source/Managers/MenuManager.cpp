@@ -155,7 +155,14 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 
 	mouse = mc;
 
+	/*dynamicDialog.reset(guiFactory->createDynamicDialog(
+		"Dynamic Dialog", Vector2(10, 100), Vector2(500, 500)));
+	dynamicDialog->setTextTint(Color(0, 0, 1, 1));
+	dynamicDialog->setText(L"YAASDHHASDHASOHDIOASHDIO asd asd asd\nYasdYAASDHHASDHASOHDIOASHDIO asd asd asd\n");
+	dynamicDialog->show();*/
+
 	Vector2 buttonpos = Vector2(100, 100);
+
 	AnimatedButton* animButton =
 		guiFactory->createAnimatedButton("Launch Button");
 	buttonpos = Vector2((Globals::WINDOW_WIDTH - animButton->getWidth()) / 2,
@@ -165,20 +172,24 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 
 
 	Button* button;
-	Vector2 size =/* Vector2(animButton->getWidth() / 2, animButton->getHeight() / 4)*/
-		Vector2::Zero;
+	Vector2 size = Vector2::Zero;
+	/*button = guiFactory->createButton(buttonpos, size, L"Test");
+	buttonpos.x = (Globals::WINDOW_WIDTH - button->getScaledWidth()) / 2;
+	button->setPosition(buttonpos);
+	button->setActionListener(new TestButtonActionListener(dynamicDialog.get()));
+	guiControls.push_back(button);*/
+
+
 	buttonpos.y += 150;
 	button = guiFactory->createButton(buttonpos, size, L"Settings");
 	buttonpos.x = (Globals::WINDOW_WIDTH - button->getScaledWidth()) / 2;
 	button->setPosition(buttonpos);
-	OnClickListenerSettingsButton* settingsListener =
-		new OnClickListenerSettingsButton(this);
-	button->setOnClickListener(settingsListener);
+	button->setActionListener(new OnClickListenerSettingsButton(this));
 	guiControls.push_back(button);
 
 
 	button = guiFactory->createImageButton("Button Up", "Button Down");
-	button->setOnClickListener(new OnClickListenerExitButton(this));
+	button->setActionListener(new OnClickListenerExitButton(this));
 	button->setText(L"Exit");
 	buttonpos.x = (Globals::WINDOW_WIDTH - button->getScaledWidth()) / 2;
 	buttonpos.y += 150;
@@ -205,7 +216,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 		exitDialog->setText(L"Really Quit The Test Project?");
 		unique_ptr<Button> quitButton;
 		quitButton.reset(guiFactory->createImageButton("Button Up", "Button Down"));
-		quitButton->setOnClickListener(new OnClickListenerDialogQuitButton(this));
+		quitButton->setActionListener(new OnClickListenerDialogQuitButton(this));
 		quitButton->setText(L"Quit");
 		exitDialog->setConfirmButton(move(quitButton), true, false);
 		exitDialog->setCancelButton(L"Keep Testing!");
@@ -241,6 +252,7 @@ void MainScreen::update(double deltaTime) {
 	wostringstream ws;
 	ws << "Mouse: " << mouse->getPosition().x << ", " << mouse->getPosition().y;
 	mouseLabel->setText(ws);
+	//dynamicDialog->setText(ws.str());
 
 
 	auto state = Keyboard::Get().GetState();
@@ -251,7 +263,7 @@ void MainScreen::update(double deltaTime) {
 		else
 			exitDialog->show();
 	}
-
+	//dynamicDialog->update(deltaTime);
 
 	if (exitDialog->isOpen()) {
 		exitDialog->update(deltaTime);
@@ -268,6 +280,7 @@ void MainScreen::draw(SpriteBatch* batch) {
 	for (auto const& control : guiControls)
 		control->draw(batch);
 
+	//dynamicDialog->draw(batch);
 	exitDialog->draw(batch);
 }
 
@@ -319,7 +332,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	adapterListbox->setSelected(game->getSelectedAdapterIndex());
 
 	OnClickListenerAdapterList* onClickAdapterList = new OnClickListenerAdapterList(this);
-	adapterListbox->setOnClickListener(onClickAdapterList);
+	adapterListbox->setActionListener(onClickAdapterList);
 
 
 	adapterLabel->setText(adapterListbox->getSelected()->toString());
@@ -379,7 +392,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	displayModeCombobox->setSelected(game->getSelectedDisplayModeIndex());
 	OnClickListenerDisplayModeList* onClickDisplayMode =
 		new OnClickListenerDisplayModeList(this);
-	displayModeCombobox->setOnClickListener(onClickDisplayMode);
+	displayModeCombobox->setActionListener(onClickDisplayMode);
 	guiControls.push_back(displayModeCombobox);
 
 
@@ -389,7 +402,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	CheckBox* check = guiFactory->createCheckBox(Vector2(50, 450), L"Full Screen");
 	OnClickListenerFullScreenCheckBox* onClickFullScreen
 		= new OnClickListenerFullScreenCheckBox(this);
-	check->setOnClickListener(onClickFullScreen);
+	check->setActionListener(onClickFullScreen);
 	check->setChecked(Globals::FULL_SCREEN);
 
 	guiControls.push_back(check);
@@ -405,7 +418,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	button->setPosition(
 		Vector2(Globals::WINDOW_WIDTH / 2 - button->getWidth(),
 			Globals::WINDOW_HEIGHT - button->getHeight() - 25));
-	button->setOnClickListener(new BackButtonListener(this));
+	button->setActionListener(new BackButtonListener(this));
 	guiControls.push_back(button);
 
 	button = (ImageButton*) guiFactory->createImageButton("Button Up", "Button Down");
@@ -560,15 +573,49 @@ void OnClickListenerSettingsButton::onClick(Button* button) {
 	main->menuManager->openConfigMenu();
 }
 
+void OnClickListenerSettingsButton::onPress(Button * button) {
+}
+
+void OnClickListenerSettingsButton::onHover(Button * button) {
+}
+
 void OnClickListenerDialogQuitButton::onClick(Button* button) {
 	main->exitDialog->hide();
 	main->confirmExit();
+}
+
+void OnClickListenerDialogQuitButton::onPress(Button * button) {
+}
+
+void OnClickListenerDialogQuitButton::onHover(Button * button) {
 }
 
 void OnClickListenerExitButton::onClick(Button* button) {
 	main->exitDialog->show();
 }
 
+void OnClickListenerExitButton::onPress(Button * button) {
+}
+
+void OnClickListenerExitButton::onHover(Button * button) {
+}
+
 void BackButtonListener::onClick(Button* button) {
 	configScreen->menuManager->openMainMenu();
+}
+
+void BackButtonListener::onPress(Button * button) {
+}
+
+void BackButtonListener::onHover(Button * button) {
+}
+
+
+void TestButtonActionListener::onClick(Button* button) {
+}
+
+void TestButtonActionListener::onPress(Button* button) {
+}
+
+void TestButtonActionListener::onHover(Button* button) {
 }

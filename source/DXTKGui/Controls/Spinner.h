@@ -69,33 +69,25 @@ private:
 };
 
 
-class SpinnerUpButtonListener : public Button::OnClickListener {
+class SpinnerUpButtonListener : public Button::ActionListener {
 public:
 	SpinnerUpButtonListener(Spinner* spnr) : spinner(spnr) {
 	}
 
-	~SpinnerUpButtonListener() {
-		OutputDebugString(L"*** SpinnerUpButtonListener Release ***\n");
-		spinner = NULL;
-	}
-	virtual void onClick(Button* button) override {
-		spinner->increase();
-	}
+	virtual void onClick(Button* button) override;
+	virtual void onPress(Button* button) override;
+	virtual void onHover(Button* button) override;
 private:
 	Spinner* spinner;
 };
 
-class SpinnerDownButtonListener : public Button::OnClickListener {
+class SpinnerDownButtonListener : public Button::ActionListener {
 public:
 	SpinnerDownButtonListener(Spinner* spnr) : spinner(spnr) {
 	}
-	~SpinnerDownButtonListener() {
-		OutputDebugString(L"*** SpinnerDownButtonListener Release ***\n");
-		spinner = NULL;
-	}
-	virtual void onClick(Button* button) override {
-		spinner->decrease();
-	}
+	virtual void onClick(Button* button) override;
+	virtual void onPress(Button* button) override;
+	virtual void onHover(Button* button) override;
 private:
 	Spinner* spinner;
 };

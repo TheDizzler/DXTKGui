@@ -39,25 +39,25 @@ public:
 
 	void setChecked(bool checked);
 
-	class OnClickListener {
+	class ActionListener {
 	public:
-	/** checkbox: The CheckBox this OnClickListener is attached to.
+	/** checkbox: The CheckBox this ActionListener is attached to.
 		isChecked: whether box is checked or no*/
 		virtual void onClick(CheckBox* checkbox, bool isChecked) = 0;
 	};
 
-	typedef void (OnClickListener::*OnClickFunction) (CheckBox*, bool);
+	
 
-	void setOnClickListener(OnClickListener* iOnC) {
-		if (onClickListener != NULL)
-			delete onClickListener;
-		onClickFunction = &OnClickListener::onClick;
-		onClickListener = iOnC;
+	void setActionListener(ActionListener* iOnC) {
+		if (actionListener != NULL)
+			delete actionListener;
+		onClickFunction = &ActionListener::onClick;
+		actionListener = iOnC;
 	}
 
 	void onClick() {
-		if (onClickListener != NULL)
-			(onClickListener->*onClickFunction)(this, isClicked);
+		if (actionListener != NULL)
+			(actionListener->*onClickFunction)(this, isClicked);
 
 		if (isClicked)
 			texture = checkedSprite->getTexture().Get();
@@ -66,9 +66,10 @@ public:
 	}
 
 private:
-
+	typedef void (ActionListener::*OnClickFunction) (CheckBox*, bool);
+	ActionListener* actionListener = NULL;
 	OnClickFunction onClickFunction;
-	OnClickListener* onClickListener = NULL;
+	
 
 	ID3D11ShaderResourceView* texture;
 	/** Helper function to center text in check sprite. */

@@ -21,8 +21,8 @@ CheckBox::CheckBox(GUIFactory* factory, shared_ptr<MouseController> mouseControl
 
 CheckBox::~CheckBox() {
 
-	if (onClickListener != NULL)
-		delete onClickListener;
+	if (actionListener != NULL)
+		delete actionListener;
 
 }
 

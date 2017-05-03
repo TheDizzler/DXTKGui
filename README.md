@@ -25,7 +25,7 @@ Email: tgillon.sdk@gmail.com
 >- Optimized control draw speed 
 >- Primitve Shapes - filled rectangle; un-filled rectangle; triangle (needs work); line
 >- Text Labels - normal and clickable
->- Button - text, image, animated
+>- Button - text, image, animated (animated buttons are hacky and due for overhaul)
 >- TexturePanel - can take a ShaderResourceView, display it, and scroll vertically
 >- Dialog Box - draggable and non-draggable; implements TexturePanel to allow text scrolling; no image (bg) loading yet;
 >- Dynamic Dialog that takes 9 images to make a variable sized dialog box
@@ -49,6 +49,7 @@ Email: tgillon.sdk@gmail.com
 Live objects ARE being released but after the debug report. <- FIXED
 ~~Still have some outstanding internal refernces.~~ Most appear gone
 >- Controller controlled controls (joysticks)
+>- Automated Button needs overhaul (or removal completely)
 >- Dialog Box - allow hyphenating of words that can't fit on one line with option to turn on/off
 (currently puts whole word on next line or puts break in word)
 >- Horizontal scrollbar

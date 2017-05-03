@@ -74,11 +74,13 @@ protected:
 
 
 	/** Generic OnClick for Cancel Button. Closes the dialog. That's all. */
-	class OnClickListenerCancelButton : public Button::OnClickListener {
+	class OnClickListenerCancelButton : public Button::ActionListener {
 	public:
 		OnClickListenerCancelButton(Dialog* dlg) : dialog(dlg) {
 		}
 		virtual void onClick(Button* button) override;
+		virtual void onPress(Button* button) override;
+		virtual void onHover(Button* button) override;
 	private:
 		Dialog* dialog;
 	};
@@ -122,11 +124,11 @@ public:
 		Set autoSize to false if using an ImageButton. */
 	void setConfirmButton(unique_ptr<Button> okButton,
 		bool autoPosition = true, bool autoSize = true);
-	/** Creates a Button that does nothing until OnClickListener is set. */
+	/** Creates a Button that does nothing until ActionListener is set. */
 	void setConfirmButton(wstring text, const pugi::char_t* font = "Default Font");
 	/** Sets the listener to the confirm button. Will create the confirm button if one
 		has not already beeen created for it. */
-	void setConfirmOnClickListener(Button::OnClickListener* iOnClickListener);
+	void setConfirmOnClickListener(Button::ActionListener* iOnClickListener);
 
 	void setCancelButton(unique_ptr<Button> cancelButton,
 		bool autoPosition = true, bool autoSize = true);
@@ -134,7 +136,7 @@ public:
 	void setCancelButton(wstring text, const pugi::char_t* font = "Default Font");
 	/** Sets the listener to the cancel button. Will create the cancel button if one
 	has not already beeen created for it. */
-	void setCancelOnClickListener(Button::OnClickListener* iOnClickListener);
+	void setCancelOnClickListener(Button::ActionListener* iOnClickListener);
 
 	/* Dialog checks to see if it's open before performing any logic. */
 	virtual void update(double deltaTime);

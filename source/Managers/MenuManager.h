@@ -2,11 +2,7 @@
 
 #include "../DXTKGui/GUIFactory.h"
 
-#include "../DXTKGui/BaseGraphics/Screen.h"
-//#include "../DXTKGui/Controls/Dialog.h"
-//#include "../DXTKGui/Controls/ComboBox.h"
-//#include "../DXTKGui/Controls/Button.h"
-//#include "../DXTKGui/Controls/CheckBox.h"
+//#include "../DXTKGui/BaseGraphics/Screen.h"
 #include "../DXTKGUI/Effects/ScreenTransitions.h"
 
 class MenuScreen;
@@ -39,7 +35,7 @@ protected:
 
 };
 
-class OnClickListenerAdapterList : public ListBox::OnClickListener {
+class OnClickListenerAdapterList : public ListBox::ActionListener {
 public:
 	OnClickListenerAdapterList(ConfigScreen* screen) : config(screen) {
 	}
@@ -48,7 +44,7 @@ private:
 	ConfigScreen* config;
 };
 
-class OnClickListenerDisplayModeList : public ComboBox::OnClickListener {
+class OnClickListenerDisplayModeList : public ComboBox::ActionListener {
 public:
 	OnClickListenerDisplayModeList(ConfigScreen* screen) : config(screen) {
 	}
@@ -58,7 +54,7 @@ private:
 
 };
 
-class OnClickListenerFullScreenCheckBox : public CheckBox::OnClickListener {
+class OnClickListenerFullScreenCheckBox : public CheckBox::ActionListener {
 public:
 	OnClickListenerFullScreenCheckBox(ConfigScreen* screen) : config(screen) {
 	}
@@ -67,31 +63,61 @@ private:
 	ConfigScreen* config;
 };
 
-class OnClickListenerSettingsButton : public Button::OnClickListener {
+class BackButtonListener : public Button::ActionListener {
+public:
+	BackButtonListener(ConfigScreen* screen) : configScreen(screen) {
+	}
+	virtual void onClick(Button* button) override;
+	virtual void onPress(Button* button) override;
+	virtual void onHover(Button* button) override;
+
+private:
+	ConfigScreen* configScreen;
+};
+
+class OnClickListenerSettingsButton : public Button::ActionListener {
 public:
 	OnClickListenerSettingsButton(MainScreen* screen) : main(screen) {
 	}
 	virtual void onClick(Button* button) override;
+	virtual void onPress(Button * button) override;
+	virtual void onHover(Button * button) override;
 private:
 	MainScreen* main;
 };
 
-class OnClickListenerDialogQuitButton : public Button::OnClickListener {
+class OnClickListenerDialogQuitButton : public Button::ActionListener {
 public:
 	OnClickListenerDialogQuitButton(MainScreen* screen) : main(screen) {
 	}
-	virtual void onClick(Button * button) override;
+	virtual void onClick(Button* button) override;
+	virtual void onPress(Button* button) override;
+	virtual void onHover(Button* button) override;
 private:
 	MainScreen* main;
 };
 
-class OnClickListenerExitButton : public Button::OnClickListener {
+class OnClickListenerExitButton : public Button::ActionListener {
 public:
 	OnClickListenerExitButton(MainScreen* screen) : main(screen) {
 	}
 	virtual void onClick(Button* button) override;
+	virtual void onPress(Button* button) override;
+	virtual void onHover(Button* button) override;
 private:
 	MainScreen* main;
+
+
+};
+
+class TestButtonActionListener : public Button::ActionListener {
+public:
+	TestButtonActionListener(DynamicDialog* dlg) : dialog(dlg){}
+	virtual void onClick(Button* button) override;
+	virtual void onPress(Button* button) override;
+	virtual void onHover(Button* button) override;
+private:
+	DynamicDialog* dialog;
 };
 
 
@@ -156,16 +182,6 @@ protected:
 };
 
 
-class BackButtonListener : public Button::OnClickListener {
-public:
-	BackButtonListener(ConfigScreen* screen) : configScreen(screen) {
-	}
-	virtual void onClick(Button * button) override;
-
-private:
-	ConfigScreen* configScreen;
-};
-
 class ConfigScreen : public MenuScreen {
 	friend class OnClickListenerAdapterList;
 	friend class OnClickListenerDisplayModeList;
@@ -211,6 +227,7 @@ public:
 private:
 	shared_ptr<MouseController> mouse;
 	unique_ptr<PromptDialog> exitDialog;
+	unique_ptr<DynamicDialog> dynamicDialog;
 	TextLabel* mouseLabel;
 };
 
