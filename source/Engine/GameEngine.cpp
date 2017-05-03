@@ -173,7 +173,7 @@ void GameEngine::run(double deltaTime) {
 		}
 	} else if (!audioEngine->Update()) {
 		if (audioEngine->IsCriticalError()) {
-			//ErrorDialog(L"Audio device lost!", L"Audio Engine failure");
+			showWarningDialog(L"Audio device lost!", L"Audio Engine failure");
 			retryAudio = true;
 		}
 	}

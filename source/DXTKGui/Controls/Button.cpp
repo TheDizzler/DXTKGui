@@ -11,6 +11,8 @@ Button::Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 	position = Vector2(-1, -1);
 
 	buttonLabel.reset(guiFactory->createTextLabel(Vector2::Zero, L"", font, true));
+	rectSprite.reset(guiFactory->createRectangle());
+	frame.reset(guiFactory->createRectangleFrame());
 }
 
 
@@ -30,9 +32,7 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 	Vector2 labelSize = measureString();
 	Vector2 newSize = size;
 
-
-	frame.reset(guiFactory->createRectangleFrame(pos, size));
-	rectSprite.reset(guiFactory->createRectangle());
+	
 
 
 	if ((labelSize.x + textMargin * 2) > size.x) {
@@ -46,6 +46,9 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 	projectedHitArea->size = newSize;
 	width = newSize.x;
 	height = newSize.y;
+
+	frame->setDimensions(position, hitArea->size);
+	rectSprite->setDimensions(position, hitArea->size);
 
 	setPosition(pos);
 	setLayerDepth(.9);
