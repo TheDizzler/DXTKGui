@@ -15,17 +15,10 @@ Button::Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 
 
 Button::~Button() {
-
-	//OutputDebugString(L"\n\n*** Button Release ***\n\t ->");
-	/*buttonLabel.reset();
-	rectSprite.reset();
-	frame.reset();*/
 	if (onClickListener != NULL)
 		delete onClickListener;
 	if (onHoverListener != NULL)
 		delete onHoverListener;
-
-	//OutputDebugString(L"\n*** Button Done ***");
 }
 
 
@@ -104,10 +97,11 @@ void Button::update(double deltaTime) {
 	}
 
 	buttonLabel->update(deltaTime);
+	if (frame.get())
+		frame->update();
 }
 
-// this function is not cheap. I suspect the frame is most costly.
-//	EDIT: bit better now. It was the button label.
+
 void Button::draw(SpriteBatch* batch) {
 
 	rectSprite->draw(batch);

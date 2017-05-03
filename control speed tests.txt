@@ -16,7 +16,13 @@ imagebutton:					2500+
 button:							3000+
 	mouse hover:				3000+ (FIXED!)
 	mouse down:					3000+
+	
+textlabel (hoverable set) && (update every frame):
+	useTexture:				3000+
+		&& setText():		1200-1300	<- NOTE
+	!useTexture:			2200+
+		&& setText():		1800-2000	<- NOTE
 
-with everything:					620-640 (now 850-900!) (1400+ wow!)
-with everything combo OPEN:			430-450	(now 590-620!) (1200+ wow!)
+with everything:				1500+	(before 620-640) 
+with everything combo OPEN:		1300+	(before 430-450)
 

@@ -156,37 +156,37 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	mouse = mc;
 
 	Vector2 buttonpos = Vector2(100, 100);
-	/*AnimatedButton* animButton =
+	AnimatedButton* animButton =
 		guiFactory->createAnimatedButton("Launch Button");
 	buttonpos = Vector2((Globals::WINDOW_WIDTH - animButton->getWidth()) / 2,
 		Globals::WINDOW_HEIGHT / 3 - animButton->getHeight() / 2);
 	animButton->setPosition(buttonpos);
-	guiControls.push_back(animButton);*/
+	guiControls.push_back(animButton);
 
 
 	Button* button;
 	Vector2 size =/* Vector2(animButton->getWidth() / 2, animButton->getHeight() / 4)*/
 		Vector2::Zero;
-	/*buttonpos.y += 150;
+	buttonpos.y += 150;
 	button = guiFactory->createButton(buttonpos, size, L"Settings");
 	buttonpos.x = (Globals::WINDOW_WIDTH - button->getScaledWidth()) / 2;
 	button->setPosition(buttonpos);
 	OnClickListenerSettingsButton* settingsListener =
 		new OnClickListenerSettingsButton(this);
 	button->setOnClickListener(settingsListener);
-	guiControls.push_back(button);*/
+	guiControls.push_back(button);
 
 
-	/*button = guiFactory->createImageButton("Button Up", "Button Down");
+	button = guiFactory->createImageButton("Button Up", "Button Down");
 	button->setOnClickListener(new OnClickListenerExitButton(this));
 	button->setText(L"Exit");
 	buttonpos.x = (Globals::WINDOW_WIDTH - button->getScaledWidth()) / 2;
 	buttonpos.y += 150;
 	button->setPosition(buttonpos);
-	guiControls.push_back(button);*/
+	guiControls.push_back(button);
 
 
-	mouseLabel = guiFactory->createTextLabel(Vector2(10, 100), L"Mouse Label", "Default Font", true);
+	mouseLabel = guiFactory->createTextLabel(Vector2(10, 100), L"Mouse Label", "Default Font", false);
 	mouseLabel->setAlpha(.1);
 	mouseLabel->setHoverable(true);
 	guiControls.push_back(mouseLabel);
@@ -240,7 +240,7 @@ void MainScreen::update(double deltaTime) {
 
 	wostringstream ws;
 	ws << "Mouse: " << mouse->getPosition().x << ", " << mouse->getPosition().y;
-	//mouseLabel->setText(ws);
+	mouseLabel->setText(ws);
 
 
 	auto state = Keyboard::Get().GetState();

@@ -26,8 +26,7 @@ class GUIFactory;
 /** A primitive, non-filled rectangle. */
 class RectangleFrame : public IElement2D, public Texturizable {
 public:
-	/* GUIFactory is optional. */
-	RectangleFrame(GraphicsAsset* pixelAsset, _In_opt_ GUIFactory* guifactory);
+	RectangleFrame(GraphicsAsset* pixelAsset, GUIFactory* guifactory);
 	virtual ~RectangleFrame();
 
 	void setDimensions(const Vector2& position, const Vector2& size,
@@ -45,6 +44,7 @@ public:
 	virtual void setTint(const Color& color) override;
 	virtual void setTint(const XMVECTORF32 color) override;
 
+	virtual void update();
 	void draw(SpriteBatch* batch);
 
 	virtual const Vector2& getPosition() const override;
@@ -69,7 +69,7 @@ public:
 private:
 	ComPtr<ID3D11ShaderResourceView> pixel;
 
-	bool useTexture = true;
+	bool refreshTexture = true;
 	unique_ptr<TexturePanel> texturePanel;
 
 	RECT frameHorizontal;
@@ -86,9 +86,10 @@ private:
 	int frameThickness = 2;
 	float layerDepth = .9f;
 	unique_ptr<HitArea> hitArea;
+	int height;
+	int width;
 
 	GUIFactory* guiFactory;
-
 };
 
 

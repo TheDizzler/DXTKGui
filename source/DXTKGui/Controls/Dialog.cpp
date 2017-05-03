@@ -392,8 +392,6 @@ void PromptDialog::calculateDialogTextPos() {
 
 	Vector2 dialogpos;
 	if (centerText) {
-		//if (panel->scrollBarVisible())
-			//scrollBarBuffer = panel->getScrollBarSize().x;
 		dialogpos = Vector2(dialogFramePosition.x +
 			(dialogFrameSize.x - dialogtextsize.x - scrollBarBuffer) / 2, 0);
 	} else {
@@ -593,6 +591,7 @@ void PromptDialog::update(double deltaTime) {
 
 	}
 	panel->update(deltaTime);
+	frame->update();
 	for (auto const& control : controls) {
 		if (control == NULL)
 			continue;
@@ -622,8 +621,6 @@ void PromptDialog::draw(SpriteBatch* batch) {
 				continue;
 			control->draw(batch);
 		}
-
-
 		frame->draw(batch);
 	}
 }

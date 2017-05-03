@@ -203,6 +203,7 @@ void ListBox::update(double deltaTime) {
 		texturePanel->setTexture(texturize());
 		texturePanel->setTexturePosition(firstItemPos);
 		refreshPanel = false;
+		frame->update();
 	}
 }
 
@@ -402,6 +403,7 @@ bool ListItem::update(double deltaTime, MouseController* mouse) {
 	} else
 		buttonDownLast = false;
 
+	textLabel->update(deltaTime);
 	return isHover && !wasHover;
 }
 

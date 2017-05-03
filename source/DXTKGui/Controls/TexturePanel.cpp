@@ -13,15 +13,7 @@ TexturePanel::TexturePanel(GUIFactory* factory, shared_ptr<MouseController> mous
 
 #include "../StringHelper.h"
 TexturePanel::~TexturePanel() {
-	/*wostringstream woo;
-	woo << L"\n\n***TexturePanel Release ***" << endl;*/
-	/*woo << "\t\tResource release #: " << */texture.Reset()/* << "\n\t ->"*/;
-	//OutputDebugString(woo.str().c_str());
 
-	//gfxAsset.reset();
-	//verticalScrollBar.reset();
-	
-	//OutputDebugString(L"\n*** TexturePanel Done ***");
 }
 
 
@@ -117,7 +109,7 @@ void TexturePanel::setLayerDepth(const float newDepth, bool frontToBack) {
 
 void TexturePanel::setScale(const Vector2& newScale) {
 	GUIControl::setScale(newScale);
-	//scale = newScale;
+	
 	if (neverShowScrollBar)
 		return;
 	verticalScrollBar->setScale(newScale);
@@ -125,7 +117,6 @@ void TexturePanel::setScale(const Vector2& newScale) {
 
 
 void TexturePanel::moveBy(const Vector2& moveVector) {
-	//GUIControl::moveBy(moveVector);
 
 	setPosition(position + moveVector);
 

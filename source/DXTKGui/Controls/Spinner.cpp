@@ -13,14 +13,7 @@ Spinner::Spinner(GUIFactory* factory, shared_ptr<MouseController> mouseControlle
 }
 
 Spinner::~Spinner() {
-	//OutputDebugString(L"\n\n*** Spinner Release ***\n\t ->");
 	list.clear();
-	//label.reset();
-	//frame.reset();
-	//rectangle.reset();
-	//upButton.reset();
-	//downButton.reset();
-	//OutputDebugString(L"*** Spinner Release ***\n");
 }
 
 #include <sstream>
@@ -62,6 +55,8 @@ void Spinner::update(double deltaTime) {
 
 	upButton->update(deltaTime);
 	downButton->update(deltaTime);
+	frame->update();
+	label->update(deltaTime);
 }
 
 

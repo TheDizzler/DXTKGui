@@ -59,7 +59,7 @@ void ComboBox::update(double deltaTime) {
 
 	selectedLabel->update(deltaTime);
 	comboListButton->update(deltaTime);
-
+	frame->update();
 
 
 	if (isOpen) {

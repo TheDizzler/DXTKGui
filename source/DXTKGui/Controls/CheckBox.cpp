@@ -51,6 +51,7 @@ void CheckBox::update(double deltaTime) {
 			onClick();
 		}
 	}
+	label->update(deltaTime);
 }
 
 void CheckBox::draw(SpriteBatch* batch) {
