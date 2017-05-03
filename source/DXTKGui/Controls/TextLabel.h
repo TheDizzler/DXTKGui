@@ -103,10 +103,16 @@ private:
 	shared_ptr<FontSet> font;
 
 	bool useTexture = false;
+	bool refreshTexture = true;
 	unique_ptr<TexturePanel> texturePanel;
 
 	/* Sometimes a TextLabel is just a TextLabel. */
 	bool isHoverable = false;
+	virtual void setToUnpressedState();
+	virtual void setToHoverState();
+	virtual void setToSelectedState();
+	bool hasBeenSetUnpressed = false;
+	bool hasBeenSetHover = false;
 
 	typedef void (OnClickListener::*OnClickFunction) (TextLabel*);
 	OnClickFunction onClickFunction;

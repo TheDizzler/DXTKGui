@@ -81,13 +81,13 @@ void ComboBox::draw(SpriteBatch* batch) {
 }
 
 
-void ComboBox::open() {
+void ComboBox::show() {
 
 	isOpen = !isOpen;
 
 }
 
-void ComboBox::close() {
+void ComboBox::hide() {
 	isOpen = false;
 }
 
@@ -170,7 +170,7 @@ void ComboBox::clear() {
 }
 
 void ComboBox::ShowListBoxListener::onClick(Button * button) {
-	comboBox->open();
+	comboBox->show();
 }
 
 void ComboBox::ListBoxListener::onClick(ListBox* listbox, int selectedItemIndex) {

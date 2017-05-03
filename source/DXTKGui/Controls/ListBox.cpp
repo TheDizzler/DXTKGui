@@ -32,17 +32,16 @@ void ListBox::initialize(const pugi::char_t* fnt, GraphicsAsset* pixelAsset,
 	fontName = fnt;
 	pixel = pixelAsset->getTexture();
 
-	texturePanel.reset(guiFactory->createPanel(false));
 
+
+	refreshPanel = true;
 	firstItemPos = Vector2(position.x, position.y);
-
 	scrollBar.reset(scrllbr);
-
 	frame.reset(guiFactory->createRectangleFrame());
-
 	hitArea.reset(new HitArea(position, Vector2(frame->getWidth(), frame->getHeight())));
-
 	isEnumerated = enumerateList;
+
+	texturePanel.reset(guiFactory->createPanel(true));
 
 	emptyListItem = new EmptyListItem();
 	emptyListItem->initialize(width - scrollBar->getWidth(), itemHeight,
@@ -113,13 +112,30 @@ void ListBox::resizeBox() {
 	frame->setDimensions(position, frameSize, frameThickness);
 	hitArea->size = frameSize;
 
-	texturePanel->setTexture(texturize());
-	texturePanel->setPosition(firstItemPos);
+	refreshPanel = true;
 }
 
 
-void ListBox::setPosition(const Vector2& position) {
-	GUIControl::setPosition(position);
+void ListBox::moveBy(const Vector2& moveBy) {
+	GUIControl::moveBy(moveBy);
+	firstItemPos += moveBy;
+	texturePanel->moveBy(moveBy);
+}
+
+void ListBox::setPosition(const Vector2& newPosition) {
+	Vector2 moveBy = newPosition - position;
+	GUIControl::setPosition(newPosition);
+
+	firstItemPos += moveBy;
+	Vector2 pos = firstItemPos;
+
+	for (int i = firstItemToDisplay;
+		i < firstItemToDisplay + itemsToDisplay; ++i) {
+
+		listItems[i]->updatePosition(pos);
+		pos.y += itemHeight;
+	}
+	texturePanel->moveBy(moveBy);
 }
 
 void ListBox::alwaysShowScrollBar(bool alwaysShow) {
@@ -127,7 +143,6 @@ void ListBox::alwaysShowScrollBar(bool alwaysShow) {
 }
 
 void ListBox::setWidth(int newWidth) {
-
 	width = newWidth;
 	scrollBar->setPosition(Vector2(position.x + width, position.y));
 }
@@ -147,8 +162,10 @@ void ListBox::update(double deltaTime) {
 
 		if (hitArea->contains(mouse->getPosition())) {
 			int mouseWheelDelta = mouse->scrollWheelValue();
-			if (mouseWheelDelta != 0)
+			if (mouseWheelDelta != 0) {
 				scrollBar->scrollByIncrement(-mouseWheelDelta);
+				refreshPanel = true;
+			}
 		}
 
 		scrollBar->update(deltaTime);
@@ -160,43 +177,38 @@ void ListBox::update(double deltaTime) {
 
 	for (int j = firstItemToDisplay; j < firstItemToDisplay + itemsToDisplay; ++j) {
 		if (listItems[j]->update(deltaTime, mouse.get())) {
-			if (!multiSelect) {
-				for (int i = 0; i < listItems.size(); ++i) {
-					if (listItems[i] == listItems[j]) {
-						selectedIndex = i;
-						continue;
+			refreshPanel = true;
+			if (listItems[j]->isSelected) {
+				if (!multiSelect) {
+					for (int i = 0; i < listItems.size(); ++i) {
+						if (listItems[i] == listItems[j]) {
+							if (selectedIndex != i) {
+								selectedIndex = i;
+								onClick();
+							}
+							continue;
+						}
+						if (listItems[i]->isSelected)
+							listItems[i]->setSelected(false);
 					}
-					if (listItems[i]->isSelected)
-						listItems[i]->setSelected(false);
 				}
-			}
 
-			isClicked = true;
-			onClick();
-			texturePanel->setTexture(texturize());
-			//texturePanel->setPosition(firstItemPos);
+			}
 		}
+
 	}
 
-	Vector2 pos = firstItemPos;
+	if (refreshPanel) {
 
-	for (int i = firstItemToDisplay;
-		i < firstItemToDisplay + itemsToDisplay; ++i) {
-
-		listItems[i]->updatePosition(pos);
-		pos.y += itemHeight;
+		texturePanel->setTexture(texturize());
+		texturePanel->setTexturePosition(firstItemPos);
+		refreshPanel = false;
 	}
 }
 
 
 void ListBox::draw(SpriteBatch* batch) {
 
-	/*for (int i = firstItemToDisplay;
-		i < firstItemToDisplay + itemsToDisplay; ++i) {
-
-		listItems[i]->draw(batch);
-
-	}*/
 
 	texturePanel->draw(batch);
 
@@ -207,11 +219,12 @@ void ListBox::draw(SpriteBatch* batch) {
 	if (listItems.size() > 0) { // draw frame
 		frame->draw(batch);
 	}
-	
+
 }
 
 
 void ListBox::textureDraw(SpriteBatch* batch) {
+	
 	for (int i = firstItemToDisplay;
 		i < firstItemToDisplay + itemsToDisplay; ++i) {
 
@@ -249,8 +262,9 @@ void ListBox::setSelected(size_t newIndex) {
 
 	}
 	scrollBar->setScrollPositionByPercent(
-		selectedIndex / (double) (listItems.size() /*- maxDisplayItems*/));
+		selectedIndex / (double) (listItems.size()));
 
+	refreshPanel = true;
 }
 
 const int ListBox::getSelectedIndex() const {
@@ -280,8 +294,8 @@ const Vector2& XM_CALLCONV ListBox::measureString() const {
 
 
 void ListBox::setFont(const pugi::char_t* fnt) {
-
 	fontName = fnt;
+	refreshPanel = true;
 }
 
 
@@ -325,11 +339,6 @@ bool ListBox::hovering() {
 
 /** **** ListItem **** **/
 ListItem::~ListItem() {
-	/*guiFactory = NULL;
-	wostringstream woo;
-	woo << L"\n\n*** ListItem Pixel *** " << endl;
-	woo << "\t\tResource release #: " <<*/ pixel.Reset() /*<< endl*/;
-	//OutputDebugString(woo.str().c_str());
 
 }
 
@@ -374,9 +383,10 @@ const wchar_t* ListItem::toString() {
 	return textLabel->getText();
 }
 
-
+/** Returns true if item isHovered. */
 bool ListItem::update(double deltaTime, MouseController* mouse) {
 
+	bool wasHover = isHover;
 	if ((isHover = hitArea->contains(mouse->getPosition()))) {
 
 		if (mouse->leftButton() && !buttonDownLast)
@@ -392,7 +402,7 @@ bool ListItem::update(double deltaTime, MouseController* mouse) {
 	} else
 		buttonDownLast = false;
 
-	return false;
+	return isHover && !wasHover;
 }
 
 void ListItem::updatePosition(const Vector2& pos) {

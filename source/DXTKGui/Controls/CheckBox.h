@@ -79,6 +79,6 @@ private:
 
 	unique_ptr<Sprite> uncheckedSprite;
 	unique_ptr<Sprite> checkedSprite;
-	/* The sprite used in draw(). */
-	//Sprite* drawSprite;
+	
+	bool firstHover;
 };

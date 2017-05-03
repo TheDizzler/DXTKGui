@@ -102,6 +102,8 @@ void Button::update(double deltaTime) {
 			hasBeenSetHover = false;
 		}
 	}
+
+	buttonLabel->update(deltaTime);
 }
 
 // this function is not cheap. I suspect the frame is most costly.

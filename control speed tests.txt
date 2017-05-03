@@ -3,17 +3,12 @@ everything OFF:					3000+
 spinner:						2600+
 spinner and spinning:			2100+
 
-listbox:						1500+
+listbox:						2700+
 
 combobox closed:				2400+
-	item loop but no draw:		1700-1800
-	no item loop:				1500-1700
-	no scrollbar				1150-1250
-	no frame					1150-1200
-	open but draw nothing		2050-2150
-	open:						1200+ (BETTER! but could be better...)
+	open:						1850-1950 (FIXED)
 
-checkbox:						1300+
+checkbox:						2800+
 
 imagebutton:					2500+
 	mouse hover					2500+
@@ -22,6 +17,6 @@ button:							3000+
 	mouse hover:				3000+ (FIXED!)
 	mouse down:					3000+
 
-with everything:					620-640 (now 850-900!)
-with everything combo OPEN:			430-450	(now 590-620!)
+with everything:					620-640 (now 850-900!) (1400+ wow!)
+with everything combo OPEN:			430-450	(now 590-620!) (1200+ wow!)
 

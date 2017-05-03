@@ -109,7 +109,8 @@ public:
 	size_t maxDisplayItems = 7;
 
 
-	virtual void setPosition(const Vector2 & position) override;
+	virtual void moveBy(const Vector2& moveVector) override;
+	virtual void setPosition(const Vector2& position) override;
 
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 	virtual const Vector2 & getPosition() const override;
@@ -168,6 +169,7 @@ private:
 	/** ID3D11ShaderResourceView is a ComPtr! */
 	ComPtr<ID3D11ShaderResourceView> pixel;
 	unique_ptr<TexturePanel> texturePanel;
+	bool refreshPanel = false;
 
 	int frameThickness = 2;
 

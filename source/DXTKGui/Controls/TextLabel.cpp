@@ -10,7 +10,7 @@ TextLabel::TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseContr
 	hitArea = make_unique<HitArea>(position, Vector2::Zero);
 
 	useTexture = texture;
-
+	texturePanel.reset(guiFactory->createPanel());
 	setText(text);
 }
 
@@ -20,21 +20,17 @@ TextLabel::TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseContr
 	font = fnt;
 	hitArea = make_unique<HitArea>(position, Vector2::Zero);
 	useTexture = texture;
-
+	texturePanel.reset(guiFactory->createPanel());
 	setText(text);
 }
 
 TextLabel::~TextLabel() {
 
-	//OutputDebugString(L"\n\n*** TextLabel Release ***\n\t ->");
-	texturePanel.reset();
-	font.reset();
 	if (onClickListener != NULL)
 		delete onClickListener;
 	if (onHoverListener != NULL)
 		delete onHoverListener;
 
-	//OutputDebugString(L"\n*** TextLabel Done ***");
 }
 
 
@@ -44,26 +40,44 @@ void TextLabel::update(double deltaTime) {
 		if (hitArea->contains(mouse->getPosition())) {
 			isHover = true;
 			if (!isPressed) {
-				onHover();
-				//setToHoverState();
+				if (!hasBeenSetHover) {
+					onHover();
+					setToHoverState();
+					hasBeenSetHover = true;
+					hasBeenSetUnpressed = false;
+				}
 			}
 		} else
 			isHover = false;
 
 		if (isPressed && !mouse->leftButton()) {
 			isClicked = true;
+			isPressed = false;
 			onClick();
-			//setToUnpressedState();
+			setToUnpressedState();
+			hasBeenSetUnpressed = false;
+			hasBeenSetHover = false;
 		} else {
 			isClicked = false;
 			if (!isHover) {
-				isPressed = false;
-				//setToUnpressedState();
-			} else if (mouse->clicked()) {
+				if (!hasBeenSetUnpressed) {
+					isPressed = false;
+					setToUnpressedState();
+					hasBeenSetUnpressed = true;
+					hasBeenSetHover = false;
+				}
+			} else if (mouse->pressed()) {
 				isPressed = true;
-				//setToSelectedState();
+				setToSelectedState();
+				hasBeenSetUnpressed = false;
+				hasBeenSetHover = false;
 			}
 		}
+	}
+
+	if (useTexture && refreshTexture) {
+		texturePanel->setTexture(texturize());
+		refreshTexture = false;
 	}
 }
 
@@ -113,12 +127,7 @@ void TextLabel::setText(wstring text) {
 	hitArea->position = position;
 	hitArea->size = size;
 
-	if (useTexture) {
-		/*if (texturePanel.get())
-			delete texturePanel.release();*/ // useless
-		texturePanel.reset(guiFactory->createPanel());
-		texturePanel->setTexture(texturize());
-	}
+	refreshTexture = true;
 }
 
 const Vector2& XM_CALLCONV TextLabel::measureString() const {
@@ -159,6 +168,18 @@ void TextLabel::setHoverable(bool hoverable) {
 	isHoverable = hoverable;
 }
 
+void TextLabel::setToUnpressedState() {
+	setTint(normalColorText);
+}
+
+void TextLabel::setToHoverState() {
+	setTint(hoverColorText);
+}
+
+void TextLabel::setToSelectedState() {
+	setTint(selectedColorText);
+}
+
 
 void TextLabel::moveBy(const Vector2& moveVector) {
 	setPosition(position + moveVector);
@@ -173,42 +194,27 @@ void TextLabel::setPosition(const Vector2& pos) {
 
 void TextLabel::setFont(const pugi::char_t* fontName) {
 	font = guiFactory->getFont(fontName);
-	if (useTexture) {
-		texturePanel.reset(guiFactory->createPanel());
-		texturePanel->setTexture(texturize());
-	}
+	refreshTexture = true;
 }
 
 void TextLabel::setFont(shared_ptr<FontSet> newFont) {
 	font = newFont;
-	if (useTexture) {
-		texturePanel.reset(guiFactory->createPanel());
-		texturePanel->setTexture(texturize());
-	}
+	refreshTexture = true;
 }
 
 void TextLabel::setTint(const XMFLOAT4 color) {
 	tint = color;
-	if (useTexture) {
-		texturePanel.reset(guiFactory->createPanel());
-		texturePanel->setTexture(texturize());
-	}
+	refreshTexture = true;
 }
 
 void TextLabel::setTint(const Color& color) {
 	tint = color;
-	if (useTexture) {
-		texturePanel.reset(guiFactory->createPanel());
-		texturePanel->setTexture(texturize());
-	}
+	refreshTexture = true;
 }
 
 void TextLabel::setTint(const XMVECTORF32 color) {
 	tint = color;
-	if (useTexture) {
-		texturePanel.reset(guiFactory->createPanel());
-		texturePanel->setTexture(texturize());
-	}
+	refreshTexture = true;
 }
 
 void TextLabel::setScale(const Vector2 & scl) {
@@ -217,10 +223,7 @@ void TextLabel::setScale(const Vector2 & scl) {
 	size *= scale;
 	hitArea->position = position;
 	hitArea->size = size;
-	if (useTexture) {
-		texturePanel.reset(guiFactory->createPanel());
-		texturePanel->setTexture(texturize());
-	}
+	refreshTexture = true;
 }
 
 void TextLabel::setLayerDepth(const float newDepth, bool frontToBack) {

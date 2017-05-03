@@ -34,7 +34,7 @@ void GUIOverlay::update(double deltaTime) {
 		wss << "frameCount: " << frameCount << " fpsUpdateTime: " << fpsUpdateTime << endl;
 		wss << "fps: " << frameCount / fpsUpdateTime;
 		fpsLabel->setText(wss.str());
-
+		fpsLabel->update(deltaTime);
 		fpsUpdateTime = 0;
 		frameCount = 0;
 	}

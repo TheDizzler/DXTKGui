@@ -22,7 +22,7 @@ Email: tgillon.sdk@gmail.com
 
 
 ##DONE:
->- Optimized draw speed for most controls (ListBox needs improvement)
+>- Optimized control draw speed 
 >- Primitve Shapes - filled rectangle; un-filled rectangle; triangle (needs work); line
 >- Text Labels - normal and clickable
 >- Button - text, image, animated
@@ -34,7 +34,6 @@ Email: tgillon.sdk@gmail.com
 >- Scrollbar - now with customizable sprites!
 >- Combo Box
 >- Spinner - can take any vector of wstring
->- can load images and animations from spritesheets
 >- transition effects (tested on screens and dialog only)
 >- controls can store a tranlsation matrix function to allow their use with a camera
 (world space vs screen space)
@@ -44,24 +43,24 @@ Email: tgillon.sdk@gmail.com
 >- when a control with a scrollbar has items removed from it dynamically, the scrubber doesn't resize properly
 
 ##TODO:
+>- A Panel for adding controls - this could be used to greatly reduce draw speeds
+	when using multiple controls
 >- ~~find out how to purge all the reported live objects ':/~~ 
 Live objects ARE being released but after the debug report. <- FIXED
 ~~Still have some outstanding internal refernces.~~ Most appear gone
->- ListBox draw speed can be improved greatly (too much text)
 >- Controller controlled controls (joysticks)
 >- Dialog Box - allow hyphenating of words that can't fit on one line with option to turn on/off
 (currently puts whole word on next line or puts break in word)
+>- Horizontal scrollbar
 >- TexturePanel - add horizontal scrolling
->- A Panel for adding controls?
+>- Scrollbar that can be slapped on to anything
 >- Dialog Box - allow custom bg image;
->- Scrollbar that can be slapped on to anything; horizontal scrolling
 >- List Box - multi-select; test adding, removing, clearing items live
 >- Radio Buttons
->- Slider
+>- Slider control
 >- Combo Box - allow custom frame/bg image
 >- ListBox - allow custom frame/bg image
 >- put default images into a spritesheet
->- tooltips?
 >- More Primitive Shapes - if I feel they might be useful
 >- Other stuff I can't think of at the moment
 >- demo and how-to videos

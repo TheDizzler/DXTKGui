@@ -31,13 +31,18 @@ void CheckBox::update(double deltaTime) {
 
 	if (hitArea->contains(mouse->getPosition())
 		|| label->contains(mouse->getPosition())) {
-		isHover = true;
-		label->setTint(hoverColorText);
-		tint = hoverColor; // this won't do anything if the checkbox is black :/
-	} else {
+
+		if (!isHover) {
+			isHover = true;
+			label->setTint(hoverColorText);
+			tint = hoverColor; // this won't do anything if the checkbox is black :/
+		}
+	} else if (isHover) {
 		label->setTint(normalColorText);
 		tint = normalColor;
 		isHover = false;
+		firstHover = false;
+
 	}
 
 	if (isHover) {

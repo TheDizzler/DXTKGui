@@ -45,8 +45,8 @@ public:
 	void clear();
 
 
-	void open();
-	void close();
+	void show();
+	void hide();
 	bool isOpen = false;
 
 	class OnClickListener {
@@ -120,7 +120,7 @@ private:
 		}
 
 		virtual void onClick(TextLabel* button) override {
-			comboBox->open();
+			comboBox->show();
 		}
 	private:
 		ComboBox* comboBox;
