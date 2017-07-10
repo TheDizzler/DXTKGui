@@ -270,7 +270,7 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case WM_INPUT:
 		{
 
-		/** If not using joysticks this can be removed  */
+			/** If not using joysticks this can be removed  */
 			PRAWINPUT pRawInput;
 			UINT bufferSize;
 			HANDLE hHeap;
@@ -286,7 +286,7 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			gameEngine->parseRawInput(pRawInput);
 
 			HeapFree(hHeap, 0, pRawInput);
-		/** Joystick end */
+			/** Joystick end */
 		}
 		return 0;
 		case WM_MOUSEMOVE:
@@ -337,7 +337,7 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 						if (deviceInterface->dbcc_classguid == guidHid) {
 							registerControllers();
-								//OutputDebugString(L"Found a controller!\n");
+							//OutputDebugString(L"Found a controller!\n");
 							return 0;
 						}
 					}
@@ -439,9 +439,9 @@ int registerControllers() {
 
 			if (rdi.hid.usUsage == 4 && rdi.hid.usUsagePage == 1) {
 				controllerRawDevices.push_back(pRawInputDeviceList[i].hDevice);
-					/*++numControllersFound;
-					HANDLE handle = pRawInputDeviceList[i].hDevice;
-					gameEngine->addJoystick(handle);*/
+				/*++numControllersFound;
+				HANDLE handle = pRawInputDeviceList[i].hDevice;
+				gameEngine->addJoystick(handle);*/
 
 			}
 
@@ -544,7 +544,6 @@ void startTimer() {
 
 	LARGE_INTEGER frequencyCount;
 	/*QueryPerformanceFrequency(&frequencyCount);
-
 	countsPerSecond = double(frequencyCount.QuadPart);*/
 
 	QueryPerformanceCounter(&frequencyCount);
