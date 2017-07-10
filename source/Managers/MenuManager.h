@@ -7,6 +7,7 @@
 
 class MenuScreen;
 class MainScreen;
+class MenuManager;
 class ConfigScreen;
 
 class DisplayModeItem : public ListItem {
@@ -88,13 +89,13 @@ private:
 
 class OnClickListenerDialogQuitButton : public Button::ActionListener {
 public:
-	OnClickListenerDialogQuitButton(MainScreen* screen) : main(screen) {
+	OnClickListenerDialogQuitButton(MenuManager* screen) : main(screen) {
 	}
 	virtual void onClick(Button* button) override;
 	virtual void onPress(Button* button) override;
 	virtual void onHover(Button* button) override;
 private:
-	MainScreen* main;
+	MenuManager* main;
 };
 
 class OnClickListenerExitButton : public Button::ActionListener {
@@ -122,6 +123,8 @@ private:
 
 
 class MenuManager : public Screen {
+	friend class OnClickListenerExitButton;
+	friend class OnClickListenerDialogQuitButton;
 public:
 	MenuManager();
 	virtual ~MenuManager();
@@ -143,12 +146,15 @@ public:
 	void openMainMenu();
 	void openConfigMenu();
 
+	void confirmExit();
+
 private:
 	shared_ptr<MouseController> mouse;
 	Screen* currentScreen = NULL;
 	Screen* switchTo = NULL;
 	unique_ptr<MainScreen> mainScreen;
 	unique_ptr<ConfigScreen> configScreen;
+	unique_ptr<PromptDialog> exitDialog;
 
 	Vector2 position = Vector2::Zero;
 
@@ -160,6 +166,7 @@ private:
 /** This class is abstract. */
 interface MenuScreen : public Screen {
 	friend class OnClickListenerSettingsButton;
+	friend class OnClickListenerExitButton;
 public:
 
 	MenuScreen(MenuManager* manager);
@@ -213,8 +220,6 @@ private:
 };
 
 class MainScreen : public MenuScreen {
-	friend class OnClickListenerExitButton;
-	friend class OnClickListenerDialogQuitButton;
 public:
 	MainScreen(MenuManager* manager);
 	virtual ~MainScreen();
@@ -223,10 +228,9 @@ public:
 	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
-	void confirmExit();
 private:
 	shared_ptr<MouseController> mouse;
-	unique_ptr<PromptDialog> exitDialog;
+	//unique_ptr<PromptDialog> exitDialog;
 	unique_ptr<DynamicDialog> dynamicDialog;
 	TextLabel* mouseLabel;
 };

@@ -1,5 +1,9 @@
 #include "MenuManager.h"
 #include "GameManager.h"
+#include "../Engine/GameEngine.h"
+#include "../globals.h"
+
+#include <sstream>
 
 MenuManager::MenuManager() {
 }
@@ -21,13 +25,49 @@ void MenuManager::setGameManager(GameManager* gm) {
 
 }
 
-#include "../Engine/GameEngine.h"
+
 bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mc) {
 
 	mouse = mc;
 	if (!mouse->loadMouseIcon(guiFactory.get(), "Mouse Reticle"))
 		return false;
 
+	{
+		Vector2 dialogPos, dialogSize;
+		dialogSize = Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2);
+		dialogPos = dialogSize;
+		dialogPos.x -= dialogSize.x / 2;
+		dialogPos.y -= dialogSize.y / 2;
+		exitDialog.reset(guiFactory->createDialog(dialogPos, dialogSize, true, true));
+		exitDialog->setTint(Color(0, .5, 1, 1));
+		exitDialog->setTitle(L"Exit Test?", Vector2(1, 1), "BlackCloak");
+		exitDialog->setText(L"Really Quit The Test Project?");
+		unique_ptr<Button> quitButton;
+		quitButton.reset(guiFactory->createImageButton("Button Up", "Button Down"));
+		quitButton->setActionListener(new OnClickListenerDialogQuitButton(this));
+		quitButton->setText(L"Quit");
+		exitDialog->setConfirmButton(move(quitButton), true, false);
+		exitDialog->setCancelButton(L"Keep Testing!");
+
+		exitDialog->setOpenTransition(
+			//new TransitionEffects::SpinGrowTransition(exitDialog.get(), .5));
+			//	new TransitionEffects::SplitTransition(exitDialog.get(), 25));
+			//new TransitionEffects::BlindsTransition(exitDialog.get(), .5, false, true));
+			/*new TransitionEffects::TrueGrowTransition(exitDialog.get(),
+			Vector2(.001, .001), Vector2(1, 1)));*/
+			/* new TransitionEffects::SlideAndGrowTransition(exitDialog.get(),
+			Vector2(-200, -200), exitDialog->getPosition(),
+			Vector2(.001, .001), Vector2(1, 1)));*/
+			new TransitionEffects::GrowTransition(exitDialog.get(),
+				Vector2(.0001, 0001), Vector2(1, 1)));
+		/*new TransitionEffects::SlideTransition(exitDialog.get(),
+		Vector2(-200, -200), exitDialog->getPosition()));*/
+
+		exitDialog->setCloseTransition(
+			new TransitionEffects::ShrinkTransition(exitDialog.get(),
+				Vector2(1, 1), Vector2(.001, .001)));
+
+	}
 
 	mainScreen.reset(new MainScreen(this));
 	mainScreen->setGameManager(game);
@@ -55,18 +95,29 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContro
 }
 
 
-#include "../globals.h"
+Keyboard::KeyboardStateTracker keyTracker;
 void MenuManager::update(double deltaTime) {
-
 
 	if (switchTo != NULL) {
 		if (transitionManager->runTransition(deltaTime)) {
 			currentScreen = switchTo;
 			switchTo = NULL;
 		}
-	} else
-		currentScreen->update(deltaTime);
+	} else {
+		auto state = Keyboard::Get().GetState();
+		keyTracker.Update(state);
+		if (keyTracker.IsKeyReleased(Keyboard::Escape)) {
+			if (exitDialog->isOpen())
+				exitDialog->hide();
+			else
+				exitDialog->show();
+		}
 
+		if (exitDialog->isOpen()) {
+			exitDialog->update(deltaTime);
+		} else
+			currentScreen->update(deltaTime);
+	}
 }
 
 
@@ -74,9 +125,10 @@ void MenuManager::draw(SpriteBatch* batch) {
 
 	if (switchTo != NULL) {
 		transitionManager->drawTransition(batch);
-	} else
+	} else {
 		currentScreen->draw(batch);
-
+		exitDialog->draw(batch);
+	}
 }
 
 void MenuManager::pause() {
@@ -101,6 +153,10 @@ void MenuManager::openConfigMenu() {
 	// switch screens at next frame
 	switchTo = configScreen.get();
 	transitionManager->transitionBetween(currentScreen, switchTo);
+}
+
+void MenuManager::confirmExit() {
+	game->exit();
 }
 /** **** END MENUMANAGER **** */
 
@@ -150,7 +206,7 @@ MainScreen::~MainScreen() {
 
 }
 
-#include <sstream>
+
 bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mc) {
 
 	mouse = mc;
@@ -203,50 +259,10 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	guiControls.push_back(mouseLabel);
 
 
-
-	{
-		Vector2 dialogPos, dialogSize;
-		dialogSize = Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2);
-		dialogPos = dialogSize;
-		dialogPos.x -= dialogSize.x / 2;
-		dialogPos.y -= dialogSize.y / 2;
-		exitDialog.reset(guiFactory->createDialog(dialogPos, dialogSize, true, true));
-		exitDialog->setTint(Color(0, .5, 1, 1));
-		exitDialog->setTitle(L"Exit Test?", Vector2(1, 1), "BlackCloak");
-		exitDialog->setText(L"Really Quit The Test Project?");
-		unique_ptr<Button> quitButton;
-		quitButton.reset(guiFactory->createImageButton("Button Up", "Button Down"));
-		quitButton->setActionListener(new OnClickListenerDialogQuitButton(this));
-		quitButton->setText(L"Quit");
-		exitDialog->setConfirmButton(move(quitButton), true, false);
-		exitDialog->setCancelButton(L"Keep Testing!");
-
-		exitDialog->setOpenTransition(
-			//new TransitionEffects::SpinGrowTransition(exitDialog.get(), .5));
-		//	new TransitionEffects::SplitTransition(exitDialog.get(), 25));
-		   //new TransitionEffects::BlindsTransition(exitDialog.get(), .5, false, true));
-			/*new TransitionEffects::TrueGrowTransition(exitDialog.get(),
-				Vector2(.001, .001), Vector2(1, 1)));*/
-		  /* new TransitionEffects::SlideAndGrowTransition(exitDialog.get(),
-			   Vector2(-200, -200), exitDialog->getPosition(),
-			   Vector2(.001, .001), Vector2(1, 1)));*/
-			new TransitionEffects::GrowTransition(exitDialog.get(),
-				Vector2(.0001, 0001), Vector2(1, 1)));
-			/*new TransitionEffects::SlideTransition(exitDialog.get(),
-				Vector2(-200, -200), exitDialog->getPosition()));*/
-
-		exitDialog->setCloseTransition(
-			new TransitionEffects::ShrinkTransition(exitDialog.get(),
-				Vector2(1, 1), Vector2(.001, .001)));
-
-	}
-
-
-
 	return true;
 }
 
-Keyboard::KeyboardStateTracker keyTracker;
+
 void MainScreen::update(double deltaTime) {
 
 	wostringstream ws;
@@ -254,23 +270,8 @@ void MainScreen::update(double deltaTime) {
 	mouseLabel->setText(ws);
 	//dynamicDialog->setText(ws.str());
 
-
-	auto state = Keyboard::Get().GetState();
-	keyTracker.Update(state);
-	if (keyTracker.IsKeyReleased(Keyboard::Escape)) {
-		if (exitDialog->isOpen())
-			exitDialog->hide();
-		else
-			exitDialog->show();
-	}
-	//dynamicDialog->update(deltaTime);
-
-	if (exitDialog->isOpen()) {
-		exitDialog->update(deltaTime);
-	} else {
-		for (auto const& control : guiControls)
-			control->update(deltaTime);
-	}
+	for (auto const& control : guiControls)
+		control->update(deltaTime);
 }
 
 
@@ -281,14 +282,6 @@ void MainScreen::draw(SpriteBatch* batch) {
 		control->draw(batch);
 
 	//dynamicDialog->draw(batch);
-	exitDialog->draw(batch);
-}
-
-
-void MainScreen::confirmExit() {
-
-	//exitDialog->open();
-	game->exit();
 }
 
 
@@ -591,7 +584,7 @@ void OnClickListenerDialogQuitButton::onHover(Button * button) {
 }
 
 void OnClickListenerExitButton::onClick(Button* button) {
-	main->exitDialog->show();
+	main->menuManager->exitDialog->show();
 }
 
 void OnClickListenerExitButton::onPress(Button * button) {
