@@ -4,6 +4,7 @@
 #include "MenuManager.h"
 #include "../DXTKGui/GUIFactory.h"
 #include "../Screens/GUIOverlay.h"
+#include "../DXTKGui/Controllers/Joystick.h"
 
 class GameEngine;
 
@@ -30,6 +31,9 @@ public:
 	void pause();
 	void exit();
 
+	void controllerRemoved(ControllerSocketNumber controllerSocket,
+		PlayerSlotNumber slotNumber);
+	void newController(shared_ptr<Joystick> newStick);
 
 	vector<ComPtr<IDXGIAdapter> > getAdapterList();
 	vector<ComPtr<IDXGIOutput> > getDisplayList();

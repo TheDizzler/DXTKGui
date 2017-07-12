@@ -7,8 +7,6 @@
 #include <sstream>
 #include <comdef.h>
 
-
-
 #include <Audio.h>
 
 #include "GraphicsEngine.h"
@@ -17,6 +15,7 @@
 #include "../Managers/GameManager.h"
 
 extern unique_ptr<GUIFactory> guiFactory;
+extern bool gameInitialized;
 
 /** The engine to connect higher level game code to the low level
 	graphic and OS software. This class should be reusable for any 2D game,
@@ -31,14 +30,14 @@ public:
 	void onAudioDeviceChange();
 
 	void run(double time);
-	virtual void render(double time);
 
 	void suspend();
 	void resume();
 	void exit();
 
-	virtual void newController(HANDLE joyHandle) override;
-	virtual void controllerRemoved(size_t controllerSlot) override;
+	virtual void controllerRemoved(ControllerSocketNumber controllerSocket,
+		PlayerSlotNumber slotNumber) override;
+	virtual void newController(shared_ptr<Joystick> newStick) override;
 
 
 	static inline bool reportError(HRESULT hr,
@@ -97,10 +96,11 @@ private:
 	unique_ptr<GameManager> game;
 
 	void update(double time);
+	virtual void render() override;
 
 	bool initGFXAssets();
 	bool initStage();
-
+	void initErrorDialogs();
 
 
 	HWND hwnd;
@@ -115,5 +115,21 @@ private:
 	static unique_ptr<PromptDialog> warningDialog;
 	static Dialog* showDialog;
 
+	CommonStates* blendState;
 };
 
+
+class QuitButtonListener : public Button::ActionListener {
+public:
+	QuitButtonListener(GameEngine* eng) : engine(eng) {
+	}
+	virtual void onClick(Button* button) override {
+		engine->exit();
+	}
+	virtual void onPress(Button* button) override {
+	}
+	virtual void onHover(Button* button) override {
+	}
+
+	GameEngine* engine;
+};

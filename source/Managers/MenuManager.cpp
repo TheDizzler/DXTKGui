@@ -29,8 +29,6 @@ void MenuManager::setGameManager(GameManager* gm) {
 bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mc) {
 
 	mouse = mc;
-	if (!mouse->loadMouseIcon(guiFactory.get(), "Mouse Reticle"))
-		return false;
 
 	{
 		Vector2 dialogPos, dialogSize;

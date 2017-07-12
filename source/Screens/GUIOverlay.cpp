@@ -1,8 +1,10 @@
 #include "GUIOverlay.h"
+#include "../Engine/GameEngine.h"
+#include "../DXTKGui/StringHelper.h"
 
 const int TEXT_MARGIN = 5;
 const int TEST_BOX_MARGIN = 16;
-#include "../Engine/GameEngine.h"
+
 GUIOverlay::GUIOverlay() {
 
 	fpsLabel.reset(guiFactory->createTextLabel(Vector2(Globals::WINDOW_WIDTH - 250, 20),
@@ -62,7 +64,7 @@ void GUIOverlay::setDialogText(USHORT playerSlotNumber, wstring text) {
 
 }
 
-#include "../DXTKGui/StringHelper.h"
+
 void GUIOverlay::reportLostJoystick(size_t playerSlotNumber) {
 
 	//displayingLostJoys.push_back(joystickSocket);

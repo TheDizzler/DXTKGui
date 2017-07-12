@@ -1,6 +1,7 @@
 #include "GameEngine.h"
 
 unique_ptr<GUIFactory> guiFactory;
+bool gameInitialized = false;
 
 unique_ptr<PromptDialog> GameEngine::errorDialog;
 unique_ptr<PromptDialog> GameEngine::warningDialog;
@@ -13,13 +14,14 @@ GameEngine::GameEngine() {
 GameEngine::~GameEngine() {
 
 	game.reset();
+	if (audioEngine != NULL)
+		audioEngine->Suspend();
+	delete blendState;
+	mouse.reset();
 	showDialog = NULL;
 	errorDialog.reset();
 	warningDialog.reset();
 	guiFactory.reset();
-
-	if (audioEngine != NULL)
-		audioEngine->Suspend();
 }
 
 
@@ -28,12 +30,12 @@ bool GameEngine::initEngine(HWND hw, HINSTANCE hInstance) {
 	hwnd = hw;
 
 	if (!initD3D(hwnd)) {
-		MessageBox(0, L"Direct3D Initialization Failed", L"Error", MB_OK);
+		GameEngine::errorMessage(L"Direct3D Initialization Failed", L"Error");
 		return false;
 	}
 
 	if (!initRawInput(hwnd)) {
-		MessageBox(0, L"Raw Input Init failed", L"Error", MB_OK);
+		GameEngine::errorMessage(L"Raw Input Init failed", L"Error");
 		return false;
 	}
 
@@ -43,25 +45,26 @@ bool GameEngine::initEngine(HWND hw, HINSTANCE hInstance) {
 //#ifdef _DEBUG
 //	audioFlags = audioFlags | AudioEngine_Debug;
 //#endif
-	audioEngine.reset(new AudioEngine(audioFlags));
+	audioEngine = make_unique<AudioEngine>(audioFlags);
 	retryAudio = false;
 
 	if (!audioEngine->IsAudioDevicePresent()) {
 		// no audio device found. Operating in silent mode.
-
 	}
 
 	if (!initGFXAssets()) {
+		GameEngine::errorMessage(L"GFX Assets Initialization Failed");
 		return false;
 	}
 
+	initErrorDialogs();
 
 	if (!initStage()) {
-		MessageBox(0, L"Stage Initialization Failed", L"Error", MB_OK);
+		GameEngine::errorMessage(L"Stage Initialization Failed");
 		return false;
 	}
 
-
+	gameInitialized = true;
 	return true;
 }
 
@@ -70,30 +73,14 @@ void GameEngine::onAudioDeviceChange() {
 }
 
 
-class QuitButtonListener : public Button::ActionListener {
-public:
-	QuitButtonListener(GameEngine* eng) : engine(eng) {
-	}
-	virtual void onClick(Button * button) override {
-		engine->exit();
-	}
-	virtual void onPress(Button * button) override {
-	}
-	virtual void onHover(Button * button) override {
-	}
-
-	GameEngine* engine;
-};
-
-
 #include "../DXTKGui/GuiAssets.h"
 bool GameEngine::initGFXAssets() {
 
 	// get graphical assets from xml file
 	docAssMan.reset(new pugi::xml_document());
 	if (!docAssMan->load_file(GUIAssets::assetManifestFile)) {
-		MessageBox(0, L"Could not read AssetManifest file!",
-			L"Fatal Read Error!", MB_OK);
+		GameEngine::errorMessage(L"Could not read AssetManifest file!",
+			L"Fatal Read Error!");
 		return false;
 	}
 
@@ -102,9 +89,12 @@ bool GameEngine::initGFXAssets() {
 	if (!guiFactory->initialize(device, deviceContext,
 		swapChain, batch.get(), mouse)) {
 
-		MessageBox(0, L"Failed to load GUIFactory", L"Fatal Error", MB_OK);
+		GameEngine::errorMessage(L"Failed to load GUIFactory", L"Fatal Error");
 		return false;
 	}
+
+	mouse->loadMouseIcon(guiFactory.get(), "Mouse Arrow");
+	blendState = new CommonStates(device.Get());
 
 	return true;
 }
@@ -113,23 +103,26 @@ bool GameEngine::initStage() {
 
 	game.reset(new GameManager(this));
 	if (!game->initializeGame(hwnd, device, mouse)) {
-		MessageBox(0, L"Game Manager failed to load.", L"Critical Failure", MB_OK);
+		GameEngine::errorMessage(L"Game Manager failed to load.", L"Critical Failure");
 		return false;
 	}
+	return true;
+}
 
+void GameEngine::initErrorDialogs() {
 
 	Vector2 dialogPos, dialogSize;
 	dialogSize = Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2);
 	dialogPos = dialogSize;
 	dialogPos.x -= dialogSize.x / 2;
 	dialogPos.y -= dialogSize.y / 2;
-	errorDialog.reset(guiFactory->createDialog(dialogPos, dialogSize, false, true));
-	//errorDialog->setDimensions(dialogPos, dialogSize);
+	errorDialog.reset(guiFactory->createDialog(dialogSize, dialogPos, false, true, 5));
 	errorDialog->setTint(Color(0, 120, 207));
 	unique_ptr<Button> quitButton;
 	quitButton.reset(guiFactory->createButton());
 	quitButton->setText(L"Exit Program");
 	quitButton->setActionListener(new QuitButtonListener(this));
+	//quitButton->setMatrixFunction([&]()-> Matrix { return camera->translationMatrix(); });
 	errorDialog->setCancelButton(move(quitButton));
 
 	ScrollBarDesc scrollBarDesc;
@@ -137,10 +130,9 @@ bool GameEngine::initStage() {
 	scrollBarDesc.upPressedButtonImage = "ScrollBar Up Pressed Custom";
 	scrollBarDesc.trackImage = "ScrollBar Track Custom";
 	scrollBarDesc.scrubberImage = "Scrubber Custom";
-	warningDialog.reset(guiFactory->createDialog(dialogPos, dialogSize, true, true));
-
-	//warningDialog->setDimensions(dialogPos, dialogSize);
+	warningDialog.reset(guiFactory->createDialog(dialogPos, dialogSize, false, true, 3));
 	warningDialog->setScrollBar(scrollBarDesc);
+	//warningDialog->setMatrixFunction([&]()-> Matrix { return camera->translationMatrix(); });
 	warningDialog->setTint(Color(0, 120, 207));
 	warningDialog->setCancelButton(L"Continue");
 	unique_ptr<Button> quitButton2;
@@ -150,7 +142,6 @@ bool GameEngine::initStage() {
 	warningDialog->setConfirmButton(move(quitButton2));
 
 	showDialog = warningDialog.get();
-	return true;
 }
 
 
@@ -158,7 +149,7 @@ bool warningCanceled = false;
 void GameEngine::run(double deltaTime) {
 
 	update(deltaTime);
-	render(deltaTime);
+	render();
 	if (!audioEngine->IsAudioDevicePresent() && !warningCanceled) {
 		// no audio device found. Operating in silent mode.
 		showWarningDialog(L"No audio device found. Operating in Silent Mode.\nEnd Message...",
@@ -182,23 +173,26 @@ void GameEngine::run(double deltaTime) {
 void GameEngine::update(double deltaTime) {
 
 	mouse->saveMouseState();
+	slotManager->updateGamePads();
 
 	if (showDialog->isOpen())
 		showDialog->update(deltaTime);
 	else
 		game->update(deltaTime);
+
+	guiOverlay->update(deltaTime);
 }
 
 
 #include "CommonStates.h"
-void GameEngine::render(double deltaTime) {
+void GameEngine::render() {
 
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), Colors::PeachPuff);
-	/*CommonStates blendState(device.Get());*/
-	batch->Begin(SpriteSortMode_Deferred/*, blendState.NonPremultiplied()*/);
+	batch->Begin(SpriteSortMode_Deferred, blendState->NonPremultiplied());
 	{
 		game->draw(batch.get());
 		showDialog->draw(batch.get());
+		guiOverlay->draw(batch.get());
 		mouse->draw(batch.get());
 	}
 	batch->End();
@@ -229,11 +223,13 @@ void GameEngine::exit() {
 	DestroyWindow(hwnd);
 }
 
+void GameEngine::controllerRemoved(ControllerSocketNumber controllerSocket,
+	PlayerSlotNumber slotNumber) {
 
-void GameEngine::newController(HANDLE joyHandle) {
+	game->controllerRemoved(controllerSocket, slotNumber);
 }
 
-void GameEngine::controllerRemoved(size_t controllerSlot) {
+void GameEngine::newController(shared_ptr<Joystick> newStick) {
+
+	game->newController(newStick);
 }
-
-

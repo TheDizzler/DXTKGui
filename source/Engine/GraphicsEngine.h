@@ -25,7 +25,7 @@ public:
 
 	bool initD3D(HWND hwnd);
 
-	virtual void render(double time) = 0;
+	virtual void render() = 0;
 
 	vector<ComPtr<IDXGIAdapter> > getAdapterList();
 	vector<ComPtr<IDXGIOutput> > getDisplayList();

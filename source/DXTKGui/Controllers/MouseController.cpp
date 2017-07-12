@@ -1,4 +1,7 @@
 #include "MouseController.h"
+#include "../GUIFactory.h"
+#include <sstream>
+
 
 MouseController::MouseController(HWND h) {
 
@@ -8,13 +11,14 @@ MouseController::MouseController(HWND h) {
 
 }
 
+MouseController::~MouseController() {
+}
 
-#include "../GUIFactory.h"
+
 void MouseController::setState(Mouse::Mode mode) {
 	mouse->SetMode(mode);
 }
 
-#include <sstream>
 bool MouseController::loadMouseIcon(GUIFactory* guiFactory,
 	const pugi::char_t* spriteName) {
 
@@ -38,7 +42,6 @@ void MouseController::loadMouseIcon(GraphicsAsset* iconAsset) {
 	setOrigin(iconAsset->getOrigin());
 }
 
-//#include "../../Engine/GameEngine.h"
 void MouseController::saveMouseState() {
 
 	lastState = state;
@@ -58,6 +61,18 @@ void MouseController::saveMouseState() {
 	isMiddleClicked = lastState.middleButton && !state.middleButton;
 }
 
+void MouseController::show() {
+	isShown = true;
+}
+
+void MouseController::hide() {
+	isShown = false;
+}
+
+void MouseController::draw(SpriteBatch* batch) {
+	if (isShown)
+		Sprite::draw(batch);
+}
 
 int MouseController::scrollWheelValue() {
 

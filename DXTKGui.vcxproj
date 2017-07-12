@@ -161,6 +161,7 @@
     <ClCompile Include="source\DXTKGui\BaseGraphics\GraphicsAsset.cpp" />
     <ClCompile Include="source\DXTKGui\BaseGraphics\PrimitiveShapes.cpp" />
     <ClCompile Include="source\DXTKGui\BaseGraphics\Sprite.cpp" />
+    <ClCompile Include="source\DXTKGui\Controllers\Joystick.cpp" />
     <ClCompile Include="source\DXTKGui\Controllers\MouseController.cpp" />
     <ClCompile Include="source\DXTKGui\Controls\Button.cpp" />
     <ClCompile Include="source\DXTKGui\Controls\CheckBox.cpp" />
@@ -180,7 +181,6 @@
     <ClCompile Include="Source\Engine\GameEngine.cpp" />
     <ClCompile Include="Source\Engine\GraphicsEngine.cpp" />
     <ClCompile Include="Source\Engine\Input.cpp" />
-    <ClCompile Include="source\Engine\Joystick.cpp" />
     <ClCompile Include="Source\Engine\main.cpp" />
     <ClCompile Include="source\Managers\GameManager.cpp" />
     <ClCompile Include="source\Managers\MenuManager.cpp" />
@@ -194,6 +194,7 @@
     <ClInclude Include="source\DXTKGui\BaseGraphics\PrimitiveShapes.h" />
     <ClInclude Include="source\DXTKGui\BaseGraphics\screen.h" />
     <ClInclude Include="source\DXTKGui\BaseGraphics\Sprite.h" />
+    <ClInclude Include="source\DXTKGui\Controllers\Joystick.h" />
     <ClInclude Include="source\DXTKGui\Controllers\MouseController.h" />
     <ClInclude Include="source\DXTKGui\Controls\Button.h" />
     <ClInclude Include="source\DXTKGui\Controls\CheckBox.h" />
@@ -215,7 +216,6 @@
     <ClInclude Include="Source\Engine\GameEngine.h" />
     <ClInclude Include="Source\Engine\GraphicsEngine.h" />
     <ClInclude Include="Source\Engine\Input.h" />
-    <ClInclude Include="source\Engine\Joystick.h" />
     <ClInclude Include="Source\globals.h" />
     <ClInclude Include="source\Managers\GameManager.h" />
     <ClInclude Include="source\Managers\MenuManager.h" />

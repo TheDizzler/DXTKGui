@@ -4,69 +4,101 @@
 #include <memory>
 #include <deque>
 #include <vector>
+#include <sstream>
 #include "../globals.h"
-#include "../Engine/Joystick.h"
+#include "../DXTKGui/Controllers/Joystick.h"
 
+using namespace std;
 
+extern CRITICAL_SECTION cs_activeSlotsAccess;
 
-const double REPEAT_DELAY = .5;
-
+class JoyData;
 
 /** This class is how the game communicates with the player input.
 	The windows message pump sends data to the joysticks and the game queries
 	the playerslots for needed data. */
 class PlayerSlot {
 public:
-	PlayerSlot(size_t slotNum) : slotNumber(slotNum) {
-	}
+	PlayerSlot(PlayerSlotNumber slotNum);
+	virtual ~PlayerSlot();
 
 	void waiting();
-
+	void finishInit();
 
 
 	/** Returns true if pair was succesful. Returns false if slot already paired. */
 	bool pairWithSocket(JoyData* joyData);
 	void unpairSocket();
 
-	//void loadCharacterData(const CharacterData* characterData);
+	JoyData* getJoyData();
 
-
-	size_t getPlayerSlotNumber();
+	PlayerSlotNumber getPlayerSlotNumber();
+	/** If no joy, no player :( */
 	bool hasJoystick();
 	Joystick* getStick();
 
 
 private:
 	Joystick* joystick = NULL;
-	size_t slotNumber;
+	PlayerSlotNumber slotNumber;
 
 
 	/* For temporary initialization purposes only! Do not use! */
 	JoyData* _threadJoystickData;
 };
 
-extern vector<shared_ptr<PlayerSlot>> activeSlots;
-extern deque<shared_ptr<PlayerSlot>> waitingSlots;
+extern std::vector<std::shared_ptr<PlayerSlot>> activeSlots;
+extern std::deque<std::shared_ptr<PlayerSlot>> waitingSlots;
 
 class PlayerSlotManager {
 public:
 	PlayerSlotManager();
 	~PlayerSlotManager();
 
+	bool checkXInputSlotNumber(USHORT inputSlotNum);
+	/* GamePads are added as soon as they are discovered. */
+	void addGamePad(shared_ptr<GamePadJoystick> newPad);
+	void updateGamePads();
+
 	void waiting();
 
-
-	void controllerRemoved(size_t playerSlotNumber);
+	void gamePadRemoved(shared_ptr<Joystick> joystick);
+	void controllerRemoved(shared_ptr<Joystick> joystick);
 	void controllerTryingToPair(JoyData* joyData);
 	void finalizePair(JoyData* joyData);
 
+	/** Ordered by PlayerSlotNumber. Always equals MAX_PLAYERS, but
+		not all are always in use. */
 	shared_ptr<PlayerSlot>  playerSlots[MAX_PLAYERS];
 
 private:
 	CRITICAL_SECTION cs_waitingJoysticks;
 
 	enum WaitingForInputTast {
-		ADD_TO_WAITING_LIST, REMOVE_FROM_LIST, CHECK_FOR_CONFIRM
+		ADD_TO_LIST, REMOVE_FROM_LIST, CHECK_FOR_CONFIRM
 	};
 	void accessWaitingSlots(size_t task, PVOID pvoid);
+	void accessActiveSlots(size_t task, PVOID pvoid);
+
+	vector<shared_ptr<GamePadJoystick>> gamepads;
+};
+
+class ControllerListener;
+/** This class is used for passing awaiting joysticks around threads. */
+struct JoyData {
+
+	JoyData(shared_ptr<Joystick> joy, ControllerListener* conListener)
+		: joystick(joy), listener(conListener) {
+	}
+	~JoyData() {
+		wostringstream wss;
+		wss << "Slot " << joystick->socket << " data deleting" << endl;
+		OutputDebugString(wss.str().c_str());
+	}
+
+
+	ControllerListener* listener;
+	shared_ptr<Joystick> joystick;
+
+	bool finishFlag = false;
 };

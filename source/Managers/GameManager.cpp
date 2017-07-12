@@ -9,7 +9,7 @@ GameManager::GameManager(GameEngine* gmngn) {
 }
 
 GameManager::~GameManager() {
-	
+
 }
 
 
@@ -21,8 +21,6 @@ bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc, shared_ptr
 
 	guiOverlay = make_unique<GUIOverlay>();
 
-	if (!mouse->loadMouseIcon(guiFactory.get(), "Mouse Reticle"))
-		return false;
 
 	menuScreen.reset(new MenuManager());
 	menuScreen->setGameManager(this);
@@ -74,6 +72,16 @@ void GameManager::pause() {
 void GameManager::exit() {
 	gameEngine->exit();
 }
+
+
+
+void GameManager::controllerRemoved(ControllerSocketNumber controllerSocket,
+	PlayerSlotNumber slotNumber) {
+}
+
+void GameManager::newController(shared_ptr<Joystick> newStick) {
+}
+
 
 
 vector<ComPtr<IDXGIAdapter>> GameManager::getAdapterList() {
