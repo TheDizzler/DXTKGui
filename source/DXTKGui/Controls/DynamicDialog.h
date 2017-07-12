@@ -20,12 +20,12 @@ public:
 		const pugi::char_t* font = "Default Font");
 
 	virtual unique_ptr<GraphicsAsset> texturize() override;
-	virtual void textureDraw(SpriteBatch * batch) override;
+	virtual void textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device = NULL) override;
 
 	virtual void setText(wstring text) override;
 	virtual void setDimensions(const Vector2& position, const Vector2& size);
 
-	virtual void update(double deltaTime) override;
+	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
 	virtual void setPosition(const Vector2& newPosition) override;
@@ -33,9 +33,6 @@ public:
 
 
 protected:
-	bool useTexture = true;
-	unique_ptr<TexturePanel> texturePanel;
-
 
 	shared_ptr<AssetSet> assetSet;
 	

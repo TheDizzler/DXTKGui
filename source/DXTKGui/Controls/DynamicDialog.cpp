@@ -4,39 +4,33 @@
 DynamicDialog::DynamicDialog(GUIFactory* factory,
 	shared_ptr<MouseController> mouseController) : Dialog(factory, mouseController) {
 
+	texturePanel.reset(guiFactory->createPanel());
+	hitArea = make_unique<HitArea>(Vector2::Zero, Vector2::Zero);
 }
 
 DynamicDialog::~DynamicDialog() {
-
-	/*OutputDebugString(L"\n\n*** Dynamic Dialog Release ***\n\t");
 	assetSet.reset();
-	texturePanel.reset();
-
-	topLeftCorner = NULL;
-	topCenter = NULL;
-	topRightCorner = NULL;
-
-	centerLeft = NULL;
-	middle = NULL;
-	centerRight = NULL;
-
-	bottomLeftCorner = NULL;
-	bottomCenter = NULL;
-	bottomRightCorner = NULL;
-
-	OutputDebugString(L"\n*** Dynamic Dialog Done ***");*/
 }
 
 
 void DynamicDialog::initialize(shared_ptr<AssetSet> set, const pugi::char_t* font) {
 
 	assetSet = set;
+	topLeftCorner = assetSet->getAsset("Top Left Corner");
+	topCenter = assetSet->getAsset("Top Center");
+	topRightCorner = assetSet->getAsset("Top Right Corner");
 
-	hitArea = make_unique<HitArea>(Vector2::Zero, Vector2::Zero);
+	centerLeft = assetSet->getAsset("Left Center");
+	middle = assetSet->getAsset("Center");
+	centerRight = assetSet->getAsset("Right Center");
+
+	bottomLeftCorner = assetSet->getAsset("Bottom Left Corner");
+	bottomCenter = assetSet->getAsset("Bottom Center");
+	bottomRightCorner = assetSet->getAsset("Bottom Right Corner");
+
 	dialogText.reset(guiFactory->createTextLabel(Vector2::Zero, L"", font));
 
 	setLayerDepth(.95);
-
 
 }
 
@@ -56,17 +50,7 @@ void DynamicDialog::setDimensions(const Vector2& posit, const Vector2& sz) {
 		OutputDebugString(L"\n\t!!Critical Failure in Dynamic Dialog: asset set is NULL!!\n\n");
 		return;
 	}
-	topLeftCorner = assetSet->getAsset("Top Left Corner");
-	topCenter = assetSet->getAsset("Top Center");
-	topRightCorner = assetSet->getAsset("Top Right Corner");
 
-	centerLeft = assetSet->getAsset("Left Center");
-	middle = assetSet->getAsset("Center");
-	centerRight = assetSet->getAsset("Right Center");
-
-	bottomLeftCorner = assetSet->getAsset("Bottom Left Corner");
-	bottomCenter = assetSet->getAsset("Bottom Center");
-	bottomRightCorner = assetSet->getAsset("Bottom Right Corner");
 
 	if (size.x > 0 && size.y > 0) {
 		// adjust to size of images
@@ -96,22 +80,16 @@ void DynamicDialog::setDimensions(const Vector2& posit, const Vector2& sz) {
 	Vector2 textPos = position + dialogTextMargin;
 	dialogText->setPosition(textPos);
 
-	texturePanel->setTexture(texturize());
+	refreshTexture = true;
 }
 
 
 unique_ptr<GraphicsAsset> DynamicDialog::texturize() {
-
-	texturePanel.reset(guiFactory->createPanel());
-	texturePanel->setDimensions(position, size);
-	unique_ptr<GraphicsAsset> gfxAss = guiFactory->createTextureFromIElement2D(this);
-	texturePanel->setTexturePosition(position);
-
-	return move(gfxAss);
+	return move(guiFactory->createTextureFromIElement2D(this));
 }
 
 
-void DynamicDialog::textureDraw(SpriteBatch* batch) {
+void DynamicDialog::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
 
 	Vector2 topPos = Vector2::Zero;
 	Vector2 bottomPos = Vector2(0, size.y - topLeftCorner->getHeight());
@@ -202,9 +180,22 @@ void DynamicDialog::textureDraw(SpriteBatch* batch) {
 }
 
 
-void DynamicDialog::update(double deltaTime) {
+bool DynamicDialog::update(double deltaTime) {
 
-	dialogText->update(deltaTime);
+	bool refreshed = false;
+
+	if (dialogText->update(deltaTime)) {
+		refreshTexture = true;
+		refreshed = true;
+	}
+
+	if (refreshTexture) {
+		texturePanel->setTexture(texturize());
+		refreshTexture = false;
+		refreshed = true;
+	}
+
+	return refreshed;
 }
 
 
@@ -214,7 +205,6 @@ void DynamicDialog::draw(SpriteBatch* batch) {
 		return;
 
 	texturePanel->draw(batch);
-
 	dialogText->draw(batch);
 }
 

@@ -3,6 +3,10 @@
 using namespace ScreenTransitions;
 
 
+ScreenTransitions::ScreenTransitionManager::ScreenTransitionManager() {
+}
+
+
 ScreenTransitionManager::ScreenTransitionManager(GUIFactory* factory, const char_t* bgName) {
 
 	guiFactory = factory;
@@ -14,9 +18,64 @@ ScreenTransitionManager::ScreenTransitionManager(GUIFactory* factory, const char
 	bg->setOrigin(bg->getPosition());
 }
 
+//
+//ScreenTransitionManager& ScreenTransitions::ScreenTransitionManager::operator=(
+//	ScreenTransitionManager& copy) {
+//
+//	guiFactory = copy.guiFactory;
+//	bg = move(copy.bg);
+//	transition = copy.transition;
+//
+//}
+
 ScreenTransitionManager::~ScreenTransitionManager() {
 	if (transition != NULL)
 		delete transition;
+}
+
+void ScreenTransitions::ScreenTransitionManager::initialize(
+	GUIFactory* factory, const char_t* bgName, bool resizeBGToFit) {
+
+
+	guiFactory = factory;
+	bg = move(guiFactory->getSpriteFromAsset(bgName));
+	if (bg == NULL) {
+		bg = guiFactory->getSpriteFromAsset("Default Transition BG");
+	}
+	bg->setPosition(Vector2::Zero);
+	bg->setOrigin(Vector2::Zero);
+	bg->setLayerDepth(0);
+
+	RECT rect;
+	GetClientRect(guiFactory->getHWND(), &rect);
+
+	//int buffer = 5; // padding to give a bit of lee-way to prevent tearing
+	int screenWidth = rect.right - rect.left ;
+	int screenHeight = rect.bottom - rect.top;
+
+	if (resizeBGToFit) {
+		//scale bg image to screen
+		int horzDif = bg->getWidth() - screenWidth;
+		int vertDif = bg->getHeight() - screenHeight;
+		if (horzDif > 0 || vertDif > 0) {
+			// bg image is bigger in one or more dimensions than screen
+			if (horzDif > vertDif) {
+				float horzRatio = float(screenWidth) / bg->getWidth();
+				bg->setScale(Vector2(horzRatio, horzRatio));
+			} else {
+				float vertRatio = float(screenHeight) / bg->getHeight();
+				bg->setScale(Vector2(vertRatio, vertRatio));
+			}
+		} else {
+			if (horzDif < vertDif) {
+				float horzRatio = float(screenWidth) / bg->getWidth();
+				bg->setScale(Vector2(horzRatio, horzRatio));
+			} else {
+				float vertRatio = float(screenHeight) / bg->getHeight();
+				bg->setScale(Vector2(vertRatio, vertRatio));
+			}
+		}
+	}
 }
 
 void ScreenTransitionManager::setTransition(ScreenTransition* effect) {
@@ -26,15 +85,21 @@ void ScreenTransitionManager::setTransition(ScreenTransition* effect) {
 	transition = effect;
 }
 
+
 #include "../BaseGraphics/screen.h"
 void ScreenTransitionManager::transitionBetween(
-	Screen* oldScreen, Screen* newScreen, float transitionTime) {
+	Screen* oldScreen, Screen* newScr, float transitionTime, bool autoBatchDraw) {
 
 	Color purple = Color(158, 0, 58);
 	Color blue = Color(0, 58, 158);
+
 	transition->setTransitionBetween(
-		guiFactory->createTextureFromScreen(oldScreen, true, Color(158, 0, 58)),
-		guiFactory->createTextureFromScreen(newScreen, true, Color(0, 58, 158)), transitionTime);
+		guiFactory->createTextureFromScreen(oldScreen, autoBatchDraw, purple),
+		guiFactory->createTextureFromScreen(newScr, autoBatchDraw, blue), transitionTime);
+
+	newScreen = newScr;
+
+	
 }
 
 bool ScreenTransitionManager::runTransition(double deltaTime) {
@@ -95,22 +160,18 @@ FlipScreenTransition::FlipScreenTransition(bool verticalFlip) {
 	startScale = Vector2(0, 0);
 	if (verticalFlip) {
 		startScale.x = 1;
-		//currentOrientation = SpriteEffects::SpriteEffects_FlipVertically;
 	} else {
 		startScale.y = 1;
-		//currentOrientation = SpriteEffects::SpriteEffects_FlipHorizontally;
 	}
 
 }
 
 bool FlipScreenTransition::run(double deltaTime) {
 
-	//if (currentOrientation != SpriteEffects::SpriteEffects_None) {
 	if (texture == oldTexture) {
 		scale = Vector2::Lerp(Vector2(1, 1), startScale, timer / transitionTime * 2);
 		scale.Clamp(startScale, Vector2(1, 1));
 		if (scale == startScale) {
-			//currentOrientation = SpriteEffects::SpriteEffects_None;
 			texture = newTexture;
 			timer = 0;
 		}
@@ -132,7 +193,6 @@ void FlipScreenTransition::draw(SpriteBatch* batch) {
 
 void FlipScreenTransition::reset() {
 
-	//currentOrientation = startOrientation;
 	texture = oldTexture;
 	origin = Vector2(oldScreenAsset->getWidth() / 2, oldScreenAsset->getHeight() / 2);
 	position = Vector2(oldScreenAsset->getWidth() / 2, oldScreenAsset->getHeight() / 2);

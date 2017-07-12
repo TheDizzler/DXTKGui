@@ -7,11 +7,13 @@
 
 
 struct Frame {
-	Frame(RECT srcRect, float timeForFrame) : sourceRect(srcRect), frameTime(timeForFrame) {
+	/** If no origin is set in xml Vector2::Zero is assumed. */
+	Frame(RECT srcRect, Vector2 orgn, float timeForFrame)
+		: sourceRect(srcRect), origin(orgn), frameTime(timeForFrame) {
 	}
 	/* Rectangle which contains sprite in spritesheet. */
 	RECT sourceRect;
-
+	Vector2 origin;
 	float frameTime;
 };
 
@@ -54,22 +56,22 @@ public:
 	ComPtr<ID3D11ShaderResourceView> getTexture();
 	ComPtr<ID3D11Resource> getResource();
 
-
+	/* for debugging */
+	wstring textureFile;
 protected:
 	ComPtr<ID3D11ShaderResourceView> texture;
 	ComPtr<ID3D11Resource> resource;
 
 	UINT width;
 	UINT height;
-	/* Optional. Currently only used for MouseController. Default == Vector2(width / 2, height / 2). */
+	/* Optional. Default == Vector2(width / 2, height / 2). */
 	Vector2 origin;
 	/* Position in spritesheet (if applicable) */
 	Vector2 position = Vector2::Zero;
 
 	RECT sourceRect;
 
-	/* for debugging */
-	wstring textureFile;
+	
 };
 
 

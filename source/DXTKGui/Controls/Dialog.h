@@ -54,6 +54,9 @@ public:
 	/** Required for some TransitionEffects. Bundle up all IElement2D to send for morphing time. */
 	virtual const vector<IElement2D*> getElements() const;
 protected:
+	bool refreshTexture = true;
+	unique_ptr<TexturePanel> texturePanel;
+
 	bool isShowing = false;
 	bool isOpening = false;
 	bool isClosing = false;
@@ -99,8 +102,6 @@ public:
 
 	PromptDialog(GUIFactory* factory,
 		shared_ptr<MouseController> mouseController, HWND hwnd, bool movable, bool centerText);
-	/* Used only for classes that extend this class */
-	//PromptDialog();
 	virtual ~PromptDialog();
 
 	void initialize(const pugi::char_t* font = "Default Font");
@@ -139,12 +140,12 @@ public:
 	void setCancelOnClickListener(Button::ActionListener* iOnClickListener);
 
 	/* Dialog checks to see if it's open before performing any logic. */
-	virtual void update(double deltaTime);
+	virtual bool update(double deltaTime);
 	/* Dialog checks to see if it's open before performing any logic. */
 	virtual void draw(SpriteBatch* batch);
 
 	virtual unique_ptr<GraphicsAsset> texturize() override;
-	virtual void textureDraw(SpriteBatch* batch) override;
+	virtual void textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device = NULL) override;
 
 	/* Add other GUIControls to dialog. Control position should be relative to Dialog.
 		Returns the position of control in control list. */
@@ -178,6 +179,9 @@ protected:
 	HWND hwnd;
 	vector<unique_ptr<GUIControl> > controls;
 	unique_ptr<TexturePanel> panel;
+	unique_ptr<TexturePanel> texturePanel;
+
+	bool refreshTexture = true;
 
 	Vector2 titleFrameSize = Vector2(0, 0);
 	Vector2 titleFramePosition;
@@ -219,6 +223,3 @@ protected:
 
 
 };
-
-
-

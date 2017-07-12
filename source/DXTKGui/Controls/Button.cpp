@@ -2,8 +2,7 @@
 
 #include "../GUIFactory.h"
 Button::Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
-	const pugi::char_t* font)
-	: GUIControl(factory, mouseController) {
+	const pugi::char_t* font) : GUIControl(factory, mouseController) {
 
 
 	hitArea = make_unique<HitArea>();
@@ -13,6 +12,7 @@ Button::Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 	buttonLabel.reset(guiFactory->createTextLabel(Vector2::Zero, L"", font, true));
 	rectSprite.reset(guiFactory->createRectangle());
 	frame.reset(guiFactory->createRectangleFrame());
+	texturePanel.reset(guiFactory->createPanel());
 }
 
 
@@ -31,8 +31,6 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 
 	Vector2 labelSize = measureString();
 	Vector2 newSize = size;
-
-	
 
 
 	if ((labelSize.x + textMargin * 2) > size.x) {
@@ -54,10 +52,12 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 	setLayerDepth(.9);
 
 	setToUnpressedState();
+
+	refreshTexture = true;
 }
 
 
-void Button::update(double deltaTime) {
+bool Button::update(double deltaTime) {
 
 	updateProjectedHitArea();
 	if (projectedHitArea->contains(mouse->getPosition())) {
@@ -68,6 +68,7 @@ void Button::update(double deltaTime) {
 				setToHoverState();
 				hasBeenSetHover = true;
 				hasBeenSetUnpressed = false;
+				refreshTexture = true;
 			}
 		}
 	} else
@@ -80,6 +81,7 @@ void Button::update(double deltaTime) {
 		setToUnpressedState();
 		hasBeenSetUnpressed = false;
 		hasBeenSetHover = false;
+		refreshTexture = true;
 	} else {
 		isClicked = false;
 		if (!isHover) {
@@ -88,27 +90,54 @@ void Button::update(double deltaTime) {
 				setToUnpressedState();
 				hasBeenSetUnpressed = true;
 				hasBeenSetHover = false;
+				refreshTexture = true;
 			}
 		} else if (mouse->pressed()) {
 			isPressed = true;
 			setToSelectedState();
 			hasBeenSetUnpressed = false;
 			hasBeenSetHover = false;
+			refreshTexture = true;
 		}
 	}
 
-	buttonLabel->update(deltaTime);
-	if (frame.get())
-		frame->update();
+	if (buttonLabel->update(deltaTime))
+		refreshTexture = true;
+
+	if (frame.get()) {
+		if (frame->update())
+			refreshTexture = true;
+	}
+
+	if (refreshTexture) {
+		texturePanel->setTexture(texturize());
+		refreshTexture = false;
+		return true;
+	}
+
+	return false;
 }
 
 
 void Button::draw(SpriteBatch* batch) {
 
+	texturePanel->draw(batch);
+	/*rectSprite->draw(batch);
+	frame->draw(batch);
+	buttonLabel->draw(batch);*/
+
+}
+
+
+unique_ptr<GraphicsAsset> Button::texturize() {
+	return guiFactory->createTextureFromIElement2D(this);
+}
+
+void Button::textureDraw(SpriteBatch * batch, ComPtr<ID3D11Device> device) {
+
 	rectSprite->draw(batch);
 	frame->draw(batch);
 	buttonLabel->draw(batch);
-
 }
 
 
@@ -132,7 +161,6 @@ void Button::setToSelectedState() {
 	buttonLabel->setTint(selectedColorText);
 	buttonLabel->setPosition(pressedTextPosition);
 }
-
 
 void Button::setText(wstring text) {
 
@@ -175,6 +203,7 @@ void Button::setTextOffset(const Vector2& unpressedOffset,
 
 void Button::moveBy(const Vector2& moveVector) {
 	GUIControl::moveBy(moveVector);
+	texturePanel->moveBy(position);
 }
 
 
@@ -190,6 +219,8 @@ void Button::setPosition(const Vector2& pos) {
 
 	// center text
 	positionText();
+
+	texturePanel->setPosition(position);
 }
 
 void Button::positionText() {
@@ -439,7 +470,7 @@ AnimatedButton::~AnimatedButton() {
 }
 
 
-void AnimatedButton::update(double deltaTime) {
+bool AnimatedButton::update(double deltaTime) {
 
 	if (hitArea->contains(mouse->getPosition())) {
 		isHover = true;
@@ -479,6 +510,8 @@ void AnimatedButton::update(double deltaTime) {
 			onPress();
 		}
 	}
+
+	return false;
 }
 
 

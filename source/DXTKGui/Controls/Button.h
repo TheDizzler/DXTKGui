@@ -6,7 +6,7 @@
 
 /** A visual and logical representation of a button.
 		Now with ActionListeners! */
-class Button : public GUIControl {
+class Button : public GUIControl, public Texturizable {
 public:
 
 	Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
@@ -18,8 +18,12 @@ public:
 		const int frameThickness = 2);
 
 
-	virtual void update(double deltaTime) override;
+	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
+
+	virtual unique_ptr<GraphicsAsset> texturize() override;
+	virtual void textureDraw(SpriteBatch * batch, ComPtr<ID3D11Device> device = NULL) override;
+
 
 	virtual void setText(wstring text) override;
 	virtual const wchar_t* getText() override;
@@ -90,6 +94,9 @@ public:
 	}
 
 protected:
+	bool refreshTexture = true;
+	unique_ptr<TexturePanel> texturePanel;
+
 	typedef void (ActionListener::*OnClickFunction) (Button*);
 	ActionListener* actionListener = NULL;
 	OnClickFunction onClickFunction;
@@ -163,7 +170,7 @@ public:
 		shared_ptr<Animation> animation, Vector2 position);
 	virtual ~AnimatedButton();
 
-	virtual void update(double deltaTime) override;
+	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
 	/* Not used in Animated Button. */

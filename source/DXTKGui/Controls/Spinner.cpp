@@ -33,8 +33,8 @@ void Spinner::initialize(const pugi::char_t* fontName,
 		itemHeight = upButton->getHeight() * 2;
 	upButton->setActionListener(new SpinnerUpButtonListener(this));
 	upButton->setPosition(Vector2(position.x + width, position.y));
-	
-	
+
+
 	downButton.reset((ImageButton*) guiFactory->createImageButton(downButtonName));
 	downButton->setPosition(Vector2(position.x + width, position.y + (itemHeight - upButton->getHeight())));
 	downButton->setActionListener(new SpinnerDownButtonListener(this));
@@ -48,26 +48,48 @@ void Spinner::initialize(const pugi::char_t* fontName,
 
 	Vector2 labelpos = Vector2(position.x + textBuffer, position.y + (itemHeight - label->getHeight()) / 2);
 	label->setPosition(labelpos);
+
+	texturePanel.reset(guiFactory->createPanel());
 }
 
 
-void Spinner::update(double deltaTime) {
 
-	upButton->update(deltaTime);
-	downButton->update(deltaTime);
-	frame->update();
-	label->update(deltaTime);
+unique_ptr<GraphicsAsset> Spinner::texturize() {
+	return move(guiFactory->createTextureFromIElement2D(this));
+}
+
+
+bool Spinner::update(double deltaTime) {
+
+	bool refreshed = false;
+	if (upButton->update(deltaTime))
+		refreshed = true;
+	if (downButton->update(deltaTime))
+		refreshed = true;
+	if (frame->update())
+		refreshed = true;
+	if (label->update(deltaTime))
+		refreshed = true;
+
+	if (refreshed) {
+		texturePanel->setTexture(texturize());
+		return true;
+	}
+	return false;
 }
 
 
 void Spinner::draw(SpriteBatch* batch) {
+	texturePanel->draw(batch);
+}
+
+void Spinner::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
 	rectangle->draw(batch);
 	upButton->draw(batch);
 	downButton->draw(batch);
 	frame->draw(batch);
 	label->draw(batch);
 }
-
 
 
 void Spinner::addItems(vector<wstring> items) {

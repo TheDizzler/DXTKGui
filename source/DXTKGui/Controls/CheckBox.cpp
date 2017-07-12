@@ -27,8 +27,9 @@ CheckBox::~CheckBox() {
 }
 
 
-void CheckBox::update(double deltaTime) {
+bool CheckBox::update(double deltaTime) {
 
+	bool refreshed = true;
 	if (hitArea->contains(mouse->getPosition())
 		|| label->contains(mouse->getPosition())) {
 
@@ -36,22 +37,27 @@ void CheckBox::update(double deltaTime) {
 			isHover = true;
 			label->setTint(hoverColorText);
 			tint = hoverColor; // this won't do anything if the checkbox is black :/
+			refreshed = true;
 		}
 	} else if (isHover) {
 		label->setTint(normalColorText);
 		tint = normalColor;
 		isHover = false;
 		firstHover = false;
-
+		refreshed = true;
 	}
 
 	if (isHover) {
 		if (mouse->pressed()) {
 			isClicked = !isClicked;
 			onClick();
+			refreshed = true;
 		}
 	}
-	label->update(deltaTime);
+	if (label->update(deltaTime))
+		refreshed = true;
+
+	return refreshed;
 }
 
 void CheckBox::draw(SpriteBatch* batch) {

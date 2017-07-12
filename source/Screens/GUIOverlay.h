@@ -15,10 +15,6 @@ public:
 	void update(double deltaTime);
 	void draw(SpriteBatch* batch);
 
-	void setDialogText(USHORT playerSlotNumber, wstring text);
-
-	void reportLostJoystick(size_t playerSlotNumber);
-
 
 private:
 
@@ -38,7 +34,7 @@ public:
 	virtual void setDimensions(const Vector2& position, const Vector2& size,
 		const int frameThickness = 10);
 
-	virtual void update(double deltaTime) override;
+	virtual bool update(double deltaTime) override;
 
 
 	virtual void setText(wstring text) override;

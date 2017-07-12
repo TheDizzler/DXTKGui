@@ -400,14 +400,8 @@ TransitionEffects::SplitTransition::SplitTransition(IElement2D* cntrl,
 	screenWidth = sWidth;
 }
 
-#include "../StringHelper.h"
-TransitionEffects::SplitTransition::~SplitTransition() {
 
-	wostringstream woo;
-	woo << L"\n\n***TexturePanel Release ***" << endl;
-	woo << "\t\tResource release #: " << texture.Reset() << "\n\t ->";
-	OutputDebugString(woo.str().c_str());
-	gfxAsset.reset();
+TransitionEffects::SplitTransition::~SplitTransition() {
 }
 
 void TransitionEffects::SplitTransition::initializeEffect(Texturizable* cntrl) {

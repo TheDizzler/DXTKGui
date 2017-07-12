@@ -10,8 +10,10 @@ FontSet::~FontSet() {
 }
 
 
-void FontSet::load(ComPtr<ID3D11Device> device, const wchar_t* file) {
+void FontSet::load(ComPtr<ID3D11Device> device, const wchar_t* file,
+	const pugi::char_t* name) {
 
+	fontName = name;
 	font.reset(new SpriteFont(device.Get(), file));
 
 }

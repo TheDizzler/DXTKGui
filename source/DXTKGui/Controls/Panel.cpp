@@ -5,7 +5,8 @@ Panel::~Panel() {
 }
 
 
-void Panel::update(double deltaTime) {
+bool Panel::update(double deltaTime) {
+	return false;
 }
 
 

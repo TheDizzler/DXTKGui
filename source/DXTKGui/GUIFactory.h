@@ -8,6 +8,7 @@
 #include "Controls/DynamicDialog.h"
 #include "Controls/CheckBox.h"
 #include "Controls/Spinner.h"
+#include "Effects/LetterJammer.h"
 
 
 using namespace pugi;
@@ -60,7 +61,11 @@ public:
 		wstring text = L"", const char_t* fontName = "Default Font",
 		bool useTexture = true);
 
-	/** Creates a button with no set text or position. */
+	LetterJammer* createLetterJammer(const Vector2& position,
+		wstring text = L"", Color textColor = Color(1, 1, 1, 1),
+		const char_t* fontName = "Default Font");
+
+/** Creates a button with no set text or position. */
 	Button* createButton(const char_t* fontName = "Default Font");
 	Button* createButton(const Vector2& position, const Vector2& size,
 		wstring text = L"", const char_t* fontName = "Default Font",
@@ -143,7 +148,8 @@ private:
 		const char_t* fontName = "Default Font");
 
 	bool getGUIAssetsFromXML();
-	unique_ptr<GraphicsAsset> parseSprite(xml_node spriteNode, ComPtr<ID3D11ShaderResourceView> sheetTexture,
+	unique_ptr<GraphicsAsset> parseSprite(xml_node spriteNode,
+		ComPtr<ID3D11ShaderResourceView> sheetTexture,
 		int xOffset = 0, int yOffset = 0);
 
 	xml_node guiAssetsNode;

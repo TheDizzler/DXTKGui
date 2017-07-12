@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Controllers/MouseController.h"
-
+#include "../Controllers/Joystick.h"
 
 class GameManager;
 
@@ -16,9 +16,10 @@ public:
 	virtual void pause() = 0;
 	/** Action to perform when a joystick has been deregistered.
 		Controller socket is virtual, used to track controllers in some sort of list.*/
-	virtual void controllerRemoved(size_t controllerSlot) = 0;
-	/** Actionto perform when a new joystick has been registered. */
-	virtual void newController(HANDLE joyHandle) = 0;
+	virtual void controllerRemoved(ControllerSocketNumber controllerSlot,
+		PlayerSlotNumber slotNumber) = 0;
+		/** Actionto perform when a new joystick has been registered. */
+	virtual void newController(shared_ptr<Joystick> newStick) = 0;
 
 	/** Override this function to get funky with your screen transitions. */
 	virtual void textureDraw(SpriteBatch* batch) {

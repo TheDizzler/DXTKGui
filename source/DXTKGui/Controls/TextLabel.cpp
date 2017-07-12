@@ -30,7 +30,7 @@ TextLabel::~TextLabel() {
 }
 
 
-void TextLabel::update(double deltaTime) {
+bool TextLabel::update(double deltaTime) {
 
 	if (isHoverable) {
 		if (hitArea->contains(mouse->getPosition())) {
@@ -74,7 +74,10 @@ void TextLabel::update(double deltaTime) {
 	if (useTexture && refreshTexture) {
 		texturePanel->setTexture(texturize());
 		refreshTexture = false;
+		return true;
 	}
+
+	return false;
 }
 
 
@@ -97,7 +100,7 @@ unique_ptr<GraphicsAsset> TextLabel::texturize() {
 	return guiFactory->createTextureFromIElement2D(this);
 }
 
-void TextLabel::textureDraw(SpriteBatch* batch) {
+void TextLabel::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
 	font->draw(batch, label.c_str(), position, tint,
 		rotation, origin, scale, layerDepth);
 }

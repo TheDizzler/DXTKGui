@@ -180,7 +180,6 @@ void GameEngine::update(double deltaTime) {
 	else
 		game->update(deltaTime);
 
-	guiOverlay->update(deltaTime);
 }
 
 

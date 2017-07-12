@@ -189,6 +189,8 @@ void PromptDialog::initialize(const pugi::char_t* font) {
 	dialogText->setTint(Color(0, 0, 0, 1));
 
 	setLayerDepth(.95);
+
+	texturePanel.reset(guiFactory->createPanel());
 }
 
 void PromptDialog::setDimensions(const Vector2& pos, const Vector2& sz,
@@ -560,10 +562,10 @@ bool PromptDialog::calculateButtonPosition(Vector2& buttonPos) {
 }
 
 /* PromptDialog checks to see if it's open before performing any logic. */
-void PromptDialog::update(double deltaTime) {
+bool PromptDialog::update(double deltaTime) {
 
 	if (!isShowing)
-		return;
+		return false;
 
 	if (isOpening) {
 		isOpening = !(openTransition->*runTransition)(deltaTime);
@@ -591,18 +593,28 @@ void PromptDialog::update(double deltaTime) {
 		if (isPressed) {
 			setDraggedPosition(mouse->getPosition() - pressedPosition);
 		}
-
-
-
 	}
-	panel->update(deltaTime);
-	frame->update();
+
+	if (panel->update(deltaTime))
+		refreshTexture = true;
+	if (frame->update())
+		refreshTexture = true;
+
 	for (auto const& control : controls) {
 		if (control == NULL)
 			continue;
-		control->update(deltaTime);
+		if (control->update(deltaTime))
+			refreshTexture = true;
 
 	}
+
+	if (refreshTexture) {						
+		texturePanel->setTexture(texturize());
+		refreshTexture = false;
+		return true;
+	}
+
+	return false;
 }
 
 /* PromptDialog checks to see if it's open before performing any logic. */
@@ -616,17 +628,19 @@ void PromptDialog::draw(SpriteBatch* batch) {
 	} else if (isClosing && (closeTransition->*drawTransition)(batch)) {
 		//OutputDebugString(L"Closing\n");
 	} else {
-		bgSprite->draw(batch);
-		panel->draw(batch);
-		titleSprite->draw(batch);
-		buttonFrameSprite->draw(batch);
+		//bgSprite->draw(batch);
+		//panel->draw(batch);
+		//titleSprite->draw(batch);
+		//buttonFrameSprite->draw(batch);
 
-		for (auto const& control : controls) {	// this definitely takes most of the CPU time
-			if (control == NULL)				// finding a way to optimize this would be ideal
-				continue;
-			control->draw(batch);
-		}
-		frame->draw(batch);
+		//for (auto const& control : controls) {	// this definitely takes most of the CPU time
+		//	if (control == NULL)				// finding a way to optimize this would be ideal
+		//		continue;
+		//	control->draw(batch);
+		//}
+		//frame->draw(batch);
+
+		texturePanel->draw(batch);
 	}
 }
 
@@ -635,7 +649,7 @@ unique_ptr<GraphicsAsset> PromptDialog::texturize() {
 }
 
 
-void PromptDialog::textureDraw(SpriteBatch* batch) {
+void PromptDialog::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
 
 	bgSprite->draw(batch);
 	panel->draw(batch);
@@ -723,6 +737,8 @@ void PromptDialog::setPosition(const Vector2& newPosition) {
 			continue;
 		control->moveBy(moveBy);
 	}
+
+	texturePanel->setPosition(position);
 }
 
 
@@ -841,6 +857,8 @@ void PromptDialog::setDraggedPosition(Vector2& newPosition) {
 			continue;
 		control->moveBy(moveBy);
 	}
+
+	texturePanel->setPosition(position);
 }
 
 /** NOT USED. */
@@ -859,6 +877,8 @@ void PromptDialog::movePosition(const Vector2& moveBy) {
 		control->moveBy(moveBy);
 	}
 	GUIControl::moveBy(moveBy);
+
+	texturePanel->moveBy(position);
 }
 
 

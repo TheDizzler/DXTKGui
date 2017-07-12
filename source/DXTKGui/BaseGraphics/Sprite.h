@@ -99,8 +99,8 @@ protected:
 	UINT width;
 	UINT height;
 	Vector2 position;
-
 	Vector2 scale;
+	SpriteEffects spriteEffect = SpriteEffects_None;
 	unique_ptr<HitArea> hitArea;
 
 };

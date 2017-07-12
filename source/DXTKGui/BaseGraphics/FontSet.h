@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SpriteFont.h>
-
+#include <pugixml.hpp>
 
 #include "IElement2D.h"
 
@@ -13,7 +13,8 @@ public:
 	FontSet();
 	virtual ~FontSet();
 
-	virtual void load(ComPtr<ID3D11Device> device, const wchar_t* file);
+	virtual void load(ComPtr<ID3D11Device> device, const wchar_t* file,
+		const pugi::char_t* fontName);
 
 	XMVECTOR XM_CALLCONV measureString(_In_z_ wchar_t const* text) const;
 
@@ -23,6 +24,7 @@ public:
 		const Color& newTint, float rotation, const Vector2& origin,
 		const Vector2& scale, const float layerDepth = .91f);
 
+	const pugi::char_t* fontName;
 protected:
 
 	unique_ptr<SpriteFont> font;

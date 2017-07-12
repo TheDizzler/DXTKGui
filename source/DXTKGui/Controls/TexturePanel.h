@@ -17,7 +17,7 @@ public:
 	void setTexture(unique_ptr<GraphicsAsset> gfxAsset);
 
 
-	virtual void update(double deltaTime) override;
+	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
 	void setDimensions(const Vector2& position, const Vector2& size);

@@ -41,74 +41,13 @@ void GUIOverlay::update(double deltaTime) {
 		frameCount = 0;
 	}
 
-
-	for (const auto& dialog : lostJoyDialogs) {
-		dialog->update(deltaTime);
-	}
-
-
 }
 
 void GUIOverlay::draw(SpriteBatch* batch) {
 
 
-	for (const auto& dialog : lostJoyDialogs)
-		dialog->draw(batch);
-
-
 	fpsLabel->draw(batch);
 }
-
-void GUIOverlay::setDialogText(USHORT playerSlotNumber, wstring text) {
-
-
-}
-
-
-void GUIOverlay::reportLostJoystick(size_t playerSlotNumber) {
-
-	//displayingLostJoys.push_back(joystickSocket);
-	//shared_ptr<Joystick> lostJoy = joystickPorts[joystickSocket];
-
-	//unique_ptr<ControllerDialog> joyLostDialog;
-	//size_t numDialogs = lostJoyDialogs.size();
-	//Vector2 dialogPos, dialogSize;
-	//if (numDialogs <= 0)
-	//	dialogSize = Vector2(Globals::WINDOW_WIDTH / 4, Globals::WINDOW_HEIGHT / 4);
-	//else
-	//	dialogSize = Vector2(lostJoyDialogs[0]->getWidth(), lostJoyDialogs[0]->getHeight());
-
-
-	//dialogPos = Vector2(Globals::WINDOW_WIDTH / 2, Globals::WINDOW_HEIGHT / 2);
-	//dialogPos.y -= dialogSize.y / 2;
-
-	//if (numDialogs <= 0) {
-	//	dialogPos.x -= dialogSize.x / 2;
-	//} else {
-	//	for (const auto& dialog : lostJoyDialogs)
-	//		dialog->moveBy(Vector2(-dialogSize.x / 2, 0));
-	//	dialogPos.x += (dialogSize.x / 2) * (numDialogs - 1);
-	//}
-
-
-	//joyLostDialog = make_unique<ControllerDialog>(guiFactory.get());
-	//joyLostDialog->setDimensions(dialogPos, dialogSize);
-	//wostringstream title;
-	//title << L"Player " << lostJoy->socket;
-	//title << L"  has dropped." << endl;
-	//joyLostDialog->setTitle(title.str(), Vector2(1.2, 1.2));
-	//wostringstream wss;
-	////wss << StringHelper::convertCharStarToWCharT(lostJoy->pc->name.c_str()) << endl;
-	//wss << L"Waiting for controller...\n";
-	//joyLostDialog->setText(wss.str());
-	//joyLostDialog->show();
-
-	//lostJoyDialogs.push_back(move(joyLostDialog));
-}
-
-
-
-
 
 
 
@@ -128,25 +67,30 @@ void ControllerDialog::setDimensions(const Vector2& position, const Vector2& siz
 }
 
 
-void ControllerDialog::update(double deltaTime) {
+bool ControllerDialog::update(double deltaTime) {
 
 	if (!isShowing)
-		return;
+		return false;
 
-
+	bool refreshed = false;
 	dialogOpenTime += deltaTime;
 	if (dialogOpenTime > CONTROLLER_WAIT_TIME) {
 		dialogOpenTime = 0;
 		if (ellipsisii++ > 5) {
 			ellipsisii = 0;
 			setText(defaultText);
+			refreshed = true;
 		} else {
 			wstring text = dialogText->getText();
 			text += L".";
 			PromptDialog::setText(text);
+			refreshed = true;
 		}
 	}
-	PromptDialog::update(deltaTime);
+	if (PromptDialog::update(deltaTime))
+		refreshed = true;
+
+	return refreshed;
 }
 
 void ControllerDialog::setText(wstring text) {

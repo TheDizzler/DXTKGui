@@ -156,7 +156,7 @@ void ListBox::clear() {
 }
 
 
-void ListBox::update(double deltaTime) {
+bool ListBox::update(double deltaTime) {
 
 	if (itemsToDisplay == maxDisplayItems || alwaysDisplayScrollBar) {
 
@@ -199,12 +199,13 @@ void ListBox::update(double deltaTime) {
 	}
 
 	if (refreshPanel) {
-
 		texturePanel->setTexture(texturize());
 		texturePanel->setTexturePosition(firstItemPos);
 		refreshPanel = false;
 		frame->update();
+		return true;
 	}
+	return false;
 }
 
 
@@ -224,8 +225,8 @@ void ListBox::draw(SpriteBatch* batch) {
 }
 
 
-void ListBox::textureDraw(SpriteBatch* batch) {
-	
+void ListBox::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
+
 	for (int i = firstItemToDisplay;
 		i < firstItemToDisplay + itemsToDisplay; ++i) {
 

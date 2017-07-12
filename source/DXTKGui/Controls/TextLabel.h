@@ -13,14 +13,14 @@ public:
 
 	virtual ~TextLabel();
 
-	virtual void update(double deltaTime) override;
+	virtual bool update(double deltaTime) override;
 	void draw(SpriteBatch* batch);
 	/* Draw with an alternate color.
 		NOTE: This draws using the SpriteFont, which is highly inefficient. */
 	void draw(SpriteBatch* batch, Color tint);
 
 	virtual unique_ptr<GraphicsAsset> texturize() override;
-	virtual void textureDraw(SpriteBatch* batch) override;
+	virtual void textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device = NULL) override;
 
 	virtual const Vector2& getPosition() const override;
 	virtual const int getWidth() const override;
@@ -93,7 +93,7 @@ public:
 		}
 	}
 
-private:
+protected:
 	typedef void (ActionListener::*OnClickFunction) (TextLabel*);
 	ActionListener* actionListener = NULL;
 	OnClickFunction onClickFunction;

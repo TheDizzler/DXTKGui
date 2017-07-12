@@ -11,7 +11,7 @@ public:
 		const pugi::char_t* font);
 	virtual ~CheckBox();
 
-	virtual void update(double deltaTime) override;
+	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
 	/* Should probably changed the way this works. */

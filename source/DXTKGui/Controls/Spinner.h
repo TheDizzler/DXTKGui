@@ -3,7 +3,7 @@
 #include "Button.h"
 
 
-class Spinner : public GUIControl {
+class Spinner : public GUIControl, public Texturizable {
 	friend class SpinnerUpButtonListener;
 	friend class SpinnerDownButtonListener;
 public:
@@ -17,7 +17,10 @@ public:
 	void initialize(const pugi::char_t* fontName,
 		const pugi::char_t* upButtonName, const pugi::char_t* downButtonName);
 
-	virtual void update(double deltaTime) override;
+	virtual unique_ptr<GraphicsAsset> texturize() override;
+	virtual void textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device = NULL) override;
+
+	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
 
@@ -48,6 +51,7 @@ public:
 
 
 private:
+	unique_ptr<TexturePanel> texturePanel;
 
 	vector<wstring> list;
 	unique_ptr<TextLabel> label;
@@ -65,7 +69,6 @@ private:
 	size_t selected = 0;
 
 	bool autoSize;
-
 };
 
 

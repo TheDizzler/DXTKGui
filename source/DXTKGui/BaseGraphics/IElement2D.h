@@ -47,7 +47,7 @@ interface Texturizable {
 public:
 
 	virtual unique_ptr<GraphicsAsset> texturize() = 0;
-	virtual void textureDraw(SpriteBatch* batch) = 0;
+	virtual void textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device = NULL) = 0;
 
 	virtual void setPosition(const Vector2& position) = 0;
 	virtual const Vector2& getPosition() const = 0;

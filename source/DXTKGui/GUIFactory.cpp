@@ -15,8 +15,7 @@ GUIFactory::GUIFactory(HWND h, pugi::xml_node guiAssets) {
 
 
 GUIFactory::~GUIFactory() {
-	// on or off, none of these have an effect on live objects
-	device.Reset();
+	/*device.Reset();
 	deviceContext.Reset();
 	docAssMan.reset();
 	mouseController.reset();
@@ -32,7 +31,7 @@ GUIFactory::~GUIFactory() {
 	for (auto& set : setMap)
 		set.second.reset();
 	setMap.clear();
-	whitePixel.Reset();
+	whitePixel.Reset();*/
 
 }
 
@@ -95,7 +94,9 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 
 		unique_ptr<FontSet> defaultFont;
 		defaultFont.reset(new FontSet());
-		defaultFont->load(device, StringHelper::convertCharStarToWCharT(defaultFontFile));
+		defaultFont->load(device,
+			StringHelper::convertCharStarToWCharT(defaultFontFile),
+			"Default Font");
 
 		return move(defaultFont);
 	}
@@ -104,7 +105,9 @@ unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 
 	unique_ptr<FontSet> font;
 	font.reset(new FontSet());
-	font->load(device, StringHelper::convertCharStarToWCharT(fontFile));
+	font->load(device,
+		StringHelper::convertCharStarToWCharT(fontFile),
+		fontName);
 	return move(font);
 }
 
@@ -200,8 +203,17 @@ TriangleFrame* GUIFactory::createTriangleFrame(const Vector2& pt1, const Vector2
 TextLabel* GUIFactory::createTextLabel(const Vector2& position,
 	wstring text, const char_t* fontName, bool useTexture) {
 
-	TextLabel* label = new TextLabel(this, mouseController, position, text, fontName, useTexture);
+	TextLabel* label = new TextLabel(this, mouseController,
+		position, text, fontName, useTexture);
 	return label;
+}
+
+LetterJammer* GUIFactory::createLetterJammer(
+	const Vector2& position, wstring text, Color textColor, const char_t* fontName) {
+
+	LetterJammer* jammer = new LetterJammer(this, NULL, position, text, fontName);
+	jammer->setTint(textColor);
+	return jammer;
 }
 
 
@@ -448,7 +460,7 @@ PromptDialog* GUIFactory::createDialog(const Vector2& position, const Vector2& s
 	return dialog;
 }
 
-DynamicDialog * GUIFactory::createDynamicDialog(const char_t* imageSet,
+DynamicDialog* GUIFactory::createDynamicDialog(const char_t* imageSet,
 	const Vector2& position, const Vector2& size, const char_t* fontName) {
 
 	DynamicDialog* dialog = new DynamicDialog(this, mouseController);
@@ -568,7 +580,8 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromIElement2D(
 			control->textureDraw(batch);
 		}
 		batch->End();
-	}
+	} else
+		control->textureDraw(batch, device);
 
 	deviceContext->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
 	textureRenderTargetView.Reset();
@@ -674,7 +687,8 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 			screen->textureDraw(batch);
 		}
 		batch->End();
-	}
+	} else
+		screen->textureDraw(batch);
 
 	deviceContext->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
 	textureRenderTargetView.Reset();
@@ -833,11 +847,18 @@ bool GUIFactory::getGUIAssetsFromXML() {
 				rect.top = spriteNode.attribute("y").as_int();
 				rect.right = rect.left + spriteNode.attribute("width").as_int();
 				rect.bottom = rect.top + spriteNode.attribute("height").as_int();
+				Vector2 origin = Vector2(0, 0);
+				xml_node originNode = spriteNode.child("origin");
+				if (originNode) {
+					origin.x = originNode.attribute("x").as_int();
+					origin.y = originNode.attribute("y").as_int();
+				}
 				shared_ptr<Frame> frame;
 				if (spriteNode.attribute("frameTime"))
-					frame.reset(new Frame(rect, spriteNode.attribute("frameTime").as_float()));
+					frame.reset(new Frame(rect, origin,
+						spriteNode.attribute("frameTime").as_float()));
 				else
-					frame.reset(new Frame(rect, timePerFrame));
+					frame.reset(new Frame(rect, origin, timePerFrame));
 				frames.push_back(move(frame));
 
 			}

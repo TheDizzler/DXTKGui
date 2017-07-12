@@ -37,10 +37,12 @@ void TexturePanel::setTexture(unique_ptr<GraphicsAsset> gfx) {
 		showScrollBar = false;
 }
 
-void TexturePanel::update(double deltaTime) {
+bool TexturePanel::update(double deltaTime) {
+
+	bool refreshed = false;
 
 	if (!neverShowScrollBar && (showScrollBar || alwaysDisplayScrollBar)) {
-		verticalScrollBar->update(deltaTime);
+		refreshed = verticalScrollBar->update(deltaTime);
 
 		if (hitArea->contains(mouse->getPosition())) {
 			int mouseWheelDelta = mouse->scrollWheelValue();
@@ -53,6 +55,8 @@ void TexturePanel::update(double deltaTime) {
 		viewRect.top = movePercent;
 		viewRect.bottom = movePercent + getHeight();
 	}
+
+	return refreshed;
 }
 
 void TexturePanel::draw(SpriteBatch* batch) {
@@ -109,7 +113,7 @@ void TexturePanel::setLayerDepth(const float newDepth, bool frontToBack) {
 
 void TexturePanel::setScale(const Vector2& newScale) {
 	GUIControl::setScale(newScale);
-	
+
 	if (neverShowScrollBar)
 		return;
 	verticalScrollBar->setScale(newScale);

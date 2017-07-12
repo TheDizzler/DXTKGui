@@ -133,11 +133,14 @@ void MenuManager::pause() {
 	// do nothing?
 }
 
-void MenuManager::controllerRemoved(size_t controllerSlot) {
+
+void MenuManager::controllerRemoved(ControllerSocketNumber controllerSlot,
+	PlayerSlotNumber slotNumber) {
 }
 
-void MenuManager::newController(HANDLE joyHandle) {
+void MenuManager::newController(shared_ptr<Joystick> newStick) {
 }
+
 
 void MenuManager::openMainMenu() {
 
@@ -282,6 +285,12 @@ void MainScreen::draw(SpriteBatch* batch) {
 	//dynamicDialog->draw(batch);
 }
 
+void MainScreen::controllerRemoved(ControllerSocketNumber controllerSlot, PlayerSlotNumber slotNumber) {
+}
+
+void MainScreen::newController(shared_ptr<Joystick> newStick) {
+}
+
 
 
 
@@ -305,13 +314,13 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	 //Labels for displaying pressed info
 	adapterLabel = guiFactory->createTextLabel(controlPos, L"Test");
 	adapterLabel->setHoverable(true);
-	guiControls.push_back(adapterLabel);
+	//guiControls.push_back(adapterLabel);
 
 	controlPos.y += adapterLabel->getHeight() + MARGIN;
 
 	// create listbox of gfx cards
 	adapterListbox = guiFactory->createListBox(controlPos, 400, itemHeight);
-	guiControls.push_back(adapterListbox);
+	//guiControls.push_back(adapterListbox);
 	vector<ListItem*> adapterItems;
 	for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
 		AdapterItem* item = new AdapterItem();
@@ -331,13 +340,13 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 
 	controlPos.y += adapterListbox->getHeight() + MARGIN * 2;
 	displayLabel = guiFactory->createTextLabel(controlPos, L"A");
-	guiControls.push_back(displayLabel);
+	//guiControls.push_back(displayLabel);
 
 	controlPos.y += displayLabel->getHeight() + MARGIN;
 
 	// create listbox of monitors available to pressed gfx card
 	displayListbox = guiFactory->createListBox(controlPos, 400, itemHeight);
-	guiControls.push_back(displayListbox);
+	//guiControls.push_back(displayListbox);
 	// because only the one adapter has displays on my laptop
 	// this has to be grab the first (and only) display.
 	populateDisplayList(game->getDisplayListFor(0));
@@ -361,7 +370,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	}
 
 	testSpinner->addItems(items);
-	guiControls.push_back(testSpinner);
+	//guiControls.push_back(testSpinner);
 
 
 	 //Setup display mode combobox
@@ -396,11 +405,11 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	check->setActionListener(onClickFullScreen);
 	check->setChecked(Globals::FULL_SCREEN);
 
-	guiControls.push_back(check);
+	//guiControls.push_back(check);
 
 	testLabel = guiFactory->createTextLabel(
 		Vector2(250, 450), L"Test Messages here");
-	guiControls.push_back(testLabel);
+	//guiControls.push_back(testLabel);
 
 	// Create Apply and Cancel Buttons
 	ImageButton* button = (ImageButton*) guiFactory->
@@ -445,6 +454,14 @@ void ConfigScreen::draw(SpriteBatch* batch) {
 	for (auto const& control : guiControls)
 		control->draw(batch);
 }
+
+
+void ConfigScreen::controllerRemoved(ControllerSocketNumber controllerSlot, PlayerSlotNumber slotNumber) {
+}
+
+void ConfigScreen::newController(shared_ptr<Joystick> newStick) {
+}
+
 
 void ConfigScreen::populateDisplayList(vector<ComPtr<IDXGIOutput>> displays) {
 

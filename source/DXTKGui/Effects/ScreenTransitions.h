@@ -29,25 +29,29 @@ namespace ScreenTransitions {
 		/* SourceRect for whole screen. */
 		RECT screenRect;
 	};
-	/** Return true when transition complete. */
-	/*typedef bool (ScreenTransition::*RunScreen) (double, Screen*);
-	typedef void (ScreenTransition::*DrawScreen) (SpriteBatch*);
-	typedef void (ScreenTransition::*ResetScreen) (Screen*);*/
 
 
 	class ScreenTransitionManager {
 	public:
+		
+		ScreenTransitionManager();
 		ScreenTransitionManager(GUIFactory* guiFactory,
 			const char_t* bgName = "Default Transition BG");
+		//ScreenTransitionManager& ScreenTransitionManager::operator=(ScreenTransitionManager&);
 		virtual ~ScreenTransitionManager();
+
+		void initialize(GUIFactory* guiFactory,
+			const char_t* bgName = "Default Transition BG", bool resizeBGToFit = true);
 
 		void setTransition(ScreenTransition* effect);
 		void transitionBetween(Screen* oldScreen, Screen* newScreen,
-			float transitionTime = .5);
+			float transitionTime = .5, bool autoBatchDraw = true);
 
 		/** Return true when transition complete. */
 		bool runTransition(double deltaTime);
 		void drawTransition(SpriteBatch* batch);
+
+		Screen* newScreen = NULL;
 	private:
 		ScreenTransition* transition = NULL;
 		unique_ptr<Sprite> bg;
@@ -66,8 +70,6 @@ namespace ScreenTransitions {
 		virtual void reset() override;
 
 	private:
-		//SpriteEffects currentOrientation;
-		//SpriteEffects startOrientation;
 
 		Vector2 position = Vector2::Zero;
 		Vector2 origin = Vector2::Zero;

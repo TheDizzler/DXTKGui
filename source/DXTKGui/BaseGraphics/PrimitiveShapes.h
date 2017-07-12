@@ -35,7 +35,7 @@ public:
 	void refreshDimensions();
 
 	virtual unique_ptr<GraphicsAsset> texturize() override;
-	virtual void textureDraw(SpriteBatch* batch) override;
+	virtual void textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device = NULL) override;
 
 	virtual void setPosition(const Vector2& newPosition) override;
 	virtual void moveBy(const Vector2& moveVector) override;
@@ -44,7 +44,7 @@ public:
 	virtual void setTint(const Color& color) override;
 	virtual void setTint(const XMVECTORF32 color) override;
 
-	virtual void update();
+	virtual bool update();
 	void draw(SpriteBatch* batch);
 
 	virtual const Vector2& getPosition() const override;

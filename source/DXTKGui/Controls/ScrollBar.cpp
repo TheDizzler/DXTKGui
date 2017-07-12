@@ -180,11 +180,12 @@ void ScrollBar::setScrollBar(int totalItems, int itemHeight, int maxDisplayItems
 }
 
 
-void ScrollBar::update(double deltaTime) {
+bool ScrollBar::update(double deltaTime) {
 
+	bool refreshed = false;
 	isHover = scrollBarTrack->getHitArea()->contains(mouse->getPosition());
 
-	scrubber->update(deltaTime, mouse.get());
+	refreshed = scrubber->update(deltaTime, mouse.get());
 
 	if (!scrubber->hovering() && isHover && mouse->leftButton()) {
 
@@ -205,8 +206,11 @@ void ScrollBar::update(double deltaTime) {
 
 	}
 
-	scrollBarDownButton->update(deltaTime);
-	scrollBarUpButton->update(deltaTime);
+	if (scrollBarDownButton->update(deltaTime))
+		refreshed = true;
+	if (scrollBarUpButton->update(deltaTime))
+		refreshed = true;
+
 	// change this to actionlisteners, or nah?
 	if (scrollBarDownButton->pressed()) {
 		// scroll down
@@ -242,6 +246,8 @@ void ScrollBar::update(double deltaTime) {
 		firstClickTimer = 0;
 
 	percentScroll = scrubber->percentAt;
+
+	return refreshed;
 }
 
 
@@ -384,27 +390,35 @@ void Scrubber::setDimensions(const Sprite* scrollBarTrack,
 
 }
 
-void Scrubber::update(double deltaTime, MouseController* mouse) {
+bool Scrubber::update(double deltaTime, MouseController* mouse) {
 
+	bool refreshed = false;
+	bool wasPressed = false;
 	isHover = hitArea->contains(mouse->getPosition());
 
 	if (isHover && mouse->leftButton() && !mouse->leftButtonLast()) {
 		isPressed = true;
 		pressedPosition = mouse->getPosition().y - position.y;
 
-	} else if (!mouse->leftButton())
+	} else if (!mouse->leftButton()) {
+		wasPressed = isPressed;
 		isPressed = false;
+	}
 
 	if (isPressed) {
 		tint = selectedColor;
 		if (minMaxDifference == 0)
-			return;
+			return true;
 		setScrollPositionByCoord(mouse->getPosition().y - pressedPosition);
-
-	} else if (isHover)
+		refreshed = true;
+	} else if (isHover) {
 		tint = hoverColor;
-	else
+		refreshed = true;
+	} else if (wasPressed) {
 		tint = normalColor;
+		refreshed = true;
+	}
+	return refreshed;
 }
 
 void Scrubber::setPosition(const Vector2& pos) {

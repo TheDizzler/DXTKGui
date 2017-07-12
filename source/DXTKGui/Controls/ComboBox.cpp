@@ -31,6 +31,7 @@ bool ComboBox::initialize(shared_ptr<FontSet> fnt,
 	comboListButton->setPosition(
 		Vector2(position.x + width - comboListButton->getWidth(), position.y));
 	comboListButton->setActionListener(new ShowListBoxListener(this));
+
 	frame.reset(guiFactory->createRectangleFrame(
 		position, Vector2(width, comboListButton->getScaledHeight())));
 
@@ -44,6 +45,12 @@ bool ComboBox::initialize(shared_ptr<FontSet> fnt,
 	selectedBackgroundSprite.reset(guiFactory->createRectangle(position,
 		Vector2(width, comboListButton->getScaledHeight()), Color(.5, .5, .5, 1)));
 
+	height = frame->getHeight();
+
+	texturePanel.reset(guiFactory->createPanel());
+
+
+
 	return true;
 }
 
@@ -51,21 +58,32 @@ void ComboBox::setScrollBar(ScrollBarDesc& scrollBarDesc) {
 	listBox->setScrollBar(scrollBarDesc);
 }
 
-void ComboBox::update(double deltaTime) {
+bool ComboBox::update(double deltaTime) {
 
 	if (frame->contains(mouse->getPosition()) && mouse->clicked()) {
 		comboListButton->onClick();
+		refreshTexture = true;
 	}
 
-	selectedLabel->update(deltaTime);
-	comboListButton->update(deltaTime);
-	frame->update();
+	if (selectedLabel->update(deltaTime))
+		refreshTexture = true;
+	if (comboListButton->update(deltaTime))
+		refreshTexture = true;
+	if (frame->update())
+		refreshTexture = true;
 
 
 	if (isOpen) {
-		listBox->update(deltaTime);
+		if (listBox->update(deltaTime))
+			refreshTexture = true;
 	}
 
+	if (refreshTexture) {
+		texturePanel->setTexture(texturize());
+		refreshTexture = false;
+		return true;
+	}
+	return false;
 }
 
 void ComboBox::draw(SpriteBatch* batch) {
@@ -74,10 +92,46 @@ void ComboBox::draw(SpriteBatch* batch) {
 		listBox->draw(batch);
 	}
 
+	texturePanel->draw(batch);
+	/*selectedBackgroundSprite->draw(batch);
+	selectedLabel->draw(batch);
+	comboListButton->draw(batch);
+	frame->draw(batch);*/
+}
+
+
+unique_ptr<GraphicsAsset> ComboBox::texturize() {
+	return move(guiFactory->createTextureFromIElement2D(this));
+}
+
+void ComboBox::textureDraw(SpriteBatch * batch, ComPtr<ID3D11Device> device) {
+
 	selectedBackgroundSprite->draw(batch);
 	selectedLabel->draw(batch);
 	comboListButton->draw(batch);
 	frame->draw(batch);
+}
+
+void ComboBox::setPosition(const Vector2& pos) {
+	Vector2 moveDiff = pos - position;
+	position = pos;
+	selectedBackgroundSprite->moveBy(moveDiff);
+	selectedLabel->moveBy(moveDiff);
+	comboListButton->moveBy(moveDiff);
+	frame->moveBy(moveDiff);
+
+	listBox->moveBy(moveDiff);
+	texturePanel->setTexturePosition(pos);
+}
+
+void ComboBox::moveBy(const Vector2 & moveVector) {
+	position += moveVector;
+	selectedBackgroundSprite->moveBy(moveVector);
+	selectedLabel->moveBy(moveVector);
+	comboListButton->moveBy(moveVector);
+	frame->moveBy(moveVector);
+	listBox->moveBy(moveVector);
+	texturePanel->setTexturePosition(position);
 }
 
 
@@ -136,7 +190,7 @@ const int ComboBox::getWidth() const {
 }
 
 const int ComboBox::getHeight() const {
-	return hitArea->size.y;
+	return height;
 }
 
 bool ComboBox::clicked() {

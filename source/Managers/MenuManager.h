@@ -113,7 +113,8 @@ private:
 
 class TestButtonActionListener : public Button::ActionListener {
 public:
-	TestButtonActionListener(DynamicDialog* dlg) : dialog(dlg){}
+	TestButtonActionListener(DynamicDialog* dlg) : dialog(dlg) {
+	}
 	virtual void onClick(Button* button) override;
 	virtual void onPress(Button* button) override;
 	virtual void onHover(Button* button) override;
@@ -138,8 +139,9 @@ public:
 
 	virtual void pause() override;
 
-	virtual void controllerRemoved(size_t controllerSlot);
-	virtual void newController(HANDLE joyHandle);
+	virtual void controllerRemoved(ControllerSocketNumber controllerSlot,
+		PlayerSlotNumber slotNumber) override;
+	virtual void newController(shared_ptr<Joystick> newStick) override;
 
 	unique_ptr<ScreenTransitions::ScreenTransitionManager> transitionManager;
 
@@ -202,6 +204,10 @@ public:
 	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
+	virtual void controllerRemoved(ControllerSocketNumber controllerSlot,
+		PlayerSlotNumber slotNumber) override;
+	virtual void newController(shared_ptr<Joystick> newStick) override;
+
 private:
 
 	void populateDisplayList(vector<ComPtr<IDXGIOutput> > displays);
@@ -228,10 +234,13 @@ public:
 	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
+	virtual void controllerRemoved(ControllerSocketNumber controllerSlot,
+		PlayerSlotNumber slotNumber) override;
+	virtual void newController(shared_ptr<Joystick> newStick) override;
 private:
 	shared_ptr<MouseController> mouse;
-	//unique_ptr<PromptDialog> exitDialog;
 	unique_ptr<DynamicDialog> dynamicDialog;
 	TextLabel* mouseLabel;
+
 };
 

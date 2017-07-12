@@ -26,29 +26,12 @@ Sprite::Sprite(const Vector2& pos) {
 
 
 Sprite::~Sprite() {
-	wostringstream woo;
-	woo << L"\n\n *** Sprite Release *** " << endl;
-	if (isPixel)
-		woo << L"\tIs pixel: " << L"True" << endl;
-	else
-		woo << L"\tIs pixel: " << L"False" << endl;
-
-	woo << "\t\tResource release #: " << texture.Reset() << endl;
-	//OutputDebugString(woo.str().c_str());
+	texture.Reset();
 
 }
 
 /* GraphicsAsset is not stored in Sprite. */
 void Sprite::load(GraphicsAsset* const graphicsAsset) {
-
-	wostringstream woo;
-	woo << L"\n\n *** Sprite Load *** " << endl;
-	if (isPixel)
-		woo << L"\tIs pixel: " << L"True" << endl;
-	else
-		woo << L"\tIs pixel: " << L"False" << endl;
-	woo << "\t\tResource release #: " << texture.Reset() << "\n\t";
-	//OutputDebugString(woo.str().c_str());
 
 	texture = graphicsAsset->getTexture();
 	width = graphicsAsset->getWidth();
@@ -66,10 +49,8 @@ void Sprite::load(GraphicsAsset* const graphicsAsset) {
 
 
 void Sprite::draw(SpriteBatch* batch) {
-
 	batch->Draw(texture.Get(), position, &sourceRect, tint, rotation,
-		origin, scale, SpriteEffects_None, layerDepth);
-
+		origin, scale, spriteEffect, layerDepth);
 }
 
 
@@ -158,7 +139,6 @@ void Sprite::setPosition(const Vector2& pos) {
 	position = pos;
 	hitArea->position = Vector2(position.x - origin.x*scale.x,
 		position.y - origin.y*scale.y);
-	//hitArea->size = Vector2(width*scale.x, height*scale.y);
 }
 
 
