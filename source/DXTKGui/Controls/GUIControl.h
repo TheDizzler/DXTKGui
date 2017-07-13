@@ -22,12 +22,6 @@ public:
 
 	virtual ~GUIControl();
 
-	/* Deprecating */
-	enum ClickAction {
-		EXIT, PLAY, SETTINGS, CANCEL, OK, UP, DOWN, NONE, CONFIRM,
-		NEUTRAL, SELECTION_CHANGED
-	};
-
 	/** Return true if GUIControl has refreshed its texture and parent GUIControls
 		need to redraw themselves. */
 	virtual bool update(double deltaTime) = 0;
@@ -84,15 +78,10 @@ public:
 
 	bool contains(const Vector2& point);
 
-	//GraphicsAsset* createTexture();
-
 	virtual bool clicked() = 0;
 	/* Is Mouse Button down over control? */
 	virtual bool pressed() = 0;
 	virtual bool hovering() = 0;
-
-	/* Deprecating this method of control. Use ActionListeners instead. */
-	ClickAction action;
 
 
 protected:

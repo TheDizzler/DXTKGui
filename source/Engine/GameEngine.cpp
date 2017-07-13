@@ -187,11 +187,10 @@ void GameEngine::update(double deltaTime) {
 void GameEngine::render() {
 
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), Colors::PeachPuff);
-	batch->Begin(SpriteSortMode_Deferred, blendState->NonPremultiplied());
+	batch->Begin(SpriteSortMode_FrontToBack, blendState->NonPremultiplied());
 	{
 		game->draw(batch.get());
 		showDialog->draw(batch.get());
-		guiOverlay->draw(batch.get());
 		mouse->draw(batch.get());
 	}
 	batch->End();

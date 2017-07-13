@@ -1,4 +1,5 @@
 #include "GUIFactory.h"
+#include "CommonStates.h"
 
 bool GUIFactory::initialized = false;
 
@@ -575,7 +576,7 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromIElement2D(
 	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), bgColor);
 
 	if (autoBatchDraw) {
-		batch->Begin(SpriteSortMode_Deferred);
+		batch->Begin(SpriteSortMode_Deferred/*, CommonStates(device.Get()).NonPremultiplied()*/);
 		{
 			control->textureDraw(batch);
 		}

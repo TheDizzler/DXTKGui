@@ -35,6 +35,7 @@ public:
 	virtual void setTint(const XMFLOAT4 color) override;
 	virtual void setTint(const Color& color) override;
 	virtual void setTint(const XMVECTORF32 color) override;
+	virtual void setAlpha(const float alpha) override;
 	virtual void setScale(const Vector2& scl) override;
 	/** bool frontToBack has no effect in TextLabel. */
 	virtual void setLayerDepth(const float newDepth, bool frontToBack = true) override;

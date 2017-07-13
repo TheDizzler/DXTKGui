@@ -17,7 +17,6 @@ GUIOverlay::GUIOverlay() {
 
 GUIOverlay::~GUIOverlay() {
 
-	fpsLabel.reset();
 	lostJoyDialogs.clear();
 	displayingLostJoys.clear();
 }

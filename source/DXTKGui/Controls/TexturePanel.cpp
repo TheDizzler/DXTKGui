@@ -63,7 +63,7 @@ void TexturePanel::draw(SpriteBatch* batch) {
 
 	if (gfxAsset != NULL) {
 		batch->Draw(texture.Get(), position, &viewRect,
-			Color(1, 1, 1, 1), rotation, origin, scale, SpriteEffects_None, layerDepth);
+			tint, rotation, origin, scale, SpriteEffects_None, layerDepth);
 
 		if (!neverShowScrollBar && (showScrollBar || alwaysDisplayScrollBar)) {
 			verticalScrollBar->draw(batch);

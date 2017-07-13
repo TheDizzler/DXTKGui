@@ -33,11 +33,11 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 	Vector2 newSize = size;
 
 
-	if ((labelSize.x + textMargin * 2) > size.x) {
-		newSize.x = labelSize.x + textMargin * 2;
+	if ((labelSize.x + (textMargin + frameThickness) * 2) > size.x) {
+		newSize.x = labelSize.x + (textMargin + frameThickness) * 2;
 	}
-	if ((labelSize.y + textMargin * 2) > size.y) {
-		newSize.y = labelSize.y + textMargin * 2;
+	if ((labelSize.y + (textMargin + frameThickness) * 2) > size.y) {
+		newSize.y = labelSize.y + (textMargin + frameThickness) * 2;
 	}
 
 	hitArea->size = newSize;
@@ -45,11 +45,11 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 	width = newSize.x;
 	height = newSize.y;
 
-	frame->setDimensions(position, hitArea->size);
+	frame->setDimensions(position, hitArea->size, frameThickness);
 	rectSprite->setDimensions(position, hitArea->size);
 
 	setPosition(pos);
-	setLayerDepth(.9);
+	setLayerDepth(layerDepth);
 
 	setToUnpressedState();
 
@@ -133,7 +133,7 @@ unique_ptr<GraphicsAsset> Button::texturize() {
 	return guiFactory->createTextureFromIElement2D(this);
 }
 
-void Button::textureDraw(SpriteBatch * batch, ComPtr<ID3D11Device> device) {
+void Button::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
 
 	rectSprite->draw(batch);
 	frame->draw(batch);
@@ -166,22 +166,24 @@ void Button::setText(wstring text) {
 
 	buttonLabel->setText(text);
 
-	Vector2 labelSize = measureString();
-
-	if ((labelSize.x + textMargin * 2) > hitArea->size.x) {
-		hitArea->size.x = labelSize.x + textMargin * 2;
-	}
-	if ((labelSize.y + textMargin * 2) > hitArea->size.y) {
-		hitArea->size.y = labelSize.y + textMargin * 2;
-	}
-
-	projectedHitArea->size = hitArea->size;
-	width = hitArea->size.x;
-	height = hitArea->size.y;
-
 	// SET POSITION if dimensions have been set
 	if (position != Vector2(-1, -1))
 		setDimensions(position, hitArea->size, frame->getThickness());
+	else {
+		Vector2 labelSize = measureString();
+
+		if ((labelSize.x + (textMargin + frameThickness) * 2) > hitArea->size.x) {
+			hitArea->size.x = labelSize.x + (textMargin + frameThickness) * 2;
+		}
+		if ((labelSize.y + (textMargin + frameThickness) * 2) > hitArea->size.y) {
+			hitArea->size.y = labelSize.y + (textMargin + frameThickness) * 2;
+		}
+
+		projectedHitArea->size = hitArea->size;
+		width = hitArea->size.x;
+		height = hitArea->size.y;
+	}
+
 }
 
 const wchar_t* Button::getText() {
@@ -203,21 +205,30 @@ void Button::setTextOffset(const Vector2& unpressedOffset,
 
 void Button::moveBy(const Vector2& moveVector) {
 	GUIControl::moveBy(moveVector);
-	texturePanel->moveBy(position);
+
+	// really not sure why this is not needed... 
+	/*if (frame != NULL)
+		frame->moveBy(moveVector);*/
+	/*if (rectSprite != NULL)
+		rectSprite->moveBy(position);*/
+	//positionText();
+
+	//texturePanel->moveBy(position);
 }
 
 
 void Button::setPosition(const Vector2& pos) {
-
+	Vector2 oldpos = position;
 	GUIControl::setPosition(pos);
 
-	buttonLabel->setPosition(position);
-	if (frame != NULL)
+	if (oldpos == Vector2(-1, -1))
+		setDimensions(position, hitArea->size, frame->getThickness());
+
+	//if (frame != NULL)
 		frame->setPosition(position);
-	if (rectSprite != NULL)
+	//if (rectSprite != NULL)
 		rectSprite->setDimensions(position, hitArea->size);
 
-	// center text
 	positionText();
 
 	texturePanel->setPosition(position);
@@ -236,9 +247,11 @@ void Button::positionText() {
 		//	resized = false;
 		//} else
 		newPos = Vector2(
-			position.x + (getScaledWidth() - textsize.x) / 2,
-			position.y + (getScaledHeight() - textsize.y) / 2);
+			(position.x) + (getScaledWidth() - textsize.x) / 2,
+			(position.y ) + (getScaledHeight() - textsize.y) / 2);
 
+		//float frontdiff = newPos.x - position.x;
+		//float backdiff = (position.x + getScaledWidth()) -(newPos.x + textsize.x);
 
 		unpressedTextPosition = newPos;
 		unpressedTextPosition += unpressedTextOffset;
@@ -365,11 +378,6 @@ ImageButton::ImageButton(GUIFactory* factory, shared_ptr<MouseController> mouseC
 
 
 ImageButton::~ImageButton() {
-	//OutputDebugString(L"\n\n*** ImageButton Release ***\n\t =>");
-	//texture = NULL;
-	//normalSprite.reset();
-	//pressedSprite.reset();
-	//OutputDebugString(L"*** ImageButton Done ***\n");
 }
 
 
@@ -392,14 +400,23 @@ void ImageButton::setText(wstring text) {
 	positionText();
 }
 
+void ImageButton::moveBy(const Vector2& moveVector) {
+	Button::moveBy(moveVector);
+	//normalSprite->moveBy(moveVector);
+}
+
 void ImageButton::setPosition(const Vector2& pos) {
 
-	Button::setPosition(pos);
+	//Button::setPosition(pos);
+	GUIControl::setPosition(pos);
 	Vector2 spritePos = position;
 	spritePos.x += normalSprite->getWidth() / 2;
 	spritePos.y += normalSprite->getHeight() / 2;
 	normalSprite->setPosition(spritePos);
 
+	positionText();
+
+	texturePanel->setPosition(position);
 }
 
 void ImageButton::setScale(const Vector2& scl) {

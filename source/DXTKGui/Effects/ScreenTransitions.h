@@ -35,8 +35,8 @@ namespace ScreenTransitions {
 	public:
 		
 		ScreenTransitionManager();
-		ScreenTransitionManager(GUIFactory* guiFactory,
-			const char_t* bgName = "Default Transition BG");
+		/*ScreenTransitionManager(GUIFactory* guiFactory,
+			const char_t* bgName = "Default Transition BG");*/
 		//ScreenTransitionManager& ScreenTransitionManager::operator=(ScreenTransitionManager&);
 		virtual ~ScreenTransitionManager();
 

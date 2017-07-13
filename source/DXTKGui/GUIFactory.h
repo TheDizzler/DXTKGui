@@ -56,7 +56,8 @@ public:
 			even if the text is updating every second (have not tested it at more than 1 update
 			a second but it should remain more efficient as long as the changes made
 			to the text is less frequent than the amount of draw commands.)
-			Only set to false if using a throw away text that won't be drawn. */
+			Only set to false if using a throw away text that won't be drawn
+			OR you need a textlabel that updates in real-time (not reccomended). */
 	TextLabel* createTextLabel(const Vector2& position,
 		wstring text = L"", const char_t* fontName = "Default Font",
 		bool useTexture = true);

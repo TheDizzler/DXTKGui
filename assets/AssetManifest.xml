@@ -10,8 +10,8 @@
 
 
 		<spritesheet name="Default GUI Sprites" file ="default gui spritesheet.dds">
-			<sprite name="Spinner Up Button" x="1" y="0" width="30" height="16" />
-			<sprite name="Spinner Down Button" x="33" y="0" width="30" height="16" />
+			<sprite name="Spinner Up Button" x="0" y="0" width="32" height="16" />
+			<sprite name="Spinner Down Button" x="32" y="0" width="32" height="16" />
 
 			<spriteset name="Dynamic Dialog">
 				<sprite name="Top Left Corner" x="0" y="17" width="16" height="16" />

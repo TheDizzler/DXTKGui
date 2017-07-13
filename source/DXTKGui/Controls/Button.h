@@ -33,7 +33,7 @@ public:
 
 	void setTextOffset(const Vector2& unpressedOffset, const Vector2& pressedOffset);
 	virtual void moveBy(const Vector2& moveVector) override;
-	/* position is topleft of button. */
+	/* Position is topleft of button. */
 	virtual void setPosition(const Vector2& moveVector) override;
 	virtual const Vector2& getPosition() const override;
 
@@ -103,6 +103,7 @@ protected:
 	OnClickFunction onHoverFunction;
 	OnClickFunction onPressFunction;
 
+	/* center text and repositions pressed and unpressed text */
 	void positionText();
 	int width = 0;
 	int height = 0;
@@ -113,8 +114,8 @@ protected:
 
 	unique_ptr<TextLabel> buttonLabel;
 	/* Offsets textlabel position.*/
-	Vector2 unpressedTextOffset = Vector2::Zero;
-	Vector2 pressedTextOffset = Vector2::Zero;
+	Vector2 unpressedTextOffset = Vector2(-2, 0);
+	Vector2 pressedTextOffset = Vector2(-2, 0);
 	Vector2 unpressedTextPosition;
 	Vector2 pressedTextPosition;
 
@@ -146,6 +147,7 @@ public:
 
 	virtual void setText(wstring text) override;
 
+	virtual void moveBy(const Vector2& moveVector) override;
 	virtual void setPosition(const Vector2& position) override;
 	virtual void setScale(const Vector2& scale) override;
 	/** Remember: Rotation is around the origin! */

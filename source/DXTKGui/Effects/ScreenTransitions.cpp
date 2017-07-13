@@ -7,27 +7,6 @@ ScreenTransitions::ScreenTransitionManager::ScreenTransitionManager() {
 }
 
 
-ScreenTransitionManager::ScreenTransitionManager(GUIFactory* factory, const char_t* bgName) {
-
-	guiFactory = factory;
-	bg = move(guiFactory->getSpriteFromAsset(bgName));
-	if (bg == NULL) {
-		bg = guiFactory->getSpriteFromAsset("Default Transition BG");
-	}
-	bg->setPosition(Vector2(bg->getWidth() / 2, bg->getHeight() / 2));
-	bg->setOrigin(bg->getPosition());
-}
-
-//
-//ScreenTransitionManager& ScreenTransitions::ScreenTransitionManager::operator=(
-//	ScreenTransitionManager& copy) {
-//
-//	guiFactory = copy.guiFactory;
-//	bg = move(copy.bg);
-//	transition = copy.transition;
-//
-//}
-
 ScreenTransitionManager::~ScreenTransitionManager() {
 	if (transition != NULL)
 		delete transition;

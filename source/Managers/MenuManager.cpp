@@ -41,7 +41,8 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContro
 		exitDialog->setTitle(L"Exit Test?", Vector2(1, 1), "BlackCloak");
 		exitDialog->setText(L"Really Quit The Test Project?");
 		unique_ptr<Button> quitButton;
-		quitButton.reset(guiFactory->createImageButton("Button Up", "Button Down"));
+		//quitButton.reset(guiFactory->createImageButton("Button Up", "Button Down"));
+		quitButton.reset(guiFactory->createButton());
 		quitButton->setActionListener(new OnClickListenerDialogQuitButton(this));
 		quitButton->setText(L"Quit");
 		exitDialog->setConfirmButton(move(quitButton), true, false);
@@ -80,9 +81,8 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContro
 
 	currentScreen = mainScreen.get();
 
-	transitionManager.reset(
-		new ScreenTransitions::ScreenTransitionManager(
-			guiFactory.get(), "Test BG"));
+	transitionManager = make_unique<ScreenTransitions::ScreenTransitionManager>();
+	transitionManager->initialize(guiFactory.get(), "Test BG");
 	transitionManager->setTransition(
 		//new ScreenTransitions::FlipScreenTransition(true));
 		new ScreenTransitions::SquareFlipScreenTransition());
@@ -254,11 +254,12 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	guiControls.push_back(button);
 
 
-	mouseLabel = guiFactory->createTextLabel(Vector2(10, 100), L"Mouse Label", "Default Font", false);
+	mouseLabel = guiFactory->createTextLabel(Vector2(0, 0), L"Mouse Label", "Default Font", false);
 	mouseLabel->setAlpha(.1);
 	mouseLabel->setHoverable(true);
 	guiControls.push_back(mouseLabel);
 
+	mouse->setAlpha(.1);
 
 	return true;
 }
@@ -314,13 +315,13 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	 //Labels for displaying pressed info
 	adapterLabel = guiFactory->createTextLabel(controlPos, L"Test");
 	adapterLabel->setHoverable(true);
-	//guiControls.push_back(adapterLabel);
+	guiControls.push_back(adapterLabel);
 
 	controlPos.y += adapterLabel->getHeight() + MARGIN;
 
 	// create listbox of gfx cards
 	adapterListbox = guiFactory->createListBox(controlPos, 400, itemHeight);
-	//guiControls.push_back(adapterListbox);
+	guiControls.push_back(adapterListbox);
 	vector<ListItem*> adapterItems;
 	for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
 		AdapterItem* item = new AdapterItem();
@@ -340,20 +341,20 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 
 	controlPos.y += adapterListbox->getHeight() + MARGIN * 2;
 	displayLabel = guiFactory->createTextLabel(controlPos, L"A");
-	//guiControls.push_back(displayLabel);
+	guiControls.push_back(displayLabel);
 
 	controlPos.y += displayLabel->getHeight() + MARGIN;
 
 	// create listbox of monitors available to pressed gfx card
 	displayListbox = guiFactory->createListBox(controlPos, 400, itemHeight);
-	//guiControls.push_back(displayListbox);
+	guiControls.push_back(displayListbox);
 	// because only the one adapter has displays on my laptop
 	// this has to be grab the first (and only) display.
 	populateDisplayList(game->getDisplayListFor(0));
 	displayListbox->setSelected(game->getSelectedDisplayIndex());
 
 	displayLabel->setText(displayListbox->getSelected()->toString());
-
+	displayLabel->setHoverable(true);
 	// setup label for Display Mode
 
 	controlPos.y += 50;
@@ -370,7 +371,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	}
 
 	testSpinner->addItems(items);
-	//guiControls.push_back(testSpinner);
+	guiControls.push_back(testSpinner);
 
 
 	 //Setup display mode combobox
@@ -405,11 +406,11 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	check->setActionListener(onClickFullScreen);
 	check->setChecked(Globals::FULL_SCREEN);
 
-	//guiControls.push_back(check);
+	guiControls.push_back(check);
 
 	testLabel = guiFactory->createTextLabel(
 		Vector2(250, 450), L"Test Messages here");
-	//guiControls.push_back(testLabel);
+	guiControls.push_back(testLabel);
 
 	// Create Apply and Cancel Buttons
 	ImageButton* button = (ImageButton*) guiFactory->

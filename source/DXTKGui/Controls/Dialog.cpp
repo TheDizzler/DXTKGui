@@ -188,7 +188,7 @@ void PromptDialog::initialize(const pugi::char_t* font) {
 	dialogText.reset(guiFactory->createTextLabel(Vector2::Zero, L"", font, false));
 	dialogText->setTint(Color(0, 0, 0, 1));
 
-	setLayerDepth(.95);
+	setLayerDepth(.99);
 
 	texturePanel.reset(guiFactory->createPanel());
 }
@@ -498,7 +498,6 @@ void PromptDialog::setCancelButton(unique_ptr<Button> cancelButton,
 		cancelButtonPosition = controls[ButtonCancel]->getPosition();
 	}
 
-
 	controls[ButtonCancel]->setPosition(cancelButtonPosition);
 
 }
@@ -507,11 +506,10 @@ void PromptDialog::setCancelButton(wstring text, const pugi::char_t * font) {
 
 	unique_ptr<Button> cancelButton;
 	cancelButton.reset(guiFactory->createButton(font));
-	cancelButton->setDimensions(cancelButtonPosition, standardButtonSize, 3);
+	cancelButton->setDimensions(cancelButtonPosition, standardButtonSize, 17);
 	cancelButton->setActionListener(new OnClickListenerCancelButton(this));
 	controls[ButtonCancel].reset();
 	controls[ButtonCancel] = move(cancelButton);
-	controls[ButtonCancel]->action = ClickAction::CANCEL;
 	controls[ButtonCancel]->setText(text);
 	cancelButtonPosition.x =
 		position.x + size.x - controls[ButtonCancel]->getWidth() - buttonMargin - frameThickness;

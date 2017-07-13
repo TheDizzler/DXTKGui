@@ -1,5 +1,5 @@
 #include "ListBox.h"
-
+#include "../GUIFactory.h"
 
 ListBox::ListBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 	const Vector2& pos, const int len, size_t itmHght, const int maxItemsShown)
@@ -8,11 +8,10 @@ ListBox::ListBox(GUIFactory* factory, shared_ptr<MouseController> mouseControlle
 	position = pos;
 	width = len;
 	maxDisplayItems = maxItemsShown;
-	action = SELECTION_CHANGED;
 	itemHeight = itmHght;
 }
 
-#include "../StringHelper.h"
+
 ListBox::~ListBox() {
 
 	if (actionListener != NULL)
@@ -25,7 +24,7 @@ ListBox::~ListBox() {
 	delete emptyListItem;
 }
 
-#include "../GUIFactory.h"
+
 void ListBox::initialize(const pugi::char_t* fnt, GraphicsAsset* pixelAsset,
 	ScrollBar* scrllbr, bool enumerateList) {
 
@@ -119,6 +118,14 @@ void ListBox::resizeBox() {
 void ListBox::moveBy(const Vector2& moveBy) {
 	GUIControl::moveBy(moveBy);
 	firstItemPos += moveBy;
+	Vector2 pos = firstItemPos;
+
+	for (int i = firstItemToDisplay;
+		i < firstItemToDisplay + itemsToDisplay; ++i) {
+
+		listItems[i]->updatePosition(pos);
+		pos.y += itemHeight;
+	}
 	texturePanel->moveBy(moveBy);
 }
 
@@ -168,7 +175,8 @@ bool ListBox::update(double deltaTime) {
 			}
 		}
 
-		scrollBar->update(deltaTime);
+		if (scrollBar->update(deltaTime))
+			refreshPanel = true;
 
 		double dif = listItems.size();
 		firstItemToDisplay = round(scrollBar->percentScroll * (double) dif);
@@ -199,10 +207,10 @@ bool ListBox::update(double deltaTime) {
 	}
 
 	if (refreshPanel) {
-		texturePanel->setTexture(texturize());
-		texturePanel->setTexturePosition(firstItemPos);
-		refreshPanel = false;
 		frame->update();
+		texturePanel->setTexturePosition(firstItemPos);
+		texturePanel->setTexture(texturize());
+		refreshPanel = false;
 		return true;
 	}
 	return false;
@@ -398,6 +406,7 @@ bool ListItem::update(double deltaTime, MouseController* mouse) {
 			isSelected = true;
 			textLabel->setTint(selectedFontColor);
 			buttonDownLast = false;
+			textLabel->update(deltaTime);
 			return true;
 		}
 

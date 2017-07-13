@@ -12,6 +12,7 @@ TextLabel::TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseContr
 	useTexture = texture;
 	texturePanel.reset(guiFactory->createPanel());
 	setText(text);
+	setTint(normalColorText);
 }
 
 TextLabel::TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
@@ -22,6 +23,7 @@ TextLabel::TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseContr
 	useTexture = texture;
 	texturePanel.reset(guiFactory->createPanel());
 	setText(text);
+	setTint(normalColorText);
 }
 
 TextLabel::~TextLabel() {
@@ -73,6 +75,7 @@ bool TextLabel::update(double deltaTime) {
 
 	if (useTexture && refreshTexture) {
 		texturePanel->setTexture(texturize());
+		texturePanel->setAlpha(tint.w);
 		refreshTexture = false;
 		return true;
 	}
@@ -214,6 +217,11 @@ void TextLabel::setTint(const Color& color) {
 void TextLabel::setTint(const XMVECTORF32 color) {
 	tint = color;
 	refreshTexture = true;
+}
+
+void TextLabel::setAlpha(const float alpha) {
+	tint.w = alpha;
+	texturePanel->setAlpha(alpha);
 }
 
 void TextLabel::setScale(const Vector2 & scl) {

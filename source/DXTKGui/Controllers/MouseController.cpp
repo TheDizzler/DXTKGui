@@ -8,6 +8,7 @@ MouseController::MouseController(HWND h) {
 	hwnd = h;
 	mouse.reset(new Mouse());
 	mouse->SetWindow(hwnd);
+	layerDepth = 1.0;
 
 }
 

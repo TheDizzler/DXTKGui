@@ -23,7 +23,7 @@ void Spinner::initialize(const pugi::char_t* fontName,
 
 	label.reset(guiFactory->createTextLabel(Vector2::Zero, L"", fontName));
 	label->setTint(Vector4(0, 0, 0, 1));
-	label->setText("100");
+	label->setText("Empty");
 	if (label->getHeight() > itemHeight)
 		itemHeight = label->getHeight();
 
@@ -36,8 +36,10 @@ void Spinner::initialize(const pugi::char_t* fontName,
 
 
 	downButton.reset((ImageButton*) guiFactory->createImageButton(downButtonName));
-	downButton->setPosition(Vector2(position.x + width, position.y + (itemHeight - upButton->getHeight())));
 	downButton->setActionListener(new SpinnerDownButtonListener(this));
+	downButton->setPosition(
+		Vector2(position.x + width, position.y + (itemHeight - upButton->getHeight())));
+
 
 	frame.reset(guiFactory->createRectangleFrame());
 	frame->setDimensions(position, Vector2(width, itemHeight));
@@ -50,6 +52,8 @@ void Spinner::initialize(const pugi::char_t* fontName,
 	label->setPosition(labelpos);
 
 	texturePanel.reset(guiFactory->createPanel());
+
+	setLayerDepth(layerDepth);
 }
 
 
@@ -80,7 +84,12 @@ bool Spinner::update(double deltaTime) {
 
 
 void Spinner::draw(SpriteBatch* batch) {
-	texturePanel->draw(batch);
+	//texturePanel->draw(batch);
+	rectangle->draw(batch);
+	upButton->draw(batch);
+	downButton->draw(batch);
+	frame->draw(batch);
+	label->draw(batch);
 }
 
 void Spinner::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
@@ -101,7 +110,8 @@ void Spinner::addItems(vector<wstring> items) {
 			list.push_back(item);
 		}
 		upButton->setPosition(Vector2(position.x + width, position.y));
-		downButton->setPosition(Vector2(position.x + width, position.y + (itemHeight - upButton->getHeight())));
+		downButton->setPosition(Vector2(position.x + width, position.y +
+			(itemHeight - upButton->getHeight())));
 		frame->setSize(Vector2(width, itemHeight));
 		rectangle->setSize(Vector2(width, itemHeight));
 	} else {
@@ -121,15 +131,40 @@ const wstring Spinner::getSelected() const {
 }
 
 void Spinner::increase() {
+	if (list.size() <= 0)
+		return;
 	if (++selected >= list.size())
 		selected = 0;
 	label->setText(list[selected]);
 }
 
 void Spinner::decrease() {
+	if (list.size() <= 0)
+		return;
 	if (--selected >= list.size())
 		selected = list.size() - 1;
 	label->setText(list[selected]);
+}
+
+void Spinner::setLayerDepth(float newDepth, bool frontToBack) {
+	layerDepth = newDepth - .00001;
+	if (layerDepth < 0) {
+		if (!frontToBack)
+			layerDepth = .00001;
+		else
+			layerDepth = 0;
+	}
+	float nudge = .00000001;
+	if (!frontToBack)
+		nudge *= -1;
+
+
+
+	rectangle->setLayerDepth(layerDepth + nudge, frontToBack);
+	upButton->setLayerDepth(layerDepth + nudge * 2, frontToBack);
+	downButton->setLayerDepth(layerDepth + nudge * 2, frontToBack);
+	frame->setLayerDepth(layerDepth + nudge * 3, frontToBack);
+	label->setLayerDepth(layerDepth + nudge * 3, frontToBack);
 }
 
 
@@ -155,13 +190,21 @@ void Spinner::moveBy(const Vector2& moveVector) {
 	frame->moveBy(moveVector);
 	label->moveBy(moveVector);
 	position += moveVector;
+
+	texturePanel->moveBy(moveVector);
 }
 
 void Spinner::setPosition(const Vector2& newPosition) {
 
 	Vector2 change = newPosition - position;
-	moveBy(change);
+	position = newPosition;
+	rectangle->moveBy(change);
+	upButton->moveBy(change);
+	downButton->moveBy(change);
+	frame->moveBy(change);
+	label->moveBy(change);
 
+	texturePanel->setPosition(position);
 }
 
 const Vector2& Spinner::getPosition() const {
