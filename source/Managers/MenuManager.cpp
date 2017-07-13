@@ -41,8 +41,8 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContro
 		exitDialog->setTitle(L"Exit Test?", Vector2(1, 1), "BlackCloak");
 		exitDialog->setText(L"Really Quit The Test Project?");
 		unique_ptr<Button> quitButton;
-		//quitButton.reset(guiFactory->createImageButton("Button Up", "Button Down"));
-		quitButton.reset(guiFactory->createButton());
+		quitButton.reset(guiFactory->createImageButton("Button Up", "Button Down"));
+		//quitButton.reset(guiFactory->createButton());
 		quitButton->setActionListener(new OnClickListenerDialogQuitButton(this));
 		quitButton->setText(L"Quit");
 		exitDialog->setConfirmButton(move(quitButton), true, false);
@@ -254,12 +254,13 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	guiControls.push_back(button);
 
 
-	mouseLabel = guiFactory->createTextLabel(Vector2(0, 0), L"Mouse Label", "Default Font", false);
-	mouseLabel->setAlpha(.1);
+	mouseLabel = guiFactory->createTextLabel(
+		Vector2(0, 0), L"Mouse Label", "Default Font", false);
+	//mouseLabel->setAlpha(.1);
 	mouseLabel->setHoverable(true);
 	guiControls.push_back(mouseLabel);
 
-	mouse->setAlpha(.1);
+	mouse->setAlpha(.5);
 
 	return true;
 }
@@ -389,7 +390,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 		guiFactory->createComboBox(controlPos, 75, itemHeight, 10, true);
 
 	populateDisplayModeList(game->getDisplayModeList(0));
-	displayModeCombobox->setScrollBar(scrollBarDesc);
+	//displayModeCombobox->setScrollBar(scrollBarDesc);
 	displayModeCombobox->setSelected(game->getSelectedDisplayModeIndex());
 	OnClickListenerDisplayModeList* onClickDisplayMode =
 		new OnClickListenerDisplayModeList(this);

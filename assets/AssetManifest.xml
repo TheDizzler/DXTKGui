@@ -13,6 +13,14 @@
 			<sprite name="Spinner Up Button" x="0" y="0" width="32" height="16" />
 			<sprite name="Spinner Down Button" x="32" y="0" width="32" height="16" />
 
+			<sprite name="Combo Button Closed" x="64" y="0" width="32" height="32" />
+			<sprite name="Combo Button Opened" x="64" y="32" width="32" height="32" />
+
+			<sprite name="ScrollBar Up" x="96" y="64" width="32" height="32" />
+			<sprite name="ScrollBar Up Pressed" x="96" y="96" width="32" height="32" />
+			<sprite name="ScrollBar Down" x="64" y="64" width="32" height="32" />
+			<sprite name="ScrollBar Down Pressed" x="64" y="96" width="32" height="32" />
+
 			<spriteset name="Dynamic Dialog">
 				<sprite name="Top Left Corner" x="0" y="17" width="16" height="16" />
 				<sprite name="Top Center" x="20" y="17" width="16" height="16" />
@@ -24,17 +32,26 @@
 				<sprite name="Bottom Center" x="20" y="57" width="16" height="16" />
 				<sprite name="Bottom Right Corner" x="40" y="57" width="16" height="16" />
 			</spriteset>
+
+			
+
+			<sprite name="Mouse Icon" x="0" y="75" width="24" height="32" >
+				<!-- Set origin to the point you want be the clicky part. -->
+				<origin x="1" y="2" />
+			</sprite>
+			<sprite name="Mouse Arrow" x="26" y="75" width="29" height="30">
+				<!-- Set origin to the point you want be the clicky part. -->
+				<origin x="1" y="1" />
+			</sprite>
+			<sprite name="Mouse Reticle" x="0" y="109" width="16" height="16"/>
 		</spritesheet>
 
-		<sprite name="Mouse Arrow" file="Mouse Arrow.dds">
-			<!-- Set origin to the point you want be the clicky part. -->
-			<origin x="2" y="2" />
-		</sprite>
+		
 
 		<sprite name="Test BG" file="TestBG.dds" />
 		<sprite name="White Pixel" file="WhitePixel.dds" />
-		<sprite name="Mouse Icon" file="mouse icon.dds" />
-		<sprite name="Mouse Reticle" file="reticle (16x16).dds" />
+		
+		
 
 		<sprite name="Button Up" file="button up (256x64).dds" />
 		<sprite name="Button Down" file="button down (256x64).dds" />
@@ -46,15 +63,11 @@
 
 
 		<!-- Excessive buttons are excessive -->
-		<sprite name="Combo Button Closed" file="ComboButtonClosed.dds" />
-		<sprite name="Combo Button Opened" file="ComboButtonOpen.dds" />
-		<sprite name="ScrollBar Up" file="ScrollBarUp.dds" />
-		<sprite name="ScrollBar Up Pressed" file="ScrollBarUpPressed.dds" />
-		<sprite name="ScrollBar Down" file="ScrollBarDown.dds" />
-		<sprite name="ScrollBar Down Pressed" file="ScrollBarDownPressed.dds" />
+		
+		
 		<sprite name="ScrollBar Up Custom" file="ScrollBarUpCustom.dds" />
 		<sprite name="ScrollBar Up Pressed Custom" file="ScrollBarUpPressedCustom.dds" />
-		<sprite name="ScrollBar Track Custom" file="ScrollBarTrack.dds" />
+		<sprite name="ScrollBar Track Custom" file="ScrollBarTrackCustom.dds" />
 		<sprite name="Scrubber Custom" file="ScrubberCustom.dds" />
 
 

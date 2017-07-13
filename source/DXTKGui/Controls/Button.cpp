@@ -224,10 +224,8 @@ void Button::setPosition(const Vector2& pos) {
 	if (oldpos == Vector2(-1, -1))
 		setDimensions(position, hitArea->size, frame->getThickness());
 
-	//if (frame != NULL)
-		frame->setPosition(position);
-	//if (rectSprite != NULL)
-		rectSprite->setDimensions(position, hitArea->size);
+	frame->setPosition(position);
+	rectSprite->setDimensions(position, hitArea->size);
 
 	positionText();
 
@@ -240,18 +238,9 @@ void Button::positionText() {
 	if (textsize.x > 0) {
 
 		Vector2 newPos;
-		//if (resized) {
-		//	newPos = Vector2(
-		//		position.x + (getScaledWidth() - textsize.x) / 2 ,
-		//		position.y + (getScaledHeight() - textsize.y) / 2 /*+ textMargin*/);
-		//	resized = false;
-		//} else
 		newPos = Vector2(
 			(position.x) + (getScaledWidth() - textsize.x) / 2,
-			(position.y ) + (getScaledHeight() - textsize.y) / 2);
-
-		//float frontdiff = newPos.x - position.x;
-		//float backdiff = (position.x + getScaledWidth()) -(newPos.x + textsize.x);
+			(position.y) + (getScaledHeight() - textsize.y) / 2);
 
 		unpressedTextPosition = newPos;
 		unpressedTextPosition += unpressedTextOffset;
@@ -383,7 +372,15 @@ ImageButton::~ImageButton() {
 
 void ImageButton::draw(SpriteBatch* batch) {
 
-	batch->Draw(texture, normalSprite->getPosition(), &normalSprite->getRect(),
+	texturePanel->draw(batch);
+	/*batch->Draw(texture, normalSprite->getPosition(), &sourceRect,
+		tint, rotation, normalSprite->getOrigin(), scale, SpriteEffects_None, layerDepth);
+	buttonLabel->draw(batch);*/
+}
+
+void ImageButton::textureDraw(SpriteBatch * batch, ComPtr<ID3D11Device> device) {
+
+	batch->Draw(texture, normalSprite->getPosition(), &sourceRect,
 		tint, rotation, normalSprite->getOrigin(), scale, SpriteEffects_None, layerDepth);
 	buttonLabel->draw(batch);
 }
@@ -403,6 +400,7 @@ void ImageButton::setText(wstring text) {
 void ImageButton::moveBy(const Vector2& moveVector) {
 	Button::moveBy(moveVector);
 	//normalSprite->moveBy(moveVector);
+	texturePanel->setPosition(position);
 }
 
 void ImageButton::setPosition(const Vector2& pos) {
@@ -445,7 +443,9 @@ void ImageButton::setToUnpressedState() {
 	buttonLabel->setTint(normalColorText);
 	buttonLabel->setPosition(unpressedTextPosition);
 	tint = normalColor;
+
 	texture = normalSprite->getTexture().Get();
+	sourceRect = normalSprite->getRect();
 }
 
 void ImageButton::setToHoverState() {
@@ -453,14 +453,17 @@ void ImageButton::setToHoverState() {
 	buttonLabel->setTint(hoverColorText);
 	tint = hoverColor;
 	texture = normalSprite->getTexture().Get();
+	sourceRect = normalSprite->getRect();
 }
 
 void ImageButton::setToSelectedState() {
 
 	buttonLabel->setPosition(pressedTextPosition);
-	if (pressedSprite.get() != NULL)
+	tint = normalColor;
+	if (pressedSprite.get() != NULL) {
 		texture = pressedSprite->getTexture().Get();
-	else
+		sourceRect = pressedSprite->getRect();
+	}else
 		tint = selectedColor;
 }
 /** ***** END OF IMAGE BUTTON **** **/

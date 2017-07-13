@@ -1,5 +1,5 @@
 #include "ScrollBar.h"
-
+#include "../GUIFactory.h"
 
 /** **** SCROLLBAR **** **/
 ScrollBar::ScrollBar(GUIFactory* factory, shared_ptr<MouseController> mouseController,
@@ -12,7 +12,7 @@ ScrollBar::ScrollBar(GUIFactory* factory, shared_ptr<MouseController> mouseContr
 ScrollBar::~ScrollBar() {
 }
 
-#include "../GUIFactory.h"
+
 bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 	size_t barHght, ImageButton* scrollButtons[2], unique_ptr<Sprite> scrllBrTrck,
 	GraphicsAsset* scrbbr) {
@@ -56,8 +56,6 @@ bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 		barHeight - scrollBarUpButton->getHeight() * 2);
 
 	if (scrllBrTrck.get() == NULL) {
-		/*scrollBarTrack = make_unique<RectangleSprite>(pixelAsset->getTexture(),
-			scrollBarPosition, trackSize);*/
 		scrollBarTrack.reset(guiFactory->createRectangle(scrollBarPosition, trackSize));
 		scrollBarTrack->setTint(Color(.502, .502, .502, 1));
 	} else {
@@ -96,9 +94,6 @@ void ScrollBar::setPosition(const Vector2& newPosition) {
 	scrollBarTrack->setPosition(
 		Vector2(xPos, newPosition.y + scrollBarUpButton->getHeight()));
 
-	/*wostringstream ws;
-	ws << "newPosition.y: " << newPosition.y << "\n";
-	OutputDebugString(ws.str().c_str());*/
 
 	Vector2 scrubberPos = scrubber->getPosition();
 	scrubberPos.x = xPos;
@@ -216,6 +211,7 @@ bool ScrollBar::update(double deltaTime) {
 		// scroll down
 		if (firstClickTimer == 0) {
 			scrubber->scroll(percentForOneItem, scrubberPercentForOneItem);
+			refreshed = true;
 		}
 
 		firstClickTimer += deltaTime;
@@ -223,19 +219,24 @@ bool ScrollBar::update(double deltaTime) {
 			// start autoscrolling
 			scrubber->scroll(percentForOneItem, scrubberPercentForOneItem);
 			firstClickTimer = autoScrollDelay;
+			refreshed = true;
 		}
 
 	} else if (scrollBarUpButton->pressed()) {
 		// scroll up
-		if (firstClickTimer == 0)
+		if (firstClickTimer == 0) {
 			scrubber->scroll(-percentForOneItem, -scrubberPercentForOneItem);
+			refreshed = true;
+		}
 
 		firstClickTimer += deltaTime;
 		if (firstClickTimer >= autoScrollStartDelay) {
 			// start autoscrolling
 			scrubber->scroll(-percentForOneItem, -scrubberPercentForOneItem);
 			firstClickTimer = autoScrollDelay;
+			refreshed = true;
 		}
+
 	}
 
 	if (scrollBarDownButton->clicked()
@@ -342,7 +343,6 @@ const Vector2& XM_CALLCONV ScrollBar::measureString() const {
 Scrubber::Scrubber(GraphicsAsset* const graphicsAsset, bool pixel)
 	: RectangleSprite(graphicsAsset) {
 
-	//assetIsPixel = pixel;
 	isPixel = pixel;
 	hitArea = make_unique<HitArea>(Vector2::Zero, Vector2::Zero);
 }

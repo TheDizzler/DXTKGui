@@ -736,14 +736,12 @@ bool GUIFactory::getGUIAssetsFromXML() {
 	defaultFontFile = GUIAssets::defaultFontFile;
 	fontMap["Default Font"] = GUIAssets::defaultFontFile;
 
-	for (xml_node spriteNode = guiAssetsNode.child("sprite"); spriteNode;
-		spriteNode = spriteNode.next_sibling("sprite")) {
-
+	for (xml_node spriteNode : guiAssetsNode.children("sprite")) {
 		string file_s = guiDir + spriteNode.attribute("file").as_string();
 		const char_t* file = file_s.c_str();
 		const char_t* name = spriteNode.attribute("name").as_string();
 
-		string check = name; // I think this is required - ya, pretty sure it is
+		//string check = name; // I think this is required - ya, pretty sure it is
 		if (name == string("White Pixel")) {
 			if (StringHelper::reportError(
 				DirectX::CreateDDSTextureFromFile(
@@ -769,7 +767,7 @@ bool GUIFactory::getGUIAssetsFromXML() {
 			return false;
 		}
 
-		assetMap[check] = move(guiAsset);
+		assetMap[name] = move(guiAsset);
 	}
 
 	for (xml_node spritesheetNode : guiAssetsNode.children("spritesheet")) {
@@ -870,9 +868,7 @@ bool GUIFactory::getGUIAssetsFromXML() {
 		}
 
 		// parse all single sprites from spritesheet
-		for (xml_node spriteNode = spritesheetNode.child("sprite"); spriteNode;
-			spriteNode = spriteNode.next_sibling("sprite")) {
-
+		for (xml_node spriteNode : spritesheetNode.children("sprite")) {
 			const char_t* name = spriteNode.attribute("name").as_string();
 			if (spriteNode.attribute("set")) {
 				string setName = spriteNode.attribute("set").as_string();

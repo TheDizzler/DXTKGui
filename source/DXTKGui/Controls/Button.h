@@ -142,6 +142,8 @@ public:
 
 	virtual void draw(SpriteBatch* batch) override;
 
+	virtual void textureDraw(SpriteBatch * batch, ComPtr<ID3D11Device> device = NULL) override;
+
 	/* Changing size will change the scale.*/
 	void setDimensions(const Vector2& position, const Vector2& size);
 
@@ -163,6 +165,7 @@ private:
 	unique_ptr<Sprite> pressedSprite;
 
 	ID3D11ShaderResourceView* texture;
+	RECT sourceRect;
 };
 
 

@@ -506,7 +506,7 @@ void PromptDialog::setCancelButton(wstring text, const pugi::char_t * font) {
 
 	unique_ptr<Button> cancelButton;
 	cancelButton.reset(guiFactory->createButton(font));
-	cancelButton->setDimensions(cancelButtonPosition, standardButtonSize, 17);
+	cancelButton->setDimensions(cancelButtonPosition, standardButtonSize, 3);
 	cancelButton->setActionListener(new OnClickListenerCancelButton(this));
 	controls[ButtonCancel].reset();
 	controls[ButtonCancel] = move(cancelButton);

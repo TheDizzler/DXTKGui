@@ -52,6 +52,7 @@ void Spinner::initialize(const pugi::char_t* fontName,
 	label->setPosition(labelpos);
 
 	texturePanel.reset(guiFactory->createPanel());
+	texturePanel->setPosition(position);
 
 	setLayerDepth(layerDepth);
 }
@@ -84,12 +85,12 @@ bool Spinner::update(double deltaTime) {
 
 
 void Spinner::draw(SpriteBatch* batch) {
-	//texturePanel->draw(batch);
-	rectangle->draw(batch);
+	texturePanel->draw(batch);
+	/*rectangle->draw(batch);
 	upButton->draw(batch);
 	downButton->draw(batch);
 	frame->draw(batch);
-	label->draw(batch);
+	label->draw(batch);*/
 }
 
 void Spinner::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
@@ -191,7 +192,7 @@ void Spinner::moveBy(const Vector2& moveVector) {
 	label->moveBy(moveVector);
 	position += moveVector;
 
-	texturePanel->moveBy(moveVector);
+	texturePanel->setPosition(position);
 }
 
 void Spinner::setPosition(const Vector2& newPosition) {
