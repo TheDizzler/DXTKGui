@@ -200,10 +200,8 @@ bool ListBox::update(double deltaTime) {
 							listItems[i]->setSelected(false);
 					}
 				}
-
 			}
 		}
-
 	}
 
 	if (refreshPanel) {
@@ -366,6 +364,10 @@ void ListItem::initialize(const int width, const int height,
 	pixel = pixelTexture;
 	itemPosition = Vector2::Zero;
 
+	selectedBGColor = ::DirectX::Colors::White;
+	hoverBGColor = ::DirectX::Colors::Aqua;
+	normalBGColor = ::DirectX::Colors::BurlyWood;
+
 	normalFontColor = label->getTint();
 	textLabel.reset(label);
 
@@ -393,28 +395,43 @@ const wchar_t* ListItem::toString() {
 	return textLabel->getText();
 }
 
-/** Returns true if item isHovered. */
+
 bool ListItem::update(double deltaTime, MouseController* mouse) {
 
+	bool refresh = false;
 	bool wasHover = isHover;
 	if ((isHover = hitArea->contains(mouse->getPosition()))) {
 
-		if (mouse->leftButton() && !buttonDownLast)
+		if (mouse->leftButton() && !buttonDownLast) {
 			buttonDownLast = true;
-
-		else if (!mouse->leftButton() && buttonDownLast) {
+		} else if (!mouse->leftButton() && buttonDownLast) {
 			isSelected = true;
+			currentBGColor = selectedBGColor;
 			textLabel->setTint(selectedFontColor);
 			buttonDownLast = false;
-			textLabel->update(deltaTime);
-			return true;
+			refresh = true;
 		}
 
-	} else
-		buttonDownLast = false;
 
-	textLabel->update(deltaTime);
-	return isHover && !wasHover;
+
+	} else {
+		buttonDownLast = false;
+	}
+	/*if (isSelected) {
+		if (isHover)
+			currentBGColor = selectedAndHoveredColor;
+		else
+			currentBGColor = selectedBGColor;
+	} else if (isHover)
+		currentBGColor = hoverBGColor;
+	else
+		currentBGColor = normalBGColor;*/
+
+	if ((isHover && !wasHover) || (!isHover && wasHover))
+		refresh = true;
+	if (textLabel->update(deltaTime))
+		refresh = true;
+	return refresh;
 }
 
 void ListItem::updatePosition(const Vector2& pos) {
@@ -431,24 +448,33 @@ void ListItem::updatePosition(const Vector2& pos) {
 
 void ListItem::draw(SpriteBatch* batch) {
 
-	if (isSelected) {// draw pressed color bg
+	/*batch->Draw(pixel.Get(), itemPosition, &itemRect,
+		currentBGColor, 0.0f, Vector2(0, 0), Vector2(1, 1),
+		SpriteEffects_None, layerDepth);
+	textLabel->draw(batch);*/
 
-		batch->Draw(pixel.Get(), itemPosition, &itemRect,
-			::DirectX::Colors::White, 0.0f, Vector2(0, 0), Vector2(1, 1),
-			SpriteEffects_None, layerDepth);
+	if (isSelected) {// draw pressed color bg
+		if (isHover)
+			batch->Draw(pixel.Get(), itemPosition, &itemRect,
+				selectedAndHoveredColor, 0.0f, Vector2(0, 0), Vector2(1, 1),
+				SpriteEffects_None, layerDepth);
+		else
+			batch->Draw(pixel.Get(), itemPosition, &itemRect,
+				selectedBGColor, 0.0f, Vector2(0, 0), Vector2(1, 1),
+				SpriteEffects_None, layerDepth);
 		textLabel->draw(batch);
 
 	} else if (isHover) { // draw hover color bg
 
 		batch->Draw(pixel.Get(), itemPosition, &itemRect,
-			::DirectX::Colors::Aqua, 0.0f, Vector2(0, 0), Vector2(1, 1),
+			hoverBGColor, 0.0f, Vector2(0, 0), Vector2(1, 1),
 			SpriteEffects_None, layerDepth);
 		textLabel->draw(batch);
 
 	} else { // draw basic bg
 
 		batch->Draw(pixel.Get(), itemPosition, &itemRect,
-			::DirectX::Colors::BurlyWood, 0.0f, Vector2(0, 0), Vector2(1, 1),
+			normalBGColor, 0.0f, Vector2(0, 0), Vector2(1, 1),
 			SpriteEffects_None, layerDepth);
 		textLabel->draw(batch);
 	}
@@ -458,9 +484,9 @@ void ListItem::draw(SpriteBatch* batch) {
 void ListItem::setSelected(bool select) {
 
 	isSelected = select;
-	if (isSelected)
+	if (isSelected) {
 		textLabel->setTint(selectedFontColor);
-	else
+	} else
 		textLabel->setTint(normalFontColor);
 }
 /** **** ListItem END **** **/

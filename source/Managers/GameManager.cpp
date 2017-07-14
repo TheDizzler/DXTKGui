@@ -1,8 +1,9 @@
 #include "GameManager.h"
+#include "../Engine/GameEngine.h"
 
 unique_ptr<GUIOverlay> guiOverlay;
 
-#include "../Engine/GameEngine.h"
+
 GameManager::GameManager(GameEngine* gmngn) {
 
 	gameEngine = gmngn;

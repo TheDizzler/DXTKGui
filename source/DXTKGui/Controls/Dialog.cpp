@@ -876,7 +876,7 @@ void PromptDialog::movePosition(const Vector2& moveBy) {
 	}
 	GUIControl::moveBy(moveBy);
 
-	texturePanel->moveBy(position);
+	texturePanel->setPosition(position);
 }
 
 

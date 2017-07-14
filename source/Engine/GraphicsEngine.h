@@ -61,7 +61,7 @@ protected:
 	ComPtr<IDXGIOutput> selectedDisplay;
 	/* Display Mode being used. */
 	DXGI_MODE_DESC selectedDisplayMode;
-	size_t selectedAdapterIndex = 0;
+	size_t selectedAdapterIndex = 1;
 	size_t selectedDisplayIndex = 0;
 	size_t selectedDisplayModeIndex = 0;
 	size_t lastDisplayModeIndex = 0;

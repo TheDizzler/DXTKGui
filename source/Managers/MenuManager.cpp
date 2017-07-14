@@ -549,6 +549,7 @@ void OnClickListenerAdapterList::onClick(ListBox* listbox, int selectedIndex) {
 		/*config->game->getSelectedAdapterIndex()*/));
 
 	config->adapterLabel->setText(listbox->getSelected()->toString());
+	
 }
 
 void OnClickListenerDisplayModeList::onClick(ComboBox* combobox, int selectedIndex) {

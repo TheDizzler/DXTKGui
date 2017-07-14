@@ -90,9 +90,9 @@ void TexturePanel::setDimensions(const Vector2& pos, const Vector2& size) {
 
 void TexturePanel::setTexturePosition(const Vector2& texPos) {
 
-	Vector2 diff = texPos - position;
+	/*Vector2 diff = texPos - position;
 	viewRect.right += diff.x;
-	viewRect.bottom += diff.y;
+	viewRect.bottom += diff.y;*/
 
 	setPosition(texPos);
 }

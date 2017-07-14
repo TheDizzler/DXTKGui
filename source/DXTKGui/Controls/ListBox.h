@@ -16,7 +16,6 @@ public:
 	Vector2 measureString() const;
 	const wchar_t* toString();
 
-	/** Returns true if item pressed. */
 	bool update(double deltaTime, MouseController* mouse);
 	void updatePosition(const Vector2& position);
 	virtual void draw(SpriteBatch* batch);
@@ -29,6 +28,12 @@ protected:
 
 	Color selectedFontColor = Color(0, 0, 0, 1);
 	Color normalFontColor = Color(1, 1, 1, 1);
+
+	Color selectedBGColor = Colors::White;
+	Color hoverBGColor = Colors::Aqua;
+	Color normalBGColor = Colors::BurlyWood;
+	Color selectedAndHoveredColor = Colors::AntiqueWhite;
+	Color currentBGColor = normalBGColor;
 
 	virtual void setText() = 0;
 	unique_ptr<TextLabel> textLabel;
@@ -86,7 +91,7 @@ public:
 	void clear();
 
 	virtual bool update(double deltaTime) override;
-	void draw(SpriteBatch* batch);
+	virtual void draw(SpriteBatch* batch) override;
 
 	virtual unique_ptr<GraphicsAsset> texturize() override;
 	virtual void textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device = NULL) override;

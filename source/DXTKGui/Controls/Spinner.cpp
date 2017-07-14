@@ -1,6 +1,6 @@
 #include "Spinner.h"
-
 #include "../GUIFactory.h"
+
 Spinner::Spinner(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 	const Vector2& pos, const size_t len, const size_t itmHght, bool autoSz)
 	: GUIControl(factory, mouseController) {
@@ -16,7 +16,7 @@ Spinner::~Spinner() {
 	list.clear();
 }
 
-#include <sstream>
+
 void Spinner::initialize(const pugi::char_t* fontName,
 	const pugi::char_t* upButtonName, const pugi::char_t* downButtonName) {
 
@@ -85,12 +85,12 @@ bool Spinner::update(double deltaTime) {
 
 
 void Spinner::draw(SpriteBatch* batch) {
-	texturePanel->draw(batch);
-	/*rectangle->draw(batch);
+	//texturePanel->draw(batch);
+	rectangle->draw(batch);
 	upButton->draw(batch);
 	downButton->draw(batch);
 	frame->draw(batch);
-	label->draw(batch);*/
+	label->draw(batch);
 }
 
 void Spinner::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {

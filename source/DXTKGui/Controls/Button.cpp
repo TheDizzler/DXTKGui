@@ -398,14 +398,12 @@ void ImageButton::setText(wstring text) {
 }
 
 void ImageButton::moveBy(const Vector2& moveVector) {
-	Button::moveBy(moveVector);
-	//normalSprite->moveBy(moveVector);
+	GUIControl::moveBy(moveVector);
+	normalSprite->moveBy(moveVector);
 	texturePanel->setPosition(position);
 }
 
 void ImageButton::setPosition(const Vector2& pos) {
-
-	//Button::setPosition(pos);
 	GUIControl::setPosition(pos);
 	Vector2 spritePos = position;
 	spritePos.x += normalSprite->getWidth() / 2;

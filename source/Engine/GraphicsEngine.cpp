@@ -1,4 +1,6 @@
 #include "GraphicsEngine.h"
+#include "../Engine/GameEngine.h"
+#include <sstream>
 
 shared_ptr<Camera> camera;
 
@@ -67,8 +69,7 @@ bool GraphicsEngine::initD3D(HWND h) {
 
 }
 
-#include <sstream>
-#include "../Engine/GameEngine.h"
+
 bool GraphicsEngine::getDisplayAdapters() {
 
 
@@ -183,7 +184,8 @@ bool GraphicsEngine::initializeAdapter(int adapterIndex) {
 		L"Error creating Device and Swap Chain.", L"ERROR"))
 		return false;
 
-	device.Get()->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(debugDevice.GetAddressOf()));
+	device.Get()->QueryInterface(__uuidof(ID3D11Debug),
+		reinterpret_cast<void**>(debugDevice.GetAddressOf()));
 
 	verifyAdapter(device);
 
@@ -376,11 +378,19 @@ bool GraphicsEngine::setAdapter(size_t newAdapterIndex) {
 	if (!initializeRenderTarget())
 		return false;
 
+
 	initializeViewport();
+
+
+
+	camera = make_shared<Camera>(Globals::WINDOW_WIDTH, Globals::WINDOW_HEIGHT);
+	camera->viewport = &viewport;
+	deviceContext->RSSetViewports(1, viewport.Get11());
 
 	// re-create SpriteBatch
 	batch.reset(new SpriteBatch(deviceContext.Get()));
 
+	//guiFactory->reInitDevice(device, deviceContext, batch.get());
 	return true;
 }
 

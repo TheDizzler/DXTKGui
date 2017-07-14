@@ -83,6 +83,14 @@ bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 	return true;
 }
 
+void GUIFactory::reInitDevice(ComPtr<ID3D11Device> dev,
+	ComPtr<ID3D11DeviceContext> devCon,	SpriteBatch* sBatch) {
+
+	device = dev;
+	deviceContext = devCon;
+	batch = sBatch;
+}
+
 
 #include "StringHelper.h"
 unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {

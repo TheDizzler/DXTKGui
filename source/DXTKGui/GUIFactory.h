@@ -33,6 +33,9 @@ public:
 		SpriteBatch* batch, shared_ptr<MouseController> mouse,
 		const char_t* assetManifestFile = NULL);
 
+	void reInitDevice(ComPtr<ID3D11Device> device,
+		ComPtr<ID3D11DeviceContext> devCon,	SpriteBatch* batch);
+
 	unique_ptr<FontSet> getFont(const char_t* fontName = "Default Font");
 	unique_ptr<Sprite> getSpriteFromAsset(const char_t* assetName);
 	shared_ptr<Animation> getAnimation(const char_t* animationName);

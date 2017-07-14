@@ -119,19 +119,18 @@ void ComboBox::setPosition(const Vector2& pos) {
 	selectedLabel->moveBy(moveDiff);
 	comboListButton->moveBy(moveDiff);
 	frame->moveBy(moveDiff);
-
 	listBox->moveBy(moveDiff);
-	texturePanel->setTexturePosition(pos);
+	texturePanel->setPosition(pos);
 }
 
-void ComboBox::moveBy(const Vector2 & moveVector) {
+void ComboBox::moveBy(const Vector2& moveVector) {
 	position += moveVector;
 	selectedBackgroundSprite->moveBy(moveVector);
 	selectedLabel->moveBy(moveVector);
 	comboListButton->moveBy(moveVector);
 	frame->moveBy(moveVector);
 	listBox->moveBy(moveVector);
-	texturePanel->setTexturePosition(position);
+	texturePanel->setPosition(position);
 }
 
 
@@ -181,7 +180,7 @@ const Vector2& XM_CALLCONV ComboBox::measureString() const {
 	return Vector2::Zero;
 }
 
-const Vector2 & ComboBox::getPosition() const {
+const Vector2& ComboBox::getPosition() const {
 	return position;
 }
 
