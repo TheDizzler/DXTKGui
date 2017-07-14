@@ -220,12 +220,12 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 
 	Vector2 buttonpos = Vector2(100, 100);
 
-	AnimatedButton* animButton =
+	/*AnimatedButton* animButton =
 		guiFactory->createAnimatedButton("Launch Button");
 	buttonpos = Vector2((Globals::WINDOW_WIDTH - animButton->getWidth()) / 2,
 		Globals::WINDOW_HEIGHT / 3 - animButton->getHeight() / 2);
 	animButton->setPosition(buttonpos);
-	guiControls.push_back(animButton);
+	guiControls.push_back(animButton);*/
 
 
 	Button* button;
@@ -254,13 +254,14 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	guiControls.push_back(button);
 
 
-	mouseLabel = guiFactory->createTextLabel(
-		Vector2(0, 0), L"Mouse Label", "Default Font", false);
-	//mouseLabel->setAlpha(.1);
-	mouseLabel->setHoverable(true);
-	guiControls.push_back(mouseLabel);
+	//mouseLabel = guiFactory->createTextLabel(
+	//	Vector2(0, 0), L"Mouse Label", "Default Font", false);
+	////mouseLabel->setAlpha(.1);
+	//mouseLabel->setHoverable(true);
+	//guiControls.push_back(mouseLabel);
 
-	mouse->setAlpha(.5);
+	//mouse->setAlpha(.5);
+
 
 	return true;
 }
@@ -270,21 +271,19 @@ void MainScreen::update(double deltaTime) {
 
 	wostringstream ws;
 	ws << "Mouse: " << mouse->getPosition().x << ", " << mouse->getPosition().y;
-	mouseLabel->setText(ws);
+	//mouseLabel->setText(ws);
 	//dynamicDialog->setText(ws.str());
-
+	//dynamicDialog->update(deltaTime);
 	for (auto const& control : guiControls)
 		control->update(deltaTime);
+
 }
 
 
 
 void MainScreen::draw(SpriteBatch* batch) {
-
 	for (auto const& control : guiControls)
 		control->draw(batch);
-
-	//dynamicDialog->draw(batch);
 }
 
 void MainScreen::controllerRemoved(ControllerSocketNumber controllerSlot, PlayerSlotNumber slotNumber) {
@@ -430,6 +429,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 			Globals::WINDOW_HEIGHT - button->getHeight() - 25));
 	guiControls.push_back(button);
 
+	texturePanel.reset(guiFactory->createPanel());
 
 
 	return true;
@@ -447,12 +447,22 @@ void ConfigScreen::update(double deltaTime) {
 
 
 	for (auto const& control : guiControls) {
-		control->update(deltaTime);
+		if (control->update(deltaTime))
+			refreshTexture = true;
+	}
+
+	if (refreshTexture) {
+		refreshTexture = false;
+		texturePanel->setTexture(guiFactory->createTextureFromScreen(this));
 	}
 }
 
 void ConfigScreen::draw(SpriteBatch* batch) {
+	texturePanel->draw(batch);
 
+}
+
+void ConfigScreen::textureDraw(SpriteBatch* batch) {
 	for (auto const& control : guiControls)
 		control->draw(batch);
 }
@@ -549,7 +559,7 @@ void OnClickListenerAdapterList::onClick(ListBox* listbox, int selectedIndex) {
 		/*config->game->getSelectedAdapterIndex()*/));
 
 	config->adapterLabel->setText(listbox->getSelected()->toString());
-	
+
 }
 
 void OnClickListenerDisplayModeList::onClick(ComboBox* combobox, int selectedIndex) {

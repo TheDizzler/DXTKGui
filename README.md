@@ -22,7 +22,7 @@ Email: tgillon.sdk@gmail.com
 
 
 ##DONE:
->- Optimized control draw speed 
+>- Optimized control draw speed (for almost everything)
 >- Primitve Shapes - filled rectangle; un-filled rectangle; triangle (needs work); line
 >- Text Labels - normal and clickable
 >- Button - text, image, animated (animated buttons are hacky and due for overhaul)
@@ -47,7 +47,8 @@ Email: tgillon.sdk@gmail.com
 	when using multiple controls
 >- ~~find out how to purge all the reported live objects ':/~~ 
 Live objects ARE being released but after the debug report. <- FIXED
-~~Still have some outstanding internal refernces.~~ Most appear gone
+~~Still have some outstanding internal references.~~ Most appear gone
+>- spinner has not been draw optimized (issue with image buttons not appearing), but all of it's components have been, so it is alright
 >- Controller controlled controls (joysticks)
 >- Automated Button needs overhaul (or removal completely)
 >- Dialog Box - allow hyphenating of words that can't fit on one line with option to turn on/off
@@ -61,7 +62,7 @@ Live objects ARE being released but after the debug report. <- FIXED
 >- Slider control
 >- Combo Box - allow custom frame/bg image
 >- ListBox - allow custom frame/bg image
->- put default images into a spritesheet
+>- ~~put default images into a spritesheet~~
 >- More Primitive Shapes - if I feel they might be useful
 >- Other stuff I can't think of at the moment
 >- demo and how-to videos

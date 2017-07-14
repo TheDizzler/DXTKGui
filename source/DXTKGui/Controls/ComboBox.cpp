@@ -1,5 +1,5 @@
 #include "ComboBox.h"
-
+#include "../GUIFactory.h"
 
 ComboBox::ComboBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 	const Vector2& pos, const int len, size_t itemHeight, const int maxItemsShown)
@@ -12,7 +12,6 @@ ComboBox::ComboBox(GUIFactory* factory, shared_ptr<MouseController> mouseControl
 
 }
 
-
 ComboBox::~ComboBox() {
 
 	if (actionListener)
@@ -20,7 +19,6 @@ ComboBox::~ComboBox() {
 
 }
 
-#include "../GUIFactory.h"
 bool ComboBox::initialize(shared_ptr<FontSet> fnt,
 	ListBox* lstBx, const pugi::char_t* buttonName, bool enumerateList) {
 
@@ -93,10 +91,6 @@ void ComboBox::draw(SpriteBatch* batch) {
 	}
 
 	texturePanel->draw(batch);
-	/*selectedBackgroundSprite->draw(batch);
-	selectedLabel->draw(batch);
-	comboListButton->draw(batch);
-	frame->draw(batch);*/
 }
 
 

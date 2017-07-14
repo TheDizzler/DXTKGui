@@ -29,7 +29,7 @@ CheckBox::~CheckBox() {
 
 bool CheckBox::update(double deltaTime) {
 
-	bool refreshed = true;
+	bool refreshed = false;
 	if (hitArea->contains(mouse->getPosition())
 		|| label->contains(mouse->getPosition())) {
 

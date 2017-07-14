@@ -204,11 +204,15 @@ public:
 	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
+	virtual void textureDraw(SpriteBatch* batch) override;
+
 	virtual void controllerRemoved(ControllerSocketNumber controllerSlot,
 		PlayerSlotNumber slotNumber) override;
 	virtual void newController(shared_ptr<Joystick> newStick) override;
 
 private:
+	unique_ptr<TexturePanel> texturePanel;
+	bool refreshTexture = true;
 
 	void populateDisplayList(vector<ComPtr<IDXGIOutput> > displays);
 	void populateDisplayModeList(vector<DXGI_MODE_DESC> displayModes);
@@ -242,5 +246,6 @@ private:
 	unique_ptr<DynamicDialog> dynamicDialog;
 	TextLabel* mouseLabel;
 
+	
 };
 

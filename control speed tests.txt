@@ -10,9 +10,9 @@ combobox closed:				2400+
 
 checkbox:						2800+
 
-imagebutton:					2500+
-	mouse hover					2500+
-	mouse down:					2500+
+imagebutton:					3000+
+	mouse hover					3000+
+	mouse down:					3000+
 button:							3000+
 	mouse hover:				3000+ (FIXED!)
 	mouse down:					3000+

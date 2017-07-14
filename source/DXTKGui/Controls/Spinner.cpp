@@ -77,7 +77,7 @@ bool Spinner::update(double deltaTime) {
 		refreshed = true;
 
 	if (refreshed) {
-		texturePanel->setTexture(texturize());
+		//texturePanel->setTexture(texturize());
 		return true;
 	}
 	return false;
