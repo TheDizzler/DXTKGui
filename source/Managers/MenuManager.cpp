@@ -542,7 +542,7 @@ void DisplayModeItem::setText() {
 void OnClickListenerAdapterList::onClick(ListBox* listbox, int selectedIndex) {
 
 	AdapterItem* selectedItem = (AdapterItem*) listbox->getItem(selectedIndex);
-	config->game->setAdapter(selectedIndex);
+	//config->game->setAdapter(selectedIndex); // DOESN'T WORK :''''(
 	config->populateDisplayList(config->game->getDisplayList());
 	config->populateDisplayModeList(
 		config->game->getDisplayModeList(0

@@ -61,7 +61,7 @@ protected:
 	ComPtr<IDXGIOutput> selectedDisplay;
 	/* Display Mode being used. */
 	DXGI_MODE_DESC selectedDisplayMode;
-	size_t selectedAdapterIndex = 1;
+	size_t selectedAdapterIndex = 0;
 	size_t selectedDisplayIndex = 0;
 	size_t selectedDisplayModeIndex = 0;
 	size_t lastDisplayModeIndex = 0;
@@ -84,8 +84,8 @@ protected:
 
 	//D3D_DRIVER_TYPE driverType;
 	D3D_FEATURE_LEVEL featureLevel;
-	//D3D11_VIEWPORT d3d_viewport;
-	Viewport viewport;
+	D3D11_VIEWPORT d3dViewport;
+	//Viewport viewport;
 
 	/* List of all gfx cards on this machine. */
 	vector<ComPtr<IDXGIAdapter> > adapters;

@@ -15,10 +15,11 @@ public:
 	Camera(const Vector2& viewport);
 	virtual ~Camera();
 
-	void updateViewport(const Vector2& viewportArea, const Vector2& viewportPosition, bool zoomToFit = false);
+	void updateViewport(const Vector2& viewportArea,
+		const Vector2& viewportPosition, bool zoomToFit = false);
 
 
-	Viewport* viewport;
+	//Viewport* viewport;
 
 
 	float rotation = 0.0f;

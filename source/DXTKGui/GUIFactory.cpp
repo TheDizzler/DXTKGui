@@ -86,9 +86,19 @@ bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 void GUIFactory::reInitDevice(ComPtr<ID3D11Device> dev,
 	ComPtr<ID3D11DeviceContext> devCon,	SpriteBatch* sBatch) {
 
+	device.Get()->Release();
+	device.Reset();
+	deviceContext->Flush();
+
 	device = dev;
 	deviceContext = devCon;
 	batch = sBatch;
+	assetMap.clear();
+
+	if (!getGUIAssetsFromXML()) {
+		MessageBox(0, L"Sprite retrieval from Asset Manifest failed.",
+			L"Epic failure", MB_OK);
+	}
 }
 
 
