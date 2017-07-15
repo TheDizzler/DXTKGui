@@ -92,6 +92,13 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContro
 	return true;
 }
 
+void MenuManager::reloadGraphicsAssets() {
+	exitDialog->reloadGraphicsAsset();
+	configScreen->reloadGraphicsAssets();
+	mainScreen->reloadGraphicsAssets();
+	transitionManager->reloadGraphicsAssets();
+}
+
 
 Keyboard::KeyboardStateTracker keyTracker;
 void MenuManager::update(double deltaTime) {
@@ -185,6 +192,11 @@ void MenuScreen::setGameManager(GameManager* gmMng) {
 	game = gmMng;
 }
 
+void MenuScreen::reloadGraphicsAssets() {
+	for (auto& control : guiControls)
+		control->reloadGraphicsAsset();
+}
+
 void MenuScreen::pause() {
 	// do nothing??
 }
@@ -264,6 +276,10 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 
 
 	return true;
+}
+
+void MainScreen::reloadGraphicsAssets() {
+	MenuScreen::reloadGraphicsAssets();
 }
 
 
@@ -386,8 +402,8 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	scrollBarDesc.scrubberImage = "Scrubber Custom";
 
 	displayModeCombobox =
-		//guiFactory->createComboBox(controlPos, 75, itemHeight, 10, true);
-		guiFactory->createListBox(controlPos, 75, itemHeight);
+		guiFactory->createComboBox(controlPos, 75, itemHeight, 10, true);
+		//guiFactory->createListBox(controlPos, 75, itemHeight);
 
 	populateDisplayModeList(game->getDisplayModeList(0));
 	//displayModeCombobox->setScrollBar(scrollBarDesc);
@@ -434,6 +450,11 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 
 
 	return true;
+}
+
+void ConfigScreen::reloadGraphicsAssets() {
+	MenuScreen::reloadGraphicsAssets();
+	refreshTexture = true;
 }
 
 
@@ -553,7 +574,8 @@ void DisplayModeItem::setText() {
 void OnClickListenerAdapterList::onClick(ListBox* listbox, int selectedIndex) {
 
 	AdapterItem* selectedItem = (AdapterItem*) listbox->getItem(selectedIndex);
-	config->game->setAdapter(selectedIndex); // DOESN'T WORK :''''(
+	config->game->setAdapter(selectedIndex); // ALMOST WORKS :)
+	config->game->reloadGraphicsAssets();
 	config->populateDisplayList(config->game->getDisplayList());
 	config->populateDisplayModeList(
 		config->game->getDisplayModeList(0

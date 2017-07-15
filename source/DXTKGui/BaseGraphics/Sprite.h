@@ -37,7 +37,7 @@ struct HitArea {
 	Vector2 size; // (width, height)
 };
 
-
+class GUIFactory;
 class Sprite : public IElement2D {
 public:
 	Sprite();
@@ -46,6 +46,7 @@ public:
 
 	/* GraphicsAsset is not stored in Sprite. */
 	virtual void load(GraphicsAsset* const graphicsAsset);
+	virtual void reloadGraphicsAsset(GUIFactory* guiFactory);
 
 	const HitArea* getHitArea() const;
 	virtual const Vector2& getPosition() const override;
@@ -76,8 +77,7 @@ public:
 
 	virtual void moveBy(const Vector2& moveVector);
 	virtual void rotateBy(float rotateAmount);
-	/* This only needs to be called when the sprites moves to update the hitbox location. */
-	//virtual void update(double deltaTime);
+
 	virtual void draw(SpriteBatch* batch) override;
 
 	ComPtr<ID3D11ShaderResourceView> getTexture();

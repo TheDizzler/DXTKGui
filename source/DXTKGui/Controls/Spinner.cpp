@@ -20,13 +20,11 @@ Spinner::~Spinner() {
 void Spinner::initialize(const pugi::char_t* fontName,
 	const pugi::char_t* upButtonName, const pugi::char_t* downButtonName) {
 
-
 	label.reset(guiFactory->createTextLabel(Vector2::Zero, L"", fontName));
 	label->setTint(Vector4(0, 0, 0, 1));
 	label->setText("Empty");
 	if (label->getHeight() > itemHeight)
 		itemHeight = label->getHeight();
-
 
 	upButton.reset((ImageButton*) guiFactory->createImageButton(upButtonName));
 	if (upButton->getHeight() * 2 > itemHeight)
@@ -34,19 +32,15 @@ void Spinner::initialize(const pugi::char_t* fontName,
 	upButton->setActionListener(new SpinnerUpButtonListener(this));
 	upButton->setPosition(Vector2(position.x + width, position.y));
 
-
 	downButton.reset((ImageButton*) guiFactory->createImageButton(downButtonName));
 	downButton->setActionListener(new SpinnerDownButtonListener(this));
 	downButton->setPosition(
 		Vector2(position.x + width, position.y + (itemHeight - upButton->getHeight())));
 
-
 	frame.reset(guiFactory->createRectangleFrame());
 	frame->setDimensions(position, Vector2(width, itemHeight));
 	rectangle.reset(guiFactory->createRectangle());
 	rectangle->setDimensions(position, Vector2(width, itemHeight));
-
-
 
 	Vector2 labelpos = Vector2(
 		position.x + textBuffer, position.y + (itemHeight - label->getHeight()) / 2);
@@ -59,11 +53,20 @@ void Spinner::initialize(const pugi::char_t* fontName,
 }
 
 
+void Spinner::reloadGraphicsAsset() {
+	label->reloadGraphicsAsset();
+	upButton->reloadGraphicsAsset();
+	downButton->reloadGraphicsAsset();
+	frame.reset(guiFactory->createRectangleFrame(
+		position, Vector2(width, itemHeight), frame->getThickness(), frame->getTint()));
+	rectangle->reloadGraphicsAsset(guiFactory);
+	texturePanel.reset(guiFactory->createPanel());
+	refreshTexture = true;
+}
 
 unique_ptr<GraphicsAsset> Spinner::texturize() {
 	return move(guiFactory->createTextureFromTexturizable(this));
 }
-
 
 bool Spinner::update(double deltaTime) {
 
@@ -87,11 +90,6 @@ bool Spinner::update(double deltaTime) {
 
 void Spinner::draw(SpriteBatch* batch) {
 	texturePanel->draw(batch);
-	/*rectangle->draw(batch);
-	upButton->draw(batch);
-	downButton->draw(batch);
-	frame->draw(batch);
-	label->draw(batch);*/
 }
 
 void Spinner::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {

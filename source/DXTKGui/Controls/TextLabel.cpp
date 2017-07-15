@@ -31,6 +31,15 @@ TextLabel::~TextLabel() {
 		delete actionListener;
 }
 
+void TextLabel::reloadGraphicsAsset() {
+	const char_t* fontName = font->fontName;
+	font.reset();
+	font = guiFactory->getFont(fontName);
+	texturePanel.reset(guiFactory->createPanel());
+	
+	refreshTexture = true;
+}
+
 
 bool TextLabel::update(double deltaTime) {
 

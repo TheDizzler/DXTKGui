@@ -1,4 +1,6 @@
 #include "GameEngine.h"
+#include "CommonStates.h"
+#include "../DXTKGui/GuiAssets.h"
 
 unique_ptr<GUIFactory> guiFactory;
 bool gameInitialized = false;
@@ -72,8 +74,13 @@ void GameEngine::onAudioDeviceChange() {
 	retryAudio = true;
 }
 
+void GameEngine::reloadGraphicsAssets() {
+	blendState = new CommonStates(device.Get());
+	errorDialog->reloadGraphicsAsset();
+	warningDialog->reloadGraphicsAsset();
+}
 
-#include "../DXTKGui/GuiAssets.h"
+
 bool GameEngine::initGFXAssets() {
 
 	// get graphical assets from xml file
@@ -183,7 +190,7 @@ void GameEngine::update(double deltaTime) {
 }
 
 
-#include "CommonStates.h"
+
 void GameEngine::render() {
 
 	deviceContext->ClearRenderTargetView(renderTargetView.Get(), Colors::PeachPuff);

@@ -18,8 +18,10 @@ public:
 	virtual ~GameManager();
 
 
-	bool initializeGame(HWND hwnd, ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse);
+	bool initializeGame(HWND hwnd, ComPtr<ID3D11Device> device,
+		shared_ptr<MouseController> mouse);
 
+	void reloadGraphicsAssets();
 
 	void update(double deltaTime);
 	void draw(SpriteBatch* batch);

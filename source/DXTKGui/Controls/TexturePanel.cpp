@@ -1,6 +1,6 @@
 #include "TexturePanel.h"
-
 #include "../GUIFactory.h"
+
 TexturePanel::TexturePanel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 	ScrollBar* scrllbr) : GUIControl(factory, mouseController) {
 
@@ -11,9 +11,8 @@ TexturePanel::TexturePanel(GUIFactory* factory, shared_ptr<MouseController> mous
 		verticalScrollBar.reset(scrllbr);
 }
 
-#include "../StringHelper.h"
-TexturePanel::~TexturePanel() {
 
+TexturePanel::~TexturePanel() {
 }
 
 
@@ -35,6 +34,11 @@ void TexturePanel::setTexture(unique_ptr<GraphicsAsset> gfx) {
 		showScrollBar = true;
 	} else
 		showScrollBar = false;
+}
+
+
+void TexturePanel::reloadGraphicsAsset() {
+//do nothing
 }
 
 bool TexturePanel::update(double deltaTime) {

@@ -11,6 +11,7 @@ public:
 	GUIOverlay();
 	virtual ~GUIOverlay();
 
+	void reloadGraphicsAssets();
 
 	void update(double deltaTime);
 	void draw(SpriteBatch* batch);

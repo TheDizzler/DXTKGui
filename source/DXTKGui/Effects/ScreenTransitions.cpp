@@ -1,9 +1,11 @@
 #include "ScreenTransitions.h"
+#include "../BaseGraphics/screen.h"
+#include "../StringHelper.h"
 
 using namespace ScreenTransitions;
 
 
-ScreenTransitions::ScreenTransitionManager::ScreenTransitionManager() {
+ScreenTransitionManager::ScreenTransitionManager() {
 }
 
 
@@ -12,7 +14,7 @@ ScreenTransitionManager::~ScreenTransitionManager() {
 		delete transition;
 }
 
-void ScreenTransitions::ScreenTransitionManager::initialize(
+void ScreenTransitionManager::initialize(
 	GUIFactory* factory, const char_t* bgName, bool resizeBGToFit) {
 
 
@@ -29,7 +31,7 @@ void ScreenTransitions::ScreenTransitionManager::initialize(
 	GetClientRect(guiFactory->getHWND(), &rect);
 
 	//int buffer = 5; // padding to give a bit of lee-way to prevent tearing
-	int screenWidth = rect.right - rect.left ;
+	int screenWidth = rect.right - rect.left;
 	int screenHeight = rect.bottom - rect.top;
 
 	if (resizeBGToFit) {
@@ -57,6 +59,11 @@ void ScreenTransitions::ScreenTransitionManager::initialize(
 	}
 }
 
+void ScreenTransitionManager::reloadGraphicsAssets() {
+	bg->reloadGraphicsAsset(guiFactory);
+
+}
+
 void ScreenTransitionManager::setTransition(ScreenTransition* effect) {
 
 	if (transition != NULL)
@@ -65,7 +72,6 @@ void ScreenTransitionManager::setTransition(ScreenTransition* effect) {
 }
 
 
-#include "../BaseGraphics/screen.h"
 void ScreenTransitionManager::transitionBetween(
 	Screen* oldScreen, Screen* newScr, float transitionTime, bool autoBatchDraw) {
 
@@ -78,7 +84,7 @@ void ScreenTransitionManager::transitionBetween(
 
 	newScreen = newScr;
 
-	
+
 }
 
 bool ScreenTransitionManager::runTransition(double deltaTime) {
@@ -91,15 +97,13 @@ void ScreenTransitionManager::drawTransition(SpriteBatch* batch) {
 }
 
 
-
-#include "../StringHelper.h"
 void ScreenTransition::setTransitionBetween(
 	unique_ptr<GraphicsAsset> oldScreen, unique_ptr<GraphicsAsset> newScreen, float time) {
 
-	wostringstream woo;
+	/*wostringstream woo;
 	woo << L"\n\n *** ScreenTransition Release *** " << endl;
 	woo << "\t\oldTexture release #: " << oldTexture.Reset() << endl;
-	woo << "\t\newTexture release #: " << newTexture.Reset() << endl;
+	woo << "\t\newTexture release #: " << newTexture.Reset() << endl;*/
 
 	oldScreenAsset = move(oldScreen);
 	newScreenAsset = move(newScreen);
@@ -121,13 +125,13 @@ void ScreenTransition::setTransitionBetween(
 
 ScreenTransitions::ScreenTransition::~ScreenTransition() {
 
-	wostringstream woo;
+	/*wostringstream woo;
 	woo << L"\n\n *** ScreenTransition Release *** " << endl;
 	woo << "\t\oldTexture release #: " << oldTexture.Reset() << endl;
 	woo << "\t\newTexture release #: " << newTexture.Reset() << endl;
 	oldScreenAsset.reset();
 	newScreenAsset.reset();
-	OutputDebugString(L"\n*** ScreenTransition Done ***");
+	OutputDebugString(L"\n*** ScreenTransition Done ***");*/
 }
 
 

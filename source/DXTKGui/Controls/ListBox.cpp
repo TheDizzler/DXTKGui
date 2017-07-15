@@ -26,14 +26,12 @@ ListBox::~ListBox() {
 
 
 void ListBox::initialize(const pugi::char_t* fnt, GraphicsAsset* pixelAsset,
-	ScrollBar* scrllbr, bool enumerateList) {
+	ScrollBar* scrllbr, bool enumerateList, const int frmThck) {
 
 	fontName = fnt;
 	pixel = pixelAsset->getTexture();
 
-
-
-	refreshPanel = true;
+	frameThickness = frmThck;
 	firstItemPos = Vector2(position.x, position.y);
 	scrollBar.reset(scrllbr);
 	frame.reset(guiFactory->createRectangleFrame());
@@ -48,6 +46,21 @@ void ListBox::initialize(const pugi::char_t* fnt, GraphicsAsset* pixelAsset,
 		guiFactory->createTextLabel(Vector2::Zero, L"", fontName),
 		pixel, listItems.size(), isEnumerated);
 	emptyListItem->setText();
+
+	refreshPanel = true;
+}
+
+void ListBox::reloadGraphicsAsset() {
+	pixel = guiFactory->getAsset("White Pixel")->getTexture();
+	scrollBar->reloadGraphicsAsset();
+	frame.reset(guiFactory->createRectangleFrame());
+	texturePanel.reset(guiFactory->createPanel(true));
+
+	for (int i = firstItemToDisplay; i < firstItemToDisplay + itemsToDisplay; ++i)
+		listItems[i]->reloadGraphicsAsset(guiFactory);
+
+	resizeBox();
+
 }
 
 
@@ -94,7 +107,7 @@ bool ListBox::update(double deltaTime) {
 
 	if (refreshPanel) {
 		frame->update();
-		
+
 		texturePanel->setTexture(texturize());
 		refreshPanel = false;
 		return true;
@@ -104,18 +117,7 @@ bool ListBox::update(double deltaTime) {
 
 
 void ListBox::draw(SpriteBatch* batch) {
-
-
 	texturePanel->draw(batch);
-
-	/*if (itemsToDisplay == maxDisplayItems || alwaysDisplayScrollBar) {
-		scrollBar->draw(batch);
-	}*/
-
-	//if (listItems.size() > 0) { // draw frame
-	//	frame->draw(batch);
-	//}
-
 }
 
 
@@ -402,13 +404,17 @@ void ListItem::initialize(const int width, const int height,
 	normalFontColor = label->getTint();
 	textLabel.reset(label);
 
-
 	isEnumerated = enumerateList;
 	listPosition = listPos;
 
 	layerDepth = layDep;
 
 	setText();
+}
+
+void ListItem::reloadGraphicsAsset(GUIFactory* guiFactory) {
+	pixel = guiFactory->getAsset("White Pixel")->getTexture();
+	textLabel->reloadGraphicsAsset();
 }
 
 void ListItem::setWidth(int newWidth) {

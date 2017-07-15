@@ -1,5 +1,5 @@
 #include "Dialog.h"
-
+#include "../GUIFactory.h"
 
 Dialog::Dialog(GUIFactory* factory, shared_ptr<MouseController> mouseController)
 	: GUIControlBox(factory, mouseController) {
@@ -167,7 +167,6 @@ PromptDialog::~PromptDialog() {
 	controls.clear();
 }
 
-#include "../GUIFactory.h"
 void PromptDialog::initialize(const pugi::char_t* font) {
 
 	panel.reset(guiFactory->createPanel(false));
@@ -191,6 +190,26 @@ void PromptDialog::initialize(const pugi::char_t* font) {
 	setLayerDepth(.99);
 
 	texturePanel.reset(guiFactory->createPanel());
+}
+
+
+void PromptDialog::reloadGraphicsAsset() {
+	panel.reset(guiFactory->createPanel(false));
+	panel->setTint(Color(0, 1, 1, 1));
+	frame.reset(guiFactory->createRectangleFrame(
+		position, size, frameThickness, frame->getTint()));
+
+	bgSprite->reloadGraphicsAsset(guiFactory);
+	titleSprite->reloadGraphicsAsset(guiFactory);
+	buttonFrameSprite->reloadGraphicsAsset(guiFactory);
+	for (auto const& control : controls) {
+		if (control == NULL)
+			continue;
+		control->reloadGraphicsAsset();
+	}
+
+	texturePanel.reset(guiFactory->createPanel());
+	refreshTexture = true;
 }
 
 void PromptDialog::setDimensions(const Vector2& pos, const Vector2& sz,
@@ -232,6 +251,110 @@ void PromptDialog::setDimensions(const Vector2& pos, const Vector2& sz,
 	calculateDialogTextPos();
 }
 
+
+
+/* PromptDialog checks to see if it's open before performing any logic. */
+bool PromptDialog::update(double deltaTime) {
+
+	if (!isShowing)
+		return false;
+
+	if (isOpening) {
+		isOpening = !(openTransition->*runTransition)(deltaTime);
+	} else if (isClosing) {
+		isClosing = !(closeTransition->*runTransition)(deltaTime);
+		isShowing = isClosing;
+		if (!isShowing)
+			(closeTransition->*resetTransition)();
+	}
+
+	if (movable && !isOpening && !isClosing) {
+		if ((isHover = titleSprite->getHitArea()->contains(mouse->getPosition()))) {
+
+			if (mouse->pressed()) {
+				pressedPosition = mouse->getPosition() - position;
+				isPressed = true;
+			}
+		}
+
+		if (!mouse->leftButton()) {
+			isPressed = false;
+			pressedPosition = Vector2::Zero;
+		}
+
+		if (isPressed) {
+			setDraggedPosition(mouse->getPosition() - pressedPosition);
+		}
+	}
+
+	if (panel->update(deltaTime))
+		refreshTexture = true;
+	if (frame->update())
+		refreshTexture = true;
+
+	for (auto const& control : controls) {
+		if (control == NULL)
+			continue;
+		if (control->update(deltaTime))
+			refreshTexture = true;
+
+	}
+
+	if (refreshTexture) {
+		texturePanel->setTexture(texturize());
+		refreshTexture = false;
+		return true;
+	}
+
+	return false;
+}
+
+/* PromptDialog checks to see if it's open before performing any logic. */
+void PromptDialog::draw(SpriteBatch* batch) {
+
+	if (!isShowing)
+		return;
+
+	if (isOpening && (openTransition->*drawTransition)(batch)) {
+		//OutputDebugString(L"opening\n");
+	} else if (isClosing && (closeTransition->*drawTransition)(batch)) {
+		//OutputDebugString(L"Closing\n");
+	} else {
+		//bgSprite->draw(batch);
+		//panel->draw(batch);
+		//titleSprite->draw(batch);
+		//buttonFrameSprite->draw(batch);
+
+		//for (auto const& control : controls) {
+		//	if (control == NULL)
+		//		continue;
+		//	control->draw(batch);
+		//}
+		//frame->draw(batch);
+
+		texturePanel->draw(batch);
+	}
+}
+
+unique_ptr<GraphicsAsset> PromptDialog::texturize() {
+	return guiFactory->createTextureFromTexturizable(this);
+}
+
+void PromptDialog::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
+
+	bgSprite->draw(batch);
+	panel->draw(batch);
+	titleSprite->draw(batch);
+	buttonFrameSprite->draw(batch);
+
+	for (auto const& control : controls) {
+		if (control == NULL)
+			continue;
+		control->draw(batch);
+	}
+
+	frame->draw(batch);
+}
 
 
 wstring PromptDialog::reformatText(size_t* scrollBarBuffer) {
@@ -330,7 +453,6 @@ void PromptDialog::testMinimumSize() {
 	if (changed)
 		setDimensions(position, newSize);
 }
-
 
 void PromptDialog::calculateTitlePos() {
 
@@ -558,112 +680,6 @@ bool PromptDialog::calculateButtonPosition(Vector2& buttonPos) {
 
 	return true;
 }
-
-/* PromptDialog checks to see if it's open before performing any logic. */
-bool PromptDialog::update(double deltaTime) {
-
-	if (!isShowing)
-		return false;
-
-	if (isOpening) {
-		isOpening = !(openTransition->*runTransition)(deltaTime);
-	} else if (isClosing) {
-		isClosing = !(closeTransition->*runTransition)(deltaTime);
-		isShowing = isClosing;
-		if (!isShowing)
-			(closeTransition->*resetTransition)();
-	}
-
-	if (movable && !isOpening && !isClosing) {
-		if ((isHover = titleSprite->getHitArea()->contains(mouse->getPosition()))) {
-
-			if (mouse->pressed()) {
-				pressedPosition = mouse->getPosition() - position;
-				isPressed = true;
-			}
-		}
-
-		if (!mouse->leftButton()) {
-			isPressed = false;
-			pressedPosition = Vector2::Zero;
-		}
-
-		if (isPressed) {
-			setDraggedPosition(mouse->getPosition() - pressedPosition);
-		}
-	}
-
-	if (panel->update(deltaTime))
-		refreshTexture = true;
-	if (frame->update())
-		refreshTexture = true;
-
-	for (auto const& control : controls) {
-		if (control == NULL)
-			continue;
-		if (control->update(deltaTime))
-			refreshTexture = true;
-
-	}
-
-	if (refreshTexture) {						
-		texturePanel->setTexture(texturize());
-		refreshTexture = false;
-		return true;
-	}
-
-	return false;
-}
-
-/* PromptDialog checks to see if it's open before performing any logic. */
-void PromptDialog::draw(SpriteBatch* batch) {
-
-	if (!isShowing)
-		return;
-
-	if (isOpening && (openTransition->*drawTransition)(batch)) {
-		//OutputDebugString(L"opening\n");
-	} else if (isClosing && (closeTransition->*drawTransition)(batch)) {
-		//OutputDebugString(L"Closing\n");
-	} else {
-		//bgSprite->draw(batch);
-		//panel->draw(batch);
-		//titleSprite->draw(batch);
-		//buttonFrameSprite->draw(batch);
-
-		//for (auto const& control : controls) {	// this definitely takes most of the CPU time
-		//	if (control == NULL)				// finding a way to optimize this would be ideal
-		//		continue;
-		//	control->draw(batch);
-		//}
-		//frame->draw(batch);
-
-		texturePanel->draw(batch);
-	}
-}
-
-unique_ptr<GraphicsAsset> PromptDialog::texturize() {
-	return guiFactory->createTextureFromTexturizable(this);
-}
-
-
-void PromptDialog::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
-
-	bgSprite->draw(batch);
-	panel->draw(batch);
-	titleSprite->draw(batch);
-	buttonFrameSprite->draw(batch);
-
-	for (auto const& control : controls) {	// this definitely takes most of the CPU time
-		if (control == NULL)				// finding a way to optimize this would be ideal
-			continue;
-		control->draw(batch);
-	}
-
-
-	frame->draw(batch);
-}
-
 
 size_t PromptDialog::addControl(unique_ptr<GUIControl> control) {
 

@@ -13,6 +13,8 @@ public:
 		const pugi::char_t* font);
 	virtual ~Button();
 
+	virtual void reloadGraphicsAsset() override;
+
 	/* position is topleft of button. */
 	void setDimensions(const Vector2& position, const Vector2& size,
 		const int frameThickness = 2);
@@ -140,6 +142,8 @@ public:
 		unique_ptr<Sprite> downButtonSprite, const pugi::char_t* font);
 	virtual ~ImageButton();
 
+	virtual void reloadGraphicsAsset() override;
+
 	virtual void draw(SpriteBatch* batch) override;
 
 	virtual void textureDraw(SpriteBatch * batch, ComPtr<ID3D11Device> device = NULL) override;
@@ -174,6 +178,8 @@ public:
 	AnimatedButton(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 		shared_ptr<Animation> animation, Vector2 position);
 	virtual ~AnimatedButton();
+
+	virtual void reloadGraphicsAsset() override;
 
 	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;

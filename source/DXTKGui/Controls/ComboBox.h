@@ -12,7 +12,9 @@ public:
 
 	bool initialize(shared_ptr<FontSet> font, ListBox* listbox,
 		const pugi::char_t* buttonAsset = "Combo Button Closed",
-		bool enumerateList = false);
+		bool enumerateList = false, const int frameThickness = 2);
+
+	virtual void reloadGraphicsAsset() override;
 
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);
 	void alwaysShowScrollBar(bool alwaysShow);
@@ -99,6 +101,8 @@ private:
 	size_t textMarginY = 5;
 
 	size_t maxDisplayItems = 7;
+
+	int frameThickness = 2;
 
 	void resizeBox();
 

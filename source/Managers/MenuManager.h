@@ -130,10 +130,11 @@ public:
 	MenuManager();
 	virtual ~MenuManager();
 
-
 	virtual void setGameManager(GameManager* game);
-
 	virtual bool initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse);
+
+	void reloadGraphicsAssets();
+
 	virtual void update(double deltaTime);
 	virtual void draw(SpriteBatch* batch);
 
@@ -175,6 +176,8 @@ public:
 	virtual ~MenuScreen();
 
 	virtual void setGameManager(GameManager* game) override;
+	virtual void reloadGraphicsAssets();
+
 	virtual void pause() override;
 
 	virtual void controllerRemoved(size_t controllerSlot);
@@ -200,7 +203,10 @@ public:
 	ConfigScreen(MenuManager* manager);
 	virtual ~ConfigScreen();
 
-	virtual bool initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse) override;
+	virtual bool initialize(ComPtr<ID3D11Device> device,
+		shared_ptr<MouseController> mouse) override;
+	virtual void reloadGraphicsAssets() override;
+
 	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
@@ -223,8 +229,8 @@ private:
 
 	ListBox* adapterListbox;
 	ListBox* displayListbox;
-	//ComboBox* displayModeCombobox;
-	ListBox* displayModeCombobox;
+	ComboBox* displayModeCombobox;
+	//ListBox* displayModeCombobox;
 	Spinner* testSpinner;
 
 };
@@ -235,6 +241,8 @@ public:
 	virtual ~MainScreen();
 
 	virtual bool initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse) override;
+	virtual void reloadGraphicsAssets() override;
+
 	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
@@ -246,6 +254,6 @@ private:
 	unique_ptr<DynamicDialog> dynamicDialog;
 	TextLabel* mouseLabel;
 
-	
+
 };
 

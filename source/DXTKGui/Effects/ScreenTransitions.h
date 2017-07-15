@@ -43,6 +43,8 @@ namespace ScreenTransitions {
 		void initialize(GUIFactory* guiFactory,
 			const char_t* bgName = "Default Transition BG", bool resizeBGToFit = true);
 
+		void reloadGraphicsAssets();
+
 		void setTransition(ScreenTransition* effect);
 		void transitionBetween(Screen* oldScreen, Screen* newScreen,
 			float transitionTime = .5, bool autoBatchDraw = true);

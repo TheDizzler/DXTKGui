@@ -22,6 +22,8 @@ public:
 
 	virtual ~GUIControl();
 
+	virtual void reloadGraphicsAsset() = 0;
+
 	/** Return true if GUIControl has refreshed its texture and parent GUIControls
 		need to redraw themselves. */
 	virtual bool update(double deltaTime) = 0;

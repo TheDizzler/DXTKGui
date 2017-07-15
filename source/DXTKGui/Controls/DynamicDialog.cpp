@@ -1,6 +1,8 @@
 #include "DynamicDialog.h"
-
 #include "../GUIFactory.h"
+#include <sstream>
+#include <comdef.h>
+
 DynamicDialog::DynamicDialog(GUIFactory* factory,
 	shared_ptr<MouseController> mouseController) : Dialog(factory, mouseController) {
 
@@ -34,13 +36,33 @@ void DynamicDialog::initialize(shared_ptr<AssetSet> set, const pugi::char_t* fon
 
 }
 
+void DynamicDialog::reloadGraphicsAsset() {
+	const pugi::char_t* assetSetName = assetSet->setName;
+	assetSet.reset();
+	assetSet = guiFactory->getAssetSet(assetSetName);
+
+	topLeftCorner = assetSet->getAsset("Top Left Corner");
+	topCenter = assetSet->getAsset("Top Center");
+	topRightCorner = assetSet->getAsset("Top Right Corner");
+
+	centerLeft = assetSet->getAsset("Left Center");
+	middle = assetSet->getAsset("Center");
+	centerRight = assetSet->getAsset("Right Center");
+
+	bottomLeftCorner = assetSet->getAsset("Bottom Left Corner");
+	bottomCenter = assetSet->getAsset("Bottom Center");
+	bottomRightCorner = assetSet->getAsset("Bottom Right Corner");
+
+	dialogText->reloadGraphicsAsset();
+
+	refreshTexture = false;
+}
+
 
 void DynamicDialog::setText(wstring text) {
 	dialogText->setText(text);
 }
 
-#include <sstream>
-#include <comdef.h>
 void DynamicDialog::setDimensions(const Vector2& posit, const Vector2& sz) {
 
 	size = sz;
@@ -81,6 +103,35 @@ void DynamicDialog::setDimensions(const Vector2& posit, const Vector2& sz) {
 	dialogText->setPosition(textPos);
 
 	refreshTexture = true;
+}
+
+
+bool DynamicDialog::update(double deltaTime) {
+
+	bool refreshed = false;
+
+	if (dialogText->update(deltaTime)) {
+		refreshTexture = true;
+		refreshed = true;
+	}
+
+	if (refreshTexture) {
+		texturePanel->setTexture(texturize());
+		refreshTexture = false;
+		refreshed = true;
+	}
+
+	return refreshed;
+}
+
+
+void DynamicDialog::draw(SpriteBatch* batch) {
+
+	if (!isShowing)
+		return;
+
+	texturePanel->draw(batch);
+	dialogText->draw(batch);
 }
 
 
@@ -180,36 +231,7 @@ void DynamicDialog::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device)
 }
 
 
-bool DynamicDialog::update(double deltaTime) {
-
-	bool refreshed = false;
-
-	if (dialogText->update(deltaTime)) {
-		refreshTexture = true;
-		refreshed = true;
-	}
-
-	if (refreshTexture) {
-		texturePanel->setTexture(texturize());
-		refreshTexture = false;
-		refreshed = true;
-	}
-
-	return refreshed;
-}
-
-
-void DynamicDialog::draw(SpriteBatch* batch) {
-
-	if (!isShowing)
-		return;
-
-	texturePanel->draw(batch);
-	dialogText->draw(batch);
-}
-
 void DynamicDialog::setPosition(const Vector2& newPosition) {
-
 
 	Vector2 moveBy = newPosition - position;
 	dialogText->moveBy(moveBy);

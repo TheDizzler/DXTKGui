@@ -366,7 +366,7 @@ vector<DXGI_MODE_DESC> GraphicsEngine::getDisplayModeList(
 
 }
 
-/** Doesn't work :( */
+/** Almost works!! */
 bool GraphicsEngine::setAdapter(size_t newAdapterIndex) {
 
 	swapChain->SetFullscreenState(false, NULL);

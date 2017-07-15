@@ -1,4 +1,5 @@
 #include "GUIFactory.h"
+#include "StringHelper.h"
 #include "CommonStates.h"
 #include "DDSTextureLoader.h"
 
@@ -89,6 +90,7 @@ void GUIFactory::reInitDevice(ComPtr<ID3D11Device> dev,
 
 	device.Reset();
 	deviceContext->Flush();
+	deviceContext.Reset();
 
 	device = dev;
 	deviceContext = devCon;
@@ -102,7 +104,7 @@ void GUIFactory::reInitDevice(ComPtr<ID3D11Device> dev,
 }
 
 
-#include "StringHelper.h"
+
 unique_ptr<FontSet> GUIFactory::getFont(const char_t* fontName) {
 
 	if (fontMap.find(fontName) == fontMap.end()) {
@@ -438,7 +440,7 @@ TexturePanel* GUIFactory::createPanel(bool neverShowScrollBar) {
 
 ListBox* GUIFactory::createListBox(const Vector2& position,
 	const int width, const int itemHeight, const int maxItemsShown,
-	bool enumerateList, const char_t* fontName) {
+	bool enumerateList, const char_t* fontName, const int frameThickness) {
 
 
 	ListBox* listbox = new ListBox(this, mouseController,
@@ -446,7 +448,8 @@ ListBox* GUIFactory::createListBox(const Vector2& position,
 
 	Vector2 scrollBarPos(position.x + width, position.y);
 	listbox->initialize(fontName, getAsset("White Pixel"),
-		createScrollBar(scrollBarPos, itemHeight * maxItemsShown), enumerateList);
+		createScrollBar(scrollBarPos, itemHeight * maxItemsShown), enumerateList,
+		frameThickness);
 
 	return listbox;
 }
@@ -454,7 +457,8 @@ ListBox* GUIFactory::createListBox(const Vector2& position,
 
 ComboBox* GUIFactory::createComboBox(const Vector2& position,
 	const int width, const int itemHeight, const int maxItemsShown,
-	bool enumerateList, const char_t* buttonAsset, const char_t* fontName) {
+	bool enumerateList, const char_t* buttonAsset, const char_t* fontName,
+	const int frameThickness) {
 
 	ComboBox* combobox = new ComboBox(this, mouseController,
 		position, width, itemHeight, maxItemsShown);
@@ -462,8 +466,8 @@ ComboBox* GUIFactory::createComboBox(const Vector2& position,
 	combobox->initialize(getFont(fontName),
 		createListBox(
 			Vector2(position.x, position.y + itemHeight),
-			width, itemHeight, maxItemsShown, enumerateList, fontName),
-		buttonAsset, enumerateList);
+			width, itemHeight, maxItemsShown, enumerateList, fontName, frameThickness),
+		buttonAsset, enumerateList, frameThickness);
 
 	return combobox;
 }
@@ -876,7 +880,7 @@ bool GUIFactory::getGUIAssetsFromXML() {
 			}
 
 			shared_ptr<Animation> animationAsset;
-			animationAsset.reset(new Animation(masterAsset->getTexture(), frames));
+			animationAsset.reset(new Animation(masterAsset->getTexture(), frames, name));
 			animationMap[name] = animationAsset;
 		}
 

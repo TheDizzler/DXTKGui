@@ -20,7 +20,8 @@ ComboBox::~ComboBox() {
 }
 
 bool ComboBox::initialize(shared_ptr<FontSet> fnt,
-	ListBox* lstBx, const pugi::char_t* buttonName, bool enumerateList) {
+	ListBox* lstBx, const pugi::char_t* buttonName,
+	bool enumerateList, const int frameThickness) {
 
 
 	comboListButton.reset(
@@ -31,7 +32,8 @@ bool ComboBox::initialize(shared_ptr<FontSet> fnt,
 	comboListButton->setActionListener(new ShowListBoxListener(this));
 
 	frame.reset(guiFactory->createRectangleFrame(
-		position, Vector2(width, comboListButton->getScaledHeight())));
+		position, Vector2(width, comboListButton->getScaledHeight()),
+		frameThickness));
 
 	listBox.reset(lstBx);
 	listBox->setActionListener(new ListBoxListener(this));
@@ -47,9 +49,21 @@ bool ComboBox::initialize(shared_ptr<FontSet> fnt,
 
 	texturePanel.reset(guiFactory->createPanel());
 
-
-
 	return true;
+}
+
+void ComboBox::reloadGraphicsAsset() {
+
+	comboListButton->reloadGraphicsAsset();
+	frame.reset(guiFactory->createRectangleFrame(
+		position, Vector2(width, comboListButton->getScaledHeight()),
+		frameThickness, frame->getTint()));
+	listBox->reloadGraphicsAsset();
+	selectedLabel->reloadGraphicsAsset();
+	selectedBackgroundSprite->reloadGraphicsAsset(guiFactory);
+	texturePanel.reset(guiFactory->createPanel());
+
+	refreshTexture = true;
 }
 
 void ComboBox::setScrollBar(ScrollBarDesc& scrollBarDesc) {
@@ -70,10 +84,11 @@ bool ComboBox::update(double deltaTime) {
 	if (frame->update())
 		refreshTexture = true;
 
-
+	bool refresh = false;
 	if (isOpen) {
 		if (listBox->update(deltaTime))
-			refreshTexture = true;
+			refresh = true;
+			//refreshTexture = true;
 	}
 
 	if (refreshTexture) {
@@ -81,7 +96,7 @@ bool ComboBox::update(double deltaTime) {
 		refreshTexture = false;
 		return true;
 	}
-	return false;
+	return refresh;
 }
 
 void ComboBox::draw(SpriteBatch* batch) {

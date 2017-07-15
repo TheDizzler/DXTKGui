@@ -21,6 +21,17 @@ Button::~Button() {
 		delete actionListener;
 }
 
+void Button::reloadGraphicsAsset() {
+
+	buttonLabel->reloadGraphicsAsset();
+	rectSprite->reloadGraphicsAsset(guiFactory);
+	frame.reset(guiFactory->createRectangleFrame(
+		position, hitArea->size, frameThickness, frame->getTint()));
+	texturePanel.reset(guiFactory->createPanel());
+
+	refreshTexture = true;
+}
+
 
 const int textMargin = 10;
 
@@ -369,13 +380,22 @@ ImageButton::ImageButton(GUIFactory* factory, shared_ptr<MouseController> mouseC
 ImageButton::~ImageButton() {
 }
 
+void ImageButton::reloadGraphicsAsset() {
+	buttonLabel->reloadGraphicsAsset();
+	texturePanel.reset(guiFactory->createPanel());
+	texture = NULL;
+	normalSprite->reloadGraphicsAsset(guiFactory);
+	if (pressedSprite != NULL)
+		pressedSprite->reloadGraphicsAsset(guiFactory);
+	texture = normalSprite->getTexture().Get();
+
+	refreshTexture = true;
+}
+
 
 void ImageButton::draw(SpriteBatch* batch) {
 
 	texturePanel->draw(batch);
-	/*batch->Draw(texture, normalSprite->getPosition(), &sourceRect,
-		tint, rotation, normalSprite->getOrigin(), scale, SpriteEffects_None, layerDepth);
-	buttonLabel->draw(batch);*/
 }
 
 void ImageButton::textureDraw(SpriteBatch * batch, ComPtr<ID3D11Device> device) {
@@ -461,7 +481,7 @@ void ImageButton::setToSelectedState() {
 	if (pressedSprite.get() != NULL) {
 		texture = pressedSprite->getTexture().Get();
 		sourceRect = pressedSprite->getRect();
-	}else
+	} else
 		tint = selectedColor;
 }
 /** ***** END OF IMAGE BUTTON **** **/
@@ -485,6 +505,11 @@ AnimatedButton::AnimatedButton(GUIFactory* factory, shared_ptr<MouseController> 
 AnimatedButton::~AnimatedButton() {
 	if (actionListener != NULL)
 		delete actionListener;
+}
+
+void AnimatedButton::reloadGraphicsAsset() {
+	animation.reset();
+	animation = guiFactory->getAnimation(animation->animationName.c_str());
 }
 
 

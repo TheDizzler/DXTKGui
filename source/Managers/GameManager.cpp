@@ -35,10 +35,16 @@ bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc, shared_ptr
 	return true;
 }
 
+void GameManager::reloadGraphicsAssets() {
+	mouse->reloadGraphicsAsset(guiFactory.get());
+	menuScreen->reloadGraphicsAssets();
+	guiOverlay->reloadGraphicsAssets();
+
+	gameEngine->reloadGraphicsAssets();
+}
+
 
 void GameManager::update(double deltaTime) {
-
-
 	currentScreen->update(deltaTime);
 	guiOverlay->update(deltaTime);
 }

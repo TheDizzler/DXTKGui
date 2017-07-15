@@ -15,18 +15,19 @@ public:
 		shared_ptr<MouseController> mouseController);
 	virtual ~DynamicDialog();
 
-
 	void initialize(shared_ptr<AssetSet> assetSet,
 		const pugi::char_t* font = "Default Font");
+
+	virtual void reloadGraphicsAsset() override;
+
+	virtual bool update(double deltaTime) override;
+	virtual void draw(SpriteBatch* batch) override;
 
 	virtual unique_ptr<GraphicsAsset> texturize() override;
 	virtual void textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device = NULL) override;
 
 	virtual void setText(wstring text) override;
 	virtual void setDimensions(const Vector2& position, const Vector2& size);
-
-	virtual bool update(double deltaTime) override;
-	virtual void draw(SpriteBatch* batch) override;
 
 	virtual void setPosition(const Vector2& newPosition) override;
 	virtual void setLayerDepth(const float depth, bool frontToBack = true) override;

@@ -1,6 +1,6 @@
 #include "CheckBox.h"
-
 #include "../GUIFactory.h"
+
 CheckBox::CheckBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 	unique_ptr<Sprite> unchkdSprite, unique_ptr<Sprite> chckdSprite,
 	const pugi::char_t* font) : GUIControl(factory, mouseController) {
@@ -24,6 +24,18 @@ CheckBox::~CheckBox() {
 	if (actionListener != NULL)
 		delete actionListener;
 
+}
+
+void CheckBox::reloadGraphicsAsset() {
+	texture = NULL;
+	uncheckedSprite->reloadGraphicsAsset(guiFactory);
+	checkedSprite->reloadGraphicsAsset(guiFactory);
+	label->reloadGraphicsAsset();
+	
+	if (isClicked)
+		texture = checkedSprite->getTexture().Get();
+	else
+		texture = uncheckedSprite->getTexture().Get();
 }
 
 
@@ -68,7 +80,6 @@ void CheckBox::draw(SpriteBatch* batch) {
 }
 
 
-#include "../GUIFactory.h"
 void CheckBox::setFont(const pugi::char_t* font) {
 	label->setFont(guiFactory->getFont(font));
 }

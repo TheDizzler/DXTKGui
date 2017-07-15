@@ -9,8 +9,7 @@ public:
 	Scrubber(GraphicsAsset* const graphicsAsset, bool assetIsPixel = true);
 	virtual ~Scrubber();
 
-	/*void setDimensions(const Vector2& startPosition,
-		const Vector2& size, const int scrollBarHeight);*/
+	
 	void setDimensions(const Sprite* scrollBarTrack,
 		double percentShowing, double maxPercent);
 
@@ -82,6 +81,8 @@ public:
 	bool initialize(GraphicsAsset* const pixelAsset, size_t barHeight,
 		ImageButton* scrollBarButtons[2] = NULL, unique_ptr<Sprite> scrollBarTrack = NULL,
 		GraphicsAsset* scrubber = NULL);
+
+	virtual void reloadGraphicsAsset() override;
 
 	void setScrollBar(int totalItems, int itemHeight, int maxDisplayItems);
 

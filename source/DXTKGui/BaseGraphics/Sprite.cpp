@@ -1,6 +1,6 @@
 #include "Sprite.h"
+#include "../GUIFactory.h"
 
-#include "../StringHelper.h"
 Sprite::Sprite() {
 
 	rotation = 0.0f;
@@ -45,6 +45,11 @@ void Sprite::load(GraphicsAsset* const graphicsAsset) {
 	hitArea.reset(new HitArea(
 		Vector2(position.x - origin.x, position.y - origin.y),
 		Vector2(width, height)));
+}
+
+
+void Sprite::reloadGraphicsAsset(GUIFactory* guiFactory) {
+	load(guiFactory->getAsset(assetName.c_str()));
 }
 
 

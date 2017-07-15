@@ -100,12 +100,13 @@ public:
 
 	ListBox* createListBox(const Vector2& position, const int width,
 		const int itemHeight = 32, const int maxItemsShown = 7,
-		bool enumerateList = false, const char_t* fontName = "Default Font");
+		bool enumerateList = false, const char_t* fontName = "Default Font",
+		const int frameThickness = 2);
 
 	ComboBox* createComboBox(const Vector2& position, const int width,
 		const int itemHeight = 32, const int maxItemsShown = 7,
 		bool enumerateList = false, const char_t* buttonAsset = "Combo Button Closed",
-		const char_t* fontName = "Default Font");
+		const char_t* fontName = "Default Font", const int frameThickness = 2);
 
 	PromptDialog* createDialog(
 		const Vector2& position = Vector2::Zero, const Vector2& size = Vector2::Zero,

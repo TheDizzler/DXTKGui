@@ -10,8 +10,8 @@ public:
 	/** A Textlabel with no set position. Used in PromptDialog. */
 	TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 		wstring text, shared_ptr<FontSet> font, bool useTexture = true);
-
 	virtual ~TextLabel();
+	virtual void reloadGraphicsAsset() override;
 
 	virtual bool update(double deltaTime) override;
 	void draw(SpriteBatch* batch);

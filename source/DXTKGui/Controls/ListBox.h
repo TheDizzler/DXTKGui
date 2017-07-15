@@ -11,6 +11,8 @@ public:
 		TextLabel* label, ComPtr<ID3D11ShaderResourceView> pixelTexture,
 		size_t listPosition = 0, float layerDepth = .925, bool enumerateList = false);
 
+	virtual void reloadGraphicsAsset(GUIFactory* guiFactory);
+
 	void setWidth(int newWidth);
 
 	Vector2 measureString() const;
@@ -81,8 +83,9 @@ public:
 
 	void initialize(const pugi::char_t* fontName,
 		GraphicsAsset* pixelAsset, ScrollBar* scrollBar,
-		bool enumerateList = false);
+		bool enumerateList = false, const int frameThickness = 2);
 
+	virtual void reloadGraphicsAsset() override;
 
 	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;

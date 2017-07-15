@@ -106,6 +106,8 @@ public:
 
 	void initialize(const pugi::char_t* font = "Default Font");
 
+	virtual void reloadGraphicsAsset() override;
+
 	virtual void setScrollBar(ScrollBarDesc& scrollBarDesc);
 	virtual void alwaysShowScrollBar(bool alwaysShow);
 

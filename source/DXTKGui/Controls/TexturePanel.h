@@ -10,12 +10,15 @@ public:
 		ScrollBar* scrllbr);
 	virtual ~TexturePanel();
 
+	
 
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);
 	void alwaysShowScrollBar(bool alwaysShow);
 
+	/** Do nothing. */
 	void setTexture(unique_ptr<GraphicsAsset> gfxAsset);
 
+	virtual void reloadGraphicsAsset() override;
 
 	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;

@@ -47,7 +47,6 @@ bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 		Vector2(position.x - scrollBarDownButton->getWidth(),
 			position.y + barHeight - scrollBarDownButton->getHeight()));
 
-
 	// use this for HitArea
 	Vector2 scrollBarPosition =
 		Vector2(position.x - scrollBarUpButton->getWidth(),
@@ -64,11 +63,6 @@ bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 		scrollBarTrack->setDimensions(scrollBarPosition, trackSize);
 	}
 
-
-	/*Vector2 scrubberStartPos(
-		scrollBarPosition.x,
-		scrollBarPosition.y);*/
-
 	if (scrbbr == NULL) {
 		scrubber = make_unique<Scrubber>(pixelAsset, false);
 
@@ -77,6 +71,13 @@ bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 	}
 	scrubber->setDimensions(scrollBarTrack.get(), 1, 0);
 	return true;
+}
+
+void ScrollBar::reloadGraphicsAsset() {
+	scrollBarUpButton->reloadGraphicsAsset();
+	scrollBarDownButton->reloadGraphicsAsset();
+	scrollBarTrack->reloadGraphicsAsset(guiFactory);
+	scrubber->reloadGraphicsAsset(guiFactory);
 }
 
 void ScrollBar::moveBy(const Vector2& moveVector) {
@@ -355,7 +356,6 @@ Scrubber::Scrubber(GraphicsAsset* const graphicsAsset, bool pixel)
 	position = Vector2::Zero;
 	hitArea = make_unique<HitArea>(Vector2::Zero, Vector2::Zero);
 }
-
 
 Scrubber::~Scrubber() {
 }

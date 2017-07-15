@@ -21,6 +21,10 @@ GUIOverlay::~GUIOverlay() {
 	displayingLostJoys.clear();
 }
 
+void GUIOverlay::reloadGraphicsAssets() {
+	fpsLabel->reloadGraphicsAsset();
+}
+
 
 int frameCount = 0;
 double fpsUpdateTime = 5;

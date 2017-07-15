@@ -29,6 +29,8 @@ public:
 	bool initEngine(HWND hwnd, HINSTANCE hInstance);
 	void onAudioDeviceChange();
 
+	void reloadGraphicsAssets();
+
 	void run(double time);
 
 	void suspend();
