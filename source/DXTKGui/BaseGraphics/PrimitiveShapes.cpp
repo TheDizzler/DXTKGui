@@ -1,6 +1,7 @@
 #include "PrimitiveShapes.h"
+#include "../GUIFactory.h"
+#include "../Controls/TexturePanel.h"
 
-#include "../StringHelper.h"
 RectangleSprite::RectangleSprite(GraphicsAsset* const graphicsAsset, Color color)
 	: Sprite() {
 
@@ -10,30 +11,13 @@ RectangleSprite::RectangleSprite(GraphicsAsset* const graphicsAsset, Color color
 	tint = color;
 }
 
-//RectangleSprite::RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel,
-//	const Vector2& pos, const Vector2 & size, Color color) : Sprite() {
-//
-//	texture = pixel;
-//	tint = color;
-//	setDimensions(pos, size);
-//}
-
 RectangleSprite::~RectangleSprite() {
 
-	//OutputDebugString(L"\n*** RectSprite Release ***\n");
 }
 
 void RectangleSprite::setSize(const Vector2 & size) {
 	Sprite::setSize(size);
 
-		/*sourceRect.left = 0;
-		sourceRect.top = 0;
-		sourceRect.bottom = height;
-		sourceRect.right = width;*/
-
-		/*hitArea.reset(new HitArea(
-			Vector2(position.x - origin.x *scale.x, position.y - origin.y*scale.y),
-			Vector2(size.x*scale.x, size.y*scale.y)));*/
 }
 
 const Vector2 RectangleSprite::getSize() const {
@@ -47,8 +31,7 @@ void RectangleSprite::moveBy(const Vector2& moveVector) {
 	hitArea->position = position;
 }
 
-#include "../GUIFactory.h"
-#include "../Controls/TexturePanel.h"
+
 /**** ***** RECTANGLE FRAME START ***** ****/
 RectangleFrame::RectangleFrame(GraphicsAsset* pixelAsset, GUIFactory* gui) {
 
@@ -149,7 +132,7 @@ unique_ptr<GraphicsAsset> RectangleFrame::texturize() {
 	//texturePanel->setTint(Color(0, 1, 1, 1));
 	//texturePanel->setDimensions(frameTopPos, hitArea->size);
 
-	unique_ptr<GraphicsAsset> gfxAsset = guiFactory->createTextureFromIElement2D(this);
+	unique_ptr<GraphicsAsset> gfxAsset = guiFactory->createTextureFromTexturizable(this);
 	texturePanel->setTexturePosition(frameTopPos);
 	texturePanel->setLayerDepth(layerDepth);
 

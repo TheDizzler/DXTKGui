@@ -130,7 +130,7 @@ void Button::draw(SpriteBatch* batch) {
 
 
 unique_ptr<GraphicsAsset> Button::texturize() {
-	return guiFactory->createTextureFromIElement2D(this);
+	return guiFactory->createTextureFromTexturizable(this);
 }
 
 void Button::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {

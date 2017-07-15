@@ -372,12 +372,12 @@ bool GraphicsEngine::setAdapter(size_t newAdapterIndex) {
 	swapChain->SetFullscreenState(false, NULL);
 
 
-	device.Get()->Release();
 	device.Reset();
 	deviceContext->Flush();
+	deviceContext.Reset();
 	swapChain.Reset();
-	debugDevice.Get()->Release();
 	debugDevice.Reset();
+	renderTargetView.Reset();
 
 	delete batch.release();
 

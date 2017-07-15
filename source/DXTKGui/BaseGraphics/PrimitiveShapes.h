@@ -10,8 +10,6 @@
 class RectangleSprite : public Sprite {
 public:
 	RectangleSprite(GraphicsAsset* const graphicsAsset, Color color = Color(1, 1, 1, 1));
-	/*RectangleSprite(ComPtr<ID3D11ShaderResourceView> pixel,
-		const Vector2& position, const Vector2& size, Color color);*/
 	virtual ~RectangleSprite();
 
 	virtual void setSize(const Vector2& size) override;

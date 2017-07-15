@@ -95,7 +95,7 @@ void ComboBox::draw(SpriteBatch* batch) {
 
 
 unique_ptr<GraphicsAsset> ComboBox::texturize() {
-	return move(guiFactory->createTextureFromIElement2D(this));
+	return move(guiFactory->createTextureFromTexturizable(this));
 }
 
 void ComboBox::textureDraw(SpriteBatch * batch, ComPtr<ID3D11Device> device) {
@@ -184,6 +184,20 @@ const int ComboBox::getWidth() const {
 
 const int ComboBox::getHeight() const {
 	return height;
+}
+
+void ComboBox::setLayerDepth(const float depth, bool frontToBack) {
+
+	float nudge = .00000001;
+	if (!frontToBack)
+		nudge *= -1;
+
+	listBox->setLayerDepth(depth, frontToBack);
+	selectedBackgroundSprite->setLayerDepth(depth, frontToBack);
+	selectedLabel->setLayerDepth(depth + nudge, frontToBack);
+	comboListButton->setLayerDepth(depth + nudge * 2, frontToBack);
+	frame->setLayerDepth(depth + nudge * 3, frontToBack);
+
 }
 
 bool ComboBox::clicked() {

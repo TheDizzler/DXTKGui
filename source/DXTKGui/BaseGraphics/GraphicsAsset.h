@@ -37,12 +37,12 @@ public:
 	GraphicsAsset();
 	virtual ~GraphicsAsset();
 
-	bool load(ComPtr<ID3D11Device> device, const wchar_t* file,
-		const Vector2& origin = Vector2(-1000, -1000),
+	bool load(ComPtr<ID3D11Device> device, const pugi::char_t* assetName,
+		const wchar_t* texturefileName, const Vector2& origin = Vector2(-1000, -1000),
 		bool showMessageBox = true);
 	void loadAsPartOfSheet(ComPtr<ID3D11ShaderResourceView> spriteSheetTexture,
-		const Vector2& locationInSheet, const Vector2& size,
-		const Vector2& origin = Vector2(-1000, -1000), const wchar_t* file = L"Master Sheet");
+		const pugi::char_t* assetName, const Vector2& locationInSheet, const Vector2& size,
+		const Vector2& origin = Vector2(-1000, -1000));
 
 	void getTextureDimensions(ID3D11Resource* res, UINT* width, UINT* height);
 
@@ -56,8 +56,8 @@ public:
 	ComPtr<ID3D11ShaderResourceView> getTexture();
 	ComPtr<ID3D11Resource> getResource();
 
-	/* for debugging */
-	wstring textureFile;
+	/* For Reloading textures on device change. */
+	string assetName;
 protected:
 	ComPtr<ID3D11ShaderResourceView> texture;
 	ComPtr<ID3D11Resource> resource;
@@ -71,7 +71,7 @@ protected:
 
 	RECT sourceRect;
 
-	
+
 };
 
 

@@ -1,4 +1,5 @@
 #include "Input.h"
+#include "../Engine/GameEngine.h"
 
 unique_ptr<PlayerSlotManager> slotManager;
 
@@ -9,13 +10,11 @@ bool slotManagerThreadRunning = false;
 Input::Input() {
 }
 
-
 Input::~Input() {
 	ReleaseCapture();
 	ShowCursor(true);
 }
 
-#include "../Engine/GameEngine.h"
 bool Input::initRawInput(HWND hwnd) {
 
 	keys = make_unique<Keyboard>();

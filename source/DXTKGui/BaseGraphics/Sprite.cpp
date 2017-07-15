@@ -33,6 +33,7 @@ Sprite::~Sprite() {
 /* GraphicsAsset is not stored in Sprite. */
 void Sprite::load(GraphicsAsset* const graphicsAsset) {
 
+	assetName = graphicsAsset->assetName;
 	texture = graphicsAsset->getTexture();
 	width = graphicsAsset->getWidth();
 	height = graphicsAsset->getHeight();

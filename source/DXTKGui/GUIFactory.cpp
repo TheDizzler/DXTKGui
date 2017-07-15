@@ -1,5 +1,6 @@
 #include "GUIFactory.h"
 #include "CommonStates.h"
+#include "DDSTextureLoader.h"
 
 bool GUIFactory::initialized = false;
 
@@ -84,9 +85,8 @@ bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 }
 
 void GUIFactory::reInitDevice(ComPtr<ID3D11Device> dev,
-	ComPtr<ID3D11DeviceContext> devCon,	SpriteBatch* sBatch) {
+	ComPtr<ID3D11DeviceContext> devCon, SpriteBatch* sBatch) {
 
-	device.Get()->Release();
 	device.Reset();
 	deviceContext->Flush();
 
@@ -499,10 +499,10 @@ DynamicDialog* GUIFactory::createDynamicDialog(shared_ptr<AssetSet> dialogImageS
 
 
 int elementCounter = 0;
-unique_ptr<GraphicsAsset> GUIFactory::createTextureFromIElement2D(
+unique_ptr<GraphicsAsset> GUIFactory::createTextureFromTexturizable(
 	Texturizable* control, bool autoBatchDraw, Color bgColor) {
 
-	int buffer = 20; // padding to give a bit of lee-way to prevent tearing
+	int buffer = 35; // padding to give a bit of lee-way to prevent tearing
 
 	RECT rect;
 	GetClientRect(hwnd, &rect);
@@ -613,11 +613,12 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromIElement2D(
 	control->setPosition(oldPos);
 	unique_ptr<GraphicsAsset> gfxAsset = make_unique<GraphicsAsset>();
 
-	wostringstream woo;
-	woo << L"Texturized Element #" << elementCounter++;
-	gfxAsset->loadAsPartOfSheet(shaderResourceView, Vector2::Zero,
-		Vector2(width - widthPadding - buffer, height - heightPadding - buffer), Vector2::Zero,
-		woo.str().c_str());
+	const char_t* name;
+	stringstream ss;
+	ss << L"Texturized Screen #" << elementCounter++;
+	name = ss.str().c_str();
+	gfxAsset->loadAsPartOfSheet(shaderResourceView, name, Vector2::Zero,
+		Vector2(width - widthPadding - buffer, height - heightPadding - buffer), Vector2::Zero);
 
 	shaderResourceView.Reset();
 	return move(gfxAsset);
@@ -714,21 +715,25 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 	deviceContext->Flush();
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
 
-	const wchar_t* name;
+	/*const wchar_t* name;
 	wostringstream woo;
 	woo << L"Texturized Screen #" << screenCounter++;
-	name = woo.str().c_str();
+	name = woo.str().c_str();*/
+
+	const char_t* name;
+	stringstream ss;
+	ss << L"Texturized Screen #" << screenCounter++;
+	name = ss.str().c_str();
 	unique_ptr<GraphicsAsset> gfxAsset = make_unique<GraphicsAsset>();
-	gfxAsset->loadAsPartOfSheet(shaderResourceView, Vector2::Zero,
-		Vector2(screenWidth - buffer, screenHeight - buffer), Vector2::Zero,
-		name);
+	gfxAsset->loadAsPartOfSheet(shaderResourceView, name, Vector2::Zero,
+		Vector2(screenWidth - buffer, screenHeight - buffer), Vector2::Zero);
 
 	shaderResourceView.Reset();
 	return move(gfxAsset);
 }
 
 
-#include "DDSTextureLoader.h"
+
 bool GUIFactory::getGUIAssetsFromXML() {
 
 	string assetsDir =
@@ -759,17 +764,6 @@ bool GUIFactory::getGUIAssetsFromXML() {
 		const char_t* file = file_s.c_str();
 		const char_t* name = spriteNode.attribute("name").as_string();
 
-		//string check = name; // I think this is required - ya, pretty sure it is
-		if (name == string("White Pixel")) {
-			if (StringHelper::reportError(
-				DirectX::CreateDDSTextureFromFile(
-					device.Get(), StringHelper::convertCharStarToWCharT(file), NULL,
-					whitePixel.GetAddressOf()),
-				L"Failed to create texture from WhitePixel.dds", L"ERROR"))
-				return false;
-
-		}
-
 		Vector2 origin = Vector2(-1000, -1000);
 		xml_node originNode = spriteNode.child("origin");
 		if (originNode) {
@@ -778,7 +772,7 @@ bool GUIFactory::getGUIAssetsFromXML() {
 		}
 		unique_ptr<GraphicsAsset> guiAsset;
 		guiAsset.reset(new GraphicsAsset());
-		if (!guiAsset->load(device, StringHelper::convertCharStarToWCharT(file), origin)) {
+		if (!guiAsset->load(device, name, StringHelper::convertCharStarToWCharT(file), origin)) {
 			wstringstream wss;
 			wss << "Unable to load file: " << file;
 			MessageBox(hwnd, wss.str().c_str(), L"Critical error", MB_OK);
@@ -795,7 +789,8 @@ bool GUIFactory::getGUIAssetsFromXML() {
 		const char_t* masterAssetName = spritesheetNode.attribute("name").as_string();
 
 		unique_ptr<GraphicsAsset> masterAsset = make_unique<GraphicsAsset>();
-		if (!masterAsset->load(device, StringHelper::convertCharStarToWCharT(file), Vector2::Zero))
+		if (!masterAsset->load(device, masterAssetName,
+			StringHelper::convertCharStarToWCharT(file), Vector2::Zero))
 			return false;
 
 
@@ -934,7 +929,7 @@ unique_ptr<GraphicsAsset> GUIFactory::parseSprite(xml_node spriteNode,
 	}
 
 	unique_ptr<GraphicsAsset> spriteAsset = make_unique<GraphicsAsset>();
-	spriteAsset->loadAsPartOfSheet(sheetTexture, position, size, origin,
-		StringHelper::convertCharStarToWCharT(spritename));
+	spriteAsset->loadAsPartOfSheet(sheetTexture,
+		spritename, position, size, origin);
 	return move(spriteAsset);
 }

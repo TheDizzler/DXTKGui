@@ -65,9 +65,9 @@ bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 	}
 
 
-	Vector2 scrubberStartPos(
+	/*Vector2 scrubberStartPos(
 		scrollBarPosition.x,
-		scrollBarPosition.y);
+		scrollBarPosition.y);*/
 
 	if (scrbbr == NULL) {
 		scrubber = make_unique<Scrubber>(pixelAsset, false);
@@ -75,14 +75,23 @@ bool ScrollBar::initialize(GraphicsAsset* const pixelAsset,
 	} else {
 		scrubber = make_unique<Scrubber>(scrbbr, true);
 	}
-
 	scrubber->setDimensions(scrollBarTrack.get(), 1, 0);
 	return true;
+}
+
+void ScrollBar::moveBy(const Vector2& moveVector) {
+
+	position += moveVector;
+	scrollBarUpButton->moveBy(moveVector);
+	scrollBarDownButton->moveBy(moveVector);
+	scrollBarTrack->moveBy(moveVector);
+	scrubber->moveBy(moveVector);
 }
 
 /* newPosition.x is position of right side of scrollbar's container. */
 void ScrollBar::setPosition(const Vector2& newPosition) {
 	/** Do not use ScrollBar's HitArea - it is NULL. */
+	Vector2 moveVector = newPosition - position;
 	position = newPosition;
 
 	int xPos = newPosition.x - scrollBarUpButton->getWidth();
@@ -94,19 +103,11 @@ void ScrollBar::setPosition(const Vector2& newPosition) {
 	scrollBarTrack->setPosition(
 		Vector2(xPos, newPosition.y + scrollBarUpButton->getHeight()));
 
-
-	Vector2 scrubberPos = scrubber->getPosition();
-	scrubberPos.x = xPos;
+	/*double perc = scrubber->percentAt;
+	Vector2 scrubberPos = scrollBarTrack->getPosition();
 	scrubber->setPosition(scrubberPos);
+	scrubber->setScrollPositionByPercent(perc);*/
 
-}
-
-void ScrollBar::moveBy(const Vector2& moveVector) {
-
-	position += moveVector;
-	scrollBarUpButton->moveBy(moveVector);
-	scrollBarDownButton->moveBy(moveVector);
-	scrollBarTrack->moveBy(moveVector);
 	scrubber->moveBy(moveVector);
 }
 
@@ -125,9 +126,9 @@ void ScrollBar::setBarHeight(int barHght) {
 	Vector2 trackSize = Vector2(scrollBarUpButton->getWidth(),
 		barHeight - scrollBarUpButton->getHeight() * 2);
 
-	Vector2 scrubberStartPos(
+	/*Vector2 scrubberStartPos(
 		scrollBarPosition.x,
-		scrollBarPosition.y);
+		scrollBarPosition.y);*/
 
 	scrubber->setDimensions(scrollBarTrack.get(), 1, -1);
 }
@@ -248,12 +249,18 @@ bool ScrollBar::update(double deltaTime) {
 
 	percentScroll = scrubber->percentAt;
 
+	/*if (refreshTexture) {
+	texturePanel->set
+		refreshTexture = false;
+		return true;
+	}*/
 	return refreshed;
 }
 
 
 void ScrollBar::draw(SpriteBatch* batch) {
 
+	//texturePanel->draw(batch);
 	// draw track bar
 	scrollBarTrack->draw(batch);
 
@@ -343,7 +350,9 @@ const Vector2& XM_CALLCONV ScrollBar::measureString() const {
 Scrubber::Scrubber(GraphicsAsset* const graphicsAsset, bool pixel)
 	: RectangleSprite(graphicsAsset) {
 
+
 	isPixel = pixel;
+	position = Vector2::Zero;
 	hitArea = make_unique<HitArea>(Vector2::Zero, Vector2::Zero);
 }
 
@@ -358,9 +367,9 @@ void Scrubber::setDimensions(const Sprite* scrollBarTrack,
 	// save current percentage
 	double currentpercent = percentAt;
 
+	position = scrollBarTrack->getPosition();
+	minPosition = maxPosition = position.y;
 
-
-	minPosition = maxPosition = position = scrollBarTrack->getPosition();
 	if (max != -1)
 		maxPercent = max;
 	percentDifference = 1 / maxPercent;
@@ -379,10 +388,10 @@ void Scrubber::setDimensions(const Sprite* scrollBarTrack,
 	sourceRect.bottom = height;
 	sourceRect.right = width;
 
-	maxPosition.y += scrollBarHeight - height;
-
-
-	minMaxDifference = maxPosition.y - minPosition.y;
+	//maxPosition.y += scrollBarHeight - height;
+	maxPosition += scrollBarHeight - height;
+	//minMaxDifference = maxPosition.y - minPosition.y;
+	minMaxDifference = maxPosition - minPosition;
 	setScrollPositionByPercent(currentpercent);
 
 	hitArea->position = position;
@@ -394,44 +403,61 @@ bool Scrubber::update(double deltaTime, MouseController* mouse) {
 
 	bool refreshed = false;
 	bool wasPressed = false;
+	bool wasHover = isHover;
 	isHover = hitArea->contains(mouse->getPosition());
+
+	wasPressed = isPressed;
 
 	if (isHover && mouse->leftButton() && !mouse->leftButtonLast()) {
 		isPressed = true;
 		pressedPosition = mouse->getPosition().y - position.y;
-
 	} else if (!mouse->leftButton()) {
-		wasPressed = isPressed;
 		isPressed = false;
 	}
 
 	if (isPressed) {
 		tint = selectedColor;
-		if (minMaxDifference == 0)
-			return true;
-		setScrollPositionByCoord(mouse->getPosition().y - pressedPosition);
-		refreshed = true;
-	} else if (isHover) {
+		float newCoord = mouse->getPosition().y - pressedPosition;
+		if (newCoord != position.y) {
+			setScrollPositionByCoord(newCoord);
+			refreshed = true;
+		} else if (!wasPressed)
+			refreshed = true;
+		else
+			refreshed = false;
+	} else if (isHover && !wasHover) {
 		tint = hoverColor;
 		refreshed = true;
-	} else if (wasPressed) {
+	} else if (!isHover && wasHover) {
 		tint = normalColor;
+		refreshed = true;
+	} else if (wasPressed) {
+		if (isHover)
+			tint = hoverColor;
+		else
+			tint = normalColor;
 		refreshed = true;
 	}
 	return refreshed;
 }
 
 void Scrubber::setPosition(const Vector2& pos) {
-
 	RectangleSprite::setPosition(pos);
+	/*Vector2 moveVector = position - pos;
+	moveBy(moveVector);*/
 
 }
 
 void Scrubber::moveBy(const Vector2& moveVector) {
 
+	//RectangleSprite::moveBy(moveVector);
+	/*position += moveVector;
+	hitArea->position = position;
+	minPosition = position.y;
+	maxPosition = position.y + minMaxDifference;*/
 	RectangleSprite::moveBy(moveVector);
-	minPosition += moveVector;
-	maxPosition += moveVector;
+	minPosition += moveVector.y;
+	maxPosition += moveVector.y;
 }
 
 
@@ -439,14 +465,14 @@ void Scrubber::setScrollPositionByCoord(int newCoordinatePosition) {
 
 	position.y = newCoordinatePosition;
 
-	if (position.y < minPosition.y)
-		position.y = minPosition.y;
-	else if (position.y > maxPosition.y)
-		position.y = maxPosition.y;
+	if (position.y < minPosition)
+		position.y = minPosition;
+	else if (position.y > maxPosition)
+		position.y = maxPosition;
 
 	hitArea->position.y = position.y;
 
-	double distanceBetweenPosAndMax = maxPosition.y - position.y;
+	double distanceBetweenPosAndMax = maxPosition - position.y;
 
 	scrubberPercentAt = (minMaxDifference - distanceBetweenPosAndMax)
 		/ (minMaxDifference);
@@ -458,7 +484,7 @@ void Scrubber::setScrollPositionByPercent(double newPositionPercentage) {
 
 	percentAt = newPositionPercentage;
 	scrubberPercentAt = percentAt * percentDifference;
-	position.y = (minMaxDifference * scrubberPercentAt) + minPosition.y;
+	position.y = (minMaxDifference * scrubberPercentAt) + minPosition;
 	hitArea->position = Vector2(position.x, position.y);
 	hitArea->size = Vector2(width*scale.x, height*scale.y);
 }
@@ -475,7 +501,7 @@ void Scrubber::scroll(double itemIncrement, double scrubberIncrement) {
 		percentAt = maxPercent;
 		scrubberPercentAt = 1;
 	}
-	position.y = (minMaxDifference * (scrubberPercentAt)) + minPosition.y;
+	position.y = (minMaxDifference * (scrubberPercentAt)) + minPosition;
 	hitArea->position.y = position.y;
 }
 

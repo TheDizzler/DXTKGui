@@ -223,8 +223,8 @@ private:
 
 	ListBox* adapterListbox;
 	ListBox* displayListbox;
-	ComboBox* displayModeCombobox;
-
+	//ComboBox* displayModeCombobox;
+	ListBox* displayModeCombobox;
 	Spinner* testSpinner;
 
 };

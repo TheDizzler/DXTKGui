@@ -9,7 +9,7 @@ public:
 
 	void initialize(const int width, const int height,
 		TextLabel* label, ComPtr<ID3D11ShaderResourceView> pixelTexture,
-		size_t listPosition = 0, bool enumerateList = false);
+		size_t listPosition = 0, float layerDepth = .925, bool enumerateList = false);
 
 	void setWidth(int newWidth);
 
@@ -20,6 +20,7 @@ public:
 	void updatePosition(const Vector2& position);
 	virtual void draw(SpriteBatch* batch);
 
+	void setLayerDepth(const float depth);
 
 	void setSelected(bool isSelected);
 	bool isSelected = false;
@@ -45,7 +46,7 @@ protected:
 			position: for text only. */
 	Vector2 itemPosition;
 
-	float layerDepth = 1;
+	float layerDepth;
 
 	size_t textMarginX = 10;
 	size_t textMarginY = 5;
@@ -83,18 +84,19 @@ public:
 		bool enumerateList = false);
 
 
+	virtual bool update(double deltaTime) override;
+	virtual void draw(SpriteBatch* batch) override;
+
+	virtual unique_ptr<GraphicsAsset> texturize() override;
+	virtual void textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device = NULL) override;
+
+
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);
 	void alwaysShowScrollBar(bool alwaysShow);
 	/* Note: this function has not been tested much....not at all really...*/
 	void addItem(ListItem* item);
 	void addItems(vector<ListItem*> items);
 	void clear();
-
-	virtual bool update(double deltaTime) override;
-	virtual void draw(SpriteBatch* batch) override;
-
-	virtual unique_ptr<GraphicsAsset> texturize() override;
-	virtual void textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device = NULL) override;
 
 
 	void setSelected(size_t newIndex);
@@ -122,6 +124,8 @@ public:
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
 
+	virtual void setLayerDepth(const float depth, bool frontToBack = true) override;
+
 	virtual bool clicked() override;
 	virtual bool pressed() override;
 	virtual bool hovering() override;
@@ -132,8 +136,6 @@ public:
 		selectedItemIndex: index of item in ListBox.*/
 		virtual void onClick(ListBox* listbox, int selectedItemIndex) = 0;
 	};
-
-	
 
 
 	void setActionListener(ActionListener* iOnC) {

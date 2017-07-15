@@ -254,11 +254,11 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	guiControls.push_back(button);
 
 
-	//mouseLabel = guiFactory->createTextLabel(
-	//	Vector2(0, 0), L"Mouse Label", "Default Font", false);
-	////mouseLabel->setAlpha(.1);
-	//mouseLabel->setHoverable(true);
-	//guiControls.push_back(mouseLabel);
+	mouseLabel = guiFactory->createTextLabel(
+		Vector2(0, 0), L"Mouse Label", "Default Font", false);
+	//mouseLabel->setAlpha(.1);
+	mouseLabel->setHoverable(true);
+	guiControls.push_back(mouseLabel);
 
 	//mouse->setAlpha(.5);
 
@@ -271,7 +271,7 @@ void MainScreen::update(double deltaTime) {
 
 	wostringstream ws;
 	ws << "Mouse: " << mouse->getPosition().x << ", " << mouse->getPosition().y;
-	//mouseLabel->setText(ws);
+	mouseLabel->setText(ws);
 	//dynamicDialog->setText(ws.str());
 	//dynamicDialog->update(deltaTime);
 	for (auto const& control : guiControls)
@@ -386,14 +386,15 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	scrollBarDesc.scrubberImage = "Scrubber Custom";
 
 	displayModeCombobox =
-		guiFactory->createComboBox(controlPos, 75, itemHeight, 10, true);
+		//guiFactory->createComboBox(controlPos, 75, itemHeight, 10, true);
+		guiFactory->createListBox(controlPos, 75, itemHeight);
 
 	populateDisplayModeList(game->getDisplayModeList(0));
 	//displayModeCombobox->setScrollBar(scrollBarDesc);
 	displayModeCombobox->setSelected(game->getSelectedDisplayModeIndex());
 	OnClickListenerDisplayModeList* onClickDisplayMode =
 		new OnClickListenerDisplayModeList(this);
-	displayModeCombobox->setActionListener(onClickDisplayMode);
+	//displayModeCombobox->setActionListener(onClickDisplayMode);
 	guiControls.push_back(displayModeCombobox);
 
 
@@ -552,7 +553,7 @@ void DisplayModeItem::setText() {
 void OnClickListenerAdapterList::onClick(ListBox* listbox, int selectedIndex) {
 
 	AdapterItem* selectedItem = (AdapterItem*) listbox->getItem(selectedIndex);
-	//config->game->setAdapter(selectedIndex); // DOESN'T WORK :''''(
+	config->game->setAdapter(selectedIndex); // DOESN'T WORK :''''(
 	config->populateDisplayList(config->game->getDisplayList());
 	config->populateDisplayModeList(
 		config->game->getDisplayModeList(0

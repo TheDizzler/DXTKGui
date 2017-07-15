@@ -100,7 +100,7 @@ void TextLabel::draw(SpriteBatch* batch, Color color) {
 
 
 unique_ptr<GraphicsAsset> TextLabel::texturize() {
-	return guiFactory->createTextureFromIElement2D(this);
+	return guiFactory->createTextureFromTexturizable(this);
 }
 
 void TextLabel::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {

@@ -128,7 +128,7 @@ public:
 	/* Creates a texture from a screen grab of an IElement2D object.
 		offset is the vector to bring object to top left corner of screen
 			in prep for its close up.*/
-	unique_ptr<GraphicsAsset> createTextureFromIElement2D(Texturizable* control,
+	unique_ptr<GraphicsAsset> createTextureFromTexturizable(Texturizable* control,
 		bool autoBatchDraw = true, Color bgColor = {0, 0, 0, 0});
 
 	unique_ptr<GraphicsAsset> createTextureFromScreen(Screen* screen,
@@ -145,7 +145,7 @@ private:
 	SpriteBatch* batch;
    /** ID3D11ShaderResourceView is a ComPtr!
 	   This is used for solid color backgrounds and area fills. */
-	ComPtr<ID3D11ShaderResourceView> whitePixel;
+	//ComPtr<ID3D11ShaderResourceView> whitePixel;
 
 	/* Creates an image button with only one image. */
 	Button* createOneImageButton(const char_t* buttonImage,

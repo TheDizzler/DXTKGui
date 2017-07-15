@@ -7,25 +7,25 @@ GraphicsAsset::GraphicsAsset() {
 
 GraphicsAsset::~GraphicsAsset() {
 
-	wostringstream woo;
-	woo << "\n\n*** GraphicsAsset: " << textureFile << endl;
+	/*wostringstream woo;
+	woo << "\n\n*** GraphicsAsset: " << assetName << endl;
 	woo << "\t\tID3D11Resource release #: " << resource.Reset() << endl;
 	woo << "\t\tResource release #: " << texture.Reset() << endl;
-	//OutputDebugString(woo.str().c_str());
+	OutputDebugString(woo.str().c_str());*/
 }
 
 
 #include <DDSTextureLoader.h>
-bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const wchar_t* texFile, const Vector2& org,
-	bool showMessageBox) {
+bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const pugi::char_t* asset,
+	const wchar_t* texturefileName, const Vector2& org, bool showMessageBox) {
 
-	textureFile = wstring(texFile);
+	assetName = string(asset);
 
 	wostringstream wss;
-	wss << L"Unable to load texture file: " << texFile << " in GraphicsAsset::load().";
+	wss << L"Unable to load texture file: " << texturefileName << " in GraphicsAsset::load().";
 
 	if (StringHelper::reportError(
-		CreateDDSTextureFromFile(device.Get(), texFile,
+		CreateDDSTextureFromFile(device.Get(), texturefileName,
 			resource.GetAddressOf(), texture.GetAddressOf()),
 		wss.str(), L"ERROR", showMessageBox))
 		return false;
@@ -49,10 +49,10 @@ bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const wchar_t* texFile, co
 
 void GraphicsAsset::loadAsPartOfSheet(
 	ComPtr<ID3D11ShaderResourceView> spriteSheetTexture,
-	const Vector2& locationInSheet, const Vector2& size, const Vector2& org,
-	const wchar_t* texFile) {
+	const pugi::char_t* asset, const Vector2& locationInSheet, const Vector2& size,
+	const Vector2& org) {
 
-	textureFile = wstring(texFile);
+	assetName = string(asset);
 
 	texture = spriteSheetTexture;
 	position = locationInSheet;
@@ -66,8 +66,8 @@ void GraphicsAsset::loadAsPartOfSheet(
 
 	sourceRect.left = position.x;
 	sourceRect.top = position.y;
-	sourceRect.bottom = position.y + height;
 	sourceRect.right = position.x + width;
+	sourceRect.bottom = position.y + height;
 }
 
 void GraphicsAsset::getTextureDimensions(ID3D11Resource* res, UINT* width, UINT* height) {

@@ -53,6 +53,7 @@ public:
 
 private:
 	unique_ptr<TexturePanel> texturePanel;
+	bool refreshTexture = true;
 
 	vector<wstring> list;
 	unique_ptr<TextLabel> label;

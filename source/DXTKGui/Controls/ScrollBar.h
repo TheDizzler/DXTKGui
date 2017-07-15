@@ -28,16 +28,17 @@ public:
 	bool pressed();
 
 
-	Color normalColor = Color((Vector3(1, 1, 0)));
-	Color hoverColor = Color((Vector3(.5, .75, 1)));;
-	Color selectedColor = Color((Vector3(0, .5, 1)));;
+	Color normalColor = Color(1, 1, 1);
+	Color hoverColor = Color(.5, .75, 1);
+	Color selectedColor = Color(0, .5, 1);
 
 	double percentAt = 0;
 
 private:
-	Vector2 minPosition;
-	Vector2 maxPosition;
-
+	//Vector2 minPosition;
+	//Vector2 maxPosition;
+	int minPosition = 0;
+	int maxPosition = 0;
 
 	int scrollBarHeight;
 	double scrubberPercentAt = 0;
@@ -68,7 +69,8 @@ struct ScrollBarDesc {
 
 
 
-/** Do not use this classes HitArea - it is NULL. */
+/** A vertical scrollbar for scrolling contents of a window.
+	NOTE: Do not use this classes HitArea - it is NULL. */
 class ScrollBar : public GUIControl {
 public:
 	ScrollBar(GUIFactory* factory, shared_ptr<MouseController> mouseController,
@@ -87,8 +89,8 @@ public:
 	virtual void draw(SpriteBatch* batch) override;
 
 	void setScrollPositionByPercent(double newPositionPercentage);
-	virtual void setPosition(const Vector2& newPosition) override;
 	virtual void moveBy(const Vector2& moveVector) override;
+	virtual void setPosition(const Vector2& newPosition) override;
 
 	void setBarHeight(int barHeight);
 	/** Call this from parent control on mouse scroll. */

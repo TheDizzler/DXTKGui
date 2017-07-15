@@ -81,7 +81,7 @@ void TexturePanel::setDimensions(const Vector2& pos, const Vector2& size) {
 
 	hitArea->size = size;
 	setPosition(pos);
-	if (neverShowScrollBar)
+	if (neverShowScrollBar || !showScrollBar)
 		return;
 	Vector2 vertScrollBarPos = Vector2(position.x + size.x, position.y);
 	verticalScrollBar->setPosition(vertScrollBarPos);
@@ -124,7 +124,7 @@ void TexturePanel::moveBy(const Vector2& moveVector) {
 
 	setPosition(position + moveVector);
 
-	if (neverShowScrollBar)
+	if (neverShowScrollBar || !showScrollBar)
 		return;
 	verticalScrollBar->moveBy(moveVector);
 }

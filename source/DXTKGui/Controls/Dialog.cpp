@@ -643,7 +643,7 @@ void PromptDialog::draw(SpriteBatch* batch) {
 }
 
 unique_ptr<GraphicsAsset> PromptDialog::texturize() {
-	return guiFactory->createTextureFromIElement2D(this);
+	return guiFactory->createTextureFromTexturizable(this);
 }
 
 

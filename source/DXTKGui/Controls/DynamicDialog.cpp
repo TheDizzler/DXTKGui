@@ -85,7 +85,7 @@ void DynamicDialog::setDimensions(const Vector2& posit, const Vector2& sz) {
 
 
 unique_ptr<GraphicsAsset> DynamicDialog::texturize() {
-	return move(guiFactory->createTextureFromIElement2D(this));
+	return move(guiFactory->createTextureFromTexturizable(this));
 }
 
 

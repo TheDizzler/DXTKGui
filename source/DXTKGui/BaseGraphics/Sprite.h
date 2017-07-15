@@ -86,6 +86,7 @@ public:
 
 
 protected:
+	string assetName;
 	ComPtr<ID3D11ShaderResourceView> texture;
 	bool isPixel = false;
 

@@ -40,6 +40,8 @@ public:
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
 
+	virtual void setLayerDepth(const float depth, bool frontToBack = true) override;
+
 	virtual bool clicked() override;
 	virtual bool pressed() override;
 	virtual bool hovering() override;
@@ -78,6 +80,9 @@ public:
 
 
 private:
+	bool refreshTexture = true;
+	unique_ptr<TexturePanel> texturePanel;
+
 	unique_ptr<ListBox> listBox;
 
 	unique_ptr<RectangleFrame> frame;
@@ -135,9 +140,6 @@ private:
 		ComboBox* comboBox;
 	};
 
-
-	bool refreshTexture = true;
-	unique_ptr<TexturePanel> texturePanel;
 };
 
 
