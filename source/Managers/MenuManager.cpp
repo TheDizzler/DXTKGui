@@ -406,7 +406,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 		//guiFactory->createListBox(controlPos, 75, itemHeight);
 
 	populateDisplayModeList(game->getDisplayModeList(0));
-	//displayModeCombobox->setScrollBar(scrollBarDesc);
+	displayModeCombobox->setScrollBar(scrollBarDesc);
 	displayModeCombobox->setSelected(game->getSelectedDisplayModeIndex());
 	OnClickListenerDisplayModeList* onClickDisplayMode =
 		new OnClickListenerDisplayModeList(this);

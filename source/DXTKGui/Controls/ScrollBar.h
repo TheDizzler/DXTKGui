@@ -34,8 +34,6 @@ public:
 	double percentAt = 0;
 
 private:
-	//Vector2 minPosition;
-	//Vector2 maxPosition;
 	int minPosition = 0;
 	int maxPosition = 0;
 

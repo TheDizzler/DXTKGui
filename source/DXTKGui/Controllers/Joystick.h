@@ -11,12 +11,12 @@
 using namespace DirectX::SimpleMath;
 
 enum PlayerSlotNumber {
-	NONE = -1, SLOT_1, SLOT_2, SLOT_3
+	NONE = -1, SLOT_1, SLOT_2, SLOT_3, SLOT_4, SLOT_5, SLOT_6, SLOT_7, SLOT_8
 };
 
 /* Virtual Sockets for controllers. */
 enum ControllerSocketNumber {
-	SOCKET_1, SOCKET_2, SOCKET_3
+	SOCKET_1, SOCKET_2, SOCKET_3, SOCKET_4, SOCKET_5, SOCKET_6, SOCKET_7, SOCKET_8
 };
 
 enum ControlButtons {

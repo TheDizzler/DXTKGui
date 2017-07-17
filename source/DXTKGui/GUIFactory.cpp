@@ -405,21 +405,38 @@ ScrollBar* GUIFactory::createScrollBar(const Vector2& position, size_t barHeight
 	ScrollBar* scrollBar = new ScrollBar(this, mouseController, position);
 
 	ImageButton* buttons[2] = {NULL, NULL};
-	buttons[0] = (ImageButton*) createImageButton(scrollBarDesc.upButtonImage.c_str(),
-		scrollBarDesc.upPressedButtonImage.c_str());
+	if (scrollBarDesc.upPressedButtonImage == "")
+		buttons[0] = (ImageButton*) createOneImageButton(scrollBarDesc.upButtonImage.c_str());
+	else
+		buttons[0] = (ImageButton*) createImageButton(scrollBarDesc.upButtonImage.c_str(),
+			scrollBarDesc.upPressedButtonImage.c_str());
 
 	if (scrollBarDesc.downButtonImage == "") { // copy the up imagebutton and reverse
-		buttons[1] = (ImageButton*) createImageButton(scrollBarDesc.upButtonImage.c_str(),
-			scrollBarDesc.upPressedButtonImage.c_str());
+		if (scrollBarDesc.upPressedButtonImage == "")
+			buttons[1] = (ImageButton*) createOneImageButton(scrollBarDesc.upButtonImage.c_str());
+		else
+			buttons[1] = (ImageButton*) createImageButton(scrollBarDesc.upButtonImage.c_str(),
+				scrollBarDesc.upPressedButtonImage.c_str());
 		buttons[1]->setRotation(XM_PI);
 	} else {
-		buttons[1] = (ImageButton*) createImageButton(scrollBarDesc.downButtonImage.c_str(),
-			scrollBarDesc.downPressedButtonImage.c_str());
+		if (scrollBarDesc.downPressedButtonImage == "")
+			buttons[1] = (ImageButton*) createOneImageButton(scrollBarDesc.downButtonImage.c_str());
+		else
+			buttons[1] = (ImageButton*) createImageButton(scrollBarDesc.downButtonImage.c_str(),
+				scrollBarDesc.downPressedButtonImage.c_str());
 	}
 
+	unique_ptr<Sprite> scrollBarTrack;
+	if (scrollBarDesc.trackImage != "") {
+		scrollBarTrack = getSpriteFromAsset(scrollBarDesc.trackImage.c_str());
+	}
+
+	GraphicsAsset* scrollBarScrubber = NULL;
+	if (scrollBarDesc.scrubberImage != "")
+		scrollBarScrubber = getAsset(scrollBarDesc.scrubberImage.c_str());
+
 	if (!scrollBar->initialize(getAsset("White Pixel"), barHeight, buttons,
-		getSpriteFromAsset(scrollBarDesc.trackImage.c_str()),
-		getAsset(scrollBarDesc.scrubberImage.c_str()))) {
+		move(scrollBarTrack), scrollBarScrubber)) {
 
 		MessageBox(NULL, L"Failed to create ScrollBar",
 			L"GUI initialization ERROR", MB_OK);

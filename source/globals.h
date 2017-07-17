@@ -1,6 +1,6 @@
 #pragma once
 
-#define MAX_PLAYERS 3
+#define MAX_PLAYERS 8
 
 namespace Globals {
 

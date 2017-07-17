@@ -50,7 +50,7 @@ ControllerListener::~ControllerListener() {
 
 void ControllerListener::addGamePad(HANDLE handle) {
 
-	if (!socketsAvailable() || numGamePads >= 3) {
+	if (!socketsAvailable() || numGamePads >= XUSER_MAX_COUNT) {
 		// too many players
 		return;
 	}
