@@ -16,13 +16,14 @@ namespace TransitionEffects {
 		}
 		virtual ~TransitionEffect();
 
-		/** This must be run in Set Transition Function. */
+		/** This must be run in SetTransition Function. */
 		virtual void initializeEffect(Texturizable* cntrl) {
 		};
 
-		/* Returns true when transition effect is finished. */
+/* Returns true when transition effect is finished. */
 		virtual bool run(double deltaTime) = 0;
 		virtual void reset() = 0;
+		//virtual void reloadGraphicAsset();
 		/** This must return false if not being used! */
 		virtual bool draw(SpriteBatch* batch) {
 			return false;

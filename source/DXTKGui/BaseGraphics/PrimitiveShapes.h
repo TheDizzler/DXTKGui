@@ -12,6 +12,8 @@ public:
 	RectangleSprite(GraphicsAsset* const graphicsAsset, Color color = Color(1, 1, 1, 1));
 	virtual ~RectangleSprite();
 
+	virtual void reloadGraphicsAsset(GUIFactory* guiFactory) override;
+
 	virtual void setSize(const Vector2& size) override;
 	const Vector2 getSize() const;
 	/* position is top left corner. */
@@ -27,6 +29,7 @@ public:
 	RectangleFrame(GraphicsAsset* pixelAsset, GUIFactory* guifactory);
 	virtual ~RectangleFrame();
 
+	virtual void reloadGraphicsAsset();
 	void setDimensions(const Vector2& position, const Vector2& size,
 		int frameThickness = 2);
 	void setSize(const Vector2& size);

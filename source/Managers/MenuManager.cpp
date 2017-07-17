@@ -410,7 +410,7 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 	displayModeCombobox->setSelected(game->getSelectedDisplayModeIndex());
 	OnClickListenerDisplayModeList* onClickDisplayMode =
 		new OnClickListenerDisplayModeList(this);
-	//displayModeCombobox->setActionListener(onClickDisplayMode);
+	displayModeCombobox->setActionListener(onClickDisplayMode);
 	guiControls.push_back(displayModeCombobox);
 
 
@@ -574,12 +574,11 @@ void DisplayModeItem::setText() {
 void OnClickListenerAdapterList::onClick(ListBox* listbox, int selectedIndex) {
 
 	AdapterItem* selectedItem = (AdapterItem*) listbox->getItem(selectedIndex);
-	config->game->setAdapter(selectedIndex); // ALMOST WORKS :)
+	config->game->setAdapter(selectedIndex);
 	config->game->reloadGraphicsAssets();
 	config->populateDisplayList(config->game->getDisplayList());
 	config->populateDisplayModeList(
-		config->game->getDisplayModeList(0
-		/*config->game->getSelectedAdapterIndex()*/));
+		config->game->getDisplayModeList(config->game->getSelectedDisplayIndex()));
 
 	config->adapterLabel->setText(listbox->getSelected()->toString());
 
@@ -607,7 +606,8 @@ void OnClickListenerFullScreenCheckBox::onClick(CheckBox* checkbox, bool isCheck
 	} else {
 		// reconstruct display
 
-		config->populateDisplayModeList(config->game->getDisplayModeList(0));
+		config->populateDisplayModeList(
+			config->game->getDisplayModeList(config->game->getSelectedDisplayIndex()));
 		//config->displayModeCombobox->setSelected(config->game->getSelectedDisplayModeIndex());
 	}
 }

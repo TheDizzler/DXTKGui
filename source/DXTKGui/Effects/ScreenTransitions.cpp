@@ -15,7 +15,7 @@ ScreenTransitionManager::~ScreenTransitionManager() {
 }
 
 void ScreenTransitionManager::initialize(
-	GUIFactory* factory, const char_t* bgName, bool resizeBGToFit) {
+	GUIFactory* factory, const char_t* bgName, bool resize) {
 
 
 	guiFactory = factory;
@@ -27,10 +27,10 @@ void ScreenTransitionManager::initialize(
 	bg->setOrigin(Vector2::Zero);
 	bg->setLayerDepth(0);
 
+	resizeBGToFit = resize;
 	RECT rect;
 	GetClientRect(guiFactory->getHWND(), &rect);
 
-	//int buffer = 5; // padding to give a bit of lee-way to prevent tearing
 	int screenWidth = rect.right - rect.left;
 	int screenHeight = rect.bottom - rect.top;
 
@@ -61,7 +61,35 @@ void ScreenTransitionManager::initialize(
 
 void ScreenTransitionManager::reloadGraphicsAssets() {
 	bg->reloadGraphicsAsset(guiFactory);
+	bg->setPosition(Vector2::Zero);
+	bg->setOrigin(Vector2::Zero);
 
+	int screenWidth = Globals::WINDOW_WIDTH;
+	int screenHeight = Globals::WINDOW_HEIGHT;
+
+	if (resizeBGToFit) {
+		//scale bg image to screen
+		int horzDif = bg->getWidth() - screenWidth;
+		int vertDif = bg->getHeight() - screenHeight;
+		if (horzDif > 0 || vertDif > 0) {
+			// bg image is bigger in one or more dimensions than screen
+			if (horzDif > vertDif) {
+				float horzRatio = float(screenWidth) / bg->getWidth();
+				bg->setScale(Vector2(horzRatio, horzRatio));
+			} else {
+				float vertRatio = float(screenHeight) / bg->getHeight();
+				bg->setScale(Vector2(vertRatio, vertRatio));
+			}
+		} else {
+			if (horzDif < vertDif) {
+				float horzRatio = float(screenWidth) / bg->getWidth();
+				bg->setScale(Vector2(horzRatio, horzRatio));
+			} else {
+				float vertRatio = float(screenHeight) / bg->getHeight();
+				bg->setScale(Vector2(vertRatio, vertRatio));
+			}
+		}
+	}
 }
 
 void ScreenTransitionManager::setTransition(ScreenTransition* effect) {

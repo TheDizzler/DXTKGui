@@ -196,9 +196,8 @@ void PromptDialog::initialize(const pugi::char_t* font) {
 void PromptDialog::reloadGraphicsAsset() {
 	panel.reset(guiFactory->createPanel(false));
 	panel->setTint(Color(0, 1, 1, 1));
-	frame.reset(guiFactory->createRectangleFrame(
-		position, size, frameThickness, frame->getTint()));
-
+	dialogText->reloadGraphicsAsset();
+	frame->reloadGraphicsAsset();
 	bgSprite->reloadGraphicsAsset(guiFactory);
 	titleSprite->reloadGraphicsAsset(guiFactory);
 	buttonFrameSprite->reloadGraphicsAsset(guiFactory);
@@ -207,9 +206,16 @@ void PromptDialog::reloadGraphicsAsset() {
 			continue;
 		control->reloadGraphicsAsset();
 	}
+	if (closeTransition != NULL)
+		closeTransition->initializeEffect(this);
+	if (openTransition != NULL)
+		openTransition->initializeEffect(this);
 
+	//calculateTitlePos()
 	texturePanel.reset(guiFactory->createPanel());
 	refreshTexture = true;
+
+	calculateDialogTextPos();
 }
 
 void PromptDialog::setDimensions(const Vector2& pos, const Vector2& sz,
@@ -249,6 +255,8 @@ void PromptDialog::setDimensions(const Vector2& pos, const Vector2& sz,
 	testMinimumSize();
 
 	calculateDialogTextPos();
+
+	refreshTexture = true;
 }
 
 
@@ -320,18 +328,6 @@ void PromptDialog::draw(SpriteBatch* batch) {
 	} else if (isClosing && (closeTransition->*drawTransition)(batch)) {
 		//OutputDebugString(L"Closing\n");
 	} else {
-		//bgSprite->draw(batch);
-		//panel->draw(batch);
-		//titleSprite->draw(batch);
-		//buttonFrameSprite->draw(batch);
-
-		//for (auto const& control : controls) {
-		//	if (control == NULL)
-		//		continue;
-		//	control->draw(batch);
-		//}
-		//frame->draw(batch);
-
 		texturePanel->draw(batch);
 	}
 }

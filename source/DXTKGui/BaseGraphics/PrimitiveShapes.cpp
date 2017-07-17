@@ -15,7 +15,14 @@ RectangleSprite::~RectangleSprite() {
 
 }
 
-void RectangleSprite::setSize(const Vector2 & size) {
+void RectangleSprite::reloadGraphicsAsset(GUIFactory* guiFactory) {
+	Vector2 orgsize = getSize();
+	Sprite::reloadGraphicsAsset(guiFactory);
+
+	setDimensions(position, orgsize);
+}
+
+void RectangleSprite::setSize(const Vector2& size) {
 	Sprite::setSize(size);
 
 }
@@ -48,14 +55,20 @@ RectangleFrame::~RectangleFrame() {
 }
 
 
+void RectangleFrame::reloadGraphicsAsset() {
+	pixel = guiFactory->getAsset("White Pixel")->getTexture();
+	texturePanel.reset(guiFactory->createPanel());
+	refreshTexture = true;
+}
+
 void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	int frmThcknss) {
 
 	frameThickness = frmThcknss;
 	Vector2 position = pos;
 
-	height = size.y ;
-	width = size.x ;
+	height = size.y;
+	width = size.x;
 	// upper horizontal frame
 	frameHorizontal.left = 0;
 	frameHorizontal.top = 0;
@@ -65,7 +78,7 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 
 
 	// lower horizontal frame
-	
+
 	frameBottomPos = frameTopPos;
 	frameBottomPos.y += height* scale.y - frameThickness;
 	// frame sticks out passed rectangle area; (-frameThickness) pulls it back in
@@ -128,9 +141,6 @@ void RectangleFrame::draw(SpriteBatch* batch) {
 }
 
 unique_ptr<GraphicsAsset> RectangleFrame::texturize() {
-
-	//texturePanel->setTint(Color(0, 1, 1, 1));
-	//texturePanel->setDimensions(frameTopPos, hitArea->size);
 
 	unique_ptr<GraphicsAsset> gfxAsset = guiFactory->createTextureFromTexturizable(this);
 	texturePanel->setTexturePosition(frameTopPos);

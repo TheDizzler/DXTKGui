@@ -33,7 +33,7 @@ namespace ScreenTransitions {
 
 	class ScreenTransitionManager {
 	public:
-		
+
 		ScreenTransitionManager();
 		/*ScreenTransitionManager(GUIFactory* guiFactory,
 			const char_t* bgName = "Default Transition BG");*/
@@ -59,6 +59,8 @@ namespace ScreenTransitions {
 		unique_ptr<Sprite> bg;
 
 		GUIFactory* guiFactory;
+
+		bool resizeBGToFit;
 	};
 
 

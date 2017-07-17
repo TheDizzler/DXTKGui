@@ -1,4 +1,5 @@
 #include "TransitionEffects.h"
+#include "../Controls/Dialog.h"
 
 
 TransitionEffects::GrowTransition::GrowTransition(IElement2D* cntrl, const Vector2& strt,
@@ -136,7 +137,6 @@ void TransitionEffects::SlideAndGrowTransition::reset() {
 }
 
 
-#include "../Controls/Dialog.h"
 TransitionEffects::TrueGrowTransition::TrueGrowTransition(
 	Dialog* cntrl, const Vector2& startScl,
 	const Vector2& endScl, float speed) : TransitionEffect(cntrl) {

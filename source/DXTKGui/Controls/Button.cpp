@@ -25,8 +25,7 @@ void Button::reloadGraphicsAsset() {
 
 	buttonLabel->reloadGraphicsAsset();
 	rectSprite->reloadGraphicsAsset(guiFactory);
-	frame.reset(guiFactory->createRectangleFrame(
-		position, hitArea->size, frameThickness, frame->getTint()));
+	frame->reloadGraphicsAsset();
 	texturePanel.reset(guiFactory->createPanel());
 
 	refreshTexture = true;
@@ -115,10 +114,8 @@ bool Button::update(double deltaTime) {
 	if (buttonLabel->update(deltaTime))
 		refreshTexture = true;
 
-	if (frame.get()) {
-		if (frame->update())
-			refreshTexture = true;
-	}
+	if (frame->update())
+		refreshTexture = true;
 
 	if (refreshTexture) {
 		texturePanel->setTexture(texturize());
@@ -129,7 +126,6 @@ bool Button::update(double deltaTime) {
 	return false;
 }
 
-
 void Button::draw(SpriteBatch* batch) {
 
 	texturePanel->draw(batch);
@@ -138,7 +134,6 @@ void Button::draw(SpriteBatch* batch) {
 	buttonLabel->draw(batch);*/
 
 }
-
 
 unique_ptr<GraphicsAsset> Button::texturize() {
 	return guiFactory->createTextureFromTexturizable(this);
@@ -382,13 +377,17 @@ ImageButton::~ImageButton() {
 
 void ImageButton::reloadGraphicsAsset() {
 	buttonLabel->reloadGraphicsAsset();
-	texturePanel.reset(guiFactory->createPanel());
+
 	texture = NULL;
 	normalSprite->reloadGraphicsAsset(guiFactory);
 	if (pressedSprite != NULL)
 		pressedSprite->reloadGraphicsAsset(guiFactory);
 	texture = normalSprite->getTexture().Get();
 
+	rectSprite->reloadGraphicsAsset(guiFactory);
+	frame->reloadGraphicsAsset();
+
+	texturePanel.reset(guiFactory->createPanel());
 	refreshTexture = true;
 }
 

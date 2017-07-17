@@ -53,9 +53,10 @@ void ListBox::initialize(const pugi::char_t* fnt, GraphicsAsset* pixelAsset,
 void ListBox::reloadGraphicsAsset() {
 	pixel = guiFactory->getAsset("White Pixel")->getTexture();
 	scrollBar->reloadGraphicsAsset();
-	frame.reset(guiFactory->createRectangleFrame());
+	//frame.reset(guiFactory->createRectangleFrame());
+	frame->reloadGraphicsAsset();
 	texturePanel.reset(guiFactory->createPanel(true));
-
+	texturePanel->setTexturePosition(firstItemPos);
 	for (int i = firstItemToDisplay; i < firstItemToDisplay + itemsToDisplay; ++i)
 		listItems[i]->reloadGraphicsAsset(guiFactory);
 

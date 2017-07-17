@@ -98,7 +98,7 @@ bool GraphicsEngine::getDisplayAdapters() {
 
 
 	int size = i - 1;
-
+	displays.clear();
 	for (int j = 0; j < size; ++j) {
 		adapter = adapters[j];
 		i = 0;
