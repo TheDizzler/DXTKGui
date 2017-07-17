@@ -77,7 +77,9 @@ void ScrollBar::reloadGraphicsAsset() {
 	scrollBarUpButton->reloadGraphicsAsset();
 	scrollBarDownButton->reloadGraphicsAsset();
 	scrollBarTrack->reloadGraphicsAsset(guiFactory);
+	scrollBarTrack->setOrigin(Vector2(0, 0));
 	scrubber->reloadGraphicsAsset(guiFactory);
+	scrubber->setOrigin(Vector2(0, 0));
 }
 
 void ScrollBar::moveBy(const Vector2& moveVector) {
