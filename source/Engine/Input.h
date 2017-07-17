@@ -35,10 +35,8 @@ public:
 	void unpairedJoystickRemoved(JoyData* joyData);
 	void playerAcceptedSlot(JoyData* joyData);
 
-	
+	vector<shared_ptr<PlayerSlot>> getJoystickList();
 
-	/** This is a virtual representation of physical controller ports. */
-	//shared_ptr<Joystick> joystickPorts[MAX_PLAYERS];
 protected:
 	enum SharedResourceTask {
 		CHECK_SOCKETS_AVAILBLE, GET_NEXT_AVAILABLE

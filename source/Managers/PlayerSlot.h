@@ -47,13 +47,13 @@ private:
 	JoyData* _threadJoystickData;
 };
 
-extern std::vector<std::shared_ptr<PlayerSlot>> activeSlots;
-extern std::deque<std::shared_ptr<PlayerSlot>> waitingSlots;
+extern vector<shared_ptr<PlayerSlot>> activeSlots;
+extern deque<shared_ptr<PlayerSlot>> waitingSlots;
 
 class PlayerSlotManager {
 public:
 	PlayerSlotManager();
-	~PlayerSlotManager();
+	virtual ~PlayerSlotManager();
 
 	bool checkXInputSlotNumber(USHORT inputSlotNum);
 	/* GamePads are added as soon as they are discovered. */
@@ -90,7 +90,7 @@ struct JoyData {
 	JoyData(shared_ptr<Joystick> joy, ControllerListener* conListener)
 		: joystick(joy), listener(conListener) {
 	}
-	~JoyData() {
+	virtual ~JoyData() {
 		wostringstream wss;
 		wss << "Slot " << joystick->socket << " data deleting" << endl;
 		OutputDebugString(wss.str().c_str());

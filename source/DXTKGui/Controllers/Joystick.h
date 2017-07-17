@@ -33,7 +33,7 @@ class Joystick {
 public:
 
 	Joystick(ControllerSocketNumber controllerSocket);
-	~Joystick();
+	virtual ~Joystick();
 
 	virtual SHORT getXInputSlot() = 0;
 

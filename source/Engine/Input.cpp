@@ -315,6 +315,10 @@ void ControllerListener::playerAcceptedSlot(JoyData* joyData) {
 	newController(joyData->joystick);
 }
 
+vector<shared_ptr<PlayerSlot>> ControllerListener::getJoystickList() {
+	return activeSlots;
+}
+
 
 DWORD WINAPI slotManagerThread(PVOID pVoid) {
 

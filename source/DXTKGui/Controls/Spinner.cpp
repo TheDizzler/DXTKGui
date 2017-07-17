@@ -57,8 +57,8 @@ void Spinner::reloadGraphicsAsset() {
 	label->reloadGraphicsAsset();
 	upButton->reloadGraphicsAsset();
 	downButton->reloadGraphicsAsset();
-	frame.reset(guiFactory->createRectangleFrame(
-		position, Vector2(width, itemHeight), frame->getThickness(), frame->getTint()));
+	frame.reset(guiFactory->createRectangleFrame(position,
+		Vector2(width, itemHeight), frame->getThickness(), frame->getTint()));
 	rectangle->reloadGraphicsAsset(guiFactory);
 	texturePanel.reset(guiFactory->createPanel());
 	refreshTexture = true;
@@ -101,19 +101,49 @@ void Spinner::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
 }
 
 
+void Spinner::addItem(wstring item) {
+	if (autoSize) {
+		if (label->measureString(item).x + textBuffer * 2 > width) {
+			width = label->measureString(item).x + textBuffer * 2;
+			upButton->setPosition(Vector2(position.x + width, position.y));
+			downButton->setPosition(
+				Vector2(position.x + width,
+					position.y + (itemHeight - upButton->getHeight())));
+			frame->setSize(Vector2(width, itemHeight));
+			rectangle->setSize(Vector2(width, itemHeight));
+		}
+	}
+	list.push_back(item);
+
+	if (list.size() == 1) {
+		selected = 0;
+		label->setText(list[selected]);
+		refreshTexture = true;
+	}
+}
+
 void Spinner::addItems(vector<wstring> items) {
 
+	if (items.size() == 0)
+		return;
+
 	if (autoSize) {
+		bool changed = false;
 		for (wstring item : items) {
-			if (label->measureString(item).x + textBuffer * 2 > width)
+			if (label->measureString(item).x + textBuffer * 2 > width) {
+				changed = true;
 				width = label->measureString(item).x + textBuffer * 2;
+			}
 			list.push_back(item);
 		}
-		upButton->setPosition(Vector2(position.x + width, position.y));
-		downButton->setPosition(
-			Vector2(position.x + width, position.y + (itemHeight - upButton->getHeight())));
-		frame->setSize(Vector2(width, itemHeight));
-		rectangle->setSize(Vector2(width, itemHeight));
+		if (changed) {
+			upButton->setPosition(Vector2(position.x + width, position.y));
+			downButton->setPosition(
+				Vector2(position.x + width,
+					position.y + (itemHeight - upButton->getHeight())));
+			frame->setSize(Vector2(width, itemHeight));
+			rectangle->setSize(Vector2(width, itemHeight));
+		}
 	} else {
 		vector<wstring> AB;
 		AB.reserve(list.size() + items.size()); // preallocate memory
@@ -125,6 +155,23 @@ void Spinner::addItems(vector<wstring> items) {
 	label->setText(list[selected]);
 	items.clear();
 	refreshTexture = true;
+}
+
+bool Spinner::removeItem(wstring removeItem) {
+
+	for (wstring item : list) {
+		if (item == removeItem) {
+			swap(item, list.back());
+			list.pop_back();
+			if (list.size() == 0) {
+				label->setText("Empty");
+				refreshTexture = true;
+			}
+			return true;
+		}
+	}
+
+	return false;
 }
 
 const wstring Spinner::getSelected() const {

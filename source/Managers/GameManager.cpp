@@ -84,9 +84,11 @@ void GameManager::exit() {
 
 void GameManager::controllerRemoved(ControllerSocketNumber controllerSocket,
 	PlayerSlotNumber slotNumber) {
+	currentScreen->controllerRemoved(controllerSocket, slotNumber);
 }
 
 void GameManager::newController(shared_ptr<Joystick> newStick) {
+	currentScreen->newController(newStick);
 }
 
 

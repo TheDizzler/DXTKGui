@@ -25,8 +25,10 @@ public:
 	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
-
+	void addItem(wstring item);
 	void addItems(const vector<wstring> items);
+	/** Returns true if item found and removed from list. */
+	bool removeItem(wstring item);
 	const wstring getSelected() const;
 
 	void increase();

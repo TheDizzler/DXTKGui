@@ -143,9 +143,11 @@ void MenuManager::pause() {
 
 void MenuManager::controllerRemoved(ControllerSocketNumber controllerSlot,
 	PlayerSlotNumber slotNumber) {
+	configScreen->controllerRemoved(controllerSlot, slotNumber);
 }
 
 void MenuManager::newController(shared_ptr<Joystick> newStick) {
+	configScreen->newController(newStick);
 }
 
 
@@ -377,12 +379,9 @@ bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContr
 
 	testSpinner = guiFactory->createSpinner(controlPos, 25, itemHeight);
 	vector<wstring> items;
-	for (ComPtr<IDXGIAdapter> adap : game->getAdapterList()) {
-		DXGI_ADAPTER_DESC desc;
-		ZeroMemory(&desc, sizeof(DXGI_ADAPTER_DESC));
-		adap->GetDesc(&desc);
+	for (const auto& playerSlot : waitingSlots) {
 		wostringstream wss;
-		wss << desc.Description;
+		wss << "Slot: " << playerSlot->getPlayerSlotNumber();
 		items.push_back(wss.str());
 	}
 
@@ -491,9 +490,15 @@ void ConfigScreen::textureDraw(SpriteBatch* batch) {
 
 
 void ConfigScreen::controllerRemoved(ControllerSocketNumber controllerSlot, PlayerSlotNumber slotNumber) {
+	wostringstream wss;
+	wss << "Slot: " << slotNumber;
+	testSpinner->removeItem(wss.str());
 }
 
 void ConfigScreen::newController(shared_ptr<Joystick> newStick) {
+	wostringstream wss;
+	wss << "Slot: " << newStick->getPlayerSlotNumber();
+	testSpinner->addItem(wss.str());
 }
 
 
