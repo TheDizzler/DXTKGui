@@ -83,7 +83,7 @@ bool TextLabel::update(double deltaTime) {
 	}
 
 	if (useTexture && refreshTexture) {
-		texturePanel->setTexture(texturize());
+		texturePanel->setTexture(move(texturize()));
 		texturePanel->setAlpha(tint.w);
 		refreshTexture = false;
 		return true;

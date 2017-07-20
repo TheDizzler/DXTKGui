@@ -15,15 +15,15 @@ GameEngine::GameEngine() {
 
 GameEngine::~GameEngine() {
 
+	guiFactory.reset();
+	errorDialog.reset();
+	warningDialog.reset();
+	showDialog = NULL;
+	mouse.reset();
 	game.reset();
 	if (audioEngine != NULL)
 		audioEngine->Suspend();
 	delete blendState;
-	mouse.reset();
-	showDialog = NULL;
-	errorDialog.reset();
-	warningDialog.reset();
-	guiFactory.reset();
 }
 
 

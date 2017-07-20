@@ -44,19 +44,25 @@ bool PlayerSlot::pairWithSocket(JoyData* joyData) {
 	_threadJoystickData = joyData;
 
 	wostringstream wss;
-	wss << L"Connecting Socket " << joystick->socket << L" to Player Slot " << slotNumber << endl;
+	wss << L"Connecting Socket " << joystick->getControllerSockerNumber()
+		<< L" to Player Slot " << slotNumber << endl;
 	OutputDebugString(wss.str().c_str());
 
+	if (!joyData->waitForInput) {
+		_threadJoystickData->finishFlag = true;
+	}
 	return true;
 }
 
 void PlayerSlot::unpairSocket() {
 	wostringstream wss;
-	wss << L"Socket " << joystick->socket << L" and Player Slot " << slotNumber;
+	wss << L"Socket " << joystick->getControllerSockerNumber()
+		<< L" and Player Slot " << slotNumber;
 	wss << L" unpaired." << endl;
 	OutputDebugString(wss.str().c_str());
 
 	joystick->setPlayerSlotNumber(PlayerSlotNumber::NONE);
+	joystick->setControllerSocketNumber(ControllerSocketNumber::CONTROLLER_SOCKET_ERROR);
 	joystick = NULL;
 	_threadJoystickData = NULL;
 }
@@ -97,6 +103,8 @@ PlayerSlotManager::~PlayerSlotManager() {
 		playerSlots[i].reset();
 	}
 
+	waitingSlots.clear();
+
 	DeleteCriticalSection(&cs_waitingJoysticks);
 	DeleteCriticalSection(&cs_activeSlotsAccess);
 }
@@ -119,7 +127,7 @@ void PlayerSlotManager::updateGamePads() {
 }
 
 void PlayerSlotManager::waiting() {
-		accessWaitingSlots(CHECK_FOR_CONFIRM, NULL);
+	accessWaitingSlots(CHECK_FOR_CONFIRM, NULL);
 }
 
 void PlayerSlotManager::gamePadRemoved(shared_ptr<Joystick> gamePad) {
@@ -128,8 +136,9 @@ void PlayerSlotManager::gamePadRemoved(shared_ptr<Joystick> gamePad) {
 	wss << "GamePad in PlayerSlot " << gamePad->getPlayerSlotNumber() << " removed" << endl;
 	OutputDebugString(wss.str().c_str());
 
+
 	JoyData* joydata = playerSlots[gamePad->getPlayerSlotNumber()]->getJoyData();
-	if (joydata)
+	if (joydata && joydata->waitForInput)
 		accessWaitingSlots(REMOVE_FROM_LIST, joydata);
 
 	PlayerSlotNumber slotNum = gamePad->getPlayerSlotNumber();
@@ -149,7 +158,7 @@ void PlayerSlotManager::controllerRemoved(shared_ptr<Joystick> joystick) {
 	OutputDebugString(wss.str().c_str());
 
 	JoyData* joydata = playerSlots[joystick->getPlayerSlotNumber()]->getJoyData();
-	if (joydata)
+	if (joydata && joydata->waitForInput)
 		accessWaitingSlots(REMOVE_FROM_LIST, joydata);
 
 	PlayerSlotNumber slotNum = joystick->getPlayerSlotNumber();
@@ -163,9 +172,11 @@ void PlayerSlotManager::controllerTryingToPair(JoyData* joyData) {
 
 }
 
+/** Called from ControllerListener::playerAcceptedSlot(). */
 void PlayerSlotManager::finalizePair(JoyData* joyData) {
 
-	accessWaitingSlots(REMOVE_FROM_LIST, joyData);
+	if (joyData->waitForInput)
+		accessWaitingSlots(REMOVE_FROM_LIST, joyData);
 
 	PlayerSlotNumber plyrSltNum = joyData->joystick->getPlayerSlotNumber();
 	accessActiveSlots(ADD_TO_LIST, &plyrSltNum);
@@ -183,9 +194,11 @@ void PlayerSlotManager::accessWaitingSlots(size_t task, PVOID pvoid) {
 		case ADD_TO_LIST:
 			for (int i = 0; i < MAX_PLAYERS; ++i) {
 				if (playerSlots[i]->pairWithSocket(joyData)) {
-					waitingSlots.push_back(playerSlots[i]);
-					DWORD id;
-					CreateThread(NULL, 0, slotManagerThread, (PVOID) 0, 0, &id);
+					if (joyData->waitForInput) {
+						waitingSlots.push_back(playerSlots[i]);
+						DWORD id;
+						CreateThread(NULL, 0, slotManagerThread, (PVOID) 0, 0, &id);
+					}
 					break;
 				}
 			}
@@ -211,7 +224,7 @@ void PlayerSlotManager::accessActiveSlots(size_t task, PVOID pvoid) {
 	PlayerSlotNumber playerSlotNumber = *((PlayerSlotNumber*) pvoid);
 
 	EnterCriticalSection(&cs_activeSlotsAccess);
-	OutputDebugString(L"\nEntering CS -> ");
+	//OutputDebugString(L"\nEntering CS -> ");
 	switch (task) {
 		case ADD_TO_LIST:
 			activeSlots.push_back(playerSlots[playerSlotNumber]);
@@ -222,6 +235,6 @@ void PlayerSlotManager::accessActiveSlots(size_t task, PVOID pvoid) {
 			break;
 
 	}
-	OutputDebugString(L"Exiting CS\n");
+	//OutputDebugString(L"Exiting CS\n");
 	LeaveCriticalSection(&cs_activeSlotsAccess);
 }

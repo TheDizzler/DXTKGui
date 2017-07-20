@@ -42,7 +42,6 @@ private:
 	Joystick* joystick = NULL;
 	PlayerSlotNumber slotNumber;
 
-
 	/* For temporary initialization purposes only! Do not use! */
 	JoyData* _threadJoystickData;
 };
@@ -65,6 +64,7 @@ public:
 	void gamePadRemoved(shared_ptr<Joystick> joystick);
 	void controllerRemoved(shared_ptr<Joystick> joystick);
 	void controllerTryingToPair(JoyData* joyData);
+	/** Called from ControllerListener::playerAcceptedSlot(). */
 	void finalizePair(JoyData* joyData);
 
 	/** Ordered by PlayerSlotNumber. Always equals MAX_PLAYERS, but
@@ -87,12 +87,12 @@ class ControllerListener;
 /** This class is used for passing awaiting joysticks around threads. */
 struct JoyData {
 
-	JoyData(shared_ptr<Joystick> joy, ControllerListener* conListener)
-		: joystick(joy), listener(conListener) {
+	JoyData(shared_ptr<Joystick> joy, ControllerListener* conListener, bool waitForInpt)
+		: joystick(joy), listener(conListener), waitForInput(waitForInpt) {
 	}
 	virtual ~JoyData() {
 		wostringstream wss;
-		wss << "Slot " << joystick->socket << " data deleting" << endl;
+		wss << "Slot " << joystick->getControllerSockerNumber() << " data deleting" << endl;
 		OutputDebugString(wss.str().c_str());
 	}
 
@@ -100,5 +100,7 @@ struct JoyData {
 	ControllerListener* listener;
 	shared_ptr<Joystick> joystick;
 
+	// Should the Slot Manager wait for player input or connect instantly? */
+	bool waitForInput;
 	bool finishFlag = false;
 };

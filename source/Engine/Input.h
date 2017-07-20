@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 #include <Keyboard.h>
-
+#include <list>
 
 #include "../DXTKGui/Controllers/MouseController.h"
 #include "../Managers/PlayerSlot.h"
@@ -15,15 +15,18 @@ DWORD WINAPI waitForHUDThread(PVOID pVoid);
 DWORD WINAPI waitForPlayerThread(PVOID pVoid);
 DWORD WINAPI slotManagerThread(PVOID pVoid);
 
+struct ControllerDevice {
+	HANDLE handle;
+	/** False is XInput. */
+	bool isRawInput;
+};
 
 class ControllerListener {
 public:
 	ControllerListener();
 	virtual ~ControllerListener();
 
-
-	void addGamePad(HANDLE handle);
-	void addJoysticks(vector<HANDLE> handles);
+	void addJoysticks(vector<ControllerDevice> controllerDevices);
 
 	void parseRawInput(PRAWINPUT pRawInput);
 
@@ -38,24 +41,22 @@ public:
 	vector<shared_ptr<PlayerSlot>> getJoystickList();
 
 protected:
-	enum SharedResourceTask {
-		CHECK_SOCKETS_AVAILBLE, GET_NEXT_AVAILABLE
-	};
-	USHORT sharedResource(size_t task);
-
-	CRITICAL_SECTION cs_availableControllerSockets;
+	/** Should SlotManager wait for player input before connecting controller to slot? */
+	bool waitForInput;
 	bool gameInitialized = false;
 	USHORT numGamePads = 0;
 
 	map<HANDLE, shared_ptr<Joystick>> joystickMap;
-	deque<ControllerSocketNumber> availableControllerSockets;
+	list<ControllerSocketNumber> availableControllerSockets;
 
-	/* Thread Safe. */
+	void addGamePad(HANDLE handle);
+
 	bool socketsAvailable();
-	/** Thread safe. Does not check if any slots available.*/
+	/** Does not check if any slots available.*/
 	ControllerSocketNumber getNextAvailableControllerSocket();
+	void makeControllerSocketAvailable(ControllerSocketNumber socketNumber);
 	/** Searches through joysticks in use to see if "new" stick is actually new. */
-	bool matchFound(vector<HANDLE> newHandles, HANDLE joystickHandle);
+	bool matchFound(vector<ControllerDevice> controllerDevices, HANDLE joystickHandle);
 };
 
 
@@ -70,5 +71,6 @@ public:
 	shared_ptr<MouseController> mouse;
 protected:
 	unique_ptr<Keyboard> keys;
+	
 	
 };

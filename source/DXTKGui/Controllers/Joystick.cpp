@@ -12,6 +12,14 @@ void Joystick::registerNewHandle(HANDLE hndl) {
 	handle = hndl;
 }
 
+void Joystick::setControllerSocketNumber(ControllerSocketNumber socketNumber) {
+	socket = socketNumber;
+}
+
+ControllerSocketNumber Joystick::getControllerSockerNumber() {
+	return socket;
+}
+
 void Joystick::setPlayerSlotNumber(PlayerSlotNumber slotNum) {
 	playerSlotNumber = slotNum;
 }

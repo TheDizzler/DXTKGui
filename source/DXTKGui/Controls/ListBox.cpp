@@ -14,6 +14,9 @@ ListBox::ListBox(GUIFactory* factory, shared_ptr<MouseController> mouseControlle
 
 ListBox::~ListBox() {
 
+	if (scrollBar != NULL || scrollBar.get())
+		scrollBar.reset();
+
 	if (actionListener != NULL)
 		delete actionListener;
 

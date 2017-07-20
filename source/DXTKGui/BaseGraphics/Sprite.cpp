@@ -1,5 +1,6 @@
 #include "Sprite.h"
 #include "../GUIFactory.h"
+#include <sstream>
 
 Sprite::Sprite() {
 
@@ -26,8 +27,16 @@ Sprite::Sprite(const Vector2& pos) {
 
 
 Sprite::~Sprite() {
-	texture.Reset();
+	int numRefRemaining = texture.Reset();
+	stringstream ss;
+	ss << assetName << ": " << numRefRemaining;
+	if (numRefRemaining == 0)
+		ss << "!!!!!!!";
+	ss << endl;
+	/*char buffer[255];
+	sprintf(buffer, ss.str().c_str());*/
 
+	OutputDebugStringA(ss.str().c_str());
 }
 
 /* GraphicsAsset is not stored in Sprite. */

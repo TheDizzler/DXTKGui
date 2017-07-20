@@ -24,7 +24,8 @@ public:
 	virtual void draw(SpriteBatch* batch) override;
 
 	virtual unique_ptr<GraphicsAsset> texturize() override;
-	virtual void textureDraw(SpriteBatch * batch, ComPtr<ID3D11Device> device = NULL) override;
+	virtual void textureDraw(SpriteBatch* batch,
+		ComPtr<ID3D11Device> device = NULL) override;
 
 
 	virtual void setText(wstring text) override;

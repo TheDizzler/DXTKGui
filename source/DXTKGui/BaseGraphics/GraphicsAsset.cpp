@@ -1,17 +1,23 @@
 #include "GraphicsAsset.h"
-
-
 #include "../StringHelper.h"
+
+
 GraphicsAsset::GraphicsAsset() {
 }
 
 GraphicsAsset::~GraphicsAsset() {
 
-	/*wostringstream woo;
-	woo << "\n\n*** GraphicsAsset: " << assetName << endl;
-	woo << "\t\tID3D11Resource release #: " << resource.Reset() << endl;
-	woo << "\t\tResource release #: " << texture.Reset() << endl;
-	OutputDebugString(woo.str().c_str());*/
+	int numRefRemaining = texture.Reset();
+	if (assetName.find("Texturized") == string::npos) {
+		stringstream ss;
+		ss << "\n\n*** GraphicsAsset: " << assetName << endl;
+		//ss << "\t\tID3D11Resource release #: " << resource.Reset() << endl;
+		ss << "\t\tResource release #: " << numRefRemaining;
+		if (numRefRemaining == 0)
+			ss << "!!!!!!!!";
+		ss << endl;
+		OutputDebugStringA(ss.str().c_str());
+	}
 }
 
 

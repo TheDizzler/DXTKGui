@@ -16,6 +16,7 @@ MenuManager::~MenuManager() {
 	mainScreen.reset();
 	configScreen.reset();
 	game = NULL;
+	exitDialog.reset();
 }
 
 void MenuManager::setGameManager(GameManager* gm) {
@@ -218,7 +219,8 @@ MainScreen::MainScreen(MenuManager* mngr) : MenuScreen(mngr) {
 }
 
 MainScreen::~MainScreen() {
-
+	mouse.reset();
+	mouseLabel = NULL;
 }
 
 
@@ -489,15 +491,20 @@ void ConfigScreen::textureDraw(SpriteBatch* batch) {
 }
 
 
-void ConfigScreen::controllerRemoved(ControllerSocketNumber controllerSlot, PlayerSlotNumber slotNumber) {
+void ConfigScreen::controllerRemoved(ControllerSocketNumber controllerSlot,
+	PlayerSlotNumber slotNumber) {
 	wostringstream wss;
-	wss << "Slot: " << slotNumber;
-	testSpinner->removeItem(wss.str());
+	wss << "Socket: " << controllerSlot;
+	wss << " Player: " << slotNumber;
+	if (!testSpinner->removeItem(wss.str())) {
+		GameEngine::showWarningDialog(L"Joystick not found in spinner", L"Joystick Removal Error");
+	}
 }
 
 void ConfigScreen::newController(shared_ptr<Joystick> newStick) {
 	wostringstream wss;
-	wss << "Slot: " << newStick->getPlayerSlotNumber();
+	wss << "Socket: " << newStick->getControllerSockerNumber();
+	wss << " Player: " << newStick->getPlayerSlotNumber();
 	testSpinner->addItem(wss.str());
 }
 

@@ -16,7 +16,7 @@ enum PlayerSlotNumber {
 
 /* Virtual Sockets for controllers. */
 enum ControllerSocketNumber {
-	SOCKET_1, SOCKET_2, SOCKET_3, SOCKET_4, SOCKET_5, SOCKET_6, SOCKET_7, SOCKET_8
+	CONTROLLER_SOCKET_ERROR = -1, SOCKET_1, SOCKET_2, SOCKET_3, SOCKET_4, SOCKET_5, SOCKET_6, SOCKET_7, SOCKET_8
 };
 
 enum ControlButtons {
@@ -42,8 +42,8 @@ public:
 
 	virtual void parseRawInput(PRAWINPUT pRawInput) = 0;
 
-	/* The virtual controller socket this joystick is plugged in to. */
-	ControllerSocketNumber socket;
+	void setControllerSocketNumber(ControllerSocketNumber socketNumber);
+	ControllerSocketNumber getControllerSockerNumber();
 
 	void setPlayerSlotNumber(PlayerSlotNumber slotNum);
 	PlayerSlotNumber getPlayerSlotNumber();
@@ -86,6 +86,8 @@ public:
 protected:
 	HANDLE handle = NULL;
 	PlayerSlotNumber playerSlotNumber = PlayerSlotNumber::NONE;
+	/* The virtual controller socket this joystick is plugged in to. */
+	ControllerSocketNumber socket = CONTROLLER_SOCKET_ERROR;
 };
 
 /* A raw input joystick class with huge thanks to Alexander Bocken

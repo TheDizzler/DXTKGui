@@ -14,7 +14,7 @@ void GUIControl::setPosition(const Vector2& pos) {
 
 
 GUIControl::~GUIControl() {
-
+	mouse.reset();
 
 }
 

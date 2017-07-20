@@ -165,6 +165,8 @@ PromptDialog::PromptDialog(GUIFactory* factory,
 
 PromptDialog::~PromptDialog() {
 	controls.clear();
+	texturePanel.reset();
+	panel.reset();
 }
 
 void PromptDialog::initialize(const pugi::char_t* font) {

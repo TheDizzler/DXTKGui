@@ -18,6 +18,7 @@ GUIFactory::GUIFactory(HWND h, pugi::xml_node guiAssets) {
 
 
 GUIFactory::~GUIFactory() {
+	mouseController.reset();
 	/*device.Reset();
 	deviceContext.Reset();
 	docAssMan.reset();
@@ -634,11 +635,9 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromTexturizable(
 	control->setPosition(oldPos);
 	unique_ptr<GraphicsAsset> gfxAsset = make_unique<GraphicsAsset>();
 
-	const char_t* name;
-	stringstream ss;
-	ss << L"Texturized Screen #" << elementCounter++;
-	name = ss.str().c_str();
-	gfxAsset->loadAsPartOfSheet(shaderResourceView, name, Vector2::Zero,
+	string name = "Texturized Control #" + to_string(elementCounter++);
+
+	gfxAsset->loadAsPartOfSheet(shaderResourceView, name.c_str(), Vector2::Zero,
 		Vector2(width - widthPadding - buffer, height - heightPadding - buffer), Vector2::Zero);
 
 	shaderResourceView.Reset();
@@ -736,17 +735,9 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 	deviceContext->Flush();
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
 
-	/*const wchar_t* name;
-	wostringstream woo;
-	woo << L"Texturized Screen #" << screenCounter++;
-	name = woo.str().c_str();*/
-
-	const char_t* name;
-	stringstream ss;
-	ss << L"Texturized Screen #" << screenCounter++;
-	name = ss.str().c_str();
+	string name = "Texturized Screen #" + to_string(screenCounter++);
 	unique_ptr<GraphicsAsset> gfxAsset = make_unique<GraphicsAsset>();
-	gfxAsset->loadAsPartOfSheet(shaderResourceView, name, Vector2::Zero,
+	gfxAsset->loadAsPartOfSheet(shaderResourceView, name.c_str(), Vector2::Zero,
 		Vector2(screenWidth - buffer, screenHeight - buffer), Vector2::Zero);
 
 	shaderResourceView.Reset();

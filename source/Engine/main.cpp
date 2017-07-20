@@ -364,6 +364,7 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
+
 /** If using joysticks this is required. */
 int registerControllers() {
 
@@ -389,8 +390,7 @@ int registerControllers() {
 	RID_DEVICE_INFO rdi;
 	rdi.cbSize = sizeof(RID_DEVICE_INFO);
 
-	int numControllersFound = 0;
-	vector<HANDLE> controllerRawDevices;
+	vector<ControllerDevice> controllerDevices;
 	for (int i = 0; i < nNoOfDevices; i++) {
 		UINT size = 256;
 		TCHAR tBuffer[256] = {0};
@@ -416,16 +416,22 @@ int registerControllers() {
 		if (rdi.dwType == RIM_TYPEHID) {
 			if (rdi.hid.usUsagePage == 1) {
 				if (rdi.hid.usUsage == 4) {
-					controllerRawDevices.push_back(pRawInputDeviceList[i].hDevice);
+					ControllerDevice cd;
+					cd.handle = pRawInputDeviceList[i].hDevice;
+					cd.isRawInput = true;
+					controllerDevices.push_back(cd);
 				} else if (rdi.hid.usUsage == 5) {
-					gameEngine->addGamePad(pRawInputDeviceList[i].hDevice);
+					ControllerDevice cd;
+					cd.handle = pRawInputDeviceList[i].hDevice;
+					cd.isRawInput = false;
+					controllerDevices.push_back(cd);
 				}
 
 			}
 		}
 	}
 
-	gameEngine->addJoysticks(controllerRawDevices);
+	gameEngine->addJoysticks(controllerDevices);
 
 
 	free(pRawInputDeviceList);

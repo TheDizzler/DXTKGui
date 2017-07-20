@@ -10,11 +10,14 @@ GameManager::GameManager(GameEngine* gmngn) {
 }
 
 GameManager::~GameManager() {
-
+	mouse.reset();
+	menuScreen.reset();
+	currentScreen = NULL;
 }
 
 
-bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc, shared_ptr<MouseController> ms) {
+bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc,
+	shared_ptr<MouseController> ms) {
 
 	device = dvc;
 	mouse = ms;

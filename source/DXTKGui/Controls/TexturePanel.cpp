@@ -13,11 +13,15 @@ TexturePanel::TexturePanel(GUIFactory* factory, shared_ptr<MouseController> mous
 
 
 TexturePanel::~TexturePanel() {
+	if (verticalScrollBar != NULL || verticalScrollBar.get())
+		verticalScrollBar.reset();
 }
 
 
 void TexturePanel::setTexture(unique_ptr<GraphicsAsset> gfx) {
 
+	texture.Reset();
+	gfxAsset.reset();
 	gfxAsset = move(gfx);
 	texture = gfxAsset->getTexture();
 	viewRect.left = 0;

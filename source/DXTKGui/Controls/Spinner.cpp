@@ -105,6 +105,10 @@ void Spinner::addItem(wstring item) {
 	if (autoSize) {
 		if (label->measureString(item).x + textBuffer * 2 > width) {
 			width = label->measureString(item).x + textBuffer * 2;
+			if (width == 0) {
+				OutputDebugString(L"Spinner Warning: Item received with 0 length string.");
+				return;
+			}
 			upButton->setPosition(Vector2(position.x + width, position.y));
 			downButton->setPosition(
 				Vector2(position.x + width,
@@ -133,6 +137,10 @@ void Spinner::addItems(vector<wstring> items) {
 			if (label->measureString(item).x + textBuffer * 2 > width) {
 				changed = true;
 				width = label->measureString(item).x + textBuffer * 2;
+				if (width == 0) {
+					OutputDebugString(L"Spinner Warning: Item received with 0 length string.");
+					continue;
+				}
 			}
 			list.push_back(item);
 		}
@@ -159,13 +167,17 @@ void Spinner::addItems(vector<wstring> items) {
 
 bool Spinner::removeItem(wstring removeItem) {
 
-	for (wstring item : list) {
-		if (item == removeItem) {
-			swap(item, list.back());
+	for (size_t i = 0; i < list.size(); ++i) {
+		if (list[i] == removeItem) {
+			swap(list[i], list.back());
 			list.pop_back();
 			if (list.size() == 0) {
 				label->setText("Empty");
 				refreshTexture = true;
+			} else if (selected == i) {
+				if (selected >= list.size())
+					selected = list.size() - 1;
+				label->setText(list[selected]);
 			}
 			return true;
 		}
@@ -179,7 +191,7 @@ const wstring Spinner::getSelected() const {
 }
 
 void Spinner::increase() {
-	if (list.size() <= 0)
+	if (list.size() == 0)
 		return;
 	if (++selected >= list.size())
 		selected = 0;
@@ -187,7 +199,7 @@ void Spinner::increase() {
 }
 
 void Spinner::decrease() {
-	if (list.size() <= 0)
+	if (list.size() == 0)
 		return;
 	if (--selected >= list.size())
 		selected = list.size() - 1;

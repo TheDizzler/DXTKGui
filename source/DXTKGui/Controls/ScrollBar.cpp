@@ -10,6 +10,10 @@ ScrollBar::ScrollBar(GUIFactory* factory, shared_ptr<MouseController> mouseContr
 }
 
 ScrollBar::~ScrollBar() {
+	scrollBarDownButton.reset();
+	scrollBarUpButton.reset();
+	scrubber.reset();
+	scrollBarTrack.reset();
 }
 
 

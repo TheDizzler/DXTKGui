@@ -30,7 +30,7 @@ public:
 class DragonJammer : public JammerEffect {
 public:
 	DragonJammer(int amplitude, float speed);
-	~DragonJammer();
+	virtual ~DragonJammer();
 	/* PVOID must be a Vector2. */
 	virtual void initialize(vector<LetterJam>& letterJams, LPVOID pvoid);
 	virtual bool run(double deltaTime, vector<LetterJam>& letterJams) override;
@@ -46,7 +46,7 @@ class PulsatingJammer : public JammerEffect {
 public:
 	PulsatingJammer(float amplitude = .125, float scaleOffset = 1,
 		float speed = 1, int horizontalAdjustment = 2);
-	~PulsatingJammer();
+	virtual ~PulsatingJammer();
 	virtual void initialize(vector<LetterJam>& letterJams, LPVOID pvoid);
 	virtual bool run(double deltaTime, vector<LetterJam>& letterJams) override;
 
@@ -61,7 +61,7 @@ public:
 class ColorJammer : public JammerEffect {
 public:
 	ColorJammer(float changeSpeed);
-	~ColorJammer();
+	virtual ~ColorJammer();
 	virtual void initialize(vector<LetterJam>& letterJams, LPVOID pvoid) override;
 	virtual bool run(double deltaTime, vector<LetterJam>& letterJams) override;
 

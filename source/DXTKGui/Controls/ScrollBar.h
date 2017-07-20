@@ -120,6 +120,8 @@ private:
 
 	unique_ptr<Sprite> scrollBarTrack;
 	unique_ptr<Scrubber> scrubber;
+	unique_ptr<ImageButton> scrollBarUpButton;
+	unique_ptr<ImageButton> scrollBarDownButton;
 
 	int barHeight;
 
@@ -127,9 +129,6 @@ private:
 	double percentForOneItem;
 	/* Percentage of scubber movement is equivalent to item. */
 	double scrubberPercentForOneItem;
-
-	unique_ptr<ImageButton> scrollBarUpButton;
-	unique_ptr<ImageButton> scrollBarDownButton;
 
 	double firstClickTimer = 0; // time since button clicked
 	double autoScrollStartDelay = .25; // time in seconds before scrollbar starts scrolling

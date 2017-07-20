@@ -13,6 +13,7 @@ MouseController::MouseController(HWND h) {
 }
 
 MouseController::~MouseController() {
+	mouse.reset();
 }
 
 
@@ -34,13 +35,14 @@ bool MouseController::loadMouseIcon(GUIFactory* guiFactory,
 
 	Sprite::load(mouseAsset);
 	setOrigin(mouseAsset->getOrigin());
-
+	mouseAsset = NULL;
 	return true;
 }
 
 void MouseController::loadMouseIcon(GraphicsAsset* iconAsset) {
 	load(iconAsset);
 	setOrigin(iconAsset->getOrigin());
+	iconAsset = NULL;
 }
 
 void MouseController::saveMouseState() {
