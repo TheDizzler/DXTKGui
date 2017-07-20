@@ -75,6 +75,7 @@ bool TextLabel::update(double deltaTime) {
 				}
 			} else if (mouse->pressed()) {
 				isPressed = true;
+				onPress();
 				setToSelectedState();
 				hasBeenSetUnpressed = false;
 				hasBeenSetHover = false;

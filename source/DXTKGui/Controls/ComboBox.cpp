@@ -255,7 +255,11 @@ void ComboBox::ShowListBoxListener::onPress(Button* button) {
 void ComboBox::ShowListBoxListener::onHover(Button* button) {
 }
 
-void ComboBox::ListBoxListener::onClick(ListBox* listbox, int selectedItemIndex) {
+void ComboBox::ListBoxListener::onClick(ListBox* listbox, UINT selectedItemIndex) {
 	comboBox->onClick();
+}
+
+void ComboBox::ListBoxListener::onHover(ListBox* listbox, short hoveredItemIndex) {
+	comboBox->onHover();
 }
 

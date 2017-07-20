@@ -54,6 +54,12 @@ public:
 	virtual bool pressed() override;
 	virtual bool hovering() override;
 
+	/** Does nothing in Spinner. */
+	virtual void onClick() override {};
+	/** Does nothing in Spinner. */
+	virtual void onPress() override {};
+	/** Does nothing in Spinner. */
+	virtual void onHover() override {};
 
 private:
 	unique_ptr<TexturePanel> texturePanel;

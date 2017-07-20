@@ -26,7 +26,7 @@ public:
 
 	void setSelected(bool isSelected);
 	bool isSelected = false;
-
+	bool isHovered = false;
 protected:
 
 	Color selectedFontColor = Color(0, 0, 0, 1);
@@ -53,7 +53,7 @@ protected:
 	size_t textMarginX = 10;
 	size_t textMarginY = 5;
 
-	bool isHover = false;
+	
 	bool buttonDownLast = false;
 
 	ComPtr<ID3D11ShaderResourceView> pixel;
@@ -103,7 +103,8 @@ public:
 
 
 	void setSelected(size_t newIndex);
-	const int getSelectedIndex() const;
+	const UINT getSelectedIndex() const;
+	const UINT getHoveredIndex() const;
 	ListItem* getSelected();
 	ListItem* getItem(size_t index);
 
@@ -137,7 +138,8 @@ public:
 	public:
 		/** listbox: The ListBox this ActionListener is attached to.
 		selectedItemIndex: index of item in ListBox.*/
-		virtual void onClick(ListBox* listbox, int selectedItemIndex) = 0;
+		virtual void onClick(ListBox* listbox, UINT selectedItemIndex) = 0;
+		virtual void onHover(ListBox* listbox, short hoveredItemIndex) = 0;
 	};
 
 
@@ -145,6 +147,7 @@ public:
 		if (actionListener != NULL)
 			delete actionListener;
 		onClickFunction = &ActionListener::onClick;
+		onHoverFunction = &ActionListener::onHover;
 		actionListener = iOnC;
 	}
 
@@ -152,25 +155,36 @@ public:
 		if (actionListener != NULL)
 			(actionListener->*onClickFunction)(this, selectedIndex);
 	}
-
+	/** Not used in ListBox. */
+	virtual void onPress() override {
+	};
+	/** Action to perform when an item is hovered. */
+	virtual void onHover() override {
+		if (actionListener != NULL)
+			(actionListener->*onHoverFunction)(this, hoveredIndex);
+	};
 
 private:
-	typedef void (ActionListener::*OnClickFunction) (ListBox*, int);
+	typedef void (ActionListener::*OnClickFunction) (ListBox*, UINT);
+	typedef void (ActionListener::*OnHoverFunction) (ListBox*, short);
 	OnClickFunction onClickFunction;
+	OnHoverFunction onHoverFunction;
+
 	ActionListener* actionListener = NULL;
 	/* width of listbox */
 	int width;
 	/* Always smaller or equal to maxDisplayItems. */
-	size_t itemsToDisplay = 0;
+	UINT itemsToDisplay = 0;
 
 	boolean isEnumerated = false;
 	bool alwaysDisplayScrollBar = false;
 
 	const pugi::char_t* fontName;
 	vector<ListItem*> listItems;
-	size_t selectedIndex = 0;
+	UINT selectedIndex = 0;
+	short hoveredIndex = -1;
 
-	size_t itemHeight = 32;
+	UINT itemHeight = 32;
 	Vector2 firstItemPos;
 	int longestLabelLength = 0;
 

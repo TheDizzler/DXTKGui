@@ -40,10 +40,11 @@ public:
 
 	vector<shared_ptr<PlayerSlot>> getJoystickList();
 
+	static bool gameInitialized;
 protected:
 	/** Should SlotManager wait for player input before connecting controller to slot? */
 	bool waitForInput;
-	bool gameInitialized = false;
+	
 	USHORT numGamePads = 0;
 
 	map<HANDLE, shared_ptr<Joystick>> joystickMap;

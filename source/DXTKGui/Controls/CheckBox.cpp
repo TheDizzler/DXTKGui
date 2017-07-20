@@ -47,6 +47,7 @@ bool CheckBox::update(double deltaTime) {
 
 		if (!isHover) {
 			isHover = true;
+			onHover();
 			label->setTint(hoverColorText);
 			tint = hoverColor; // this won't do anything if the checkbox is black :/
 			refreshed = true;

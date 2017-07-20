@@ -50,6 +50,16 @@ public:
 	virtual bool pressed() override;
 	virtual bool hovering() override;
 
+	/** Not used in TexturePanel. */
+	virtual void onClick() override {
+	};
+	/** Not used in TexturePanel. */
+	virtual void onPress() override {
+	};
+	/** Not used in TexturePanel. */
+	virtual void onHover() override {
+	};
+
 	int scrollSpeed = 10;
 private:
 

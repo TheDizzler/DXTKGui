@@ -144,10 +144,12 @@ void MenuManager::pause() {
 
 void MenuManager::controllerRemoved(ControllerSocketNumber controllerSlot,
 	PlayerSlotNumber slotNumber) {
+	mainScreen->controllerRemoved(controllerSlot, slotNumber);
 	configScreen->controllerRemoved(controllerSlot, slotNumber);
 }
 
 void MenuManager::newController(shared_ptr<Joystick> newStick) {
+	mainScreen->newController(newStick);
 	configScreen->newController(newStick);
 }
 
@@ -227,7 +229,9 @@ MainScreen::~MainScreen() {
 bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mc) {
 
 	mouse = mc;
-
+	selector = make_unique<Selector>();
+	selector->initialize(guiFactory.get());
+	//selector->setJoystick(activeSlots[0]->getStick());
 	/*dynamicDialog.reset(guiFactory->createDynamicDialog(
 		"Dynamic Dialog", Vector2(10, 100), Vector2(500, 500)));
 	dynamicDialog->setTextTint(Color(0, 0, 1, 1));
@@ -259,7 +263,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	button->setPosition(buttonpos);
 	button->setActionListener(new OnClickListenerSettingsButton(this));
 	guiControls.push_back(button);
-
+	selector->addControl(button);
 
 	button = guiFactory->createImageButton("Button Up", "Button Down");
 	button->setActionListener(new OnClickListenerExitButton(this));
@@ -268,7 +272,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	buttonpos.y += 150;
 	button->setPosition(buttonpos);
 	guiControls.push_back(button);
-
+	selector->addControl(button);
 
 	mouseLabel = guiFactory->createTextLabel(
 		Vector2(0, 0), L"Mouse Label", "Default Font", false);
@@ -297,6 +301,7 @@ void MainScreen::update(double deltaTime) {
 	for (auto const& control : guiControls)
 		control->update(deltaTime);
 
+	selector->update(deltaTime);
 }
 
 
@@ -304,12 +309,25 @@ void MainScreen::update(double deltaTime) {
 void MainScreen::draw(SpriteBatch* batch) {
 	for (auto const& control : guiControls)
 		control->draw(batch);
+
+	selector->draw(batch);
 }
 
-void MainScreen::controllerRemoved(ControllerSocketNumber controllerSlot, PlayerSlotNumber slotNumber) {
+void MainScreen::controllerRemoved(ControllerSocketNumber controllerSocket,
+	PlayerSlotNumber slotNumber) {
+
+	if (selector->isControllerSocket(controllerSocket)) {
+		if (activeSlots.size() == 0)
+			selector->setJoystick(NULL);
+		else {
+			selector->setJoystick(activeSlots[0]->getStick());
+		}
+	}
 }
 
 void MainScreen::newController(shared_ptr<Joystick> newStick) {
+	if (!selector->hasController())
+		selector->setJoystick(newStick.get());
 }
 
 
@@ -583,7 +601,7 @@ void DisplayModeItem::setText() {
 }
 
 
-void OnClickListenerAdapterList::onClick(ListBox* listbox, int selectedIndex) {
+void OnClickListenerAdapterList::onClick(ListBox* listbox, UINT selectedIndex) {
 
 	AdapterItem* selectedItem = (AdapterItem*) listbox->getItem(selectedIndex);
 	config->game->setAdapter(selectedIndex);
@@ -596,7 +614,10 @@ void OnClickListenerAdapterList::onClick(ListBox* listbox, int selectedIndex) {
 
 }
 
-void OnClickListenerDisplayModeList::onClick(ComboBox* combobox, int selectedIndex) {
+void OnClickListenerAdapterList::onHover(ListBox* listbox, short hoveredItemIndex) {
+}
+
+void OnClickListenerDisplayModeList::onClick(ComboBox* combobox, UINT selectedIndex) {
 
 	if (!config->game->setDisplayMode(selectedIndex)) {
 		// change back to previous setting
@@ -606,6 +627,9 @@ void OnClickListenerDisplayModeList::onClick(ComboBox* combobox, int selectedInd
 		config->testLabel->setText(combobox->getItem(selectedIndex)->toString());
 	}
 
+}
+
+void OnClickListenerDisplayModeList::onHover(ComboBox* listbox, short hoveredItemIndex) {
 }
 
 void OnClickListenerFullScreenCheckBox::onClick(CheckBox* checkbox, bool isChecked) {
@@ -622,6 +646,9 @@ void OnClickListenerFullScreenCheckBox::onClick(CheckBox* checkbox, bool isCheck
 			config->game->getDisplayModeList(config->game->getSelectedDisplayIndex()));
 		//config->displayModeCombobox->setSelected(config->game->getSelectedDisplayModeIndex());
 	}
+}
+
+void OnClickListenerFullScreenCheckBox::onHover(CheckBox * checkbox, bool isChecked) {
 }
 
 void OnClickListenerSettingsButton::onClick(Button* button) {

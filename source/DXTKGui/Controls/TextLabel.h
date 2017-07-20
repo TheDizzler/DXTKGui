@@ -81,14 +81,18 @@ public:
 		actionListener = iOnC;
 	}
 
-	void onClick() {
+	virtual void onClick() override {
 		if (actionListener != NULL) {
-			isClicked = isPressed = false;
+			isClicked = false;
 			(actionListener->*onClickFunction)(this);
 		}
 	}
-
-	void onHover() {
+	virtual void onPress() override {
+		if (actionListener != NULL) {
+			(actionListener->*onPressFunction)(this);
+		}
+	}
+	virtual void onHover() override {
 		if (actionListener != NULL) {
 			(actionListener->*onHoverFunction)(this);
 		}

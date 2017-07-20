@@ -105,6 +105,11 @@ bool ListBox::update(double deltaTime) {
 							listItems[i]->setSelected(false);
 					}
 				}
+			} else if (listItems[j]->isHovered) {
+				hoveredIndex = j;
+				onHover();
+			} else {
+				hoveredIndex = -1;
 			}
 		}
 	}
@@ -297,8 +302,12 @@ void ListBox::setSelected(size_t newIndex) {
 	refreshPanel = true;
 }
 
-const int ListBox::getSelectedIndex() const {
+const UINT ListBox::getSelectedIndex() const {
 	return selectedIndex;
+}
+
+const UINT ListBox::getHoveredIndex() const {
+	return hoveredIndex;
 }
 
 ListItem* ListBox::getSelected() {
@@ -442,8 +451,8 @@ const wchar_t* ListItem::toString() {
 bool ListItem::update(double deltaTime, MouseController* mouse) {
 
 	bool refresh = false;
-	bool wasHover = isHover;
-	if ((isHover = hitArea->contains(mouse->getPosition()))) {
+	bool wasHover = isHovered;
+	if ((isHovered = hitArea->contains(mouse->getPosition()))) {
 
 		if (mouse->leftButton() && !buttonDownLast) {
 			buttonDownLast = true;
@@ -459,7 +468,7 @@ bool ListItem::update(double deltaTime, MouseController* mouse) {
 	}
 
 
-	if ((isHover && !wasHover) || (!isHover && wasHover))
+	if ((isHovered && !wasHover) || (!isHovered && wasHover))
 		refresh = true;
 	if (textLabel->update(deltaTime))
 		refresh = true;
@@ -481,7 +490,7 @@ void ListItem::updatePosition(const Vector2& pos) {
 void ListItem::draw(SpriteBatch* batch) {
 
 	if (isSelected) {// draw pressed color bg
-		if (isHover)
+		if (isHovered)
 			batch->Draw(pixel.Get(), itemPosition, &itemRect,
 				selectedAndHoveredColor, 0.0f, Vector2(0, 0), Vector2(1, 1),
 				SpriteEffects_None, layerDepth);
@@ -491,7 +500,7 @@ void ListItem::draw(SpriteBatch* batch) {
 				SpriteEffects_None, layerDepth);
 		textLabel->draw(batch);
 
-	} else if (isHover) { // draw hover color bg
+	} else if (isHovered) { // draw hover color bg
 
 		batch->Draw(pixel.Get(), itemPosition, &itemRect,
 			hoverBGColor, 0.0f, Vector2(0, 0), Vector2(1, 1),

@@ -1,9 +1,8 @@
 #pragma once
 
 #include "../DXTKGui/GUIFactory.h"
-
-//#include "../DXTKGui/BaseGraphics/Screen.h"
 #include "../DXTKGUI/Effects/ScreenTransitions.h"
+#include "../DXTKGui/Controllers/Selector.h"
 
 class MenuScreen;
 class MainScreen;
@@ -40,16 +39,19 @@ class OnClickListenerAdapterList : public ListBox::ActionListener {
 public:
 	OnClickListenerAdapterList(ConfigScreen* screen) : config(screen) {
 	}
-	virtual void onClick(ListBox* listbox, int selectedIndex) override;
+	virtual void onClick(ListBox* listbox, UINT selectedIndex) override;
+	virtual void onHover(ListBox* listbox, short hoveredItemIndex) override;
 private:
 	ConfigScreen* config;
+
 };
 
 class OnClickListenerDisplayModeList : public ComboBox::ActionListener {
 public:
 	OnClickListenerDisplayModeList(ConfigScreen* screen) : config(screen) {
 	}
-	virtual void onClick(ComboBox* combobox, int selectedIndex) override;
+	virtual void onClick(ComboBox* combobox, UINT selectedIndex) override;
+	virtual void onHover(ComboBox * listbox, short hoveredItemIndex) override;
 private:
 	ConfigScreen* config;
 
@@ -60,6 +62,7 @@ public:
 	OnClickListenerFullScreenCheckBox(ConfigScreen* screen) : config(screen) {
 	}
 	virtual void onClick(CheckBox* checkbox, bool isChecked) override;
+	virtual void onHover(CheckBox* checkbox, bool isChecked) override;
 private:
 	ConfigScreen* config;
 };
@@ -246,7 +249,7 @@ public:
 	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
-	virtual void controllerRemoved(ControllerSocketNumber controllerSlot,
+	virtual void controllerRemoved(ControllerSocketNumber controllerSocket,
 		PlayerSlotNumber slotNumber) override;
 	virtual void newController(shared_ptr<Joystick> newStick) override;
 private:
@@ -254,6 +257,7 @@ private:
 	unique_ptr<DynamicDialog> dynamicDialog;
 	TextLabel* mouseLabel;
 
+	unique_ptr<Selector> selector;
 
 };
 

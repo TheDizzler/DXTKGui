@@ -61,23 +61,35 @@ public:
 	public:
 		/** combobox: The ComboBox this ActionListener is attached to.
 		selectedItemIndex: index of item in ListBox.*/
-		virtual void onClick(ComboBox* combobox, int selectedItemIndex) = 0;
+		virtual void onClick(ComboBox* combobox, UINT selectedItemIndex) = 0;
+		virtual void onHover(ComboBox* listbox, short hoveredItemIndex) = 0;
 	};
 
-	typedef void (ActionListener::*OnClickFunction) (ComboBox*, int);
-
+	typedef void (ActionListener::*OnClickFunction) (ComboBox*, UINT);
+	typedef void (ActionListener::*OnHoverFunction) (ComboBox*, short);
 
 	void setActionListener(ActionListener* iOnC) {
 		if (actionListener != NULL)
 			delete actionListener;
 		onClickFunction = &ActionListener::onClick;
+		onHoverFunction = &ActionListener::onHover;
 		actionListener = iOnC;
 	}
 
-	void onClick() {
+	virtual void onClick() override {
 		if (actionListener != NULL)
 			(actionListener->*onClickFunction)(this, listBox->getSelectedIndex());
 		selectedLabel->setText(listBox->getSelected()->toString());
+	}
+
+	/** Not used in Combobox. */
+	virtual void onPress() override {
+	}
+
+	/** Note: To activate the onHover, it should be called from ListBox onHover. */
+	virtual void onHover() override {
+		if (actionListener != NULL)
+			(actionListener->*onHoverFunction)(this, listBox->getHoveredIndex());
 	}
 
 
@@ -106,8 +118,10 @@ private:
 
 	void resizeBox();
 
-	OnClickFunction onClickFunction;
 	ActionListener* actionListener = NULL;
+	OnClickFunction onClickFunction;
+	OnHoverFunction onHoverFunction;
+	
 
 	class ListBoxListener : public ListBox::ActionListener {
 	public:
@@ -116,7 +130,8 @@ private:
 
 	private:
 		ComboBox* comboBox;
-		virtual void onClick(ListBox * listbox, int selectedItemIndex) override;
+		virtual void onClick(ListBox* listbox, UINT selectedItemIndex) override;
+		virtual void onHover(ListBox* listbox, short hoveredItemIndex) override;
 	};
 
 	class ShowListBoxListener : public Button::ActionListener {

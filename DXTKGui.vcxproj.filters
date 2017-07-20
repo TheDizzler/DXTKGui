@@ -153,6 +153,9 @@
     <ClCompile Include="source\DXTKGui\Effects\LetterJammer.cpp">
       <Filter>Source Files\DXTKGui\Effects</Filter>
     </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controllers\Selector.cpp">
+      <Filter>Source Files\DXTKGui\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\GameEngine.h">
@@ -256,6 +259,9 @@
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Effects\LetterJammer.h">
       <Filter>Header Files\DXTKGui\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controllers\Selector.h">
+      <Filter>Header Files\DXTKGui\Controllers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,7 +5,7 @@ unique_ptr<PlayerSlotManager> slotManager;
 
 bool endAllThreadsNow = false;
 bool slotManagerThreadRunning = false;
-
+bool Input::gameInitialized = false;
 
 Input::Input() {
 
@@ -433,8 +433,8 @@ DWORD WINAPI waitForPlayerThread(PVOID pVoid) {
 DWORD WINAPI waitForHUDThread(PVOID pVoid) {
 
 	JoyData* joyData = (JoyData*) pVoid;
-
-	while (guiOverlay == NULL) { // Jus hol up
+	
+	while (Input::gameInitialized == false) { // Jus hol up
 		//wostringstream wss;
 		//wss << L"Test Thread #" << GetCurrentThreadId() << endl;
 		//wss << data->joystick->socket << " waiting for HUD." << endl;

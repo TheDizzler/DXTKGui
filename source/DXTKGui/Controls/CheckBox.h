@@ -46,18 +46,20 @@ public:
 	/** checkbox: The CheckBox this ActionListener is attached to.
 		isChecked: whether box is checked or no*/
 		virtual void onClick(CheckBox* checkbox, bool isChecked) = 0;
+		virtual void onHover(CheckBox* checkbox, bool isChecked) = 0;
 	};
 
-	
+
 
 	void setActionListener(ActionListener* iOnC) {
 		if (actionListener != NULL)
 			delete actionListener;
 		onClickFunction = &ActionListener::onClick;
+		onHoverFunction = &ActionListener::onHover;
 		actionListener = iOnC;
 	}
 
-	void onClick() {
+	virtual void onClick() override {
 		if (actionListener != NULL)
 			(actionListener->*onClickFunction)(this, isClicked);
 
@@ -67,11 +69,22 @@ public:
 			texture = uncheckedSprite->getTexture().Get();
 	}
 
+	/** Not used in CheckBox. */
+	virtual void onPress() override {
+	}
+
+	virtual void onHover() override {
+		if (actionListener != NULL) {
+			(actionListener->*onHoverFunction)(this, isClicked);
+		}
+	}
+
 private:
 	typedef void (ActionListener::*OnClickFunction) (CheckBox*, bool);
 	ActionListener* actionListener = NULL;
 	OnClickFunction onClickFunction;
-	
+	OnClickFunction onPressFunction;
+	OnClickFunction onHoverFunction;
 
 	ID3D11ShaderResourceView* texture;
 	/** Helper function to center text in check sprite. */
@@ -82,6 +95,6 @@ private:
 
 	unique_ptr<Sprite> uncheckedSprite;
 	unique_ptr<Sprite> checkedSprite;
-	
+
 	bool firstHover;
 };

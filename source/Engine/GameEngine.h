@@ -15,7 +15,7 @@
 #include "../Managers/GameManager.h"
 
 extern unique_ptr<GUIFactory> guiFactory;
-extern bool gameInitialized;
+//extern bool gameInitialized;
 
 /** The engine to connect higher level game code to the low level
 	graphic and OS software. This class should be reusable for any 2D game,

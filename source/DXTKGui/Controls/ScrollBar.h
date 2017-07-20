@@ -111,10 +111,19 @@ public:
 	/* Unused in ScrollBar. */
 	virtual const Vector2& XM_CALLCONV measureString() const override;
 
-
 	virtual bool clicked() override;
 	virtual bool pressed() override;
 	virtual bool hovering() override;
+
+	/** Not used in Scrollbar. */
+	virtual void onClick() override {
+	};
+	/** Not used in Scrollbar. */
+	virtual void onPress() override {
+	};
+	/** Not used in Scrollbar. */
+	virtual void onHover() override {
+	};
 
 private:
 

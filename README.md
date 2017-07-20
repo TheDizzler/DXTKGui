@@ -43,7 +43,7 @@ Email: tgillon.sdk@gmail.com
 >- when a control with a scrollbar has items removed from it dynamically, the scrubber doesn't resize properly
 
 ##TODO:
->- A Panel for adding controls - this could be used to greatly reduce draw speeds
+>- A Panel for adding controls - this could be used to greatly reduce draw times
 	when using multiple controls
 >- ~~find out how to purge all the reported live objects ':/~~ 
 Live objects ARE being released but after the debug report. <- FIXED

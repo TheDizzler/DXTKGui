@@ -517,7 +517,8 @@ bool AnimatedButton::update(double deltaTime) {
 	if (hitArea->contains(mouse->getPosition())) {
 		isHover = true;
 		if (!isPressed) {
-			onHover(deltaTime);
+			timeHovering += deltaTime;
+			onHover();
 		}
 	} else {
 		isHover = false;

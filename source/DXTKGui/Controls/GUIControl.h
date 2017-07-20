@@ -80,6 +80,14 @@ public:
 
 	bool contains(const Vector2& point);
 
+	/** Action to perform when mouse button released over control. */
+	virtual void onClick() = 0;
+	/** Action to perform when mouse button held over control. */
+	virtual void onPress() = 0;
+	/** Action to perform when mouse over control. */
+	virtual void onHover() = 0;
+
+
 	virtual bool clicked() = 0;
 	/* Is Mouse Button down over control? */
 	virtual bool pressed() = 0;
@@ -107,7 +115,7 @@ protected:
 	bool isPressed = false;
 	/** While still hovering over control, button has been pressed and released. */
 	bool isClicked = false;
-	
+
 
 	GUIFactory* guiFactory;
 	shared_ptr<MouseController> mouse;

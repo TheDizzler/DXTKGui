@@ -53,6 +53,16 @@ public:
 
 	/** Required for some TransitionEffects. Bundle up all IElement2D to send for morphing time. */
 	virtual const vector<IElement2D*> getElements() const;
+
+
+	/** Not used in Dialog. */
+	virtual void onClick() override {
+	}
+	/** Not used in Dialog. */
+	virtual void onPress() override {
+	}
+	virtual void onHover() override {
+	}
 protected:
 	bool refreshTexture = true;
 	unique_ptr<TexturePanel> texturePanel;
@@ -165,13 +175,9 @@ public:
 
 	const Color& getPanelTint() const;
 
-
-
 	virtual const vector<IElement2D*> getElements() const override;
 
-
 	int titleTextMargin = 10;
-
 protected:
 
 	enum GUIControlLookUp {

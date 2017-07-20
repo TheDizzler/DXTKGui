@@ -3,7 +3,7 @@
 #include "../DXTKGui/GuiAssets.h"
 
 unique_ptr<GUIFactory> guiFactory;
-bool gameInitialized = false;
+//bool gameInitialized = false;
 
 unique_ptr<PromptDialog> GameEngine::errorDialog;
 unique_ptr<PromptDialog> GameEngine::warningDialog;
