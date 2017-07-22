@@ -1,6 +1,7 @@
 #include "Button.h"
-
 #include "../GUIFactory.h"
+
+
 Button::Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 	const pugi::char_t* font) : GUIControl(factory, mouseController) {
 
@@ -71,43 +72,24 @@ bool Button::update(double deltaTime) {
 
 	updateProjectedHitArea();
 	if (projectedHitArea->contains(mouse->getPosition())) {
-		isHover = true;
 		if (!isPressed) {
 			if (!hasBeenSetHover) {
 				onHover();
-				setToHoverState();
-				hasBeenSetHover = true;
-				hasBeenSetUnpressed = false;
-				refreshTexture = true;
 			}
 		}
 	} else
 		isHover = false;
 
 	if (isPressed && !mouse->leftButton()) {
-		isClicked = true;
-		isPressed = false;
 		onClick();
-		setToUnpressedState();
-		hasBeenSetUnpressed = false;
-		hasBeenSetHover = false;
-		refreshTexture = true;
 	} else {
 		isClicked = false;
 		if (!isHover) {
-			if (!hasBeenSetUnpressed) {
-				isPressed = false;
-				setToUnpressedState();
-				hasBeenSetUnpressed = true;
-				hasBeenSetHover = false;
-				refreshTexture = true;
+			if (!hasBeenSetUnpressed) {		
+				resetState();
 			}
 		} else if (mouse->pressed()) {
-			isPressed = true;
-			setToSelectedState();
-			hasBeenSetUnpressed = false;
-			hasBeenSetHover = false;
-			refreshTexture = true;
+			onPress();
 		}
 	}
 
@@ -129,9 +111,6 @@ bool Button::update(double deltaTime) {
 void Button::draw(SpriteBatch* batch) {
 
 	texturePanel->draw(batch);
-	/*rectSprite->draw(batch);
-	frame->draw(batch);
-	buttonLabel->draw(batch);*/
 
 }
 
@@ -144,6 +123,14 @@ void Button::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
 	rectSprite->draw(batch);
 	frame->draw(batch);
 	buttonLabel->draw(batch);
+}
+
+
+void Button::setTextLabel(TextLabel* newLabel) {
+
+	buttonLabel.reset(newLabel);
+	positionText();
+	//useTexture = isLetterJammer;
 }
 
 

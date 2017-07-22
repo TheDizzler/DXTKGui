@@ -206,13 +206,6 @@ void MenuScreen::pause() {
 	// do nothing??
 }
 
-void MenuScreen::newController(HANDLE joyHandle) {
-}
-
-void MenuScreen::controllerRemoved(size_t controllerSlot) {
-}
-
-
 
 
 /** **** MainMenuScreen **** **/
@@ -240,13 +233,13 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 
 	Vector2 buttonpos = Vector2(100, 100);
 
-	/*AnimatedButton* animButton =
+	AnimatedButton* animButton =
 		guiFactory->createAnimatedButton("Launch Button");
 	buttonpos = Vector2((Globals::WINDOW_WIDTH - animButton->getWidth()) / 2,
 		Globals::WINDOW_HEIGHT / 3 - animButton->getHeight() / 2);
 	animButton->setPosition(buttonpos);
-	guiControls.push_back(animButton);*/
-
+	guiControls.push_back(animButton);
+	selector->addControl(animButton);
 
 	Button* button;
 	Vector2 size = Vector2::Zero;
@@ -262,6 +255,11 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	buttonpos.x = (Globals::WINDOW_WIDTH - button->getScaledWidth()) / 2;
 	button->setPosition(buttonpos);
 	button->setActionListener(new OnClickListenerSettingsButton(this));
+	LetterJammer* jammer = guiFactory->createLetterJammer(
+		Vector2::Zero, L"Settings", Color(0, 0, 0, 1), false);
+	jammer->setEffect(make_unique<ColorJammer>(.525));
+	button->setTextLabel(jammer);
+	jammer = NULL;
 	guiControls.push_back(button);
 	selector->addControl(button);
 
@@ -273,12 +271,16 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	button->setPosition(buttonpos);
 	guiControls.push_back(button);
 	selector->addControl(button);
-
-	mouseLabel = guiFactory->createTextLabel(
-		Vector2(0, 0), L"Mouse Label", "Default Font", false);
-	//mouseLabel->setAlpha(.1);
-	mouseLabel->setHoverable(true);
-	guiControls.push_back(mouseLabel);
+	button = NULL;
+	//mouseLabel = guiFactory->createLetterJammer(
+	//	Vector2(0, 0), L"Mouse Label", Color(1, 1, 1, 1), false);
+	////mouseLabel->setAlpha(.1);
+	//mouseLabel->setHoverable(true);
+	///*amplitude = .125, float scaleOffset = 1,
+	//	float speed = 1, int horizontalAdjustment = 2*/
+	//((LetterJammer*)mouseLabel)->setEffect(make_unique<PulsatingJammer>(.525, 1, .525, 1));
+	////jammer = NULL;
+	//guiControls.push_back(mouseLabel);
 
 	//mouse->setAlpha(.5);
 
@@ -293,9 +295,9 @@ void MainScreen::reloadGraphicsAssets() {
 
 void MainScreen::update(double deltaTime) {
 
-	wostringstream ws;
+	/*wostringstream ws;
 	ws << "Mouse: " << mouse->getPosition().x << ", " << mouse->getPosition().y;
-	mouseLabel->setText(ws);
+	mouseLabel->setText(ws.str());*/
 	//dynamicDialog->setText(ws.str());
 	//dynamicDialog->update(deltaTime);
 	for (auto const& control : guiControls)
@@ -601,6 +603,7 @@ void DisplayModeItem::setText() {
 }
 
 
+
 void OnClickListenerAdapterList::onClick(ListBox* listbox, UINT selectedIndex) {
 
 	AdapterItem* selectedItem = (AdapterItem*) listbox->getItem(selectedIndex);
@@ -617,6 +620,8 @@ void OnClickListenerAdapterList::onClick(ListBox* listbox, UINT selectedIndex) {
 void OnClickListenerAdapterList::onHover(ListBox* listbox, short hoveredItemIndex) {
 }
 
+
+
 void OnClickListenerDisplayModeList::onClick(ComboBox* combobox, UINT selectedIndex) {
 
 	if (!config->game->setDisplayMode(selectedIndex)) {
@@ -631,6 +636,8 @@ void OnClickListenerDisplayModeList::onClick(ComboBox* combobox, UINT selectedIn
 
 void OnClickListenerDisplayModeList::onHover(ComboBox* listbox, short hoveredItemIndex) {
 }
+
+
 
 void OnClickListenerFullScreenCheckBox::onClick(CheckBox* checkbox, bool isChecked) {
 
@@ -648,49 +655,71 @@ void OnClickListenerFullScreenCheckBox::onClick(CheckBox* checkbox, bool isCheck
 	}
 }
 
-void OnClickListenerFullScreenCheckBox::onHover(CheckBox * checkbox, bool isChecked) {
+void OnClickListenerFullScreenCheckBox::onHover(CheckBox* checkbox, bool isChecked) {
 }
+
+
 
 void OnClickListenerSettingsButton::onClick(Button* button) {
 
 	main->menuManager->openConfigMenu();
 }
 
-void OnClickListenerSettingsButton::onPress(Button * button) {
+void OnClickListenerSettingsButton::onPress(Button* button) {
 }
 
-void OnClickListenerSettingsButton::onHover(Button * button) {
+void OnClickListenerSettingsButton::onHover(Button* button) {
+	((LetterJammer*) button->buttonLabel.get())->setRun(true);
 }
+
+void OnClickListenerSettingsButton::resetState(Button* button) {
+	((LetterJammer*) button->buttonLabel.get())->reset();
+}
+
+
 
 void OnClickListenerDialogQuitButton::onClick(Button* button) {
 	main->exitDialog->hide();
 	main->confirmExit();
 }
 
-void OnClickListenerDialogQuitButton::onPress(Button * button) {
+void OnClickListenerDialogQuitButton::onPress(Button* button) {
 }
 
-void OnClickListenerDialogQuitButton::onHover(Button * button) {
+void OnClickListenerDialogQuitButton::onHover(Button* button) {
 }
+
+void OnClickListenerDialogQuitButton::resetState(Button * button) {
+}
+
+
 
 void OnClickListenerExitButton::onClick(Button* button) {
 	main->menuManager->exitDialog->show();
 }
 
-void OnClickListenerExitButton::onPress(Button * button) {
+void OnClickListenerExitButton::onPress(Button* button) {
 }
 
-void OnClickListenerExitButton::onHover(Button * button) {
+void OnClickListenerExitButton::onHover(Button* button) {
 }
+
+void OnClickListenerExitButton::resetState(Button * button) {
+}
+
+
 
 void BackButtonListener::onClick(Button* button) {
 	configScreen->menuManager->openMainMenu();
 }
 
-void BackButtonListener::onPress(Button * button) {
+void BackButtonListener::onPress(Button* button) {
 }
 
-void BackButtonListener::onHover(Button * button) {
+void BackButtonListener::onHover(Button* button) {
+}
+
+void BackButtonListener::resetState(Button * button) {
 }
 
 

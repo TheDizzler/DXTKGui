@@ -40,8 +40,8 @@ public:
 	/** bool frontToBack has no effect in TextLabel. */
 	virtual void setLayerDepth(const float newDepth, bool frontToBack = true) override;
 
-	void setText(string text);
-	void setText(wostringstream& text);
+	virtual void setText(string text);
+	virtual void setText(wostringstream& text);
 	virtual void setText(wstring text) override;
 	/** Special use setText. Use on a throw-away TextLabel with useTexture = false. */
 	//virtual void setText(wstring text, bool useTexture);
@@ -82,20 +82,38 @@ public:
 	}
 
 	virtual void onClick() override {
+		isClicked = true;
+		isPressed = false;
 		if (actionListener != NULL) {
 			isClicked = false;
 			(actionListener->*onClickFunction)(this);
 		}
+		setToUnpressedState();
+		hasBeenSetUnpressed = false;
+		hasBeenSetHover = false;
 	}
 	virtual void onPress() override {
+		isPressed = true;
 		if (actionListener != NULL) {
 			(actionListener->*onPressFunction)(this);
 		}
+		setToSelectedState();
+		hasBeenSetUnpressed = false;
+		hasBeenSetHover = false;
 	}
 	virtual void onHover() override {
 		if (actionListener != NULL) {
 			(actionListener->*onHoverFunction)(this);
 		}
+		setToHoverState();
+		hasBeenSetHover = true;
+		hasBeenSetUnpressed = false;
+	}
+	virtual void resetState() override {
+		isPressed = false;
+		setToUnpressedState();
+		hasBeenSetUnpressed = true;
+		hasBeenSetHover = false;
 	}
 
 protected:

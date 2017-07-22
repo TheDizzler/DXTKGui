@@ -61,7 +61,11 @@ public:
 	/** Not used in Dialog. */
 	virtual void onPress() override {
 	}
+	/** Not used in Dialog. */
 	virtual void onHover() override {
+	}
+	/** Not used in Dialog. */
+	virtual void resetState() override {
 	}
 protected:
 	bool refreshTexture = true;
@@ -94,6 +98,7 @@ protected:
 		virtual void onClick(Button* button) override;
 		virtual void onPress(Button* button) override;
 		virtual void onHover(Button* button) override;
+		virtual void resetState(Button* button) override;
 	private:
 		Dialog* dialog;
 	};

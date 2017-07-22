@@ -41,30 +41,23 @@ void CheckBox::reloadGraphicsAsset() {
 
 bool CheckBox::update(double deltaTime) {
 
-	bool refreshed = false;
+	refreshed = false;
 	if (hitArea->contains(mouse->getPosition())
 		|| label->contains(mouse->getPosition())) {
 
 		if (!isHover) {
 			isHover = true;
 			onHover();
-			label->setTint(hoverColorText);
-			tint = hoverColor; // this won't do anything if the checkbox is black :/
-			refreshed = true;
 		}
 	} else if (isHover) {
-		label->setTint(normalColorText);
-		tint = normalColor;
+		resetState();
 		isHover = false;
-		firstHover = false;
-		refreshed = true;
 	}
 
 	if (isHover) {
 		if (mouse->pressed()) {
 			isClicked = !isClicked;
 			onClick();
-			refreshed = true;
 		}
 	}
 	if (label->update(deltaTime))

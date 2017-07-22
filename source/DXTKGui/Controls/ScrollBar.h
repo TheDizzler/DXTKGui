@@ -124,6 +124,8 @@ public:
 	/** Not used in Scrollbar. */
 	virtual void onHover() override {
 	};
+	/** Not used in Scrollbar. */
+	virtual void resetState() override {};
 
 private:
 

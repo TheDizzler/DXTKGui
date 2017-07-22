@@ -132,6 +132,8 @@ public:
 	}
 	virtual void onHover(Button* button) override {
 	}
+	virtual void resetState(Button* button) override {
+	}
 
 	GameEngine* engine;
 };

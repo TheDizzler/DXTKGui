@@ -67,7 +67,7 @@ public:
 
 	LetterJammer* createLetterJammer(const Vector2& position,
 		wstring text = L"", Color textColor = Color(1, 1, 1, 1),
-		const char_t* fontName = "Default Font");
+		bool autoRun = true, const char_t* fontName = "Default Font");
 
 /** Creates a button with no set text or position. */
 	Button* createButton(const char_t* fontName = "Default Font");

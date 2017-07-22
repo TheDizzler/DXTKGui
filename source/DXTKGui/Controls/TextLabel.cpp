@@ -49,36 +49,21 @@ bool TextLabel::update(double deltaTime) {
 			if (!isPressed) {
 				if (!hasBeenSetHover) {
 					onHover();
-					setToHoverState();
-					hasBeenSetHover = true;
-					hasBeenSetUnpressed = false;
 				}
 			}
 		} else
 			isHover = false;
 
 		if (isPressed && !mouse->leftButton()) {
-			isClicked = true;
-			isPressed = false;
 			onClick();
-			setToUnpressedState();
-			hasBeenSetUnpressed = false;
-			hasBeenSetHover = false;
 		} else {
 			isClicked = false;
 			if (!isHover) {
 				if (!hasBeenSetUnpressed) {
-					isPressed = false;
-					setToUnpressedState();
-					hasBeenSetUnpressed = true;
-					hasBeenSetHover = false;
+					resetState();
 				}
 			} else if (mouse->pressed()) {
-				isPressed = true;
 				onPress();
-				setToSelectedState();
-				hasBeenSetUnpressed = false;
-				hasBeenSetHover = false;
 			}
 		}
 	}

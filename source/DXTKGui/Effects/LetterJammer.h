@@ -42,6 +42,8 @@ private:
 	vector<double> times;
 };
 
+/** float amplitude = .125, float scaleOffset = 1,
+		float speed = 1, int horizontalAdjustment = 2 */
 class PulsatingJammer : public JammerEffect {
 public:
 	PulsatingJammer(float amplitude = .125, float scaleOffset = 1,
@@ -58,6 +60,7 @@ public:
 	vector<double> times;
 };
 
+/** ColorJammer(float changeSpeed) */
 class ColorJammer : public JammerEffect {
 public:
 	ColorJammer(float changeSpeed);
@@ -99,11 +102,14 @@ private:
 	vector<double> times;
 };
 
+/** If autoRun == false, run() must be called manually. */
 class LetterJammer : public TextLabel {
 public:
 	LetterJammer(GUIFactory* factory, shared_ptr<MouseController> mouseController,
-		Vector2 position, wstring text, const pugi::char_t* font = "Default Font");
+		Vector2 position, wstring text, bool autoRun = true, const pugi::char_t* font = "Default Font");
 	virtual ~LetterJammer();
+
+	
 
 	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
@@ -112,6 +118,15 @@ public:
 	void clearEffects();
 	virtual void setText(wstring text) override;
 
+	virtual void setPosition(const Vector2& position) override;
+	/* Not used? */
+	virtual void setTint(const XMFLOAT4 color) override;
+	/* Not used? */
+	virtual void setTint(const Color& color) override;
+	/* Not used? */
+	virtual void setTint(const XMVECTORF32 color) override;
+
+	void setRun(bool run);
 	bool isDone();
 	void reset();
 private:
@@ -121,5 +136,10 @@ private:
 	ComPtr<ID3D11ShaderResourceView> textTexture;
 	unique_ptr<GraphicsAsset> gfxAsset;
 
+	bool running = true;
+	/** All effect jammers finished. */
 	bool done;
+
+	void run(double deltaTime);
+
 };

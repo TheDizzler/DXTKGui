@@ -59,6 +59,8 @@ public:
 	/** Not used in TexturePanel. */
 	virtual void onHover() override {
 	};
+	/** Not used in TexturePanel. */
+	virtual void resetState() override {};
 
 	int scrollSpeed = 10;
 private:

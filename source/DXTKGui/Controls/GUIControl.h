@@ -86,7 +86,8 @@ public:
 	virtual void onPress() = 0;
 	/** Action to perform when mouse over control. */
 	virtual void onHover() = 0;
-
+	/** Action to perform to return control back to neutral state. */
+	virtual void resetState() = 0;
 
 	virtual bool clicked() = 0;
 	/* Is Mouse Button down over control? */

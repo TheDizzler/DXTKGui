@@ -76,10 +76,12 @@ public:
 		actionListener = iOnC;
 	}
 
+	/** Called when ListBox item selected (unless overriden) */
 	virtual void onClick() override {
 		if (actionListener != NULL)
 			(actionListener->*onClickFunction)(this, listBox->getSelectedIndex());
 		selectedLabel->setText(listBox->getSelected()->toString());
+		//comboListButton->onClick();
 	}
 
 	/** Not used in Combobox. */
@@ -92,6 +94,9 @@ public:
 			(actionListener->*onHoverFunction)(this, listBox->getHoveredIndex());
 	}
 
+	virtual void resetState() override {
+		
+	}
 
 private:
 	bool refreshTexture = true;
@@ -141,6 +146,7 @@ private:
 		virtual void onClick(Button* button) override;
 		virtual void onPress(Button* button) override;
 		virtual void onHover(Button* button) override;
+		virtual void resetState(Button* button) override;
 	private:
 		ComboBox* comboBox;
 	};

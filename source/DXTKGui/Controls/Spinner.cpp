@@ -301,6 +301,9 @@ void SpinnerUpButtonListener::onPress(Button* button) {
 void SpinnerUpButtonListener::onHover(Button* button) {
 }
 
+void SpinnerUpButtonListener::resetState(Button * button) {
+}
+
 void SpinnerDownButtonListener::onClick(Button* button) {
 	spinner->decrease();
 }
@@ -309,4 +312,7 @@ void SpinnerDownButtonListener::onPress(Button* button) {
 }
 
 void SpinnerDownButtonListener::onHover(Button* button) {
+}
+
+void SpinnerDownButtonListener::resetState(Button * button) {
 }

@@ -231,9 +231,11 @@ TextLabel* GUIFactory::createTextLabel(const Vector2& position,
 }
 
 LetterJammer* GUIFactory::createLetterJammer(
-	const Vector2& position, wstring text, Color textColor, const char_t* fontName) {
+	const Vector2& position, wstring text, Color textColor,
+	bool autoRun, const char_t* fontName) {
 
-	LetterJammer* jammer = new LetterJammer(this, NULL, position, text, fontName);
+	LetterJammer* jammer = new LetterJammer(
+		this, mouseController, position, text, autoRun, fontName);
 	jammer->setTint(textColor);
 	return jammer;
 }

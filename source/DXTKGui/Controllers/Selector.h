@@ -4,6 +4,7 @@
 #include "Joystick.h"
 
 class GUIFactory;
+
 class Selector {
 public:
 	Selector();

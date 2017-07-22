@@ -61,8 +61,6 @@ void PlayerSlot::unpairSocket() {
 	wss << L" unpaired." << endl;
 	OutputDebugString(wss.str().c_str());
 
-	joystick->setPlayerSlotNumber(PlayerSlotNumber::NONE);
-	joystick->setControllerSocketNumber(ControllerSocketNumber::CONTROLLER_SOCKET_ERROR);
 	joystick = NULL;
 	_threadJoystickData = NULL;
 }

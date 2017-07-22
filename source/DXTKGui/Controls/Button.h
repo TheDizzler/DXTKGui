@@ -4,9 +4,9 @@
 #include "../BaseGraphics/PrimitiveShapes.h"
 
 
-/** A visual and logical representation of a button.
-		Now with ActionListeners! */
+/** A visual and logical representation of a button. */
 class Button : public GUIControl, public Texturizable {
+	
 public:
 
 	Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
@@ -27,6 +27,7 @@ public:
 	virtual void textureDraw(SpriteBatch* batch,
 		ComPtr<ID3D11Device> device = NULL) override;
 
+	virtual void setTextLabel(TextLabel* newLabel);
 
 	virtual void setText(wstring text) override;
 	virtual const wchar_t* getText() override;
@@ -71,37 +72,65 @@ public:
 		virtual void onClick(Button* button) = 0;
 		virtual void onPress(Button* button) = 0;
 		virtual void onHover(Button* button) = 0;
+		virtual void resetState(Button* button) = 0;
 	};
 
-
+	
 	void setActionListener(ActionListener* iOnC) {
 		if (actionListener != NULL)
 			delete actionListener;
 		onClickFunction = &ActionListener::onClick;
 		onHoverFunction = &ActionListener::onHover;
 		onPressFunction = &ActionListener::onPress;
+		onResetFunction = &ActionListener::resetState;
 		actionListener = iOnC;
 	}
 
 	virtual void onClick() override {
+		isClicked = true;
+		isPressed = false;
 		if (actionListener != NULL) {
 			isClicked = isPressed = false;
 			(actionListener->*onClickFunction)(this);
 		}
+		resetState();
+		hasBeenSetUnpressed = false;
 	}
 
 	virtual void onPress() override {
+		isPressed = true;
 		if (actionListener != NULL) {
 			(actionListener->*onPressFunction)(this);
 		}
+		setToSelectedState();
+		hasBeenSetUnpressed = false;
+		hasBeenSetHover = false;
+		refreshTexture = true;
 	}
 
 	virtual void onHover() override {
+		isHover = true;
 		if (actionListener != NULL) {
 			(actionListener->*onHoverFunction)(this);
 		}
+		setToHoverState();
+		hasBeenSetHover = true;
+		hasBeenSetUnpressed = false;
+		refreshTexture = true;
 	}
 
+	virtual void resetState() override {
+		if (actionListener != NULL) {
+			(actionListener->*onResetFunction)(this);
+		}
+		isPressed = false;
+		setToUnpressedState();
+		hasBeenSetUnpressed = true;
+		hasBeenSetHover = false;
+		refreshTexture = true;
+	}
+
+	unique_ptr<TextLabel> buttonLabel;
 protected:
 	bool refreshTexture = true;
 	unique_ptr<TexturePanel> texturePanel;
@@ -111,6 +140,7 @@ protected:
 	OnClickFunction onClickFunction;
 	OnClickFunction onHoverFunction;
 	OnClickFunction onPressFunction;
+	OnClickFunction onResetFunction;
 
 	/* center text and repositions pressed and unpressed text */
 	void positionText();
@@ -121,7 +151,7 @@ protected:
 	virtual void setToHoverState();
 	virtual void setToSelectedState();
 
-	unique_ptr<TextLabel> buttonLabel;
+	
 	/* Offsets textlabel position.*/
 	Vector2 unpressedTextOffset = Vector2(-2, 0);
 	Vector2 pressedTextOffset = Vector2(-2, 0);
@@ -262,6 +292,10 @@ public:
 					adjustPosition(currentFrameIndex - 1);
 			}
 		}
+	}
+
+	virtual void resetState() override {
+		setToUnpressedState();
 	}
 
 	double timeHovering = 0;

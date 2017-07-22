@@ -74,7 +74,7 @@ public:
 	virtual void onClick(Button* button) override;
 	virtual void onPress(Button* button) override;
 	virtual void onHover(Button* button) override;
-
+	virtual void resetState(Button* button) override;
 private:
 	ConfigScreen* configScreen;
 };
@@ -84,8 +84,9 @@ public:
 	OnClickListenerSettingsButton(MainScreen* screen) : main(screen) {
 	}
 	virtual void onClick(Button* button) override;
-	virtual void onPress(Button * button) override;
-	virtual void onHover(Button * button) override;
+	virtual void onPress(Button* button) override;
+	virtual void onHover(Button* button) override;
+	virtual void resetState(Button* button) override;
 private:
 	MainScreen* main;
 };
@@ -97,6 +98,7 @@ public:
 	virtual void onClick(Button* button) override;
 	virtual void onPress(Button* button) override;
 	virtual void onHover(Button* button) override;
+	virtual void resetState(Button* button) override;
 private:
 	MenuManager* main;
 };
@@ -108,6 +110,7 @@ public:
 	virtual void onClick(Button* button) override;
 	virtual void onPress(Button* button) override;
 	virtual void onHover(Button* button) override;
+	virtual void resetState(Button* button) override;
 private:
 	MainScreen* main;
 
@@ -182,10 +185,6 @@ public:
 	virtual void reloadGraphicsAssets();
 
 	virtual void pause() override;
-
-	virtual void controllerRemoved(size_t controllerSlot);
-	virtual void newController(HANDLE joyHandle);
-
 protected:
 
 	GameManager* game;

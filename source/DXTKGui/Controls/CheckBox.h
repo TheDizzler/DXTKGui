@@ -67,6 +67,7 @@ public:
 			texture = checkedSprite->getTexture().Get();
 		else
 			texture = uncheckedSprite->getTexture().Get();
+		refreshed = true;
 	}
 
 	/** Not used in CheckBox. */
@@ -77,6 +78,12 @@ public:
 		if (actionListener != NULL) {
 			(actionListener->*onHoverFunction)(this, isClicked);
 		}
+		label->setTint(hoverColorText);
+		tint = hoverColor; // this won't do anything if the checkbox is black :/
+	}
+	virtual void resetState() override {
+		label->setTint(normalColorText);
+		tint = normalColor;
 	}
 
 private:
@@ -96,5 +103,5 @@ private:
 	unique_ptr<Sprite> uncheckedSprite;
 	unique_ptr<Sprite> checkedSprite;
 
-	bool firstHover;
+	bool refreshed = false;
 };

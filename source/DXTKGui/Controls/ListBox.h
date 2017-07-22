@@ -163,6 +163,9 @@ public:
 		if (actionListener != NULL)
 			(actionListener->*onHoverFunction)(this, hoveredIndex);
 	};
+	
+	virtual void resetState() override {
+	};
 
 private:
 	typedef void (ActionListener::*OnClickFunction) (ListBox*, UINT);

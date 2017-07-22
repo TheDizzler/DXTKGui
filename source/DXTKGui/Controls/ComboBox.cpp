@@ -88,7 +88,6 @@ bool ComboBox::update(double deltaTime) {
 	if (isOpen) {
 		if (listBox->update(deltaTime))
 			refresh = true;
-			//refreshTexture = true;
 	}
 
 	if (refreshTexture) {
@@ -255,8 +254,12 @@ void ComboBox::ShowListBoxListener::onPress(Button* button) {
 void ComboBox::ShowListBoxListener::onHover(Button* button) {
 }
 
+void ComboBox::ShowListBoxListener::resetState(Button * button) {
+}
+
 void ComboBox::ListBoxListener::onClick(ListBox* listbox, UINT selectedItemIndex) {
 	comboBox->onClick();
+	comboBox->show();
 }
 
 void ComboBox::ListBoxListener::onHover(ListBox* listbox, short hoveredItemIndex) {

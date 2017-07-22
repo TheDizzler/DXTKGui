@@ -4,10 +4,11 @@
 
 LetterJammer::LetterJammer(GUIFactory* factory,
 	shared_ptr<MouseController> mouseController, Vector2 position,
-	wstring text, const pugi::char_t* font)
-	: TextLabel(factory, mouseController, position, text, font, true) {
+	wstring text, bool autoRun, const pugi::char_t* font)
+	: TextLabel(factory, mouseController, position, text, font, false) {
 
 	setText(text);
+	running = autoRun;
 }
 
 
@@ -17,6 +18,13 @@ LetterJammer::~LetterJammer() {
 }
 
 
+void LetterJammer::run(double deltaTime) {
+	done = true;
+	for (const auto& fx : jammerFXs)
+		if (!fx->run(deltaTime, letterJams))
+			done = false;
+}
+
 bool LetterJammer::update(double deltaTime) {
 
 	if (isHoverable) {
@@ -25,43 +33,29 @@ bool LetterJammer::update(double deltaTime) {
 			if (!isPressed) {
 				if (!hasBeenSetHover) {
 					onHover();
-					setToHoverState();
-					hasBeenSetHover = true;
-					hasBeenSetUnpressed = false;
 				}
 			}
 		} else
 			isHover = false;
 
 		if (isPressed && !mouse->leftButton()) {
-			isClicked = true;
-			isPressed = false;
 			onClick();
-			setToUnpressedState();
-			hasBeenSetUnpressed = false;
-			hasBeenSetHover = false;
+			
 		} else {
 			isClicked = false;
 			if (!isHover) {
 				if (!hasBeenSetUnpressed) {
-					isPressed = false;
-					setToUnpressedState();
-					hasBeenSetUnpressed = true;
-					hasBeenSetHover = false;
+					resetState();
 				}
 			} else if (mouse->pressed()) {
-				isPressed = true;
-				setToSelectedState();
-				hasBeenSetUnpressed = false;
-				hasBeenSetHover = false;
+				onPress();
 			}
 		}
 	}
 
-	done = true;
-	for (const auto& fx : jammerFXs)
-		if (!fx->run(deltaTime, letterJams))
-			done = false;
+	if (running) {
+		run(deltaTime);
+	}
 
 	if (refreshTexture) {
 		if (label.size() > 0) {
@@ -69,15 +63,14 @@ bool LetterJammer::update(double deltaTime) {
 			textTexture = gfxAsset->getTexture();
 		}
 		refreshTexture = false;
-		return true;
 	}
 
-	return false;
+	return running;
 }
 
 void LetterJammer::draw(SpriteBatch* batch) {
 
-	for (LetterJam letter : letterJams) {
+	for (LetterJam& letter : letterJams) {
 		batch->Draw(textTexture.Get(), letter.position, &letter.sourceRECT,
 			letter.tint, letter.rotation, letter.origin, letter.scale,
 			letter.spriteEffects, letter.layerDepth);
@@ -124,12 +117,41 @@ void LetterJammer::setText(wstring text) {
 		fx->initialize(letterJams, (PVOID) &position);
 }
 
+void LetterJammer::setPosition(const Vector2& newPos) {
+	Vector2 moveVector = newPos - position;
+	GUIControl::setPosition(newPos);
+
+	for (LetterJam& letter : letterJams) {
+		letter.position += moveVector;
+		int tset = 0;
+	}
+}
+
+
+void LetterJammer::setTint(const XMFLOAT4 color) {
+	tint = color;
+}
+
+void LetterJammer::setTint(const Color& color) {
+	tint = color;
+}
+
+void LetterJammer::setTint(const XMVECTORF32 color) {
+	tint = color;
+}
+
+
+void LetterJammer::setRun(bool run) {
+	running = run;
+}
+
 bool LetterJammer::isDone() {
 	return done;
 }
 
 void LetterJammer::reset() {
 	done = false;
+	running = false;
 	if (label.size() > 0) {
 		gfxAsset = texturize();
 		textTexture = gfxAsset->getTexture();
@@ -261,9 +283,11 @@ void ColorJammer::initialize(vector<LetterJam>& jams, LPVOID pvoid) {
 
 	for (int i = 0; i < jams.size(); ++i) {
 		State newState = State(randState(rng));
-		Color newColor = Color(randColor(rng), randColor(rng), randColor(rng), 1);
+		Color newColor(Colors::Black);
+			// = Color(randColor(rng), randColor(rng), randColor(rng), 1);
 		states.push_back(newState);
 		startColors.push_back(newColor);
+		jams[i].tint = newColor;
 		times.push_back(0);
 	}
 }

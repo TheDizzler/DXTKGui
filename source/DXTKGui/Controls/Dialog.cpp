@@ -151,6 +151,9 @@ void Dialog::OnClickListenerCancelButton::onPress(Button * button) {
 void Dialog::OnClickListenerCancelButton::onHover(Button * button) {
 }
 
+void Dialog::OnClickListenerCancelButton::resetState(Button * button) {
+}
+
 
 
 

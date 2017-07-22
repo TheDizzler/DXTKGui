@@ -23,6 +23,8 @@ void Selector::setJoystick(Joystick* joy) {
 
 void Selector::update(double deltaTime) {
 
+	if (controls.size() == 0)
+		return;
 	if (joystick) {
 		if (joystick->aButtonPushed()) {
 			controls[selected]->onClick();
@@ -30,14 +32,14 @@ void Selector::update(double deltaTime) {
 		} else if (joystick->isUpPressed()) {
 
 			if (timeSincePressed > DELAY_TIME) {
-				setSelected(--selected);
+				setSelected(selected - 1);
 				timeSincePressed = 0;
 			}
 			timeSincePressed += deltaTime;
 		} else if (joystick->isDownPressed()) {
 
 			if (timeSincePressed > DELAY_TIME) {
-				setSelected(++selected);
+				setSelected(selected + 1);
 				timeSincePressed = 0;
 			}
 			timeSincePressed += deltaTime;
@@ -74,6 +76,11 @@ void Selector::addControls(vector<GUIControl*> controls) {
 }
 
 void Selector::setSelected(SHORT index) {
+
+
+	if (selected > -1 && selected < controls.size())
+		controls[selected]->resetState();
+
 	if (index < 0)
 		selected = controls.size() - 1;
 	else if (index > controls.size() - 1)
@@ -85,4 +92,6 @@ void Selector::setSelected(SHORT index) {
 		controls[selected]->getPosition(),
 		Vector2(controls[selected]->getWidth(), controls[selected]->getHeight()),
 		frameThickness);
+
+	controls[selected]->onHover();
 }

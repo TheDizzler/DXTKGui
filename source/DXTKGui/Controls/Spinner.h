@@ -60,6 +60,7 @@ public:
 	virtual void onPress() override {};
 	/** Does nothing in Spinner. */
 	virtual void onHover() override {};
+	virtual void resetState() override {};
 
 private:
 	unique_ptr<TexturePanel> texturePanel;
@@ -92,6 +93,7 @@ public:
 	virtual void onClick(Button* button) override;
 	virtual void onPress(Button* button) override;
 	virtual void onHover(Button* button) override;
+	virtual void resetState(Button* button) override;
 private:
 	Spinner* spinner;
 };
@@ -103,6 +105,7 @@ public:
 	virtual void onClick(Button* button) override;
 	virtual void onPress(Button* button) override;
 	virtual void onHover(Button* button) override;
+	virtual void resetState(Button* button) override;
 private:
 	Spinner* spinner;
 };
