@@ -339,6 +339,10 @@ void SquareFlipScreenTransition::reset() {
 
 
 
+ScreenTransitions::LineWipeScreenTransition::LineWipeScreenTransition(bool toleft) {
+	wipeToLeft = !toleft;
+}
+
 ScreenTransitions::LineWipeScreenTransition::~LineWipeScreenTransition() {
 	for (Line* line : lines)
 		delete line;
@@ -368,7 +372,11 @@ void LineWipeScreenTransition::setTransitionBetween(
 
 		line->position = Vector2(0, rect.top);
 		line->start = Vector2(0, rect.top);
-		line->end = Vector2(line->position.x - oldScreenAsset->getWidth(), line->position.y);
+		if (wipeToLeft)
+			line->end = Vector2(line->position.x - oldScreenAsset->getWidth(),
+				line->position.y);
+		else
+			line->end = Vector2(oldScreenAsset->getWidth(), line->position.y);
 		lines.push_back(line);
 
 	}
@@ -392,25 +400,30 @@ bool ScreenTransitions::LineWipeScreenTransition::run(double deltaTime) {
 			allDone = false;
 			break;
 		}
-		if (line->position.x + oldScreenAsset->getWidth() > 0)
+		if (wipeToLeft) {
+			if (line->position.x + oldScreenAsset->getWidth() > 0)
+				allDone = false;
+		} else if (line->position.x < oldScreenAsset->getWidth())
 			allDone = false;
 	}
 
 
 	return allDone;
 }
-
+float z = 0;
 void ScreenTransitions::LineWipeScreenTransition::draw(SpriteBatch* batch) {
 
 	batch->Draw(newTexture.Get(), position, &screenRect,
 		tint, rotation, origin, scale, SpriteEffects_None);
 
 	for (Line* line : lines)
-		batch->Draw(oldTexture.Get(), line->position, &line->rect,
+		batch->Draw(oldTexture.Get(), Vector3(line->position.x, line->position.y, z++),
+			&line->rect,
 			tint, rotation, origin, scale, SpriteEffects_None);
 }
 
 void ScreenTransitions::LineWipeScreenTransition::reset() {
 
 	timer = 0;
+	wipeToLeft = !wipeToLeft;
 }

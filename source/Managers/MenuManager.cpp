@@ -85,9 +85,9 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContro
 	transitionManager = make_unique<ScreenTransitions::ScreenTransitionManager>();
 	transitionManager->initialize(guiFactory.get(), "Test BG");
 	transitionManager->setTransition(
-		//new ScreenTransitions::FlipScreenTransition(true));
-		new ScreenTransitions::SquareFlipScreenTransition());
-		//new ScreenTransitions::LineWipeScreenTransition());
+		//new ScreenTransitions::FlipScreenTransition(false));
+		//new ScreenTransitions::SquareFlipScreenTransition());
+		new ScreenTransitions::LineWipeScreenTransition(false));
 
 
 	return true;
@@ -290,6 +290,8 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 
 void MainScreen::reloadGraphicsAssets() {
 	MenuScreen::reloadGraphicsAssets();
+
+	selector->reloadGraphicsAsset();
 }
 
 

@@ -124,6 +124,7 @@ namespace ScreenTransitions {
 
 	class LineWipeScreenTransition : public ScreenTransition {
 	public:
+		LineWipeScreenTransition(bool wipeToLeftFirst = true);
 		virtual ~LineWipeScreenTransition();
 		virtual void setTransitionBetween(unique_ptr<GraphicsAsset> oldScreenAsset,
 			unique_ptr<GraphicsAsset> newScreenAsset, float transitionTime) override;
@@ -142,6 +143,7 @@ namespace ScreenTransitions {
 		double delay;
 		vector<Line*> lines;
 
+		bool wipeToLeft;
 		Vector2 position = Vector2::Zero;
 		Vector2 origin = Vector2::Zero;
 		Vector2 scale = Vector2(1, 1);

@@ -76,59 +76,12 @@ public:
 	};
 
 	
-	void setActionListener(ActionListener* iOnC) {
-		if (actionListener != NULL)
-			delete actionListener;
-		onClickFunction = &ActionListener::onClick;
-		onHoverFunction = &ActionListener::onHover;
-		onPressFunction = &ActionListener::onPress;
-		onResetFunction = &ActionListener::resetState;
-		actionListener = iOnC;
-	}
+	void setActionListener(ActionListener* iOnC);
 
-	virtual void onClick() override {
-		isClicked = true;
-		isPressed = false;
-		if (actionListener != NULL) {
-			isClicked = isPressed = false;
-			(actionListener->*onClickFunction)(this);
-		}
-		resetState();
-		hasBeenSetUnpressed = false;
-	}
-
-	virtual void onPress() override {
-		isPressed = true;
-		if (actionListener != NULL) {
-			(actionListener->*onPressFunction)(this);
-		}
-		setToSelectedState();
-		hasBeenSetUnpressed = false;
-		hasBeenSetHover = false;
-		refreshTexture = true;
-	}
-
-	virtual void onHover() override {
-		isHover = true;
-		if (actionListener != NULL) {
-			(actionListener->*onHoverFunction)(this);
-		}
-		setToHoverState();
-		hasBeenSetHover = true;
-		hasBeenSetUnpressed = false;
-		refreshTexture = true;
-	}
-
-	virtual void resetState() override {
-		if (actionListener != NULL) {
-			(actionListener->*onResetFunction)(this);
-		}
-		isPressed = false;
-		setToUnpressedState();
-		hasBeenSetUnpressed = true;
-		hasBeenSetHover = false;
-		refreshTexture = true;
-	}
+	virtual void onClick() override;
+	virtual void onPress() override;
+	virtual void onHover() override;
+	virtual void resetState() override;
 
 	unique_ptr<TextLabel> buttonLabel;
 protected:
@@ -162,7 +115,11 @@ protected:
 	unique_ptr<RectangleFrame> frame;
 	int frameThickness = 2;
 
+	bool mouseHover = false;
+	bool lastWasHover = false;
+	/** Flag to prevent continuous texture refresh. */
 	bool hasBeenSetUnpressed = false;
+	/** Flag to prevent continuous texture refresh. */
 	bool hasBeenSetHover = false;
 };
 
@@ -251,52 +208,12 @@ public:
 	};
 
 
-	void setActionListener(ActionListener* iOnC) {
-		if (actionListener != NULL)
-			delete actionListener;
-		onClickFunction = &ActionListener::onClick;
-		onHoverFunction = &ActionListener::onHover;
-		onPressFunction = &ActionListener::onPress;
-		actionListener = iOnC;
-	}
+	void setActionListener(ActionListener* iOnC);
 
-	virtual void onClick() override {
-		if (actionListener != NULL) {
-			(actionListener->*onClickFunction)(this);
-		} else {
-			currentFrameIndex = animation->animationFrames.size() - 1;
-		}
-
-		isClicked = isPressed = false;
-	}
-
-	virtual void onPress() override {
-		if (actionListener != NULL) {
-			(actionListener->*onPressFunction)(this);
-		} else
-			currentFrameIndex = animation->animationFrames.size() - 2;
-	}
-
-	virtual void onHover() override {
-
-		if (actionListener != NULL) {
-			(actionListener->*onHoverFunction)(this);
-		} else {
-			if (timeHovering > timePerFrame) {
-				timeHovering = 0;
-				++currentFrameIndex;
-				if (currentFrameIndex > animation->animationFrames.size() - 3) {
-					currentFrameIndex = animation->animationFrames.size() - 3;
-					isOpen = true;
-				} else
-					adjustPosition(currentFrameIndex - 1);
-			}
-		}
-	}
-
-	virtual void resetState() override {
-		setToUnpressedState();
-	}
+	virtual void onClick() override;
+	virtual void onPress() override;
+	virtual void onHover() override;
+	virtual void resetState() override;
 
 	double timeHovering = 0;
 	double timePerFrame = .167;
@@ -318,6 +235,6 @@ private:
 	/** Because frames of animation aren't always the same size... */
 	Vector2 center;
 
-
+	bool lastWasHover = false;
 
 };

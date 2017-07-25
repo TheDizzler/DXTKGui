@@ -72,23 +72,28 @@ bool Button::update(double deltaTime) {
 
 	updateProjectedHitArea();
 	if (projectedHitArea->contains(mouse->getPosition())) {
+		lastWasHover = true;
+		mouseHover = true;
 		if (!isPressed) {
 			if (!hasBeenSetHover) {
 				onHover();
 			}
 		}
-	} else
+	} else if (lastWasHover) {
+		lastWasHover = false;
 		isHover = false;
+		mouseHover = false;
+	}
 
 	if (isPressed && !mouse->leftButton()) {
 		onClick();
 	} else {
 		isClicked = false;
 		if (!isHover) {
-			if (!hasBeenSetUnpressed) {		
+			if (!hasBeenSetUnpressed) {
 				resetState();
 			}
-		} else if (mouse->pressed()) {
+		} else if (mouseHover && mouse->pressed()) {
 			onPress();
 		}
 	}
@@ -223,6 +228,61 @@ void Button::setPosition(const Vector2& pos) {
 	positionText();
 
 	texturePanel->setPosition(position);
+}
+
+void Button::setActionListener(ActionListener* iOnC) {
+	if (actionListener != NULL)
+		delete actionListener;
+	onClickFunction = &ActionListener::onClick;
+	onHoverFunction = &ActionListener::onHover;
+	onPressFunction = &ActionListener::onPress;
+	onResetFunction = &ActionListener::resetState;
+	actionListener = iOnC;
+}
+
+void Button::onClick() {
+	isClicked = true;
+	if (actionListener != NULL) {
+		isClicked = isPressed = false;
+		(actionListener->*onClickFunction)(this);
+	}
+	resetState();
+	hasBeenSetUnpressed = false;
+}
+
+void Button::onPress() {
+	isPressed = true;
+	if (actionListener != NULL) {
+		(actionListener->*onPressFunction)(this);
+	}
+	setToSelectedState();
+	hasBeenSetUnpressed = false;
+	hasBeenSetHover = false;
+	refreshTexture = true;
+}
+
+void Button::onHover() {
+	isHover = true;
+	if (actionListener != NULL) {
+		(actionListener->*onHoverFunction)(this);
+	}
+	setToHoverState();
+	hasBeenSetHover = true;
+	hasBeenSetUnpressed = false;
+	refreshTexture = true;
+}
+
+void Button::resetState() {
+	if (actionListener != NULL) {
+		(actionListener->*onResetFunction)(this);
+	}
+	isHover = false;
+	mouseHover = false;
+	isPressed = false;
+	setToUnpressedState();
+	hasBeenSetUnpressed = true;
+	hasBeenSetHover = false;
+	refreshTexture = true;
 }
 
 void Button::positionText() {
@@ -494,23 +554,24 @@ AnimatedButton::~AnimatedButton() {
 }
 
 void AnimatedButton::reloadGraphicsAsset() {
+	string name = animation->animationName;
 	animation.reset();
-	animation = guiFactory->getAnimation(animation->animationName.c_str());
+	animation = guiFactory->getAnimation(name.c_str());
 }
 
 
 bool AnimatedButton::update(double deltaTime) {
 
 	if (hitArea->contains(mouse->getPosition())) {
-		isHover = true;
+		//lastWasHover = true;
 		if (!isPressed) {
 			timeHovering += deltaTime;
 			onHover();
 		}
-	} else {
+	} else/* if (lastWasHover)*/ {
+		//lastWasHover = false;
 		isHover = false;
 		isPressed = false;
-		//afterHover();
 		if (timeHovering > 0) {
 			timeHovering -= deltaTime;
 			isOpen = false;
@@ -528,8 +589,6 @@ bool AnimatedButton::update(double deltaTime) {
 
 	if (isPressed && !mouse->leftButton()) {
 		isClicked = true;
-		isPressed = false;
-
 		onClick();
 	} else {
 		isClicked = false;
@@ -620,4 +679,51 @@ void AnimatedButton::setToHoverState() {
 }
 
 void AnimatedButton::setToSelectedState() {
+}
+
+void AnimatedButton::setActionListener(ActionListener* iOnC) {
+	if (actionListener != NULL)
+		delete actionListener;
+	onClickFunction = &ActionListener::onClick;
+	onHoverFunction = &ActionListener::onHover;
+	onPressFunction = &ActionListener::onPress;
+	actionListener = iOnC;
+}
+
+void AnimatedButton::onClick() {
+	if (actionListener != NULL) {
+		(actionListener->*onClickFunction)(this);
+	} else {
+		currentFrameIndex = animation->animationFrames.size() - 1;
+	}
+
+	isClicked = isPressed = false;
+}
+
+void AnimatedButton::onPress() {
+	if (actionListener != NULL) {
+		(actionListener->*onPressFunction)(this);
+	} else
+		currentFrameIndex = animation->animationFrames.size() - 2;
+}
+
+void AnimatedButton::onHover() {
+	isHover = true;
+	if (actionListener != NULL) {
+		(actionListener->*onHoverFunction)(this);
+	} else {
+		if (timeHovering > timePerFrame) {
+			timeHovering = 0;
+			++currentFrameIndex;
+			if (currentFrameIndex > animation->animationFrames.size() - 3) {
+				currentFrameIndex = animation->animationFrames.size() - 3;
+				isOpen = true;
+			} else
+				adjustPosition(currentFrameIndex - 1);
+		}
+	}
+}
+
+void AnimatedButton::resetState() {
+	setToUnpressedState();
 }

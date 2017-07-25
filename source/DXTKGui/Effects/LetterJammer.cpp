@@ -123,7 +123,6 @@ void LetterJammer::setPosition(const Vector2& newPos) {
 
 	for (LetterJam& letter : letterJams) {
 		letter.position += moveVector;
-		int tset = 0;
 	}
 }
 

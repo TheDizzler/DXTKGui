@@ -10,6 +10,7 @@ public:
 	Selector();
 	virtual ~Selector();
 
+	void reloadGraphicsAsset();
 	void setJoystick(Joystick* joystick);
 	bool initialize(GUIFactory* guiFactory);
 

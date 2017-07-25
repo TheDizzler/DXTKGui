@@ -16,6 +16,10 @@ bool Selector::initialize(GUIFactory* guiFactory) {
 	return true;
 }
 
+void Selector::reloadGraphicsAsset() {
+	frame->reloadGraphicsAsset();
+}
+
 void Selector::setJoystick(Joystick* joy) {
 	joystick = joy;
 }
@@ -28,7 +32,9 @@ void Selector::update(double deltaTime) {
 	if (joystick) {
 		if (joystick->aButtonPushed()) {
 			controls[selected]->onClick();
+			controls[selected]->onHover();
 			timeSincePressed = DELAY_TIME;
+
 		} else if (joystick->isUpPressed()) {
 
 			if (timeSincePressed > DELAY_TIME) {
