@@ -5,6 +5,8 @@
 
 class GUIFactory;
 
+/* A simple GUIControl selector for joystick control. If no mouse support needed,
+	utilize this.*/
 class Selector {
 public:
 	Selector();
@@ -21,7 +23,7 @@ public:
 	bool isControllerSocket(ControllerSocketNumber socketNumber);
 
 	void addControl(GUIControl* control);
-	/* vector is NOT cleared after. */
+	/* Input vector is NOT cleared after. */
 	void addControls(vector<GUIControl*> controls);
 
 private:
@@ -36,4 +38,45 @@ private:
 	const double DELAY_TIME = .5;
 	double timeSincePressed = DELAY_TIME;
 
+};
+
+/* A manager for simultaneous mouse, joystick and keyboard control.
+	NOTE: SelectorManager manages (handles update and draw) of all
+	GUIControls added to it.*/
+class SelectorManager {
+public:
+	SelectorManager();
+	virtual ~SelectorManager();
+
+	void reloadGraphicsAssets();
+	bool initialize(GUIFactory* guiFactory);
+	void setControllers(shared_ptr<MouseController> mouse, Joystick* joy);
+	void setJoystick(Joystick* joystick);
+
+	void update(double deltaTime);
+	void draw(SpriteBatch* batch);
+
+	bool hasController();
+
+	void addControl(GUIControl* control);
+	/* Input vector is NOT cleared after. */
+	void addControls(vector<GUIControl*> controls);
+
+	void controllerRemoved(ControllerSocketNumber controllerSocket, Joystick* joy);
+
+
+private:
+	unique_ptr<RectangleFrame> frame;
+
+	Joystick* joystick = NULL;
+	shared_ptr<MouseController> mouse;
+
+	vector<GUIControl*> controls;
+	SHORT selected = -1;
+	void setSelected(SHORT index);
+
+	short frameThickness = 5;
+
+	const double DELAY_TIME = .5;
+	double timeSincePressed = DELAY_TIME;
 };

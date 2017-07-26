@@ -256,7 +256,8 @@ private:
 	unique_ptr<DynamicDialog> dynamicDialog;
 	TextLabel* mouseLabel;
 
-	unique_ptr<Selector> selector;
+	//unique_ptr<Selector> selector;
+	SelectorManager selectorManager;
 
 };
 

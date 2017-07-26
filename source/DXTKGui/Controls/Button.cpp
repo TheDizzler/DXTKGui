@@ -98,7 +98,7 @@ bool Button::update(double deltaTime) {
 		}
 	}
 
-	if (buttonLabel->update(deltaTime))
+	if (buttonLabel->update(deltaTime) && !isLetterJammer)
 		refreshTexture = true;
 
 	if (frame->update())
@@ -116,6 +116,8 @@ bool Button::update(double deltaTime) {
 void Button::draw(SpriteBatch* batch) {
 
 	texturePanel->draw(batch);
+	if (isLetterJammer)
+		buttonLabel->draw(batch);
 
 }
 
@@ -127,15 +129,16 @@ void Button::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
 
 	rectSprite->draw(batch);
 	frame->draw(batch);
-	buttonLabel->draw(batch);
+	if (!isLetterJammer)
+		buttonLabel->draw(batch);
 }
 
 
-void Button::setTextLabel(TextLabel* newLabel) {
+void Button::setTextLabel(TextLabel* newLabel, bool letterJammer) {
 
 	buttonLabel.reset(newLabel);
 	positionText();
-	//useTexture = isLetterJammer;
+	isLetterJammer = letterJammer;
 }
 
 

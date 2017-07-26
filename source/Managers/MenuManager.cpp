@@ -222,9 +222,16 @@ MainScreen::~MainScreen() {
 bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mc) {
 
 	mouse = mc;
-	selector = make_unique<Selector>();
-	selector->initialize(guiFactory.get());
+	selectorManager.initialize(guiFactory.get());
+	Joystick* nextJoy = NULL;
+	if (activeSlots.size() != 0)
+		nextJoy = activeSlots[0]->getStick();
+	selectorManager.setControllers(mouse, nextJoy);
+
+	//selector = make_unique<Selector>();
+	//selector->initialize(guiFactory.get());
 	//selector->setJoystick(activeSlots[0]->getStick());
+
 	/*dynamicDialog.reset(guiFactory->createDynamicDialog(
 		"Dynamic Dialog", Vector2(10, 100), Vector2(500, 500)));
 	dynamicDialog->setTextTint(Color(0, 0, 1, 1));
@@ -238,8 +245,9 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	buttonpos = Vector2((Globals::WINDOW_WIDTH - animButton->getWidth()) / 2,
 		Globals::WINDOW_HEIGHT / 3 - animButton->getHeight() / 2);
 	animButton->setPosition(buttonpos);
-	guiControls.push_back(animButton);
-	selector->addControl(animButton);
+	//guiControls.push_back(animButton);
+	//selector->addControl(animButton);
+	selectorManager.addControl(animButton);
 
 	Button* button;
 	Vector2 size = Vector2::Zero;
@@ -258,10 +266,11 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	LetterJammer* jammer = guiFactory->createLetterJammer(
 		Vector2::Zero, L"Settings", Color(0, 0, 0, 1), false);
 	jammer->setEffect(make_unique<ColorJammer>(.525));
-	button->setTextLabel(jammer);
+	button->setTextLabel(jammer, true);
 	jammer = NULL;
-	guiControls.push_back(button);
-	selector->addControl(button);
+	//guiControls.push_back(button);
+	//selector->addControl(button);
+	selectorManager.addControl(button);
 
 	button = guiFactory->createImageButton("Button Up", "Button Down");
 	button->setActionListener(new OnClickListenerExitButton(this));
@@ -269,8 +278,9 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	buttonpos.x = (Globals::WINDOW_WIDTH - button->getScaledWidth()) / 2;
 	buttonpos.y += 150;
 	button->setPosition(buttonpos);
-	guiControls.push_back(button);
-	selector->addControl(button);
+	//guiControls.push_back(button);
+	//selector->addControl(button);
+	selectorManager.addControl(button);
 	button = NULL;
 	//mouseLabel = guiFactory->createLetterJammer(
 	//	Vector2(0, 0), L"Mouse Label", Color(1, 1, 1, 1), false);
@@ -291,7 +301,8 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 void MainScreen::reloadGraphicsAssets() {
 	MenuScreen::reloadGraphicsAssets();
 
-	selector->reloadGraphicsAsset();
+	//selector->reloadGraphicsAsset();
+	selectorManager.reloadGraphicsAssets();
 }
 
 
@@ -305,7 +316,8 @@ void MainScreen::update(double deltaTime) {
 	for (auto const& control : guiControls)
 		control->update(deltaTime);
 
-	selector->update(deltaTime);
+	//selector->update(deltaTime);
+	selectorManager.update(deltaTime);
 }
 
 
@@ -314,24 +326,35 @@ void MainScreen::draw(SpriteBatch* batch) {
 	for (auto const& control : guiControls)
 		control->draw(batch);
 
-	selector->draw(batch);
+	//selector->draw(batch);
+	selectorManager.draw(batch);
 }
 
 void MainScreen::controllerRemoved(ControllerSocketNumber controllerSocket,
 	PlayerSlotNumber slotNumber) {
 
-	if (selector->isControllerSocket(controllerSocket)) {
+	/*if (selector->isControllerSocket(controllerSocket)) {
 		if (activeSlots.size() == 0)
 			selector->setJoystick(NULL);
 		else {
 			selector->setJoystick(activeSlots[0]->getStick());
 		}
-	}
+	}*/
+
+	Joystick* nextJoy = NULL;
+	if (activeSlots.size() != 0)
+		nextJoy = activeSlots[0]->getStick();
+	selectorManager.controllerRemoved(controllerSocket, nextJoy);
+
+
 }
 
 void MainScreen::newController(shared_ptr<Joystick> newStick) {
-	if (!selector->hasController())
-		selector->setJoystick(newStick.get());
+	/*if (!selector->hasController())
+		selector->setJoystick(newStick.get());*/
+
+		if (!selectorManager.hasController())
+		selectorManager.setJoystick(newStick.get());
 }
 
 

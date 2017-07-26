@@ -410,14 +410,14 @@ bool ScreenTransitions::LineWipeScreenTransition::run(double deltaTime) {
 
 	return allDone;
 }
-float z = 0;
+
 void ScreenTransitions::LineWipeScreenTransition::draw(SpriteBatch* batch) {
 
 	batch->Draw(newTexture.Get(), position, &screenRect,
 		tint, rotation, origin, scale, SpriteEffects_None);
 
 	for (Line* line : lines)
-		batch->Draw(oldTexture.Get(), Vector3(line->position.x, line->position.y, z++),
+		batch->Draw(oldTexture.Get(), line->position,
 			&line->rect,
 			tint, rotation, origin, scale, SpriteEffects_None);
 }

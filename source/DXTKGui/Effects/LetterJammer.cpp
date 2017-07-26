@@ -40,7 +40,7 @@ bool LetterJammer::update(double deltaTime) {
 
 		if (isPressed && !mouse->leftButton()) {
 			onClick();
-			
+
 		} else {
 			isClicked = false;
 			if (!isHover) {
@@ -69,12 +69,15 @@ bool LetterJammer::update(double deltaTime) {
 }
 
 void LetterJammer::draw(SpriteBatch* batch) {
-
-	for (LetterJam& letter : letterJams) {
-		batch->Draw(textTexture.Get(), letter.position, &letter.sourceRECT,
-			letter.tint, letter.rotation, letter.origin, letter.scale,
-			letter.spriteEffects, letter.layerDepth);
-	}
+	if (!running)
+		batch->Draw(textTexture.Get(), position, &gfxAsset->getSourceRect(), tint,
+			rotation, origin, scale, SpriteEffects::SpriteEffects_None, layerDepth);
+	else
+		for (LetterJam& letter : letterJams) {
+			batch->Draw(textTexture.Get(), letter.position, &letter.sourceRECT,
+				letter.tint, letter.rotation, letter.origin, letter.scale,
+				letter.spriteEffects, letter.layerDepth);
+		}
 }
 
 void LetterJammer::setEffect(unique_ptr<JammerEffect> effect) {

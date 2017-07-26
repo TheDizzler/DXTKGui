@@ -27,7 +27,7 @@ public:
 	virtual void textureDraw(SpriteBatch* batch,
 		ComPtr<ID3D11Device> device = NULL) override;
 
-	virtual void setTextLabel(TextLabel* newLabel);
+	virtual void setTextLabel(TextLabel* newLabel, bool isLetterJammer);
 
 	virtual void setText(wstring text) override;
 	virtual const wchar_t* getText() override;
@@ -115,6 +115,7 @@ protected:
 	unique_ptr<RectangleFrame> frame;
 	int frameThickness = 2;
 
+	bool isLetterJammer = false;
 	bool mouseHover = false;
 	bool lastWasHover = false;
 	/** Flag to prevent continuous texture refresh. */
