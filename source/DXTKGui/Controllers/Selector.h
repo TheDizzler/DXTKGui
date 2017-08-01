@@ -2,6 +2,7 @@
 #include "..\BaseGraphics\PrimitiveShapes.h"
 #include "..\Controls\GUIControl.h"
 #include "Joystick.h"
+#include <Keyboard.h>
 
 class GUIFactory;
 
@@ -58,9 +59,9 @@ public:
 
 	bool hasController();
 
-	void addControl(GUIControl* control);
+	void addControl(Selectable* control);
 	/* Input vector is NOT cleared after. */
-	void addControls(vector<GUIControl*> controls);
+	void addControls(vector<Selectable*> controls);
 
 	void controllerRemoved(ControllerSocketNumber controllerSocket, Joystick* joy);
 
@@ -70,8 +71,9 @@ private:
 
 	Joystick* joystick = NULL;
 	shared_ptr<MouseController> mouse;
+	Keyboard::KeyboardStateTracker keyTracker;
 
-	vector<GUIControl*> controls;
+	vector<Selectable*> controls;
 	SHORT selected = -1;
 	void setSelected(SHORT index);
 

@@ -5,8 +5,8 @@
 
 
 /** A visual and logical representation of a button. */
-class Button : public GUIControl, public Texturizable {
-	
+class Button : public Selectable, public Texturizable {
+
 public:
 
 	Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
@@ -19,7 +19,8 @@ public:
 	void setDimensions(const Vector2& position, const Vector2& size,
 		const int frameThickness = 2);
 
-
+	/* For use in SelectionManager only. */
+	virtual bool updateSelect(double deltaTime) override;
 	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
@@ -75,7 +76,7 @@ public:
 		virtual void resetState(Button* button) = 0;
 	};
 
-	
+
 	void setActionListener(ActionListener* iOnC);
 
 	virtual void onClick() override;
@@ -104,7 +105,7 @@ protected:
 	virtual void setToHoverState();
 	virtual void setToSelectedState();
 
-	
+
 	/* Offsets textlabel position.*/
 	Vector2 unpressedTextOffset = Vector2(-2, 0);
 	Vector2 pressedTextOffset = Vector2(-2, 0);
@@ -168,7 +169,7 @@ private:
 };
 
 
-class AnimatedButton : public GUIControl {
+class AnimatedButton : public Selectable {
 public:
 	AnimatedButton(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 		shared_ptr<Animation> animation, Vector2 position);
@@ -176,6 +177,8 @@ public:
 
 	virtual void reloadGraphicsAsset() override;
 
+	/* For use in SelectionManager only. */
+	virtual bool updateSelect(double deltaTime) override;
 	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 

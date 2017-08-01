@@ -25,7 +25,7 @@ Email: tgillon.sdk@gmail.com
 >- Optimized control draw speed (for almost everything)
 >- Primitve Shapes - filled rectangle; un-filled rectangle; triangle (needs work); line
 >- Text Labels - normal and clickable
->- Button - text, image, animated (animated buttons are hacky and due for overhaul)
+>- Button - text, image, animated (animated buttons are hacky and ~~due for overhaul~~ probably shouldn't be used at all)
 >- TexturePanel - can take a ShaderResourceView, display it, and scroll vertically
 >- Dialog Box - draggable and non-draggable; implements TexturePanel to allow text scrolling; no image (bg) loading yet;
 >- Dynamic Dialog that takes 9 images to make a variable sized dialog box
@@ -37,6 +37,7 @@ Email: tgillon.sdk@gmail.com
 >- transition effects (tested on screens and dialog only)
 >- controls can store a tranlsation matrix function to allow their use with a camera
 (world space vs screen space)
+>- Controller controlled controls (joysticks && keyboard) via a SelectorManager (not at all elegant but works for multiple purposes)
 
 ##KNOWN ISSUES:
 >- controls overlapping each other may all call their onClick functions instead of the just the topmost
@@ -48,20 +49,20 @@ Email: tgillon.sdk@gmail.com
 >- ~~find out how to purge all the reported live objects ':/~~ 
 Live objects ARE being released but after the debug report. <- FIXED
 ~~Still have some outstanding internal references.~~ Most appear gone
->- Controller controlled controls (joysticks)
+>- ~~Controller controlled controls (joysticks && keyboard)~~
 >- Automated Button needs overhaul (or removal completely)
 >- Dialog Box - allow hyphenating of words that can't fit on one line with option to turn on/off
 (currently puts whole word on next line or puts break in word)
 >- Horizontal scrollbar
 >- TexturePanel - add horizontal scrolling
->- Scrollbar that can be slapped on to anything
+>- Scrollbars that can be slapped on to anything
 >- Dialog Box - allow custom bg image;
 >- List Box - multi-select; test adding, removing, clearing items live
 >- Radio Buttons
 >- Slider control
 >- Combo Box - allow custom frame/bg image
 >- ListBox - allow custom frame/bg image
->- ~~put default images into a spritesheet~~
+>- ~~put default images into a single spritesheet~~
 >- More Primitive Shapes - if I feel they might be useful
 >- Other stuff I can't think of at the moment
 >- demo and how-to videos

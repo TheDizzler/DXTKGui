@@ -114,6 +114,10 @@ SelectorManager::SelectorManager() {
 
 SelectorManager::~SelectorManager() {
 	joystick = NULL;
+	for (auto& control : controls)
+		delete control;
+
+	controls.clear();
 }
 
 void SelectorManager::reloadGraphicsAssets() {
@@ -140,18 +144,9 @@ void SelectorManager::setJoystick(Joystick* joy) {
 	joystick = joy;
 }
 
+
 void SelectorManager::update(double deltaTime) {
 
-	
-
-	for (int i = 0; i < controls.size(); ++i) {
-		if (controls[i]->update(deltaTime))
-			int check = 0;
-		if (selected != i && controls[i]->hovering()) {
-			setSelected(i);
-		}
-
-	}
 
 	if (joystick) {
 		if (joystick->aButtonPushed()) {
@@ -177,6 +172,25 @@ void SelectorManager::update(double deltaTime) {
 			timeSincePressed = DELAY_TIME;
 	}
 
+	auto keyState = Keyboard::Get().GetState();
+	keyTracker.Update(keyState);
+	if (keyTracker.IsKeyPressed(Keyboard::Down))
+		setSelected(selected + 1);
+	else if (keyTracker.IsKeyPressed(Keyboard::Up))
+		setSelected(selected - 1);
+	else if (keyTracker.IsKeyPressed(Keyboard::Enter)) {
+		controls[selected]->onClick();
+		controls[selected]->onHover();
+	}
+
+	for (int i = 0; i < controls.size(); ++i) {
+		controls[i]->updateSelect(deltaTime);
+		if (selected != i && controls[i]->hovering()) {
+			setSelected(i);
+		}
+
+	}
+
 	frame->update();
 }
 
@@ -192,7 +206,7 @@ bool SelectorManager::hasController() {
 	return joystick;
 }
 
-void SelectorManager::addControl(GUIControl* control) {
+void SelectorManager::addControl(Selectable* control) {
 	controls.push_back(control);
 
 	if (selected == -1) {
@@ -200,7 +214,7 @@ void SelectorManager::addControl(GUIControl* control) {
 	}
 }
 
-void SelectorManager::addControls(vector<GUIControl*> controls) {
+void SelectorManager::addControls(vector<Selectable*> controls) {
 	for (const auto& control : controls)
 		controls.push_back(control);
 

@@ -3,7 +3,7 @@
 
 
 Button::Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
-	const pugi::char_t* font) : GUIControl(factory, mouseController) {
+	const pugi::char_t* font) : Selectable(factory, mouseController) {
 
 
 	hitArea = make_unique<HitArea>();
@@ -63,10 +63,53 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 	setLayerDepth(layerDepth);
 
 	setToUnpressedState();
-
 	refreshTexture = true;
 }
 
+
+bool Button::updateSelect(double deltaTime) {
+
+	updateProjectedHitArea();
+	if (projectedHitArea->contains(mouse->getPosition())) {
+		lastWasHover = true;
+		mouseHover = true;
+		if (!isPressed) {
+			if (!hasBeenSetHover) {
+				onHover();
+			}
+		}
+	} else if (lastWasHover) {
+		lastWasHover = false;
+		mouseHover = false;
+	}
+
+	if (isPressed && !mouse->leftButton()) {
+		onClick();
+	} else {
+		isClicked = false;
+		if (!isHover) {
+			if (!hasBeenSetUnpressed) {
+				resetState();
+			}
+		} else if (mouseHover && mouse->pressed()) {
+			onPress();
+		}
+	}
+
+	if (buttonLabel->update(deltaTime) && !isLetterJammer)
+		refreshTexture = true;
+
+	if (frame->update())
+		refreshTexture = true;
+
+	if (refreshTexture) {
+		texturePanel->setTexture(texturize());
+		refreshTexture = false;
+		return true;
+	}
+
+	return false;
+}
 
 bool Button::update(double deltaTime) {
 
@@ -148,6 +191,7 @@ void Button::setToUnpressedState() {
 	buttonLabel->setTint(normalColorText);
 	buttonLabel->setPosition(unpressedTextPosition);
 
+	hasBeenSetUnpressed = true;
 }
 
 void Button::setToHoverState() {
@@ -283,7 +327,6 @@ void Button::resetState() {
 	mouseHover = false;
 	isPressed = false;
 	setToUnpressedState();
-	hasBeenSetUnpressed = true;
 	hasBeenSetHover = false;
 	refreshTexture = true;
 }
@@ -513,6 +556,8 @@ void ImageButton::setToUnpressedState() {
 
 	texture = normalSprite->getTexture().Get();
 	sourceRect = normalSprite->getRect();
+
+	hasBeenSetUnpressed = true;
 }
 
 void ImageButton::setToHoverState() {
@@ -539,7 +584,7 @@ void ImageButton::setToSelectedState() {
 
 /** ***** Animated Button ***** **/
 AnimatedButton::AnimatedButton(GUIFactory* factory, shared_ptr<MouseController> mouseController,
-	shared_ptr<Animation> anim, Vector2 pos) : GUIControl(factory, mouseController) {
+	shared_ptr<Animation> anim, Vector2 pos) : Selectable(factory, mouseController) {
 
 	animation = anim;
 
@@ -562,6 +607,10 @@ void AnimatedButton::reloadGraphicsAsset() {
 	animation = guiFactory->getAnimation(name.c_str());
 }
 
+
+bool AnimatedButton::updateSelect(double deltaTime) {
+	return update(deltaTime);
+}
 
 bool AnimatedButton::update(double deltaTime) {
 

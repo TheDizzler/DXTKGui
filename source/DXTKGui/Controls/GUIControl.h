@@ -137,3 +137,13 @@ public:
 
 	virtual GUIControl* getControl(size_t controlPosition) const = 0;
 };
+
+
+/** A GUIControl that can be used in a SelectionManager. */
+interface Selectable : public GUIControl {
+public:
+	Selectable(GUIFactory* factory, shared_ptr<MouseController> mouseController)
+		: GUIControl(factory, mouseController) {
+	}
+	virtual bool updateSelect(double deltaTime) = 0;
+};

@@ -3,7 +3,6 @@
 #include "../DXTKGui/GuiAssets.h"
 
 unique_ptr<GUIFactory> guiFactory;
-//bool gameInitialized = false;
 
 unique_ptr<PromptDialog> GameEngine::errorDialog;
 unique_ptr<PromptDialog> GameEngine::warningDialog;
@@ -15,6 +14,7 @@ GameEngine::GameEngine() {
 
 GameEngine::~GameEngine() {
 
+	delete blendState;
 	guiFactory.reset();
 	errorDialog.reset();
 	warningDialog.reset();
@@ -23,7 +23,7 @@ GameEngine::~GameEngine() {
 	game.reset();
 	if (audioEngine != NULL)
 		audioEngine->Suspend();
-	delete blendState;
+	
 }
 
 

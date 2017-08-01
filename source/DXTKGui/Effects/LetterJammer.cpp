@@ -8,13 +8,25 @@ LetterJammer::LetterJammer(GUIFactory* factory,
 	: TextLabel(factory, mouseController, position, text, font, false) {
 
 	setText(text);
+	tint = Colors::White;	// tint MUST Be set to white or your gonna have a bad time
+							// while trying to figure out why your tints aren't working
 	running = autoRun;
+	reset();
 }
 
 
 LetterJammer::~LetterJammer() {
 	letterJams.clear();
 	jammerFXs.clear();
+}
+
+void LetterJammer::reloadGraphicsAsset() {
+	TextLabel::reloadGraphicsAsset();
+	if (label.size() > 0) {
+		gfxAsset = texturize();
+		textTexture = gfxAsset->getTexture();
+	}
+	refreshTexture = false;
 }
 
 
@@ -53,16 +65,9 @@ bool LetterJammer::update(double deltaTime) {
 		}
 	}
 
+
 	if (running) {
 		run(deltaTime);
-	}
-
-	if (refreshTexture) {
-		if (label.size() > 0) {
-			gfxAsset = texturize();
-			textTexture = gfxAsset->getTexture();
-		}
-		refreshTexture = false;
 	}
 
 	return running;
@@ -113,6 +118,7 @@ void LetterJammer::setText(wstring text) {
 		LetterJam jam;
 		jam.position = pos;
 		jam.sourceRECT = rect;
+		jam.layerDepth = layerDepth;
 		letterJams.push_back(jam);
 	}
 
@@ -154,14 +160,16 @@ bool LetterJammer::isDone() {
 void LetterJammer::reset() {
 	done = false;
 	running = false;
-	if (label.size() > 0) {
+	if (/*refreshTexture && */label.size() > 0) {
 		gfxAsset = texturize();
 		textTexture = gfxAsset->getTexture();
+		refreshTexture = false;
 	}
-	refreshTexture = false;
+
 	for (const auto& fx : jammerFXs)
 		fx->initialize(letterJams, (PVOID) &position);
 }
+/***** **** END LETTERJAMMER **** *****/
 
 
 
@@ -268,14 +276,16 @@ ColorJammer::ColorJammer(float sped) {
 ColorJammer::~ColorJammer() {
 	times.clear();
 	startColors.clear();
-	states.clear();
+	endColors.clear();
+	//states.clear();
 }
 
 void ColorJammer::initialize(vector<LetterJam>& jams, LPVOID pvoid) {
 
 	times.clear();
-	states.clear();
+	//states.clear();
 	startColors.clear();
+	endColors.clear();
 
 	int min = State::Red;
 	int max = State::BlueReverse;
@@ -284,22 +294,12 @@ void ColorJammer::initialize(vector<LetterJam>& jams, LPVOID pvoid) {
 	uniform_real_distribution<float> randColor(0, 1);
 
 	for (int i = 0; i < jams.size(); ++i) {
-		State newState = State(randState(rng));
+
 		Color newColor(Colors::Black);
 			// = Color(randColor(rng), randColor(rng), randColor(rng), 1);
-		states.push_back(newState);
-		startColors.push_back(newColor);
-		jams[i].tint = newColor;
-		times.push_back(0);
-	}
-}
-
-bool ColorJammer::run(double deltaTime, vector<LetterJam>& jams) {
-
-	for (int i = 0; i < jams.size(); ++i) {
-		times[i] += deltaTime;
-		Color endColor = jams[i].tint;
-		switch (states[i]) {
+		Color endColor = Colors::Black;
+		State newState = State(randState(rng));
+		switch (newState) {
 			case Red:
 				endColor.R(1);
 				break;
@@ -319,14 +319,91 @@ bool ColorJammer::run(double deltaTime, vector<LetterJam>& jams) {
 				endColor.B(0);
 				break;
 		}
-		jams[i].tint = Color::Lerp(startColors[i], endColor,
+		//states.push_back(newState);
+		jams[i].tint = newColor;
+		startColors.push_back(newColor);
+		endColors.push_back(endColor);
+		times.push_back(0);
+	}
+}
+
+bool ColorJammer::run(double deltaTime, vector<LetterJam>& jams) {
+
+	for (int i = 0; i < jams.size(); ++i) {
+		times[i] += deltaTime;
+		//Color endColor = jams[i].tint;
+		/*switch (states[i]) {
+			case Red:
+				endColor.R(1);
+				break;
+			case RedReverse:
+				endColor.R(0);
+				break;
+			case Green:
+				endColor.G(1);
+				break;
+			case GreenReverse:
+				endColor.G(0);
+				break;
+			case Blue:
+				endColor.B(1);
+				break;
+			case BlueReverse:
+				endColor.B(0);
+				break;
+		}*/
+		jams[i].tint = Color::Lerp(startColors[i], endColors[i],
 			times[i] / speedChange);
 		if (times[i] >= speedChange) {
 			times[i] = 0;
-			State newState = State(randState(rng));
-			while (newState == states[i])
+			if (jams[i].tint.x > 1)
+				jams[i].tint.x = 1;
+			else if (jams[i].tint.x < 0)
+				jams[i].tint.x = 0;
+			if (jams[i].tint.y > 1)
+				jams[i].tint.y = 1;
+			else if (jams[i].tint.y < 0)
+				jams[i].tint.y = 0;
+			if (jams[i].tint.z > 1)
+				jams[i].tint.z = 1;
+			else if (jams[i].tint.z < 0)
+				jams[i].tint.z = 0;
+
+			State newState;
+			Color newColor;
+			do {
+
+				//newColor = endColors[i];
+				newColor = jams[i].tint;
 				newState = State(randState(rng));
-			states[i] = newState;
+				switch (newState) {
+					case Red:
+						newColor.R(1);
+						break;
+					case RedReverse:
+						newColor.R(0);
+						break;
+					case Green:
+						newColor.G(1);
+						break;
+					case GreenReverse:
+						newColor.G(0);
+						break;
+					case Blue:
+						newColor.B(1);
+						break;
+					case BlueReverse:
+						newColor.B(0);
+						break;
+				}
+			}
+			//while (newState == states[i])
+			while (newColor == jams[i].tint);
+
+
+
+		//states[i] = newState;
+			endColors[i] = newColor;
 			startColors[i] = jams[i].tint;
 		}
 	}

@@ -355,7 +355,7 @@ LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 			gameEngine->resume();
 			return 0;
 
-		case WM_DESTROY:	// top right x button pressed
+		case WM_DESTROY:	// top right x button pressed or DestroyWindow(HWND) called
 			PostQuitMessage(0);
 			return 0;
 

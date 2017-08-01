@@ -66,6 +66,7 @@ public:
 	ColorJammer(float changeSpeed);
 	virtual ~ColorJammer();
 	virtual void initialize(vector<LetterJam>& letterJams, LPVOID pvoid) override;
+	/** ColorJammer always returns false (doesn't end). */
 	virtual bool run(double deltaTime, vector<LetterJam>& letterJams) override;
 
 private:
@@ -76,8 +77,9 @@ private:
 	enum State {
 		Red, Green, Blue, RedReverse, GreenReverse, BlueReverse
 	};
-	vector<State> states;
+	//vector<State> states;
 	vector<Color> startColors;
+	vector<Color> endColors;
 	vector<double> times;
 };
 
@@ -109,7 +111,7 @@ public:
 		Vector2 position, wstring text, bool autoRun = true, const pugi::char_t* font = "Default Font");
 	virtual ~LetterJammer();
 
-	
+	virtual void reloadGraphicsAsset() override;
 
 	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;

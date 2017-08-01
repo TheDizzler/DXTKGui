@@ -313,8 +313,8 @@ void MainScreen::update(double deltaTime) {
 	mouseLabel->setText(ws.str());*/
 	//dynamicDialog->setText(ws.str());
 	//dynamicDialog->update(deltaTime);
-	for (auto const& control : guiControls)
-		control->update(deltaTime);
+	/*for (auto const& control : guiControls)
+		control->update(deltaTime);*/
 
 	//selector->update(deltaTime);
 	selectorManager.update(deltaTime);
@@ -323,8 +323,8 @@ void MainScreen::update(double deltaTime) {
 
 
 void MainScreen::draw(SpriteBatch* batch) {
-	for (auto const& control : guiControls)
-		control->draw(batch);
+	/*for (auto const& control : guiControls)
+		control->draw(batch);*/
 
 	//selector->draw(batch);
 	selectorManager.draw(batch);
@@ -694,6 +694,7 @@ void OnClickListenerSettingsButton::onPress(Button* button) {
 }
 
 void OnClickListenerSettingsButton::onHover(Button* button) {
+	//((LetterJammer*) button->buttonLabel.get())->reset();
 	((LetterJammer*) button->buttonLabel.get())->setRun(true);
 }
 

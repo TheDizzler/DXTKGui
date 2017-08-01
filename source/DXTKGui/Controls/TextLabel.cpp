@@ -67,14 +67,14 @@ bool TextLabel::update(double deltaTime) {
 			}
 		}
 	}
-
+	
 	if (useTexture && refreshTexture) {
 		texturePanel->setTexture(move(texturize()));
 		texturePanel->setAlpha(tint.w);
 		refreshTexture = false;
 		return true;
 	}
-
+	
 	return false;
 }
 
@@ -99,6 +99,7 @@ unique_ptr<GraphicsAsset> TextLabel::texturize() {
 }
 
 void TextLabel::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
+
 	font->draw(batch, label.c_str(), position, tint,
 		rotation, origin, scale, layerDepth);
 }
