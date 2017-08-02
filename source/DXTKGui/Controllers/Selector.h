@@ -6,38 +6,43 @@
 
 class GUIFactory;
 
-/* A simple GUIControl selector for joystick control. If no mouse support needed,
-	utilize this.*/
-class Selector {
+interface Selector {
 public:
-	Selector();
+	
 	virtual ~Selector();
 
-	void reloadGraphicsAsset();
-	void setJoystick(Joystick* joystick);
-	bool initialize(GUIFactory* guiFactory);
+	virtual void reloadGraphicsAsset() = 0;
 
-	void update(double deltaTime);
-	void draw(SpriteBatch* batch);
+	virtual void update(double deltaTime) = 0;
+	virtual void draw(SpriteBatch* batch) = 0;
 
-	bool hasController();
-	bool isControllerSocket(ControllerSocketNumber socketNumber);
+	virtual void setDimensions(const Vector2& position, const Vector2& size) = 0;
+};
 
-	void addControl(GUIControl* control);
-	/* Input vector is NOT cleared after. */
-	void addControls(vector<GUIControl*> controls);
+
+class ColorFlashSelector : public Selector {
+public:
+	ColorFlashSelector(GUIFactory* guiFactory);
+	virtual ~ColorFlashSelector();
+
+	virtual void reloadGraphicsAsset() override;
+	
+
+	virtual void update(double deltaTime) override;
+	virtual void draw(SpriteBatch* batch) override;
+
+	virtual void setDimensions(const Vector2& position, const Vector2& size) override;
 
 private:
 	unique_ptr<RectangleFrame> frame;
-	Joystick* joystick = NULL;
-	vector<GUIControl*> controls;
-	SHORT selected = -1;
-	void setSelected(SHORT index);
 
 	short frameThickness = 5;
 
-	const double DELAY_TIME = .5;
-	double timeSincePressed = DELAY_TIME;
+	const double FLASH_TIME = .55;
+	double currentFlashTime = 0;
+	Color startColor = Colors::Red;
+	Color endColor = Colors::White;
+	Color color1, color2;
 
 };
 
@@ -50,7 +55,7 @@ public:
 	virtual ~SelectorManager();
 
 	void reloadGraphicsAssets();
-	bool initialize(GUIFactory* guiFactory);
+	void initialize(unique_ptr<Selector> newSelector);
 	void setControllers(shared_ptr<MouseController> mouse, Joystick* joy);
 	void setJoystick(Joystick* joystick);
 
@@ -67,7 +72,7 @@ public:
 
 
 private:
-	unique_ptr<RectangleFrame> frame;
+	unique_ptr<Selector> selector;
 
 	Joystick* joystick = NULL;
 	shared_ptr<MouseController> mouse;
@@ -77,8 +82,8 @@ private:
 	SHORT selected = -1;
 	void setSelected(SHORT index);
 
-	short frameThickness = 5;
-
 	const double DELAY_TIME = .5;
 	double timeSincePressed = DELAY_TIME;
+
+
 };

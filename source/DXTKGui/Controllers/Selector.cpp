@@ -2,110 +2,48 @@
 #include "..\GUIFactory.h"
 
 
-Selector::Selector() {
-}
-
 Selector::~Selector() {
-	controls.clear();
+
 }
 
-bool Selector::initialize(GUIFactory* guiFactory) {
+
+ColorFlashSelector::ColorFlashSelector(GUIFactory* guiFactory) {
 
 	frame.reset(guiFactory->createRectangleFrame());
-	frame->setTint(Colors::Red);
-	return true;
+	frame->setTint(Colors::White, false);
 }
 
-void Selector::reloadGraphicsAsset() {
+ColorFlashSelector::~ColorFlashSelector() {
+}
+
+void ColorFlashSelector::reloadGraphicsAsset() {
 	frame->reloadGraphicsAsset();
 }
 
-void Selector::setJoystick(Joystick* joy) {
-	joystick = joy;
-}
+void ColorFlashSelector::update(double deltaTime) {
 
-
-void Selector::update(double deltaTime) {
-
-	if (controls.size() == 0)
-		return;
-	if (joystick) {
-		if (joystick->aButtonPushed()) {
-			controls[selected]->onClick();
-			controls[selected]->onHover();
-			timeSincePressed = DELAY_TIME;
-
-		} else if (joystick->isUpPressed()) {
-
-			if (timeSincePressed > DELAY_TIME) {
-				setSelected(selected - 1);
-				timeSincePressed = 0;
-			}
-			timeSincePressed += deltaTime;
-		} else if (joystick->isDownPressed()) {
-
-			if (timeSincePressed > DELAY_TIME) {
-				setSelected(selected + 1);
-				timeSincePressed = 0;
-			}
-			timeSincePressed += deltaTime;
-		} else
-			timeSincePressed = DELAY_TIME;
+	currentFlashTime += deltaTime;
+	frame->setTint(Color::Lerp(color1, color2, currentFlashTime / FLASH_TIME), true);
+	if (currentFlashTime > FLASH_TIME) {
+		Color temp = color1;
+		color1 = color2;
+		color2 = temp;
+		currentFlashTime = 0;
 	}
 	frame->update();
+
 }
 
-void Selector::draw(SpriteBatch* batch) {
-	if (selected > -1)
-		frame->draw(batch);
+void ColorFlashSelector::draw(SpriteBatch* batch) {
+	frame->draw(batch);
 }
 
-bool Selector::hasController() {
-	return joystick;
+void ColorFlashSelector::setDimensions(const Vector2& pos, const Vector2& size) {
+	frame->setDimensions(pos, size, frameThickness);
+	currentFlashTime = 0;
+	color1 = startColor;
+	color2 = endColor;
 }
-
-bool Selector::isControllerSocket(ControllerSocketNumber socketNumber) {
-	return joystick->getControllerSockerNumber() == socketNumber;
-}
-
-void Selector::addControl(GUIControl* control) {
-	controls.push_back(control);
-
-	if (selected == -1) {
-		setSelected(0);
-	}
-}
-
-void Selector::addControls(vector<GUIControl*> controls) {
-	for (const auto& control : controls)
-		controls.push_back(control);
-
-	if (selected == -1) {
-		setSelected(0);
-	}
-}
-
-void Selector::setSelected(SHORT index) {
-
-
-	if (selected > -1 && selected < controls.size())
-		controls[selected]->resetState();
-
-	if (index < 0)
-		selected = controls.size() - 1;
-	else if (index > controls.size() - 1)
-		selected = 0;
-	else
-		selected = index;
-
-	frame->setDimensions(
-		controls[selected]->getPosition(),
-		Vector2(controls[selected]->getWidth(), controls[selected]->getHeight()),
-		frameThickness);
-
-	controls[selected]->onHover();
-}
-
 
 
 
@@ -124,13 +62,14 @@ void SelectorManager::reloadGraphicsAssets() {
 	for (const auto& control : controls)
 		control->reloadGraphicsAsset();
 
-	frame->reloadGraphicsAsset();
+	selector->reloadGraphicsAsset();
 }
 
-bool SelectorManager::initialize(GUIFactory* guiFactory) {
-	frame.reset(guiFactory->createRectangleFrame());
-	frame->setTint(Colors::Red);
-	return true;
+void SelectorManager::initialize(unique_ptr<Selector> newSelector) {
+
+		/*selector = make_unique<ColorFlashSelector>();
+		selector->initialize(guiFactory);*/
+	selector = move(newSelector);
 }
 
 void SelectorManager::setControllers(shared_ptr<MouseController> ms,
@@ -174,9 +113,9 @@ void SelectorManager::update(double deltaTime) {
 
 	auto keyState = Keyboard::Get().GetState();
 	keyTracker.Update(keyState);
-	if (keyTracker.IsKeyPressed(Keyboard::Down))
+	if (keyTracker.IsKeyPressed(Keyboard::Down) || keyTracker.IsKeyPressed(Keyboard::Right))
 		setSelected(selected + 1);
-	else if (keyTracker.IsKeyPressed(Keyboard::Up))
+	else if (keyTracker.IsKeyPressed(Keyboard::Up) || keyTracker.IsKeyPressed(Keyboard::Left))
 		setSelected(selected - 1);
 	else if (keyTracker.IsKeyPressed(Keyboard::Enter)) {
 		controls[selected]->onClick();
@@ -188,10 +127,11 @@ void SelectorManager::update(double deltaTime) {
 		if (selected != i && controls[i]->hovering()) {
 			setSelected(i);
 		}
-
 	}
 
-	frame->update();
+	if (selected > -1)
+		selector->update(deltaTime);
+
 }
 
 void SelectorManager::draw(SpriteBatch* batch) {
@@ -199,7 +139,7 @@ void SelectorManager::draw(SpriteBatch* batch) {
 		control->draw(batch);
 
 	if (selected > -1)
-		frame->draw(batch);
+		selector->draw(batch);
 }
 
 bool SelectorManager::hasController() {
@@ -243,10 +183,9 @@ void SelectorManager::setSelected(SHORT index) {
 	else
 		selected = index;
 
-	frame->setDimensions(
+	selector->setDimensions(
 		controls[selected]->getPosition(),
-		Vector2(controls[selected]->getWidth(), controls[selected]->getHeight()),
-		frameThickness);
+		Vector2(controls[selected]->getWidth(), controls[selected]->getHeight()));
 
 	controls[selected]->onHover();
 }

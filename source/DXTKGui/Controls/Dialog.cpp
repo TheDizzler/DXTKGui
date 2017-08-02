@@ -164,6 +164,8 @@ PromptDialog::PromptDialog(GUIFactory* factory,
 	hwnd = h;
 	movable = canMove;
 	centerText = centerTxt;
+
+
 }
 
 PromptDialog::~PromptDialog() {
@@ -197,6 +199,12 @@ void PromptDialog::initialize(const pugi::char_t* font) {
 	texturePanel.reset(guiFactory->createPanel());
 }
 
+void PromptDialog::setSelectorManager(shared_ptr<MouseController> mouse, Joystick* joy) {
+
+	selector = make_unique<SelectorManager>();
+	selector->setControllers(mouse, joy);
+}
+
 
 void PromptDialog::reloadGraphicsAsset() {
 	panel.reset(guiFactory->createPanel(false));
@@ -211,16 +219,20 @@ void PromptDialog::reloadGraphicsAsset() {
 			continue;
 		control->reloadGraphicsAsset();
 	}
+	if (selector)
+		selector->reloadGraphicsAssets();
+
 	if (closeTransition != NULL)
 		closeTransition->initializeEffect(this);
 	if (openTransition != NULL)
 		openTransition->initializeEffect(this);
 
-	//calculateTitlePos()
 	texturePanel.reset(guiFactory->createPanel());
 	refreshTexture = true;
 
 	calculateDialogTextPos();
+
+
 }
 
 void PromptDialog::setDimensions(const Vector2& pos, const Vector2& sz,
@@ -313,6 +325,9 @@ bool PromptDialog::update(double deltaTime) {
 
 	}
 
+	if (selector)
+		selector->update(deltaTime);
+
 	if (refreshTexture) {
 		texturePanel->setTexture(texturize());
 		refreshTexture = false;
@@ -334,6 +349,8 @@ void PromptDialog::draw(SpriteBatch* batch) {
 		//OutputDebugString(L"Closing\n");
 	} else {
 		texturePanel->draw(batch);
+		if (selector)
+			selector->draw(batch);
 	}
 }
 

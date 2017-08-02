@@ -41,9 +41,11 @@ public:
 	virtual void setPosition(const Vector2& newPosition) override;
 	virtual void moveBy(const Vector2& moveVector) override;
 
-	virtual void setTint(const XMFLOAT4 color) override;
-	virtual void setTint(const Color& color) override;
-	virtual void setTint(const XMVECTORF32 color) override;
+	/** If tintTexture == false, set frame color and refresh texturePanel.
+		If tintTexture == true, set texturePanel color. */
+	void setTint(const XMFLOAT4 color, bool tintTexture);
+	void setTint(const Color& color, bool tintTexture);
+	void setTint(const XMVECTORF32 color, bool tintTexture);
 
 	virtual bool update();
 	void draw(SpriteBatch* batch);
@@ -69,6 +71,10 @@ public:
 	bool contains(const Vector2& point);
 private:
 	ComPtr<ID3D11ShaderResourceView> pixel;
+
+	virtual void setTint(const XMFLOAT4 color) override;
+	virtual void setTint(const Color& color) override;
+	virtual void setTint(const XMVECTORF32 color) override;
 
 	bool refreshTexture = true;
 	unique_ptr<TexturePanel> texturePanel;

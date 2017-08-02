@@ -207,7 +207,7 @@ RectangleFrame* GUIFactory::createRectangleFrame(const Vector2& position,
 
 	RectangleFrame* frame = new RectangleFrame(getAsset("White Pixel"), this);
 	frame->setDimensions(position, size, frameThickness);
-	frame->setTint(frameColor);
+	frame->setTint(frameColor, false);
 
 	return frame;
 }

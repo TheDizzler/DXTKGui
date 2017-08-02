@@ -222,7 +222,8 @@ MainScreen::~MainScreen() {
 bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mc) {
 
 	mouse = mc;
-	selectorManager.initialize(guiFactory.get());
+	selectorManager.initialize(make_unique<ColorFlashSelector>(guiFactory.get()));
+	//selectorManager.initialize(guiFactory.get());
 	Joystick* nextJoy = NULL;
 	if (activeSlots.size() != 0)
 		nextJoy = activeSlots[0]->getStick();
@@ -353,7 +354,7 @@ void MainScreen::newController(shared_ptr<Joystick> newStick) {
 	/*if (!selector->hasController())
 		selector->setJoystick(newStick.get());*/
 
-		if (!selectorManager.hasController())
+	if (!selectorManager.hasController())
 		selectorManager.setJoystick(newStick.get());
 }
 

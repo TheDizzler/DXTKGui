@@ -2,6 +2,7 @@
 
 #include "TexturePanel.h"
 #include "../Effects/TransitionEffects.h"
+#include "../Controllers/Selector.h"
 
 
 class Dialog : public GUIControlBox, public Texturizable {
@@ -121,6 +122,8 @@ public:
 
 	void initialize(const pugi::char_t* font = "Default Font");
 
+	void setSelectorManager(shared_ptr<MouseController> mouse, Joystick* joy);
+
 	virtual void reloadGraphicsAsset() override;
 
 	virtual void setScrollBar(ScrollBarDesc& scrollBarDesc);
@@ -234,5 +237,5 @@ protected:
 	bool movable = false;
 	bool centerText = false;
 
-
+	unique_ptr<SelectorManager> selector = NULL;
 };

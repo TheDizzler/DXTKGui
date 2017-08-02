@@ -194,6 +194,27 @@ void RectangleFrame::moveBy(const Vector2& moveVector) {
 	texturePanel->moveBy(moveVector);
 }
 
+void RectangleFrame::setTint(const XMFLOAT4 color, bool tintTexture) {
+	if (tintTexture) {
+		texturePanel->setTint(color);
+	} else
+		setTint(color);
+}
+
+void RectangleFrame::setTint(const Color & color, bool tintTexture) {
+	if (tintTexture) {
+		texturePanel->setTint(color);
+	} else
+		setTint(color);
+}
+
+void RectangleFrame::setTint(const XMVECTORF32 color, bool tintTexture) {
+	if (tintTexture) {
+		texturePanel->setTint(color);
+	} else
+		setTint(color);
+}
+
 
 const Vector2& RectangleFrame::getPosition() const {
 	return frameTopPos;

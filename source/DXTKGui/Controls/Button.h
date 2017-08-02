@@ -19,7 +19,7 @@ public:
 	void setDimensions(const Vector2& position, const Vector2& size,
 		const int frameThickness = 2);
 
-	/* For use in SelectionManager only. */
+	/* For use in SelectionManager only. Note that mouse behaviour is different. */
 	virtual bool updateSelect(double deltaTime) override;
 	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
