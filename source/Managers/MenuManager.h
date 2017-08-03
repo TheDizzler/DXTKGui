@@ -251,8 +251,9 @@ public:
 	virtual void controllerRemoved(ControllerSocketNumber controllerSocket,
 		PlayerSlotNumber slotNumber) override;
 	virtual void newController(shared_ptr<Joystick> newStick) override;
-private:
 	shared_ptr<MouseController> mouse;
+private:
+	
 	unique_ptr<DynamicDialog> dynamicDialog;
 	TextLabel* mouseLabel;
 

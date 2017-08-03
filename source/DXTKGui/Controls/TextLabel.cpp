@@ -1,6 +1,6 @@
 #include "TextLabel.h"
-
 #include "../GUIFactory.h"
+
 TextLabel::TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
 	Vector2 pos, wstring text, const pugi::char_t* fontName, bool texture)
 	: GUIControl(factory, mouseController) {

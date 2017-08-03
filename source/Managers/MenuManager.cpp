@@ -49,6 +49,11 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContro
 		exitDialog->setConfirmButton(move(quitButton), true, false);
 		exitDialog->setCancelButton(L"Keep Testing!");
 
+		if (activeSlots.size() > 0) {
+			Joystick* stick = activeSlots[0]->getStick();
+			exitDialog->setSelectorManager(mouse, stick);
+		}
+
 		exitDialog->setOpenTransition(
 			//new TransitionEffects::SpinGrowTransition(exitDialog.get(), .5));
 			//	new TransitionEffects::SplitTransition(exitDialog.get(), 25));
@@ -115,8 +120,13 @@ void MenuManager::update(double deltaTime) {
 		if (keyTracker.IsKeyReleased(Keyboard::Escape)) {
 			if (exitDialog->isOpen())
 				exitDialog->hide();
-			else
+			else {
+				if (activeSlots.size() > 0) {
+					Joystick* stick = activeSlots[0]->getStick();
+					exitDialog->setSelectorManager(mouse, stick);
+				}
 				exitDialog->show();
+			}
 		}
 
 		if (exitDialog->isOpen()) {
@@ -151,6 +161,7 @@ void MenuManager::controllerRemoved(ControllerSocketNumber controllerSlot,
 void MenuManager::newController(shared_ptr<Joystick> newStick) {
 	mainScreen->newController(newStick);
 	configScreen->newController(newStick);
+
 }
 
 
@@ -229,9 +240,6 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 		nextJoy = activeSlots[0]->getStick();
 	selectorManager.setControllers(mouse, nextJoy);
 
-	//selector = make_unique<Selector>();
-	//selector->initialize(guiFactory.get());
-	//selector->setJoystick(activeSlots[0]->getStick());
 
 	/*dynamicDialog.reset(guiFactory->createDynamicDialog(
 		"Dynamic Dialog", Vector2(10, 100), Vector2(500, 500)));
@@ -722,6 +730,10 @@ void OnClickListenerDialogQuitButton::resetState(Button * button) {
 
 
 void OnClickListenerExitButton::onClick(Button* button) {
+	if (activeSlots.size() > 0) {
+		Joystick* stick = activeSlots[0]->getStick();
+		main->menuManager->exitDialog->setSelectorManager(main->mouse, stick);
+	}
 	main->menuManager->exitDialog->show();
 }
 

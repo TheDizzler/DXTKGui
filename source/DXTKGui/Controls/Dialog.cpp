@@ -201,7 +201,21 @@ void PromptDialog::initialize(const pugi::char_t* font) {
 
 void PromptDialog::setSelectorManager(shared_ptr<MouseController> mouse, Joystick* joy) {
 
-	selector = make_unique<SelectorManager>();
+	if (!selector) {
+		selector = make_unique<SelectorManager>();
+		selector->initialize(make_unique<ColorFlashSelector>(guiFactory));
+
+		if (controls[ButtonOK]) {
+			selector->addControl((Selectable*) controls[ButtonOK].release());
+		}
+		if (controls[ButtonNeutral]) {
+			selector->addControl((Selectable*) controls[ButtonNeutral].release());
+		}
+		if (controls[ButtonCancel]) {
+			selector->addControl((Selectable*) controls[ButtonCancel].release());
+		}
+	}
+
 	selector->setControllers(mouse, joy);
 }
 
