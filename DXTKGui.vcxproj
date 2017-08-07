@@ -162,6 +162,7 @@
     <ClCompile Include="source\DXTKGui\BaseGraphics\PrimitiveShapes.cpp" />
     <ClCompile Include="source\DXTKGui\BaseGraphics\Sprite.cpp" />
     <ClCompile Include="source\DXTKGui\Controllers\Joystick.cpp" />
+    <ClCompile Include="source\DXTKGui\Controllers\KeyboardController.cpp" />
     <ClCompile Include="source\DXTKGui\Controllers\MouseController.cpp" />
     <ClCompile Include="source\DXTKGui\Controllers\Selector.cpp" />
     <ClCompile Include="source\DXTKGui\Controls\Button.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="source\DXTKGui\BaseGraphics\screen.h" />
     <ClInclude Include="source\DXTKGui\BaseGraphics\Sprite.h" />
     <ClInclude Include="source\DXTKGui\Controllers\Joystick.h" />
+    <ClInclude Include="source\DXTKGui\Controllers\KeyboardController.h" />
     <ClInclude Include="source\DXTKGui\Controllers\MouseController.h" />
     <ClInclude Include="source\DXTKGui\Controllers\Selector.h" />
     <ClInclude Include="source\DXTKGui\Controls\Button.h" />

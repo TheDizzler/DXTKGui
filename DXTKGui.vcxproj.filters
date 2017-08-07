@@ -156,6 +156,9 @@
     <ClCompile Include="source\DXTKGui\Controllers\Selector.cpp">
       <Filter>Source Files\DXTKGui\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="source\DXTKGui\Controllers\KeyboardController.cpp">
+      <Filter>Source Files\DXTKGui\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\GameEngine.h">
@@ -261,6 +264,9 @@
       <Filter>Header Files\DXTKGui\Effects</Filter>
     </ClInclude>
     <ClInclude Include="source\DXTKGui\Controllers\Selector.h">
+      <Filter>Header Files\DXTKGui\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DXTKGui\Controllers\KeyboardController.h">
       <Filter>Header Files\DXTKGui\Controllers</Filter>
     </ClInclude>
   </ItemGroup>

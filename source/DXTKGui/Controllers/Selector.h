@@ -2,13 +2,14 @@
 #include "..\BaseGraphics\PrimitiveShapes.h"
 #include "..\Controls\GUIControl.h"
 #include "Joystick.h"
-#include <Keyboard.h>
+
 
 class GUIFactory;
+class KeyboardController;
 
 interface Selector {
 public:
-	
+
 	virtual ~Selector();
 
 	virtual void reloadGraphicsAsset() = 0;
@@ -26,7 +27,7 @@ public:
 	virtual ~ColorFlashSelector();
 
 	virtual void reloadGraphicsAsset() override;
-	
+
 
 	virtual void update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
@@ -56,7 +57,7 @@ public:
 
 	void reloadGraphicsAssets();
 	void initialize(unique_ptr<Selector> newSelector);
-	void setControllers(shared_ptr<MouseController> mouse, Joystick* joy);
+	void setControllers(Joystick* joy, KeyboardController* keys);
 	void setJoystick(Joystick* joystick);
 
 	void update(double deltaTime);
@@ -75,8 +76,8 @@ private:
 	unique_ptr<Selector> selector;
 
 	Joystick* joystick = NULL;
-	shared_ptr<MouseController> mouse;
-	Keyboard::KeyboardStateTracker keyTracker;
+	//shared_ptr<MouseController> mouse = NULL;
+	KeyboardController* keyController = NULL;
 
 	vector<Selectable*> controls;
 	SHORT selected = -1;

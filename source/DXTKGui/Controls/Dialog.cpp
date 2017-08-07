@@ -199,7 +199,7 @@ void PromptDialog::initialize(const pugi::char_t* font) {
 	texturePanel.reset(guiFactory->createPanel());
 }
 
-void PromptDialog::setSelectorManager(shared_ptr<MouseController> mouse, Joystick* joy) {
+void PromptDialog::setSelectorManager(Joystick* joy, KeyboardController* keys) {
 
 	if (!selector) {
 		selector = make_unique<SelectorManager>();
@@ -216,7 +216,7 @@ void PromptDialog::setSelectorManager(shared_ptr<MouseController> mouse, Joystic
 		}
 	}
 
-	selector->setControllers(mouse, joy);
+	selector->setControllers(joy, keys);
 }
 
 

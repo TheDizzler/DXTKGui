@@ -122,7 +122,7 @@ public:
 
 	void initialize(const pugi::char_t* font = "Default Font");
 
-	void setSelectorManager(shared_ptr<MouseController> mouse, Joystick* joy);
+	void setSelectorManager(Joystick* joy, KeyboardController* keys);
 
 	virtual void reloadGraphicsAsset() override;
 

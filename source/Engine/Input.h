@@ -1,14 +1,14 @@
 #pragma once
 
-#include <Windows.h>
-#include <Keyboard.h>
+//#include <Windows.h>
 #include <list>
 
 #include "../DXTKGui/Controllers/MouseController.h"
+#include "../DXTKGui/Controllers/KeyboardController.h"
 #include "../Managers/PlayerSlot.h"
 
 extern unique_ptr<PlayerSlotManager> slotManager;
-
+extern unique_ptr<KeyboardController> keys;
 
 
 DWORD WINAPI waitForHUDThread(PVOID pVoid);
@@ -70,8 +70,9 @@ public:
 
 
 	shared_ptr<MouseController> mouse;
+	//shared_ptr<KeyboardController> keys;
 protected:
-	unique_ptr<Keyboard> keys;
+	//unique_ptr<Keyboard> keys;
 	
 	
 };

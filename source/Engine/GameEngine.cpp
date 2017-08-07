@@ -180,6 +180,7 @@ void GameEngine::run(double deltaTime) {
 void GameEngine::update(double deltaTime) {
 
 	mouse->saveMouseState();
+	keys->saveKeyState();
 	slotManager->updateGamePads();
 
 	if (showDialog->isOpen())

@@ -2,6 +2,7 @@
 #include "../Engine/GameEngine.h"
 
 unique_ptr<PlayerSlotManager> slotManager;
+unique_ptr<KeyboardController> keys;
 
 bool endAllThreadsNow = false;
 bool slotManagerThreadRunning = false;
@@ -20,7 +21,7 @@ Input::~Input() {
 
 bool Input::initRawInput(HWND hwnd) {
 
-	keys = make_unique<Keyboard>();
+	keys = make_unique<KeyboardController>();
 	mouse = make_shared<MouseController>(hwnd);
 
 	return true;

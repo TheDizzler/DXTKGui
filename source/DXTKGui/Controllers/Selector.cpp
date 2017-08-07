@@ -1,6 +1,6 @@
 #include "Selector.h"
 #include "..\GUIFactory.h"
-
+#include "KeyboardController.h"
 
 Selector::~Selector() {
 
@@ -72,11 +72,11 @@ void SelectorManager::initialize(unique_ptr<Selector> newSelector) {
 	selector = move(newSelector);
 }
 
-void SelectorManager::setControllers(shared_ptr<MouseController> ms,
-	Joystick* joy) {
+void SelectorManager::setControllers(Joystick* joy, KeyboardController* key) {
 
-	mouse = ms;
+	//mouse = ms;
 	joystick = joy;
+	keyController = key;
 }
 
 void SelectorManager::setJoystick(Joystick* joy) {
@@ -93,14 +93,14 @@ void SelectorManager::update(double deltaTime) {
 			controls[selected]->onHover();
 			timeSincePressed = DELAY_TIME;
 
-		} else if (joystick->isUpPressed()) {
+		} else if (joystick->isUpPressed() || joystick->isLeftPressed()) {
 
 			if (timeSincePressed > DELAY_TIME) {
 				setSelected(selected - 1);
 				timeSincePressed = 0;
 			}
 			timeSincePressed += deltaTime;
-		} else if (joystick->isDownPressed()) {
+		} else if (joystick->isDownPressed() || joystick->isRightPressed()) {
 
 			if (timeSincePressed > DELAY_TIME) {
 				setSelected(selected + 1);
@@ -111,17 +111,19 @@ void SelectorManager::update(double deltaTime) {
 			timeSincePressed = DELAY_TIME;
 	}
 
-	auto keyState = Keyboard::Get().GetState();
-	keyTracker.Update(keyState);
-	if (keyTracker.IsKeyPressed(Keyboard::Down) || keyTracker.IsKeyPressed(Keyboard::Right))
-		setSelected(selected + 1);
-	else if (keyTracker.IsKeyPressed(Keyboard::Up) || keyTracker.IsKeyPressed(Keyboard::Left))
-		setSelected(selected - 1);
-	else if (keyTracker.IsKeyPressed(Keyboard::Enter)) {
-		controls[selected]->onClick();
-		controls[selected]->onHover();
-	}
 
+	if (keyController) {
+		if (keyController->isKeyPressed(Keyboard::Down)
+			|| keyController->isKeyPressed(Keyboard::Right))
+			setSelected(selected + 1);
+		else if (keyController->isKeyPressed(Keyboard::Up)
+			|| keyController->isKeyPressed(Keyboard::Left))
+			setSelected(selected - 1);
+		else if (keyController->isKeyPressed(Keyboard::Enter)) {
+			controls[selected]->onClick();
+			controls[selected]->onHover();
+		}
+	}
 	for (int i = 0; i < controls.size(); ++i) {
 		controls[i]->updateSelect(deltaTime);
 		if (selected != i && controls[i]->hovering()) {

@@ -49,10 +49,11 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContro
 		exitDialog->setConfirmButton(move(quitButton), true, false);
 		exitDialog->setCancelButton(L"Keep Testing!");
 
+		Joystick* stick = NULL;
 		if (activeSlots.size() > 0) {
-			Joystick* stick = activeSlots[0]->getStick();
-			exitDialog->setSelectorManager(mouse, stick);
+			stick = activeSlots[0]->getStick();
 		}
+		exitDialog->setSelectorManager(stick, keys.get());
 
 		exitDialog->setOpenTransition(
 			//new TransitionEffects::SpinGrowTransition(exitDialog.get(), .5));
@@ -106,7 +107,6 @@ void MenuManager::reloadGraphicsAssets() {
 }
 
 
-Keyboard::KeyboardStateTracker keyTracker;
 void MenuManager::update(double deltaTime) {
 
 	if (switchTo != NULL) {
@@ -115,16 +115,16 @@ void MenuManager::update(double deltaTime) {
 			switchTo = NULL;
 		}
 	} else {
-		auto state = Keyboard::Get().GetState();
-		keyTracker.Update(state);
-		if (keyTracker.IsKeyReleased(Keyboard::Escape)) {
+		
+		if (keys->isKeyReleased(Keyboard::Escape)) {
 			if (exitDialog->isOpen())
 				exitDialog->hide();
 			else {
+				Joystick* stick = NULL;
 				if (activeSlots.size() > 0) {
-					Joystick* stick = activeSlots[0]->getStick();
-					exitDialog->setSelectorManager(mouse, stick);
+					stick = activeSlots[0]->getStick();
 				}
+				exitDialog->setSelectorManager(stick, keys.get());
 				exitDialog->show();
 			}
 		}
@@ -238,7 +238,7 @@ bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseControl
 	Joystick* nextJoy = NULL;
 	if (activeSlots.size() != 0)
 		nextJoy = activeSlots[0]->getStick();
-	selectorManager.setControllers(mouse, nextJoy);
+	selectorManager.setControllers(nextJoy, keys.get());
 
 
 	/*dynamicDialog.reset(guiFactory->createDynamicDialog(
@@ -515,10 +515,8 @@ void ConfigScreen::reloadGraphicsAssets() {
 
 void ConfigScreen::update(double deltaTime) {
 
-	auto state = Keyboard::Get().GetState();
-	keyTracker.Update(state);
 
-	if (keyTracker.IsKeyReleased(Keyboard::Escape)) {
+	if (keys->isKeyReleased(Keyboard::Escape)) {
 		menuManager->openMainMenu();
 	}
 
@@ -730,10 +728,11 @@ void OnClickListenerDialogQuitButton::resetState(Button * button) {
 
 
 void OnClickListenerExitButton::onClick(Button* button) {
+	Joystick* stick = NULL;
 	if (activeSlots.size() > 0) {
-		Joystick* stick = activeSlots[0]->getStick();
-		main->menuManager->exitDialog->setSelectorManager(main->mouse, stick);
+		stick = activeSlots[0]->getStick();
 	}
+	main->menuManager->exitDialog->setSelectorManager(stick, keys.get());
 	main->menuManager->exitDialog->show();
 }
 
