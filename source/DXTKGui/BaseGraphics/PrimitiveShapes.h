@@ -48,7 +48,7 @@ public:
 	void setTint(const XMVECTORF32 color, bool tintTexture);
 
 	virtual bool update();
-	void draw(SpriteBatch* batch);
+	virtual void draw(SpriteBatch* batch) override;
 
 	virtual const Vector2& getPosition() const override;
 	virtual const int getWidth() const override;

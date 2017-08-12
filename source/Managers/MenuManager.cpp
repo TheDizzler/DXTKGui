@@ -89,7 +89,7 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContro
 	currentScreen = mainScreen.get();
 
 	transitionManager = make_unique<ScreenTransitions::ScreenTransitionManager>();
-	transitionManager->initialize(guiFactory.get(), "Test BG");
+	transitionManager->initialize(guiFactory.get(), "Default Transition BG");
 	transitionManager->setTransition(
 		//new ScreenTransitions::FlipScreenTransition(false));
 		//new ScreenTransitions::SquareFlipScreenTransition());
@@ -115,7 +115,7 @@ void MenuManager::update(double deltaTime) {
 			switchTo = NULL;
 		}
 	} else {
-		
+
 		if (keys->isKeyReleased(Keyboard::Escape)) {
 			if (exitDialog->isOpen())
 				exitDialog->hide();
@@ -639,14 +639,13 @@ void DisplayModeItem::setText() {
 void OnClickListenerAdapterList::onClick(ListBox* listbox, UINT selectedIndex) {
 
 	AdapterItem* selectedItem = (AdapterItem*) listbox->getItem(selectedIndex);
-	config->game->setAdapter(selectedIndex);
-	config->game->reloadGraphicsAssets();
-	config->populateDisplayList(config->game->getDisplayList());
-	config->populateDisplayModeList(
-		config->game->getDisplayModeList(config->game->getSelectedDisplayIndex()));
+	if (config->game->setAdapter(selectedIndex)) {
+		config->populateDisplayList(config->game->getDisplayList());
+		config->populateDisplayModeList(
+			config->game->getDisplayModeList(config->game->getSelectedDisplayIndex()));
 
-	config->adapterLabel->setText(listbox->getSelected()->toString());
-
+		config->adapterLabel->setText(listbox->getSelected()->toString());
+	}
 }
 
 void OnClickListenerAdapterList::onHover(ListBox* listbox, short hoveredItemIndex) {

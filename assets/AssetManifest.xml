@@ -47,7 +47,7 @@
 
 		
 
-		<sprite name="Test BG" file="TestBG.dds" />
+		<sprite name="Default Transition BG" file="TestBG.dds" />
 		<sprite name="White Pixel" file="WhitePixel.dds" />
 		
 		

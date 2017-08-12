@@ -42,8 +42,6 @@ void GameManager::reloadGraphicsAssets() {
 	mouse->reloadGraphicsAsset(guiFactory.get());
 	menuScreen->reloadGraphicsAssets();
 	guiOverlay->reloadGraphicsAssets();
-
-	gameEngine->reloadGraphicsAssets();
 }
 
 

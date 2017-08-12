@@ -25,6 +25,7 @@ public:
 
 	bool initD3D(HWND hwnd);
 
+	virtual void reloadGraphicsAssets() = 0;
 	virtual void render() = 0;
 
 	vector<ComPtr<IDXGIAdapter> > getAdapterList();

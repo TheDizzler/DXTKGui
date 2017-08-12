@@ -75,9 +75,11 @@ void GameEngine::onAudioDeviceChange() {
 }
 
 void GameEngine::reloadGraphicsAssets() {
+	guiFactory->reInitDevice(device, deviceContext, batch.get());
 	blendState = new CommonStates(device.Get());
 	errorDialog->reloadGraphicsAsset();
 	warningDialog->reloadGraphicsAsset();
+	game->reloadGraphicsAssets();
 }
 
 

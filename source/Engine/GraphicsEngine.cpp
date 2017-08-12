@@ -366,7 +366,7 @@ vector<DXGI_MODE_DESC> GraphicsEngine::getDisplayModeList(
 
 }
 
-/** Almost works!! */
+/** Works!! */
 bool GraphicsEngine::setAdapter(size_t newAdapterIndex) {
 
 	swapChain->SetFullscreenState(false, NULL);
@@ -396,9 +396,8 @@ bool GraphicsEngine::setAdapter(size_t newAdapterIndex) {
 
 
 	// re-create SpriteBatch
-	batch.reset(new SpriteBatch(deviceContext.Get()));
-
-	guiFactory->reInitDevice(device, deviceContext, batch.get());
+	batch = make_unique<SpriteBatch>(deviceContext.Get());
+	reloadGraphicsAssets();
 	return true;
 }
 
