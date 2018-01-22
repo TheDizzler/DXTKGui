@@ -176,6 +176,7 @@
     <ClCompile Include="source\DXTKGui\Controls\Spinner.cpp" />
     <ClCompile Include="source\DXTKGui\Controls\TextLabel.cpp" />
     <ClCompile Include="source\DXTKGui\Controls\TexturePanel.cpp" />
+    <ClCompile Include="source\DXTKGui\Effects\GfxAssetCombiner.cpp" />
     <ClCompile Include="source\DXTKGui\Effects\LetterJammer.cpp" />
     <ClCompile Include="source\DXTKGui\Effects\ScreenTransitions.cpp" />
     <ClCompile Include="source\DXTKGui\Effects\TransitionEffects.cpp" />
@@ -185,9 +186,9 @@
     <ClCompile Include="Source\Engine\GraphicsEngine.cpp" />
     <ClCompile Include="Source\Engine\Input.cpp" />
     <ClCompile Include="Source\Engine\main.cpp" />
+    <ClCompile Include="source\Engine\PlayerSlot.cpp" />
     <ClCompile Include="source\Managers\GameManager.cpp" />
     <ClCompile Include="source\Managers\MenuManager.cpp" />
-    <ClCompile Include="source\Managers\PlayerSlot.cpp" />
     <ClCompile Include="source\Screens\GUIOverlay.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -212,6 +213,7 @@
     <ClInclude Include="source\DXTKGui\Controls\Spinner.h" />
     <ClInclude Include="source\DXTKGui\Controls\TextLabel.h" />
     <ClInclude Include="source\DXTKGui\Controls\TexturePanel.h" />
+    <ClInclude Include="source\DXTKGui\Effects\GfxAssetCombiner.h" />
     <ClInclude Include="source\DXTKGui\Effects\LetterJammer.h" />
     <ClInclude Include="source\DXTKGui\Effects\ScreenTransitions.h" />
     <ClInclude Include="source\DXTKGui\Effects\TransitionEffects.h" />
@@ -222,10 +224,10 @@
     <ClInclude Include="Source\Engine\GameEngine.h" />
     <ClInclude Include="Source\Engine\GraphicsEngine.h" />
     <ClInclude Include="Source\Engine\Input.h" />
+    <ClInclude Include="source\Engine\PlayerSlot.h" />
     <ClInclude Include="Source\globals.h" />
     <ClInclude Include="source\Managers\GameManager.h" />
     <ClInclude Include="source\Managers\MenuManager.h" />
-    <ClInclude Include="source\Managers\PlayerSlot.h" />
     <ClInclude Include="source\Screens\GUIOverlay.h" />
   </ItemGroup>
   <ItemGroup>

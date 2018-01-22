@@ -16,11 +16,9 @@ GameManager::~GameManager() {
 }
 
 
-bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc,
-	shared_ptr<MouseController> ms) {
+bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc) {
 
 	device = dvc;
-	mouse = ms;
 
 
 	guiOverlay = make_unique<GUIOverlay>();
@@ -28,7 +26,7 @@ bool GameManager::initializeGame(HWND hwnd, ComPtr<ID3D11Device> dvc,
 
 	menuScreen.reset(new MenuManager());
 	menuScreen->setGameManager(this);
-	if (!menuScreen->initialize(device, mouse))
+	if (!menuScreen->initialize(device))
 		return false;
 
 	currentScreen = menuScreen.get();

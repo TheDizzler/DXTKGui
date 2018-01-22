@@ -1,7 +1,7 @@
 #include "ListBox.h"
 #include "../GUIFactory.h"
 
-ListBox::ListBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+ListBox::ListBox(GUIFactory* factory, MouseController* mouseController,
 	const Vector2& pos, const int len, size_t itmHght, const int maxItemsShown)
 	: GUIControl(factory, mouseController) {
 
@@ -38,7 +38,8 @@ void ListBox::initialize(const pugi::char_t* fnt, GraphicsAsset* pixelAsset,
 	firstItemPos = Vector2(position.x, position.y);
 	scrollBar.reset(scrllbr);
 	frame.reset(guiFactory->createRectangleFrame());
-	hitArea.reset(new HitArea(position, Vector2(frame->getWidth(), frame->getHeight())));
+	hitArea.position = position;
+	hitArea.size = Vector2(frame->getWidth(), frame->getHeight());
 	isEnumerated = enumerateList;
 
 	texturePanel.reset(guiFactory->createPanel(true));
@@ -72,7 +73,7 @@ bool ListBox::update(double deltaTime) {
 
 	if (itemsToDisplay == maxDisplayItems || alwaysDisplayScrollBar) {
 
-		if (hitArea->contains(mouse->getPosition())) {
+		if (hitArea.contains(mouse->getPosition())) {
 			int mouseWheelDelta = mouse->scrollWheelValue();
 			if (mouseWheelDelta != 0) {
 				scrollBar->scrollByIncrement(-mouseWheelDelta);
@@ -89,7 +90,7 @@ bool ListBox::update(double deltaTime) {
 	}
 
 	for (int j = firstItemToDisplay; j < firstItemToDisplay + itemsToDisplay; ++j) {
-		if (listItems[j]->update(deltaTime, mouse.get())) {
+		if (listItems[j]->update(deltaTime, mouse)) {
 			refreshPanel = true;
 			if (listItems[j]->isSelected) {
 				if (!multiSelect) {
@@ -209,7 +210,7 @@ void ListBox::resizeBox() {
 	int frameHeight = itemHeight * itemsToDisplay;
 	Vector2 frameSize = Vector2(frameWidth, frameHeight);
 	frame->setDimensions(position, frameSize, frameThickness);
-	hitArea->size = frameSize;
+	hitArea.size = frameSize;
 
 	refreshPanel = true;
 }
@@ -217,8 +218,8 @@ void ListBox::resizeBox() {
 
 void ListBox::moveBy(const Vector2& moveVector) {
 	position += moveVector;
-	hitArea->position = Vector2(position.x, position.y);
-	hitArea->size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
+	hitArea.position = Vector2(position.x, position.y);
+	hitArea.size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
 	firstItemPos += moveVector;
 
 	Vector2 pos = firstItemPos;
@@ -238,8 +239,8 @@ void ListBox::moveBy(const Vector2& moveVector) {
 void ListBox::setPosition(const Vector2& newPosition) {
 	Vector2 moveVector = newPosition - position;
 	position = newPosition;
-	hitArea->position = Vector2(position.x, position.y);
-	hitArea->size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
+	hitArea.position = Vector2(position.x, position.y);
+	hitArea.size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
 
 	firstItemPos += moveVector;
 	Vector2 pos = firstItemPos;

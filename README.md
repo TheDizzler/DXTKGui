@@ -21,6 +21,94 @@ Email: tgillon.sdk@gmail.com
 >- PugiXML (http://pugixml.org/)
 
 
+##How to set up: (Note: may be outdated)
+	Start Win32 project
+		set to window application, empty project, no SDL
+
+	Install latest DirectXTK_desktop_2015 (2017.6.21.1 as of writing)
+	Install pugixml							(1.8.5 as of writing)
+
+	Copy /source and /assets
+	Copy X3DAudio.lib & XAPOFX.lib
+
+	Debug && x64
+	
+	Property Pages (All Configs && All Platforms)
+	set precompiledheader && hid.lib
+		Config Properties
+			C/C++
+				Precompiled Header
+					Create (/Yc)
+					File pch.h
+				Advanced (optional?)
+					Forced Include
+						pch.h
+			Linker
+				Input
+					Additional Dep
+						hid.lib
+
+
+	Add
+		mouse->saveMouseState();
+		slotManager->updateGamePads();
+	to GameEngine::update()
+
+
+How to Button:
+	unique_ptr<Button> confirmButton;
+	confirmButton.reset(guiFactory->createButton());
+	confirmButton->setText(L"Le Text");
+	confirmButton->setOnClickListener(new ButtonOnClickListener(this));
+
+How to OnClickListener:
+	class ButtonOnClickListener : public Button::OnClickListener {
+	public:
+		ButtonOnClickListener(Context* cntxt) : context(cntxt) {
+		}
+		virtual void onClick(Button* button) override;
+
+	private:
+		Context* context;
+	};
+
+How to Dialog:
+	use to factory to create new
+		dialog.reset(guiFactory->createDialog());
+	set dimensions (mandatory), tint, buttons and listeners if desired
+		dialog->setConfirmOnClickListener(new GenerateBuildingListener(this));
+		dialog->setTitle(L"Building Setup");
+	set text
+	
+	
+	if want open
+		dialog->open();
+		
+	add to update and draw
+
+How to extend/sub-class:
+	class ControllerDialog : public Dialog
+		ControllerDialog(HWND hwnd, shared_ptr<MouseController> mouse);
+			initializeControl(guiFactory, mouse);
+			initialize(guiFactory->getAsset("White Pixel"));
+			setDimensions(position, size, frameThickness);
+		
+
+
+How to ScreenTransition:
+	create a class that extends Screen
+	
+	unique_ptr<ScreenTransitions::ScreenTransitionManager> transitionManager;
+
+	transitionManager.reset(
+		new ScreenTransitions::ScreenTransitionManager(
+			guiFactory.get(), nameOfBGHereIfNeeded));
+	transitionManager->setTransition(
+		some kind of Transition here (ex: ScreenTransitions::SquareFlipScreenTransition() )
+				);
+			
+			
+
 ##DONE:
 >- Optimized control draw speed (for almost everything)
 >- Primitve Shapes - filled rectangle; un-filled rectangle; triangle (needs work); line

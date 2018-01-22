@@ -9,7 +9,7 @@ class GameManager;
 	level screens, etc. */
 interface Screen {
 public:
-	virtual bool initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse) = 0;
+	virtual bool initialize(ComPtr<ID3D11Device> device) = 0;
 	virtual void setGameManager(GameManager* game) = 0;
 	virtual void update(double deltaTime) = 0;
 	virtual void draw(SpriteBatch* batch) = 0;

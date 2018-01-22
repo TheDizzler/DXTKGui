@@ -1,6 +1,6 @@
 #include "Sprite.h"
 #include "../GUIFactory.h"
-#include <sstream>
+//#include <sstream>
 
 Sprite::Sprite() {
 
@@ -39,7 +39,7 @@ Sprite::~Sprite() {
 	//OutputDebugStringA(ss.str().c_str());
 }
 
-/* GraphicsAsset is not stored in Sprite. */
+/* GraphicsAsset is not stored in Sprite. Note: scale should be set after this. */
 void Sprite::load(GraphicsAsset* const graphicsAsset) {
 
 	assetName = graphicsAsset->assetName;
@@ -51,9 +51,8 @@ void Sprite::load(GraphicsAsset* const graphicsAsset) {
 
 	sourceRect = graphicsAsset->getSourceRect();
 
-	hitArea.reset(new HitArea(
-		Vector2(position.x - origin.x, position.y - origin.y),
-		Vector2(width, height)));
+	hitArea.position = Vector2(position.x - origin.x, position.y - origin.y);
+	hitArea.size = Vector2(width, height);
 }
 
 
@@ -73,8 +72,12 @@ ComPtr<ID3D11ShaderResourceView> Sprite::getTexture() {
 	return texture;
 }
 
-const HitArea* Sprite::getHitArea() const {
-	return hitArea.get();
+bool Sprite::contains(const Vector2& point) {
+	return hitArea.contains(point);
+}
+
+const HitArea& Sprite::getHitArea() const {
+	return hitArea;
 }
 
 const Vector2& Sprite::getPosition() const {
@@ -110,11 +113,11 @@ const float Sprite::getLayerDepth() const {
 }
 
 const int Sprite::getWidth() const {
-	return width;
+	return hitArea.size.x;
 }
 
 const int Sprite::getHeight() const {
-	return height;
+	return hitArea.size.y;
 }
 
 
@@ -123,9 +126,8 @@ void Sprite::setDimensions(Sprite* baseSprite) {
 	width = baseSprite->width;
 	height = baseSprite->height;
 
-	hitArea.reset(new HitArea(
-		Vector2(position.x - width*scale.x / 2, position.y - height*scale.y / 2),
-		Vector2(width*scale.x, height*scale.y)));
+	hitArea.position = Vector2(position.x - width*scale.x / 2, position.y - height*scale.y / 2);
+	hitArea.size = Vector2(width*scale.x, height*scale.y);
 }
 
 void Sprite::setDimensions(const Vector2& pos, const Vector2& size) {
@@ -144,29 +146,36 @@ void Sprite::setSize(const Vector2& size) {
 	sourceRect.bottom = size.y;
 	sourceRect.right = size.x;
 
-	hitArea.reset(new HitArea(
-		Vector2(position.x - origin.x *scale.x, position.y - origin.y*scale.y),
-		Vector2(size.x*scale.x, size.y*scale.y)));
+	hitArea.position = Vector2(position.x - origin.x *scale.x, position.y - origin.y*scale.y);
+	hitArea.size = Vector2(size.x*scale.x, size.y*scale.y);
 }
 
 void Sprite::setPosition(const Vector2& pos) {
 
 	position = pos;
-	hitArea->position = Vector2(position.x - origin.x*scale.x,
+	hitArea.position = Vector2(position.x - origin.x*scale.x,
 		position.y - origin.y*scale.y);
 }
 
 
 void Sprite::setOrigin(const Vector2& orgn) {
 	origin = orgn;
+	hitArea.position = Vector2(position.x - origin.x*scale.x,
+		position.y - origin.y*scale.y);
+}
+
+void Sprite::setOriginCenter() {
+	origin = Vector2(getWidth() / 2, getHeight() / 2);
+	hitArea.position = Vector2(position.x - origin.x*scale.x,
+		position.y - origin.y*scale.y);
 }
 
 void Sprite::setScale(const Vector2& scl) {
 
 	scale = scl;
-	hitArea->position = Vector2(position.x - origin.x*scale.x,
+	hitArea.position = Vector2(position.x - origin.x*scale.x,
 		position.y - origin.y*scale.y);
-	hitArea->size = Vector2(width * scale.x, height * scale.y);
+	hitArea.size = Vector2(width * scale.x, height * scale.y);
 }
 
 void Sprite::setRotation(const float rot) {

@@ -137,7 +137,7 @@ public:
 	virtual ~MenuManager();
 
 	virtual void setGameManager(GameManager* game);
-	virtual bool initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse);
+	virtual bool initialize(ComPtr<ID3D11Device> device);
 
 	void reloadGraphicsAssets();
 
@@ -205,8 +205,7 @@ public:
 	ConfigScreen(MenuManager* manager);
 	virtual ~ConfigScreen();
 
-	virtual bool initialize(ComPtr<ID3D11Device> device,
-		shared_ptr<MouseController> mouse) override;
+	virtual bool initialize(ComPtr<ID3D11Device> device) override;
 	virtual void reloadGraphicsAssets() override;
 
 	virtual void update(double deltaTime) override;
@@ -242,7 +241,7 @@ public:
 	MainScreen(MenuManager* manager);
 	virtual ~MainScreen();
 
-	virtual bool initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse) override;
+	virtual bool initialize(ComPtr<ID3D11Device> device) override;
 	virtual void reloadGraphicsAssets() override;
 
 	virtual void update(double deltaTime) override;

@@ -2,6 +2,7 @@
 #include "StringHelper.h"
 #include "CommonStates.h"
 #include "DDSTextureLoader.h"
+#include "GuiAssets.h"
 
 bool GUIFactory::initialized = false;
 
@@ -18,24 +19,7 @@ GUIFactory::GUIFactory(HWND h, pugi::xml_node guiAssets) {
 
 
 GUIFactory::~GUIFactory() {
-	mouseController.reset();
-	/*device.Reset();
-	deviceContext.Reset();
-	docAssMan.reset();
-	mouseController.reset();
-	for (auto& asset : assetMap)
-		asset.second.reset();
-	assetMap.clear();
-	fontMap.clear();
-	for (auto& anim : animationMap) {
-		anim.second.reset();
-	}
-	animationMap.clear();
 
-	for (auto& set : setMap)
-		set.second.reset();
-	setMap.clear();
-	whitePixel.Reset();*/
 
 }
 
@@ -43,14 +27,14 @@ HWND GUIFactory::getHWND() {
 	return hwnd;
 }
 
-shared_ptr<MouseController> GUIFactory::getMouseController() {
+MouseController* GUIFactory::getMouseController() {
 	return mouseController;
 }
 
-#include "GuiAssets.h"
+
 bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 	ComPtr<ID3D11DeviceContext> devCon, ComPtr<IDXGISwapChain> sChain,
-	SpriteBatch* sBatch, shared_ptr<MouseController> mouse, const char_t* assetManifestFile) {
+	SpriteBatch* sBatch, MouseController* mouse, const char_t* assetManifestFile) {
 
 
 	if (assetManifestFile != NULL) {
@@ -76,10 +60,6 @@ bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 		return false;
 	}
 
-	if (mouse.get() == NULL) {
-		mouse = make_shared<MouseController>(hwnd); // for some reason hwnd is unusable here!
-		mouse->loadMouseIcon(this, "Mouse Icon");
-	}
 	mouseController = mouse;
 
 	initialized = true;
@@ -190,6 +170,17 @@ Line* GUIFactory::createLine(const Vector2& position, const Vector2& size, Color
 	Line* line = new Line(getAsset("White Pixel"), position, size);
 	line->setTint(lineColor);
 
+	return line;
+}
+
+Line* GUIFactory::createLineBetween(const Vector2 pointA, const Vector2 pointB, Color lineColor) {
+
+	Vector2 v = pointB - pointA;
+	float angle = atan2(v.y, v.x);
+	float length = Vector2::Distance(pointA, pointB);
+	Line* line = new Line(getAsset("White Pixel"), pointA, Vector2(length, 2));
+	line->setTint(lineColor);
+	line->setRotation(angle);
 	return line;
 }
 
@@ -483,7 +474,7 @@ ComboBox* GUIFactory::createComboBox(const Vector2& position,
 	ComboBox* combobox = new ComboBox(this, mouseController,
 		position, width, itemHeight, maxItemsShown);
 
-	combobox->initialize(getFont(fontName),
+	combobox->initialize(fontName,
 		createListBox(
 			Vector2(position.x, position.y + itemHeight),
 			width, itemHeight, maxItemsShown, enumerateList, fontName, frameThickness),
@@ -526,13 +517,17 @@ int elementCounter = 0;
 unique_ptr<GraphicsAsset> GUIFactory::createTextureFromTexturizable(
 	Texturizable* control, bool autoBatchDraw, Color bgColor) {
 
-	int buffer = 35; // padding to give a bit of lee-way to prevent tearing
+	int buffer = 45; // padding to give a bit of lee-way to prevent tearing
 
 	RECT rect;
 	GetClientRect(hwnd, &rect);
 
 	int screenWidth = rect.right - rect.left + buffer;
 	int screenHeight = rect.bottom - rect.top + buffer;
+
+	/*wostringstream wss;
+	wss << "W: " << rect.right - rect.left << " H: " << rect.bottom - rect.top << endl;
+	OutputDebugString(wss.str().c_str());*/
 
 	int width = control->getWidth();
 	int height = control->getHeight();
@@ -601,7 +596,6 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromTexturizable(
 		return NULL;
 
 
-
 	// get normal rendertargetview and switch to temp one
 	ComPtr<ID3D11RenderTargetView> oldRenderTargetView;
 	deviceContext->OMGetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
@@ -611,14 +605,34 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromTexturizable(
 	deviceContext->OMSetRenderTargets(1, textureRenderTargetView.GetAddressOf(), nullptr);
 
 
+
 	Vector2 oldPos = control->getPosition();
 	//Vector2 oldSize = Vector2(control->getWidth(), control->getHeight());
 	control->setPosition(Vector2(0, 0));
 
 	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), bgColor);
 
+
+	/** Create a new viewport incase the current one is not normal.*/
+	const UINT MAX_VIEWPORTS = 16;
+	UINT numViewports = MAX_VIEWPORTS;
+	D3D11_VIEWPORT oldViewports[MAX_VIEWPORTS];
+	deviceContext->RSGetViewports(&numViewports, oldViewports);
+	D3D11_VIEWPORT textureViewport;
+	ZeroMemory(&textureViewport, sizeof(D3D11_VIEWPORT));
+	textureViewport.TopLeftX = 0;
+	textureViewport.TopLeftY = 0;
+	textureViewport.Width = screenWidth;
+	textureViewport.Height = screenHeight;
+	textureViewport.MinDepth = 0.0f;
+	textureViewport.MaxDepth = 1.0f;
+	deviceContext->RSSetViewports(1, &textureViewport);
+	batch->SetViewport(textureViewport);
+
 	if (autoBatchDraw) {
-		batch->Begin(SpriteSortMode_Deferred/*, CommonStates(device.Get()).NonPremultiplied()*/);
+		/* This is supposed to be the bare minimum. If you need more you should
+			set autoBatchDraw to false and override the objects textureDraw().*/
+		batch->Begin(SpriteSortMode_Deferred);
 		{
 			control->textureDraw(batch);
 		}
@@ -630,6 +644,8 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromTexturizable(
 	textureRenderTargetView.Reset();
 	deviceContext->Flush();
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
+	deviceContext->RSSetViewports(numViewports, oldViewports);
+	batch->SetViewport(oldViewports[0]);
 
 	textureRenderTargetView.Reset();
 	oldRenderTargetView.Reset();
@@ -712,6 +728,7 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 
 
 
+
 	// get normal rendertargetview and switch to temp one
 	ComPtr<ID3D11RenderTargetView> oldRenderTargetView;
 	deviceContext->OMGetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
@@ -722,6 +739,24 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 
 
 	deviceContext->ClearRenderTargetView(textureRenderTargetView.Get(), bgColor);
+
+
+	/** Create a new viewport incase the current one is not normal.*/
+	const UINT MAX_VIEWPORTS = 16;
+	UINT numViewports = MAX_VIEWPORTS;
+	D3D11_VIEWPORT oldViewports[MAX_VIEWPORTS];
+	deviceContext->RSGetViewports(&numViewports, oldViewports);
+	D3D11_VIEWPORT textureViewport;
+	ZeroMemory(&textureViewport, sizeof(D3D11_VIEWPORT));
+	textureViewport.TopLeftX = 0;
+	textureViewport.TopLeftY = 0;
+	textureViewport.Width = screenWidth;
+	textureViewport.Height = screenHeight;
+	textureViewport.MinDepth = 0.0f;
+	textureViewport.MaxDepth = 1.0f;
+	deviceContext->RSSetViewports(1, &textureViewport);
+	batch->SetViewport(textureViewport);
+
 
 	if (autoBatchDraw) {
 		batch->Begin(SpriteSortMode_Deferred);
@@ -736,6 +771,8 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 	textureRenderTargetView.Reset();
 	deviceContext->Flush();
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
+	deviceContext->RSSetViewports(numViewports, oldViewports);
+	batch->SetViewport(oldViewports[0]);
 
 	string name = "Texturized Screen #" + to_string(screenCounter++);
 	unique_ptr<GraphicsAsset> gfxAsset = make_unique<GraphicsAsset>();

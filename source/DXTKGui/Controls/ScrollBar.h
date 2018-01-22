@@ -9,7 +9,7 @@ public:
 	Scrubber(GraphicsAsset* const graphicsAsset, bool assetIsPixel = true);
 	virtual ~Scrubber();
 
-	
+
 	void setDimensions(const Sprite* scrollBarTrack,
 		double percentShowing, double maxPercent);
 
@@ -70,7 +70,7 @@ struct ScrollBarDesc {
 	NOTE: Do not use this classes HitArea - it is NULL. */
 class ScrollBar : public GUIControl {
 public:
-	ScrollBar(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	ScrollBar(GUIFactory* factory, MouseController* mouseController,
 		const Vector2& position);
 	virtual ~ScrollBar();
 
@@ -90,6 +90,7 @@ public:
 	void setScrollPositionByPercent(double newPositionPercentage);
 	virtual void moveBy(const Vector2& moveVector) override;
 	virtual void setPosition(const Vector2& newPosition) override;
+	void resetPositionTo(const Vector2& newPosition);
 
 	void setBarHeight(int barHeight);
 	/** Call this from parent control on mouse scroll. */
@@ -125,7 +126,8 @@ public:
 	virtual void onHover() override {
 	};
 	/** Not used in Scrollbar. */
-	virtual void resetState() override {};
+	virtual void resetState() override {
+	};
 
 private:
 

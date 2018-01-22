@@ -107,7 +107,7 @@ private:
 /** If autoRun == false, run() must be called manually. */
 class LetterJammer : public TextLabel {
 public:
-	LetterJammer(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	LetterJammer(GUIFactory* factory, MouseController* mouseController,
 		Vector2 position, wstring text, bool autoRun = true, const pugi::char_t* font = "Default Font");
 	virtual ~LetterJammer();
 

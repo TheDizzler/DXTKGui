@@ -6,7 +6,7 @@
 class CheckBox : public GUIControl {
 public:
 
-	CheckBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	CheckBox(GUIFactory* factory, MouseController* mouseController,
 		unique_ptr<Sprite> uncheckedSprite, unique_ptr<Sprite> checkedSprite,
 		const pugi::char_t* font);
 	virtual ~CheckBox();

@@ -1,10 +1,9 @@
 #include "TexturePanel.h"
 #include "../GUIFactory.h"
 
-TexturePanel::TexturePanel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+TexturePanel::TexturePanel(GUIFactory* factory, MouseController* mouseController,
 	ScrollBar* scrllbr) : GUIControl(factory, mouseController) {
 
-	hitArea = make_unique<HitArea>(Vector2::Zero, Vector2::Zero);
 	if (scrllbr == NULL)
 		neverShowScrollBar = true;
 	else
@@ -42,7 +41,7 @@ void TexturePanel::setTexture(unique_ptr<GraphicsAsset> gfx) {
 
 
 void TexturePanel::reloadGraphicsAsset() {
-//do nothing
+	//do nothing
 }
 
 bool TexturePanel::update(double deltaTime) {
@@ -52,10 +51,12 @@ bool TexturePanel::update(double deltaTime) {
 	if (!neverShowScrollBar && (showScrollBar || alwaysDisplayScrollBar)) {
 		refreshed = verticalScrollBar->update(deltaTime);
 
-		if (hitArea->contains(mouse->getPosition())) {
+		if (hitArea.contains(mouse->getPosition())) {
 			int mouseWheelDelta = mouse->scrollWheelValue();
-			if (mouseWheelDelta != 0)
+			if (mouseWheelDelta != 0) {
 				verticalScrollBar->scrollByIncrement(-mouseWheelDelta);
+				refreshed = true;
+			}
 		}
 
 		// adjust viewRect according to scrollBar percent
@@ -87,13 +88,13 @@ void TexturePanel::setDimensions(const Vector2& pos, const Vector2& size) {
 	viewRect.right = size.x;
 	viewRect.bottom = size.y;
 
-	hitArea->size = size;
+	hitArea.size = size;
 	setPosition(pos);
-	if (neverShowScrollBar || !showScrollBar)
-		return;
-	Vector2 vertScrollBarPos = Vector2(position.x + size.x, position.y);
-	verticalScrollBar->setPosition(vertScrollBarPos);
-	verticalScrollBar->setBarHeight(size.y);
+	if (verticalScrollBar) {
+		Vector2 vertScrollBarPos = Vector2(position.x + size.x, position.y);
+		verticalScrollBar->setPosition(vertScrollBarPos);
+		verticalScrollBar->setBarHeight(size.y);
+	}
 }
 
 void TexturePanel::setTexturePosition(const Vector2& texPos) {
@@ -113,18 +114,16 @@ void TexturePanel::setLayerDepth(const float newDepth, bool frontToBack) {
 	if (!frontToBack)
 		nudge *= -1;
 
-	if (neverShowScrollBar)
-		return;
-	verticalScrollBar->setLayerDepth(layerDepth + nudge, frontToBack);
+	if (verticalScrollBar)
+		verticalScrollBar->setLayerDepth(layerDepth + nudge, frontToBack);
 }
 
 
 void TexturePanel::setScale(const Vector2& newScale) {
 	GUIControl::setScale(newScale);
 
-	if (neverShowScrollBar)
-		return;
-	verticalScrollBar->setScale(newScale);
+	if (verticalScrollBar)
+		verticalScrollBar->setScale(newScale);
 }
 
 
@@ -132,9 +131,8 @@ void TexturePanel::moveBy(const Vector2& moveVector) {
 
 	setPosition(position + moveVector);
 
-	if (neverShowScrollBar || !showScrollBar)
-		return;
-	verticalScrollBar->moveBy(moveVector);
+	if (verticalScrollBar)
+		verticalScrollBar->moveBy(moveVector);
 }
 
 const Vector2& TexturePanel::getPosition() const {
@@ -142,11 +140,11 @@ const Vector2& TexturePanel::getPosition() const {
 }
 
 const int TexturePanel::getWidth() const {
-	return hitArea->size.x;
+	return hitArea.size.x;
 }
 
 const int TexturePanel::getHeight() const {
-	return hitArea->size.y;
+	return hitArea.size.y;
 }
 
 const Vector2& TexturePanel::getScrollBarSize() const {

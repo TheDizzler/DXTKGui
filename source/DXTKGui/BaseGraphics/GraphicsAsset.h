@@ -35,13 +35,13 @@ struct Animation {
 class GraphicsAsset {
 public:
 
-
-	GraphicsAsset();
 	virtual ~GraphicsAsset();
 
+	/** origin = Vector2(-1000, -1000) will auto-center origin. */
 	bool load(ComPtr<ID3D11Device> device, const pugi::char_t* assetName,
 		const wchar_t* texturefileName, const Vector2& origin = Vector2(-1000, -1000),
 		bool showMessageBox = true);
+	/** origin = Vector2(-1000, -1000) will auto-center origin. */
 	void loadAsPartOfSheet(ComPtr<ID3D11ShaderResourceView> spriteSheetTexture,
 		const pugi::char_t* assetName, const Vector2& locationInSheet, const Vector2& size,
 		const Vector2& origin = Vector2(-1000, -1000));

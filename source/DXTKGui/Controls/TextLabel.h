@@ -5,11 +5,14 @@
 class TexturePanel;
 class TextLabel : public GUIControl, public Texturizable {
 public:
-	TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	TextLabel(GUIFactory* factory, MouseController* mouseController,
 		Vector2 position, wstring text, const pugi::char_t* font, bool useTexture = true);
 	/** A Textlabel with no set position. Used in PromptDialog. */
-	TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
-		wstring text, shared_ptr<FontSet> font, bool useTexture = true);
+	TextLabel(GUIFactory* factory, MouseController* mouseController,
+		wstring text, unique_ptr<FontSet> font, bool useTexture = true);
+	TextLabel(GUIFactory* factory, MouseController* mouseController,
+		wstring text, const pugi::char_t* font, bool useTexture = true);
+
 	virtual ~TextLabel();
 	virtual void reloadGraphicsAsset() override;
 
@@ -26,12 +29,12 @@ public:
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
 
-	const shared_ptr<FontSet> getFont() const;
+	const pugi::char_t* getFont() const;
 
 	virtual void moveBy(const Vector2& moveVector) override;
 	virtual void setPosition(const Vector2& position) override;
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
-	virtual void setFont(shared_ptr<FontSet> newFont);
+	virtual void setFont(unique_ptr<FontSet> newFont);
 	virtual void setTint(const XMFLOAT4 color) override;
 	virtual void setTint(const Color& color) override;
 	virtual void setTint(const XMVECTORF32 color) override;
@@ -124,7 +127,7 @@ protected:
 	OnClickFunction onPressFunction;
 
 	wstring label;
-	shared_ptr<FontSet> font;
+	unique_ptr<FontSet> font;
 
 	bool useTexture = false;
 	bool refreshTexture = true;

@@ -1,15 +1,14 @@
 #pragma once
 
-//#include <Windows.h>
 #include <list>
 
 #include "../DXTKGui/Controllers/MouseController.h"
 #include "../DXTKGui/Controllers/KeyboardController.h"
-#include "../Managers/PlayerSlot.h"
+#include "PlayerSlot.h"
 
 extern unique_ptr<PlayerSlotManager> slotManager;
 extern unique_ptr<KeyboardController> keys;
-
+extern unique_ptr<MouseController> mouse;
 
 DWORD WINAPI waitForHUDThread(PVOID pVoid);
 DWORD WINAPI waitForPlayerThread(PVOID pVoid);
@@ -68,11 +67,6 @@ public:
 
 	bool initRawInput(HWND hwnd);
 
-
-	shared_ptr<MouseController> mouse;
-	//shared_ptr<KeyboardController> keys;
 protected:
-	//unique_ptr<Keyboard> keys;
-	
-	
+
 };

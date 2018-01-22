@@ -1,25 +1,37 @@
 #include "TextLabel.h"
 #include "../GUIFactory.h"
 
-TextLabel::TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+TextLabel::TextLabel(GUIFactory* factory, MouseController* mouseController,
 	Vector2 pos, wstring text, const pugi::char_t* fontName, bool texture)
 	: GUIControl(factory, mouseController) {
 
 	position = pos;
 	font = guiFactory->getFont(fontName);
-	hitArea = make_unique<HitArea>(position, Vector2::Zero);
-
+	hitArea.position = position;
 	useTexture = texture;
 	texturePanel.reset(guiFactory->createPanel());
 	setText(text);
 	setTint(normalColorText);
 }
 
-TextLabel::TextLabel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
-	wstring text, shared_ptr<FontSet> fnt, bool texture) : GUIControl(factory, mouseController) {
+TextLabel::TextLabel(GUIFactory* factory, MouseController* mouseController,
+	wstring text, unique_ptr<FontSet> fnt, bool texture) : GUIControl(factory, mouseController) {
 
-	font = fnt;
-	hitArea = make_unique<HitArea>(position, Vector2::Zero);
+	position = Vector2::Zero;
+	font = move(fnt);
+	hitArea.position = position;
+	useTexture = texture;
+	texturePanel.reset(guiFactory->createPanel());
+	setText(text);
+	setTint(normalColorText);
+}
+
+TextLabel::TextLabel(GUIFactory* factory, MouseController* mouseController,
+	wstring text, const pugi::char_t* fontName, bool texture) : GUIControl(factory, mouseController) {
+
+	position = Vector2::Zero;
+	font = guiFactory->getFont(fontName);
+	hitArea.position = position;
 	useTexture = texture;
 	texturePanel.reset(guiFactory->createPanel());
 	setText(text);
@@ -36,7 +48,7 @@ void TextLabel::reloadGraphicsAsset() {
 	font.reset();
 	font = guiFactory->getFont(fontName);
 	texturePanel.reset(guiFactory->createPanel());
-	
+
 	refreshTexture = true;
 }
 
@@ -44,7 +56,7 @@ void TextLabel::reloadGraphicsAsset() {
 bool TextLabel::update(double deltaTime) {
 
 	if (isHoverable) {
-		if (hitArea->contains(mouse->getPosition())) {
+		if (hitArea.contains(mouse->getPosition())) {
 			isHover = true;
 			if (!isPressed) {
 				if (!hasBeenSetHover) {
@@ -67,14 +79,14 @@ bool TextLabel::update(double deltaTime) {
 			}
 		}
 	}
-	
+
 	if (useTexture && refreshTexture) {
 		texturePanel->setTexture(move(texturize()));
 		texturePanel->setAlpha(tint.w);
 		refreshTexture = false;
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -122,8 +134,8 @@ void TextLabel::setText(wstring text) {
 	label = text;
 	Vector2 size = font->measureString(label.c_str());
 	size *= scale;
-	hitArea->position = position;
-	hitArea->size = size;
+	hitArea.position = position;
+	hitArea.size = size;
 
 	refreshTexture = true;
 }
@@ -195,8 +207,8 @@ void TextLabel::setFont(const pugi::char_t* fontName) {
 	refreshTexture = true;
 }
 
-void TextLabel::setFont(shared_ptr<FontSet> newFont) {
-	font = newFont;
+void TextLabel::setFont(unique_ptr<FontSet> newFont) {
+	font = move(newFont);
 	refreshTexture = true;
 }
 
@@ -224,8 +236,8 @@ void TextLabel::setScale(const Vector2 & scl) {
 	scale = scl;
 	Vector2 size = font->measureString(label.c_str());
 	size *= scale;
-	hitArea->position = position;
-	hitArea->size = size;
+	hitArea.position = position;
+	hitArea.size = size;
 	refreshTexture = true;
 }
 
@@ -241,13 +253,13 @@ const Vector2& TextLabel::getPosition() const {
 
 
 int const TextLabel::getWidth() const {
-	return ceil(hitArea->size.x);
+	return ceil(hitArea.size.x);
 }
 
 int const TextLabel::getHeight() const {
-	return ceil(hitArea->size.y);
+	return ceil(hitArea.size.y);
 }
 
-const shared_ptr<FontSet> TextLabel::getFont() const {
-	return font;
+const pugi::char_t* TextLabel::getFont() const {
+	return font->fontName;
 }

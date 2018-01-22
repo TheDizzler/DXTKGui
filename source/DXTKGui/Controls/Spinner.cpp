@@ -1,7 +1,7 @@
 #include "Spinner.h"
 #include "../GUIFactory.h"
 
-Spinner::Spinner(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+Spinner::Spinner(GUIFactory* factory, MouseController* mouseController,
 	const Vector2& pos, const size_t len, const size_t itmHght, bool autoSz)
 	: GUIControl(factory, mouseController) {
 

@@ -3,7 +3,7 @@
 class templ {
 public:
 	templ();
-	~templ();
+	virtual ~templ();
 
 
 private:

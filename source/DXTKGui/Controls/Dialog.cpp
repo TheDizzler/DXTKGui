@@ -1,7 +1,7 @@
 #include "Dialog.h"
 #include "../GUIFactory.h"
 
-Dialog::Dialog(GUIFactory* factory, shared_ptr<MouseController> mouseController)
+Dialog::Dialog(GUIFactory* factory, MouseController* mouseController)
 	: GUIControlBox(factory, mouseController) {
 }
 
@@ -159,7 +159,7 @@ void Dialog::OnClickListenerCancelButton::resetState(Button * button) {
 
 /** ******* PromptDialog START ******** **/
 PromptDialog::PromptDialog(GUIFactory* factory,
-	shared_ptr<MouseController> mouseController, HWND h, bool canMove, bool centerTxt)
+	MouseController* mouseController, HWND h, bool canMove, bool centerTxt)
 	: Dialog(factory, mouseController) {
 	hwnd = h;
 	movable = canMove;
@@ -185,7 +185,6 @@ void PromptDialog::initialize(const pugi::char_t* font) {
 	titleSprite->setTint(Color(1, 1, 1, 1));
 	buttonFrameSprite.reset(guiFactory->createRectangle());
 	buttonFrameSprite->setTint(Color(1, 1, 1, 1));
-	hitArea = make_unique<HitArea>(Vector2::Zero, Vector2::Zero);
 
 	controls.resize(5);
 
@@ -264,17 +263,17 @@ void PromptDialog::setDimensions(const Vector2& pos, const Vector2& sz,
 	titleFrameSize.y -= frameThickness;
 	titleFramePosition = Vector2(position.x + frameThickness, position.y + frameThickness);
 	titleSprite->setDimensions(titleFramePosition, titleFrameSize);
-	dialogFramePosition = Vector2(position.x + frameThickness, position.y + titleFrameSize.y);
+	textFramePosition = Vector2(position.x + frameThickness, position.y + titleFrameSize.y);
 	//buttonFrameSize.y += frameThickness/2;
-	dialogFrameSize =
+	textFrameSize =
 		Vector2(size.x - frameThickness * 2, size.y - titleFrameSize.y - buttonFrameSize.y);
 	buttonFramePosition =
-		Vector2(position.x + frameThickness, dialogFramePosition.y + dialogFrameSize.y);
+		Vector2(position.x + frameThickness, textFramePosition.y + textFrameSize.y);
 	buttonFrameSize.x = size.x - frameThickness * 2;
 
 	buttonFrameSprite->setDimensions(buttonFramePosition, buttonFrameSize);
 
-	panel->setDimensions(dialogFramePosition, dialogFrameSize);
+	panel->setDimensions(textFramePosition, textFrameSize);
 
 	if (controls[TitleText] != NULL) {
 		Vector2 titlesize = controls[TitleText]->measureString();
@@ -303,12 +302,13 @@ bool PromptDialog::update(double deltaTime) {
 	} else if (isClosing) {
 		isClosing = !(closeTransition->*runTransition)(deltaTime);
 		isShowing = isClosing;
+		isPressed = false;
 		if (!isShowing)
 			(closeTransition->*resetTransition)();
 	}
 
 	if (movable && !isOpening && !isClosing) {
-		if ((isHover = titleSprite->getHitArea()->contains(mouse->getPosition()))) {
+		if ((isHover = titleSprite->contains(mouse->getPosition()))) {
 
 			if (mouse->pressed()) {
 				pressedPosition = mouse->getPosition() - position;
@@ -397,7 +397,7 @@ wstring PromptDialog::reformatText(size_t* scrollBarBuffer) {
 
 
 	// how long line length?
-	int maxLineLength = dialogFrameSize.x - *scrollBarBuffer - (dialogTextMargin.x * 2);
+	int maxLineLength = textFrameSize.x - *scrollBarBuffer - (dialogTextMargin.x * 2);
 
 	int i = 0;
 	int textLength = wcslen(dialogText->getText());
@@ -452,10 +452,10 @@ wstring PromptDialog::reformatText(size_t* scrollBarBuffer) {
 		// If text is getting too long, restart and adjust for scrollbar
 		if (!scrollbarAdded
 			&& dialogText->measureString(newText).y + dialogTextMargin.y * 2
-		> dialogFrameSize.y) {
+		> textFrameSize.y) {
 
 			*scrollBarBuffer = panel->getScrollBarSize().x;
-			maxLineLength = dialogFrameSize.x - *scrollBarBuffer - (dialogTextMargin.x * 2);
+			maxLineLength = textFrameSize.x - *scrollBarBuffer - (dialogTextMargin.x * 2);
 			i = 0;
 			newText = L"";
 			scrollbarAdded = true;
@@ -469,7 +469,7 @@ wstring PromptDialog::reformatText(size_t* scrollBarBuffer) {
 void PromptDialog::testMinimumSize() {
 
 	Vector2 mindialogtextSize = dialogText->measureString(L"Min accept");
-	int maxLineLength = dialogFrameSize.x - (dialogTextMargin.x * 2);
+	int maxLineLength = textFrameSize.x - (dialogTextMargin.x * 2);
 	Vector2 newSize = size;
 	bool changed = false;
 	if (maxLineLength < mindialogtextSize.x) {
@@ -492,7 +492,7 @@ void PromptDialog::calculateTitlePos() {
 
 	if (titlesize.x > titleFrameSize.x
 		|| titlesize.y > titleFrameSize.y) { // if title is bigger than dialog box
-		//expand the box
+											 //expand the box
 		Vector2 newSize = size;
 		Vector2 newPos = position;
 		if (titlesize.x > titleFrameSize.x) {
@@ -534,16 +534,15 @@ void PromptDialog::calculateDialogTextPos() {
 	}
 
 	TextLabel formattedText(guiFactory, NULL, dialogText->getText(), dialogText->getFont(), false);
-	//formattedText.initializeControl(guiFactory, NULL);
 	size_t scrollBarBuffer = 0;
 
-	if (dialogtextsize.x + dialogTextMargin.x * 2 > dialogFrameSize.x) {
+	if (dialogtextsize.x + dialogTextMargin.x * 2 > textFrameSize.x) {
 
-	// if the text is longer than the dialog box
-	//		break the text down into multiple lines
+		// if the text is longer than the dialog box
+		//		break the text down into multiple lines
 		formattedText.setText(reformatText(&scrollBarBuffer));
 		dialogtextsize = formattedText.measureString();
-	} else if (dialogtextsize.y /*+ dialogTextMargin.y * 2*/ > dialogFrameSize.y) {
+	} else if (dialogtextsize.y /*+ dialogTextMargin.y * 2*/ > textFrameSize.y) {
 
 		// width is fine but text is getting long
 		scrollBarBuffer = panel->getScrollBarSize().x;
@@ -551,26 +550,27 @@ void PromptDialog::calculateDialogTextPos() {
 		dialogtextsize = formattedText.measureString();
 	}
 
-	Vector2 dialogpos;
+	Vector2 textpanelpos;
 	if (centerText) {
-		dialogpos = Vector2(dialogFramePosition.x +
-			(dialogFrameSize.x - dialogtextsize.x - scrollBarBuffer) / 2, 0);
+		textpanelpos = Vector2(textFramePosition.x +
+			(textFrameSize.x - dialogtextsize.x - scrollBarBuffer) / 2, 0);
 	} else {
-		dialogpos = dialogFramePosition + dialogTextMargin;
+		textpanelpos = textFramePosition + dialogTextMargin;
 	}
 
-	if (dialogtextsize.y < dialogFrameSize.y)
-		dialogpos.y = dialogFramePosition.y + (dialogFrameSize.y - dialogtextsize.y) / 2;
+	if (dialogtextsize.y < textFrameSize.y)
+		textpanelpos.y = textFramePosition.y + (textFrameSize.y - dialogtextsize.y) / 2;
 	else
-		dialogpos.y = dialogFramePosition.y;
-	dialogText->setPosition(dialogpos);
+		textpanelpos.y = textFramePosition.y;
+	textpanelpos.y += 5; // offset so first line isn't covered by TitleBar
+	dialogText->setPosition(textpanelpos);
 	Color tint = dialogText->getTint();
 	formattedText.setTint(dialogText->getTint());
-	formattedText.setPosition(dialogpos);
+	formattedText.setPosition(textpanelpos);
 
-	panel->setDimensions(dialogFramePosition, dialogFrameSize);
+	panel->setDimensions(textFramePosition, textFrameSize);
 	panel->setTexture(formattedText.texturize());
-	panel->setTexturePosition(dialogpos);
+	panel->setTexturePosition(textpanelpos);
 }
 
 void PromptDialog::setText(wstring text) {
@@ -715,7 +715,7 @@ bool PromptDialog::calculateButtonPosition(Vector2& buttonPos) {
 
 size_t PromptDialog::addControl(unique_ptr<GUIControl> control) {
 
-	control->moveBy(dialogFramePosition);
+	control->moveBy(textFramePosition);
 	controls.push_back(move(control));
 	return controls.size() - 1;
 }
@@ -768,20 +768,23 @@ void PromptDialog::setScale(const Vector2& newScale) {
 
 void PromptDialog::setPosition(const Vector2& newPosition) {
 
-	Vector2 moveBy = newPosition - position;
+	Vector2 moveVector = newPosition - position;
 	GUIControl::setPosition(newPosition);
-	dialogFramePosition += moveBy;
-	titleFramePosition += moveBy;
-	frame->moveBy(moveBy);
-	bgSprite->moveBy(moveBy);
-	titleSprite->moveBy(moveBy);
-	buttonFrameSprite->moveBy(moveBy);
-	panel->moveBy(moveBy);
+	textFramePosition += moveVector;
+	titleFramePosition += moveVector;
+	frame->moveBy(moveVector);
+	bgSprite->moveBy(moveVector);
+	titleSprite->moveBy(moveVector);
+	buttonFrameSprite->moveBy(moveVector);
+	panel->moveBy(moveVector);
+
+	if (selector)
+		selector->moveBy(moveVector);
 
 	for (auto const& control : controls) {
 		if (control == NULL)
 			continue;
-		control->moveBy(moveBy);
+		control->moveBy(moveVector);
 	}
 
 	texturePanel->setPosition(position);
@@ -886,43 +889,26 @@ void PromptDialog::setDraggedPosition(Vector2& newPosition) {
 		newPosition.y = screenHeight - size.y;
 	}
 
-	Vector2 moveBy = newPosition - position;
-	if (moveBy == Vector2::Zero)
+	Vector2 moveVector = newPosition - position;
+	if (moveVector == Vector2::Zero)
 		return;
 	GUIControl::setPosition(newPosition);
-	dialogFramePosition += moveBy;
-	titleFramePosition += moveBy;
-	frame->moveBy(moveBy);
-	bgSprite->moveBy(moveBy);
-	titleSprite->moveBy(moveBy);
-	buttonFrameSprite->moveBy(moveBy);
-	panel->moveBy(moveBy);
+	textFramePosition += moveVector;
+	titleFramePosition += moveVector;
+	frame->moveBy(moveVector);
+	bgSprite->moveBy(moveVector);
+	titleSprite->moveBy(moveVector);
+	buttonFrameSprite->moveBy(moveVector);
+	panel->moveBy(moveVector);
+
+	if (selector)
+		selector->moveBy(moveVector);
 
 	for (auto const& control : controls) {
 		if (control == NULL)
 			continue;
-		control->moveBy(moveBy);
+		control->moveBy(moveVector);
 	}
-
-	texturePanel->setPosition(position);
-}
-
-/** NOT USED. */
-void PromptDialog::movePosition(const Vector2& moveBy) {
-
-
-	frame->moveBy(moveBy);
-	bgSprite->moveBy(moveBy);
-	titleSprite->moveBy(moveBy);
-	buttonFrameSprite->moveBy(moveBy);
-	panel->moveBy(moveBy);
-
-	for (auto const& control : controls) {
-		if (control == NULL)
-			continue;
-		control->moveBy(moveBy);
-	}
-	GUIControl::moveBy(moveBy);
 
 	texturePanel->setPosition(position);
 }

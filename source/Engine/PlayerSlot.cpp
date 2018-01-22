@@ -1,5 +1,5 @@
 #include "PlayerSlot.h"
-#include "../Engine/GameEngine.h"
+#include "GameEngine.h"
 #include <algorithm>
 
 vector<shared_ptr<PlayerSlot>> activeSlots;

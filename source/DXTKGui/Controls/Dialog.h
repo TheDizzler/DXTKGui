@@ -8,7 +8,7 @@
 class Dialog : public GUIControlBox, public Texturizable {
 public:
 
-	Dialog(GUIFactory* factory, shared_ptr<MouseController> mouseController);
+	Dialog(GUIFactory* factory, MouseController* mouseController);
 	virtual ~Dialog();
 	virtual void draw(SpriteBatch* batch) = 0;
 
@@ -117,7 +117,7 @@ class PromptDialog : public Dialog {
 public:
 
 	PromptDialog(GUIFactory* factory,
-		shared_ptr<MouseController> mouseController, HWND hwnd, bool movable, bool centerText);
+		MouseController* mouseController, HWND hwnd, bool movable, bool centerText);
 	virtual ~PromptDialog();
 
 	void initialize(const pugi::char_t* font = "Default Font");
@@ -201,10 +201,12 @@ protected:
 
 	Vector2 titleFrameSize = Vector2(0, 0);
 	Vector2 titleFramePosition;
-	Vector2 dialogFrameSize;
-	Vector2 dialogFramePosition;
+	Vector2 textFrameSize;
+	Vector2 textFramePosition;
 	Vector2 buttonFramePosition;
 	Vector2 buttonFrameSize = Vector2(0, 0);
+
+	int minTextFrameHeight;
 
 	int frameThickness = 2;
 	int buttonMargin = 10; // space between edge of dialog box and button edge
@@ -224,7 +226,7 @@ protected:
 		Also used for transition effects. */
 	void setDraggedPosition(Vector2& newPosition);
 	/** NOT USED. */
-	void movePosition(const Vector2& moveVector);
+	//void movePosition(const Vector2& moveVector);
 
 	unique_ptr<RectangleSprite> bgSprite;
 	unique_ptr<RectangleFrame> frame;

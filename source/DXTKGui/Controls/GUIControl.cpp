@@ -8,14 +8,12 @@ void GUIControl::moveBy(const Vector2& moveVector) {
 
 void GUIControl::setPosition(const Vector2& pos) {
 	position = pos;
-	hitArea->position = Vector2(position.x, position.y);
-	hitArea->size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
+	hitArea.position = Vector2(position.x, position.y);
+	hitArea.size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
 }
 
 
 GUIControl::~GUIControl() {
-	mouse.reset();
-
 }
 
 const wchar_t* GUIControl::getText() {
@@ -24,9 +22,9 @@ const wchar_t* GUIControl::getText() {
 
 void GUIControl::setScale(const Vector2& scl) {
 	scale = scl;
-	hitArea->position = Vector2(position.x - origin.x*scale.x,
+	hitArea.position = Vector2(position.x - origin.x*scale.x,
 		position.y - origin.y*scale.y);
-	hitArea->size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
+	hitArea.size = Vector2(getWidth()*scale.x, getHeight()*scale.y);
 }
 
 
@@ -51,38 +49,36 @@ const float GUIControl::getAlpha() const {
 }
 
 bool GUIControl::contains(const Vector2& point) {
-	return hitArea->contains(point);
+	return projectedHitArea.contains(point);
 }
+
 
 const float GUIControl::getLayerDepth() const {
 	return layerDepth;
 }
 
-const HitArea* GUIControl::getHitArea() const {
-	return hitArea.get();
+const HitArea& GUIControl::getHitArea() const {
+	return hitArea;
 }
 
 
 void GUIControl::updateProjectedHitArea() {
 
 	Vector2 screenCords = getScreenPosition(translationMatrix());
-	projectedHitArea->position = screenCords;
-	projectedHitArea->size = hitArea->size * cameraZoom();
+	projectedHitArea.position = screenCords;
+	projectedHitArea.size = hitArea.size * cameraZoom();
 }
 
 const Vector2& GUIControl::getScreenPosition(Matrix viewProjectionMatrix) const {
 
-	Vector2 screenCords = XMVector2Transform(hitArea->position, viewProjectionMatrix);
+	Vector2 screenCords = XMVector2Transform(hitArea.position, viewProjectionMatrix);
 	return screenCords;
-
 }
 
 unique_ptr<HitArea> GUIControl::getScreenHitArea(Matrix viewProjectionMatrix) const {
 
 	Vector2 screenCords = getScreenPosition(viewProjectionMatrix);
-	unique_ptr<HitArea> projectedHitArea;
-	projectedHitArea.reset(new HitArea(screenCords, hitArea->size*scale));
-	return projectedHitArea;
+	return make_unique<HitArea>(screenCords, hitArea.size*scale);
 }
 
 void GUIControl::setOrigin(const Vector2 & org) {
@@ -114,6 +110,7 @@ void GUIControl::setLayerDepth(const float depth, bool frontToBack) {
 }
 
 void GUIControl::setHitArea(HitArea* newHitArea) {
-	hitArea.reset(newHitArea);
+	hitArea.position = newHitArea->position;
+	hitArea.size = newHitArea->size;
 }
 

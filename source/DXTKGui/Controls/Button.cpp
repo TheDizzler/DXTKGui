@@ -2,11 +2,8 @@
 #include "../GUIFactory.h"
 
 
-Button::Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+Button::Button(GUIFactory* factory, MouseController* mouseController,
 	const pugi::char_t* font) : Selectable(factory, mouseController) {
-
-
-	hitArea = make_unique<HitArea>();
 
 	position = Vector2(-1, -1);
 
@@ -51,13 +48,13 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 		newSize.y = labelSize.y + (textMargin + frameThickness) * 2;
 	}
 
-	hitArea->size = newSize;
-	projectedHitArea->size = newSize;
+	hitArea.size = newSize;
+	projectedHitArea.size = newSize;
 	width = newSize.x;
 	height = newSize.y;
 
-	frame->setDimensions(position, hitArea->size, frameThickness);
-	rectSprite->setDimensions(position, hitArea->size);
+	frame->setDimensions(position, hitArea.size, frameThickness);
+	rectSprite->setDimensions(position, hitArea.size);
 
 	setPosition(pos);
 	setLayerDepth(layerDepth);
@@ -70,7 +67,7 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 bool Button::updateSelect(double deltaTime) {
 
 	updateProjectedHitArea();
-	if (projectedHitArea->contains(mouse->getPosition())) {
+	if (projectedHitArea.contains(mouse->getPosition())) {
 		lastWasHover = true;
 		mouseHover = true;
 		if (!isPressed) {
@@ -114,7 +111,7 @@ bool Button::updateSelect(double deltaTime) {
 bool Button::update(double deltaTime) {
 
 	updateProjectedHitArea();
-	if (projectedHitArea->contains(mouse->getPosition())) {
+	if (projectedHitArea.contains(mouse->getPosition())) {
 		lastWasHover = true;
 		mouseHover = true;
 		if (!isPressed) {
@@ -213,20 +210,20 @@ void Button::setText(wstring text) {
 
 	// SET POSITION if dimensions have been set
 	if (position != Vector2(-1, -1))
-		setDimensions(position, hitArea->size, frame->getThickness());
+		setDimensions(position, hitArea.size, frame->getThickness());
 	else {
 		Vector2 labelSize = measureString();
 
-		if ((labelSize.x + (textMargin + frameThickness) * 2) > hitArea->size.x) {
-			hitArea->size.x = labelSize.x + (textMargin + frameThickness) * 2;
+		if ((labelSize.x + (textMargin + frameThickness) * 2) > hitArea.size.x) {
+			hitArea.size.x = labelSize.x + (textMargin + frameThickness) * 2;
 		}
-		if ((labelSize.y + (textMargin + frameThickness) * 2) > hitArea->size.y) {
-			hitArea->size.y = labelSize.y + (textMargin + frameThickness) * 2;
+		if ((labelSize.y + (textMargin + frameThickness) * 2) > hitArea.size.y) {
+			hitArea.size.y = labelSize.y + (textMargin + frameThickness) * 2;
 		}
 
-		projectedHitArea->size = hitArea->size;
-		width = hitArea->size.x;
-		height = hitArea->size.y;
+		projectedHitArea.size = hitArea.size;
+		width = hitArea.size.x;
+		height = hitArea.size.y;
 	}
 
 }
@@ -253,9 +250,9 @@ void Button::moveBy(const Vector2& moveVector) {
 
 	// really not sure why this is not needed... 
 	/*if (frame != NULL)
-		frame->moveBy(moveVector);*/
+	frame->moveBy(moveVector);*/
 	/*if (rectSprite != NULL)
-		rectSprite->moveBy(position);*/
+	rectSprite->moveBy(position);*/
 	//positionText();
 
 	//texturePanel->moveBy(position);
@@ -267,14 +264,24 @@ void Button::setPosition(const Vector2& pos) {
 	GUIControl::setPosition(pos);
 
 	if (oldpos == Vector2(-1, -1))
-		setDimensions(position, hitArea->size, frame->getThickness());
+		setDimensions(position, hitArea.size, frame->getThickness());
 
 	frame->setPosition(position);
-	rectSprite->setDimensions(position, hitArea->size);
+	rectSprite->setDimensions(position, hitArea.size);
 
 	positionText();
 
 	texturePanel->setPosition(position);
+}
+
+void Button::setOrigin(const Vector2& org) {
+	origin = org;
+	texturePanel->setOrigin(org);
+}
+
+void Button::setRotation(const float rot) {
+	rotation = rot;
+	texturePanel->setRotation(rotation);
 }
 
 void Button::setActionListener(ActionListener* iOnC) {
@@ -392,11 +399,24 @@ const int Button::getHeight() const {
 }
 
 const int Button::getScaledWidth() const {
-	return hitArea->size.x;
+	return hitArea.size.x;
 }
 
 const int Button::getScaledHeight() const {
-	return hitArea->size.y;
+	return hitArea.size.y;
+}
+
+void Button::setUnpressedColor(const Color& newColor) {
+	normalColor = newColor;
+	rectSprite->setTint(normalColor);
+}
+
+void Button::setPressedColor(const Color& newColor) {
+	selectedColor = newColor;
+}
+
+void Button::setHoverColor(const Color& newColor) {
+	hoverColor = newColor;
 }
 
 
@@ -427,7 +447,7 @@ void Button::setFont(const pugi::char_t* font) {
 
 
 /** **** ImageButton **** **/
-ImageButton::ImageButton(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+ImageButton::ImageButton(GUIFactory* factory, MouseController* mouseController,
 	unique_ptr<Sprite> buttonSprite, const pugi::char_t* font)
 	: Button(factory, mouseController, font) {
 
@@ -439,13 +459,13 @@ ImageButton::ImageButton(GUIFactory* factory, shared_ptr<MouseController> mouseC
 	Vector2 size = Vector2(normalSprite->getWidth(), normalSprite->getHeight());
 	width = size.x;
 	height = size.y;
-	hitArea.reset(new HitArea(Vector2::Zero, size));
+	hitArea.size = size;
 
 	setToUnpressedState();
 }
 
 
-ImageButton::ImageButton(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+ImageButton::ImageButton(GUIFactory* factory, MouseController* mouseController,
 	unique_ptr<Sprite> upButtonSprite, unique_ptr<Sprite> downButtonSprite,
 	const pugi::char_t* font)
 	: Button(factory, mouseController, font) {
@@ -459,7 +479,7 @@ ImageButton::ImageButton(GUIFactory* factory, shared_ptr<MouseController> mouseC
 	Vector2 size = Vector2(normalSprite->getWidth(), normalSprite->getHeight());
 	width = size.x;
 	height = size.y;
-	hitArea.reset(new HitArea(Vector2::Zero, size));
+	hitArea.size = size;
 
 	setToUnpressedState();
 }
@@ -490,7 +510,7 @@ void ImageButton::draw(SpriteBatch* batch) {
 	texturePanel->draw(batch);
 }
 
-void ImageButton::textureDraw(SpriteBatch * batch, ComPtr<ID3D11Device> device) {
+void ImageButton::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
 
 	batch->Draw(texture, normalSprite->getPosition(), &sourceRect,
 		tint, rotation, normalSprite->getOrigin(), scale, SpriteEffects_None, layerDepth);
@@ -583,7 +603,7 @@ void ImageButton::setToSelectedState() {
 
 
 /** ***** Animated Button ***** **/
-AnimatedButton::AnimatedButton(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+AnimatedButton::AnimatedButton(GUIFactory* factory, MouseController* mouseController,
 	shared_ptr<Animation> anim, Vector2 pos) : Selectable(factory, mouseController) {
 
 	animation = anim;
@@ -592,7 +612,8 @@ AnimatedButton::AnimatedButton(GUIFactory* factory, shared_ptr<MouseController> 
 		currentFrameIndex = 0;
 
 	position = pos;
-	hitArea.reset(new HitArea(position, Vector2(getWidth(), getHeight())));
+	hitArea.position = position;
+	hitArea.size = Vector2(getWidth(), getHeight());
 	center = Vector2(getWidth() / 2, getHeight() / 2);
 }
 
@@ -614,7 +635,7 @@ bool AnimatedButton::updateSelect(double deltaTime) {
 
 bool AnimatedButton::update(double deltaTime) {
 
-	if (hitArea->contains(mouse->getPosition())) {
+	if (hitArea.contains(mouse->getPosition())) {
 		//lastWasHover = true;
 		if (!isPressed) {
 			timeHovering += deltaTime;

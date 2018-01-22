@@ -76,7 +76,7 @@ public:
 /** A simple control to display various (text) items. */
 class ListBox : public GUIControl, public Texturizable {
 public:
-	ListBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	ListBox(GUIFactory* factory, MouseController* mouseController,
 		const Vector2& position, const int width,
 		size_t itemHeight = 32, const int maxItemsShown = 7);
 	virtual ~ListBox();

@@ -3,7 +3,7 @@
 
 
 LetterJammer::LetterJammer(GUIFactory* factory,
-	shared_ptr<MouseController> mouseController, Vector2 position,
+	MouseController* mouseController, Vector2 position,
 	wstring text, bool autoRun, const pugi::char_t* font)
 	: TextLabel(factory, mouseController, position, text, font, false) {
 
@@ -40,7 +40,7 @@ void LetterJammer::run(double deltaTime) {
 bool LetterJammer::update(double deltaTime) {
 
 	if (isHoverable) {
-		if (hitArea->contains(mouse->getPosition())) {
+		if (hitArea.contains(mouse->getPosition())) {
 			isHover = true;
 			if (!isPressed) {
 				if (!hasBeenSetHover) {
@@ -296,7 +296,7 @@ void ColorJammer::initialize(vector<LetterJam>& jams, LPVOID pvoid) {
 	for (int i = 0; i < jams.size(); ++i) {
 
 		Color newColor(Colors::Black);
-			// = Color(randColor(rng), randColor(rng), randColor(rng), 1);
+		// = Color(randColor(rng), randColor(rng), randColor(rng), 1);
 		Color endColor = Colors::Black;
 		State newState = State(randState(rng));
 		switch (newState) {
@@ -333,24 +333,24 @@ bool ColorJammer::run(double deltaTime, vector<LetterJam>& jams) {
 		times[i] += deltaTime;
 		//Color endColor = jams[i].tint;
 		/*switch (states[i]) {
-			case Red:
-				endColor.R(1);
-				break;
-			case RedReverse:
-				endColor.R(0);
-				break;
-			case Green:
-				endColor.G(1);
-				break;
-			case GreenReverse:
-				endColor.G(0);
-				break;
-			case Blue:
-				endColor.B(1);
-				break;
-			case BlueReverse:
-				endColor.B(0);
-				break;
+		case Red:
+		endColor.R(1);
+		break;
+		case RedReverse:
+		endColor.R(0);
+		break;
+		case Green:
+		endColor.G(1);
+		break;
+		case GreenReverse:
+		endColor.G(0);
+		break;
+		case Blue:
+		endColor.B(1);
+		break;
+		case BlueReverse:
+		endColor.B(0);
+		break;
 		}*/
 		jams[i].tint = Color::Lerp(startColors[i], endColors[i],
 			times[i] / speedChange);
@@ -402,7 +402,7 @@ bool ColorJammer::run(double deltaTime, vector<LetterJam>& jams) {
 
 
 
-		//states[i] = newState;
+			//states[i] = newState;
 			endColors[i] = newColor;
 			startColors[i] = jams[i].tint;
 		}

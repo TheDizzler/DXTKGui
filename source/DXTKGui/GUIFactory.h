@@ -24,17 +24,17 @@ public:
 	/** Required if a user wants to create their own controls. */
 	HWND getHWND();
 	/** Required if a user wants to create their own controls. */
-	shared_ptr<MouseController> getMouseController();
+	MouseController* getMouseController();
 
 	/** DeviceContext and SpriteBatch references are required
 		to create textures from a GUIControl (will probably refactor this). */
 	bool initialize(ComPtr<ID3D11Device> device,
 		ComPtr<ID3D11DeviceContext> devCon, ComPtr<IDXGISwapChain> swapChain,
-		SpriteBatch* batch, shared_ptr<MouseController> mouse,
+		SpriteBatch* batch, MouseController* mouse,
 		const char_t* assetManifestFile = NULL);
 
 	void reInitDevice(ComPtr<ID3D11Device> device,
-		ComPtr<ID3D11DeviceContext> devCon,	SpriteBatch* batch);
+		ComPtr<ID3D11DeviceContext> devCon, SpriteBatch* batch);
 
 	unique_ptr<FontSet> getFont(const char_t* fontName = "Default Font");
 	unique_ptr<Sprite> getSpriteFromAsset(const char_t* assetName);
@@ -43,6 +43,7 @@ public:
 	shared_ptr<AssetSet> const getAssetSet(const char_t* setName);
 
 	Line* createLine(const Vector2& position, const Vector2& size, Color lineColor = Color(0, 0, 0, 1));
+	Line* createLineBetween(const Vector2 pointA, const Vector2 pointB, Color lineColor = Color(0, 0, 0, 1));
 
 	RectangleSprite* createRectangle(const Vector2& position = Vector2::Zero,
 		const Vector2& size = Vector2::Zero, Color color = Color(1, 1, 1, 1));
@@ -69,7 +70,7 @@ public:
 		wstring text = L"", Color textColor = Color(1, 1, 1, 1),
 		bool autoRun = true, const char_t* fontName = "Default Font");
 
-/** Creates a button with no set text or position. */
+	/** Creates a button with no set text or position. */
 	Button* createButton(const char_t* fontName = "Default Font");
 	Button* createButton(const Vector2& position, const Vector2& size,
 		wstring text = L"", const char_t* fontName = "Default Font",
@@ -140,13 +141,10 @@ private:
 	HWND hwnd;
 	ComPtr<ID3D11Device> device;
 	ComPtr<ID3D11DeviceContext> deviceContext;
-	shared_ptr<MouseController> mouseController;
+	MouseController* mouseController;
 	unique_ptr<xml_document> docAssMan;
 
 	SpriteBatch* batch;
-   /** ID3D11ShaderResourceView is a ComPtr!
-	   This is used for solid color backgrounds and area fills. */
-	//ComPtr<ID3D11ShaderResourceView> whitePixel;
 
 	/* Creates an image button with only one image. */
 	Button* createOneImageButton(const char_t* buttonImage,

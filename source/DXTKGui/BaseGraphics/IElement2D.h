@@ -38,6 +38,8 @@ public:
 	virtual void setAlpha(const float alpha) = 0;
 	virtual void setLayerDepth(const float depth, bool frontToBack = true) = 0;
 
+	virtual bool contains(const Vector2& point) = 0;
+
 	virtual void draw(SpriteBatch* batch) = 0;
 
 };
@@ -46,7 +48,9 @@ class GraphicsAsset;
 interface Texturizable {
 public:
 
+	/* Call this when you want this object to be texturized. */
 	virtual unique_ptr<GraphicsAsset> texturize() = 0;
+	/* Called by GUIFactory::createTextureFromTexturizable(). Generally should not be called otherwise. */
 	virtual void textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device = NULL) = 0;
 
 	virtual void setPosition(const Vector2& position) = 0;

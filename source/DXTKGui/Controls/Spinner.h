@@ -8,7 +8,7 @@ class Spinner : public GUIControl, public Texturizable {
 	friend class SpinnerDownButtonListener;
 public:
 	/** Width does not include buttons. */
-	Spinner(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	Spinner(GUIFactory* factory, MouseController* mouseController,
 		const Vector2& pos, const size_t width, const size_t itemHeight, bool autoSize);
 	virtual ~Spinner();
 

@@ -18,6 +18,7 @@ public:
 	virtual void draw(SpriteBatch* batch) = 0;
 
 	virtual void setDimensions(const Vector2& position, const Vector2& size) = 0;
+	virtual void moveBy(const Vector2& moveVector) = 0;
 };
 
 
@@ -33,6 +34,7 @@ public:
 	virtual void draw(SpriteBatch* batch) override;
 
 	virtual void setDimensions(const Vector2& position, const Vector2& size) override;
+	virtual void moveBy(const Vector2& moveVector) override;
 
 private:
 	unique_ptr<RectangleFrame> frame;
@@ -69,6 +71,8 @@ public:
 	/* Input vector is NOT cleared after. */
 	void addControls(vector<Selectable*> controls);
 
+	virtual void moveBy(const Vector2& moveVector);
+
 	void controllerRemoved(ControllerSocketNumber controllerSocket, Joystick* joy);
 
 
@@ -76,7 +80,7 @@ private:
 	unique_ptr<Selector> selector;
 
 	Joystick* joystick = NULL;
-	//shared_ptr<MouseController> mouse = NULL;
+	//MouseController* mouse = NULL;
 	KeyboardController* keyController = NULL;
 
 	vector<Selectable*> controls;

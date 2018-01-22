@@ -5,12 +5,12 @@
 
 class ComboBox : public GUIControl, public Texturizable {
 public:
-	ComboBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	ComboBox(GUIFactory* factory, MouseController* mouseController,
 		const Vector2& position, const int width,
 		size_t itemHeight = 32, const int maxItemsShown = 7);
 	virtual ~ComboBox();
 
-	bool initialize(shared_ptr<FontSet> font, ListBox* listbox,
+	bool initialize(const pugi::char_t* fontName, ListBox* listbox,
 		const pugi::char_t* buttonAsset = "Combo Button Closed",
 		bool enumerateList = false, const int frameThickness = 2);
 

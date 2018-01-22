@@ -1,7 +1,7 @@
 #include "CheckBox.h"
 #include "../GUIFactory.h"
 
-CheckBox::CheckBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+CheckBox::CheckBox(GUIFactory* factory, MouseController* mouseController,
 	unique_ptr<Sprite> unchkdSprite, unique_ptr<Sprite> chckdSprite,
 	const pugi::char_t* font) : GUIControl(factory, mouseController) {
 
@@ -12,7 +12,7 @@ CheckBox::CheckBox(GUIFactory* factory, shared_ptr<MouseController> mouseControl
 	checkedSprite->setOrigin(Vector2(0, 0));
 	Vector2 size = Vector2(uncheckedSprite->getWidth(), uncheckedSprite->getHeight());
 
-	hitArea.reset(new HitArea(Vector2::Zero, size));
+	hitArea.size = size;
 
 	label.reset(guiFactory->createTextLabel(Vector2::Zero, L"", font));
 
@@ -31,7 +31,7 @@ void CheckBox::reloadGraphicsAsset() {
 	uncheckedSprite->reloadGraphicsAsset(guiFactory);
 	checkedSprite->reloadGraphicsAsset(guiFactory);
 	label->reloadGraphicsAsset();
-	
+
 	if (isClicked)
 		texture = checkedSprite->getTexture().Get();
 	else
@@ -42,8 +42,8 @@ void CheckBox::reloadGraphicsAsset() {
 bool CheckBox::update(double deltaTime) {
 
 	refreshed = false;
-	if (hitArea->contains(mouse->getPosition())
-		|| label->contains(mouse->getPosition())) {
+	if (hitArea.contains(mouse->getPosition())
+		/*|| label->contains(mouse->getPosition())*/) {
 
 		if (!isHover) {
 			isHover = true;

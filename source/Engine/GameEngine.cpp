@@ -96,7 +96,7 @@ bool GameEngine::initGFXAssets() {
 	xml_node guiAssetsNode = docAssMan->child("root").child("gui");
 	guiFactory = make_unique<GUIFactory>(hwnd, guiAssetsNode);
 	if (!guiFactory->initialize(device, deviceContext,
-		swapChain, batch.get(), mouse)) {
+		swapChain, batch.get(), mouse.get())) {
 
 		GameEngine::errorMessage(L"Failed to load GUIFactory", L"Fatal Error");
 		return false;
@@ -111,7 +111,7 @@ bool GameEngine::initGFXAssets() {
 bool GameEngine::initStage() {
 
 	game.reset(new GameManager(this));
-	if (!game->initializeGame(hwnd, device, mouse)) {
+	if (!game->initializeGame(hwnd, device)) {
 		GameEngine::errorMessage(L"Game Manager failed to load.", L"Critical Failure");
 		return false;
 	}

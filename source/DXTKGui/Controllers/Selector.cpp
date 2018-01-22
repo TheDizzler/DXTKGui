@@ -45,6 +45,11 @@ void ColorFlashSelector::setDimensions(const Vector2& pos, const Vector2& size) 
 	color2 = endColor;
 }
 
+void ColorFlashSelector::moveBy(const Vector2& moveVector) {
+
+	frame->moveBy(moveVector);
+}
+
 
 
 SelectorManager::SelectorManager() {
@@ -164,6 +169,15 @@ void SelectorManager::addControls(vector<Selectable*> controls) {
 		setSelected(0);
 	}
 }
+
+
+void SelectorManager::moveBy(const Vector2& moveVector) {
+	for (const auto& control : controls)
+		control->moveBy(moveVector);
+
+	selector->moveBy(moveVector);
+}
+
 
 void SelectorManager::controllerRemoved(
 	ControllerSocketNumber socketNumber, Joystick* joy) {

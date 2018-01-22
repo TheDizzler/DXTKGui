@@ -27,9 +27,8 @@ void MenuManager::setGameManager(GameManager* gm) {
 }
 
 
-bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mc) {
+bool MenuManager::initialize(ComPtr<ID3D11Device> device) {
 
-	mouse = mc;
 
 	{
 		Vector2 dialogPos, dialogSize;
@@ -77,12 +76,12 @@ bool MenuManager::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseContro
 
 	mainScreen.reset(new MainScreen(this));
 	mainScreen->setGameManager(game);
-	if (!mainScreen->initialize(device, mouse))
+	if (!mainScreen->initialize(device))
 		return false;
 
 	configScreen.reset(new ConfigScreen(this));
 	configScreen->setGameManager(game);
-	if (!configScreen->initialize(device, mouse))
+	if (!configScreen->initialize(device))
 		return false;
 	configScreen->update(0);
 
@@ -230,9 +229,8 @@ MainScreen::~MainScreen() {
 }
 
 
-bool MainScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mc) {
+bool MainScreen::initialize(ComPtr<ID3D11Device> device) {
 
-	mouse = mc;
 	selectorManager.initialize(make_unique<ColorFlashSelector>(guiFactory.get()));
 	//selectorManager.initialize(guiFactory.get());
 	Joystick* nextJoy = NULL;
@@ -383,7 +381,7 @@ ConfigScreen::~ConfigScreen() {
 
 int MARGIN = 10;
 int itemHeight = 32;
-bool ConfigScreen::initialize(ComPtr<ID3D11Device> device, shared_ptr<MouseController> mouse) {
+bool ConfigScreen::initialize(ComPtr<ID3D11Device> device) {
 
 	Vector2 controlPos = Vector2(50, 50);
 	 //Labels for displaying pressed info

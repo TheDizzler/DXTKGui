@@ -1,9 +1,7 @@
 #include "GraphicsAsset.h"
+#include <DDSTextureLoader.h>
 #include "../StringHelper.h"
 
-
-GraphicsAsset::GraphicsAsset() {
-}
 
 GraphicsAsset::~GraphicsAsset() {
 
@@ -21,7 +19,6 @@ GraphicsAsset::~GraphicsAsset() {
 }
 
 
-#include <DDSTextureLoader.h>
 bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const pugi::char_t* asset,
 	const wchar_t* texturefileName, const Vector2& org, bool showMessageBox) {
 

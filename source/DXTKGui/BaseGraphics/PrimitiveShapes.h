@@ -33,6 +33,7 @@ public:
 	void setDimensions(const Vector2& position, const Vector2& size,
 		int frameThickness = 2);
 	void setSize(const Vector2& size);
+	void setFrameThickness(int frameThickness);
 	void refreshDimensions();
 
 	virtual unique_ptr<GraphicsAsset> texturize() override;
@@ -92,7 +93,7 @@ private:
 	Color tint = Colors::Black;
 	int frameThickness = 2;
 	float layerDepth = .9f;
-	unique_ptr<HitArea> hitArea;
+	HitArea hitArea;
 	int height;
 	int width;
 
@@ -135,7 +136,9 @@ public:
 	/* bool frontToBack has no effect in TriangleFrame. */
 	virtual void setLayerDepth(const float depth, bool frontToBack = true) override;
 
-	virtual void draw(SpriteBatch * batch) override;
+	virtual void draw(SpriteBatch* batch) override;
+
+	virtual bool contains(const Vector2& point) override;
 
 private:
 	ComPtr<ID3D11ShaderResourceView> pixel;
@@ -151,6 +154,7 @@ private:
 	float layerDepth = .9f;
 	Vector2 scale = Vector2(1, 1);
 	Color tint;
+
 };
 
 

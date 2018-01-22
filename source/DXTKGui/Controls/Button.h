@@ -9,7 +9,7 @@ class Button : public Selectable, public Texturizable {
 
 public:
 
-	Button(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	Button(GUIFactory* factory, MouseController* mouseController,
 		const pugi::char_t* font);
 	virtual ~Button();
 
@@ -39,25 +39,26 @@ public:
 	void setTextOffset(const Vector2& unpressedOffset, const Vector2& pressedOffset);
 	virtual void moveBy(const Vector2& moveVector) override;
 	/* Position is topleft of button. */
-	virtual void setPosition(const Vector2& moveVector) override;
+	virtual void setPosition(const Vector2& newPosition) override;
+	virtual void setOrigin(const Vector2& origin) override;
+	virtual void setRotation(const float rotation) override;
 	virtual const Vector2& getPosition() const override;
 
 	virtual void setLayerDepth(float newDepth, bool frontToBack = true) override;
 	virtual void setScale(const Vector2& scale) override;
 	/** NOTE: This DOES NOT return scaled width!
-		Use getScaledWidth(). */
+	Use getScaledWidth(). */
 	virtual const int getWidth() const override;
 	/** NOTE: This DOES NOT return scaled height!!
-		Use getScaledHeight(). */
+	Use getScaledHeight(). */
 	virtual const int getHeight() const override;
 
 	const int getScaledWidth() const;
 	const int getScaledHeight() const;
 
-	/** Colors for imageless button. */
-	Color normalColor = Color(1, 1, 1, 1);
-	Color hoverColor = Color(1, .75, 0, 1);
-	Color selectedColor = Color(1, 0, .4, 1);
+	virtual void setUnpressedColor(const Color& newColor);
+	virtual void setPressedColor(const Color& newColor);
+	virtual void setHoverColor(const Color& newColor);
 
 	/** Colors for text on button. */
 	Color normalColorText = Color(0, 0, 0, 1);
@@ -105,6 +106,10 @@ protected:
 	virtual void setToHoverState();
 	virtual void setToSelectedState();
 
+	/** Colors for imageless button. */
+	Color normalColor = Color(1, 1, 1, 1);
+	Color hoverColor = Color(1, .75, 0, 1);
+	Color selectedColor = Color(1, 0, .4, 1);
 
 	/* Offsets textlabel position.*/
 	Vector2 unpressedTextOffset = Vector2(-2, 0);
@@ -127,13 +132,13 @@ protected:
 
 
 /** A button created with dds files. Requires only an Unpressed image (upButton).
-	Pressed button image (downButton) is optional. Defaults to tinting image
-	with Button::selectedColor if no downButton is used. */
+Pressed button image (downButton) is optional. Defaults to tinting image
+with Button::selectedColor if no downButton is used. */
 class ImageButton : public Button {
 public:
-	ImageButton(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	ImageButton(GUIFactory* factory, MouseController* mouseController,
 		unique_ptr<Sprite> buttonSprite, const pugi::char_t* font);
-	ImageButton(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	ImageButton(GUIFactory* factory, MouseController* mouseController,
 		unique_ptr<Sprite> upButtonSprite,
 		unique_ptr<Sprite> downButtonSprite, const pugi::char_t* font);
 	virtual ~ImageButton();
@@ -171,7 +176,7 @@ private:
 
 class AnimatedButton : public Selectable {
 public:
-	AnimatedButton(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	AnimatedButton(GUIFactory* factory, MouseController* mouseController,
 		shared_ptr<Animation> animation, Vector2 position);
 	virtual ~AnimatedButton();
 

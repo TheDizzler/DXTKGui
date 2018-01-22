@@ -1,7 +1,7 @@
 #include "ComboBox.h"
 #include "../GUIFactory.h"
 
-ComboBox::ComboBox(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+ComboBox::ComboBox(GUIFactory* factory, MouseController* mouseController,
 	const Vector2& pos, const int len, size_t itemHeight, const int maxItemsShown)
 	: GUIControl(factory, mouseController) {
 
@@ -19,7 +19,7 @@ ComboBox::~ComboBox() {
 
 }
 
-bool ComboBox::initialize(shared_ptr<FontSet> fnt,
+bool ComboBox::initialize(const pugi::char_t* fontName,
 	ListBox* lstBx, const pugi::char_t* buttonName,
 	bool enumerateList, const int frameThickness) {
 
@@ -39,7 +39,7 @@ bool ComboBox::initialize(shared_ptr<FontSet> fnt,
 	listBox->setActionListener(new ListBoxListener(this));
 
 	selectedLabel.reset(guiFactory->createTextLabel(
-		Vector2(position.x + textMarginX, position.y + textMarginY)));
+		Vector2(position.x + textMarginX, position.y + textMarginY), L"", fontName));
 	selectedLabel->setActionListener(new SelectedOnClick(this));
 
 	selectedBackgroundSprite.reset(guiFactory->createRectangle(position,

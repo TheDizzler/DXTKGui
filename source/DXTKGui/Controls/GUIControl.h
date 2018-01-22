@@ -11,10 +11,10 @@ interface GUIControl : public IElement2D {
 public:
 
 	GUIControl(GUIFactory* factory,
-		shared_ptr<MouseController> mouseController) {
+		MouseController* mouseController) {
 		guiFactory = factory;
 		mouse = mouseController;
-		projectedHitArea.reset(new HitArea(Vector2::Zero, Vector2::Zero));
+		
 
 		translationMatrix = [&]() -> Matrix { return Matrix::Identity; };
 		cameraZoom = [&]() -> float { return 1; };
@@ -58,7 +58,7 @@ public:
 	virtual const int getHeight() const = 0;
 	virtual const float getLayerDepth() const override;
 
-	const HitArea* getHitArea() const;
+	const HitArea& getHitArea() const;
 
 	/** Usage example:
 		control->setMatrixFunction([&]() -> Matrix { return camera->translationMatrix(); }); */
@@ -78,7 +78,7 @@ public:
 	virtual const Vector2& getScreenPosition(Matrix viewProjectionMatrix) const;
 	virtual unique_ptr<HitArea> getScreenHitArea(Matrix viewProjectionMatrix) const;
 
-	bool contains(const Vector2& point);
+	virtual bool contains(const Vector2& point) override;
 
 	/** Action to perform when mouse button released over control. */
 	virtual void onClick() = 0;
@@ -98,9 +98,9 @@ public:
 protected:
 	function<Matrix()> translationMatrix;
 	function<float()> cameraZoom;
-	unique_ptr<HitArea> hitArea;
+	HitArea hitArea;
 
-	unique_ptr<HitArea> projectedHitArea;
+	HitArea projectedHitArea;
 
 	Vector2 position = Vector2::Zero;
 	Vector2 scale = Vector2(1, 1);
@@ -119,7 +119,7 @@ protected:
 
 
 	GUIFactory* guiFactory;
-	shared_ptr<MouseController> mouse;
+	MouseController* mouse;
 
 };
 
@@ -129,7 +129,7 @@ protected:
 		Not actually implemented.... */
 interface GUIControlBox : public GUIControl {
 public:
-	GUIControlBox(GUIFactory* factory, shared_ptr<MouseController> mouseController)
+	GUIControlBox(GUIFactory* factory, MouseController* mouseController)
 		: GUIControl(factory, mouseController) {
 	}
 	virtual size_t addControl(unique_ptr<GUIControl> control) = 0;
@@ -142,7 +142,7 @@ public:
 /** A GUIControl that can be used in a SelectionManager. */
 interface Selectable : public GUIControl {
 public:
-	Selectable(GUIFactory* factory, shared_ptr<MouseController> mouseController)
+	Selectable(GUIFactory* factory, MouseController* mouseController)
 		: GUIControl(factory, mouseController) {
 	}
 	virtual bool updateSelect(double deltaTime) = 0;

@@ -6,17 +6,20 @@
 class TexturePanel : public GUIControl {
 public:
 
-	TexturePanel(GUIFactory* factory, shared_ptr<MouseController> mouseController,
+	TexturePanel(GUIFactory* factory, MouseController* mouseController,
 		ScrollBar* scrllbr);
 	virtual ~TexturePanel();
 
 	
 
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);
+	//void setVerticalScrollBarPosition(const Vector2& newPos);
 	void alwaysShowScrollBar(bool alwaysShow);
+	//void enableScrollBar(bool enable);
 
-	/** Do nothing. */
 	void setTexture(unique_ptr<GraphicsAsset> gfxAsset);
+	//void setTexture(unique_ptr<GraphicsAsset> gfxAsset, const Vector2& addMargins);
+	//void setTexture(unique_ptr<GraphicsAsset> gfxAsset, RECT& viewableArea);
 
 	virtual void reloadGraphicsAsset() override;
 
@@ -71,7 +74,7 @@ private:
 	/* Portion of panel that is visible. */
 	RECT viewRect;
 
-	unique_ptr<ScrollBar> verticalScrollBar;
+	unique_ptr<ScrollBar> verticalScrollBar = NULL;
 	bool alwaysDisplayScrollBar = false;
 	bool showScrollBar = false;
 	bool neverShowScrollBar = false;

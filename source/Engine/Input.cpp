@@ -3,6 +3,7 @@
 
 unique_ptr<PlayerSlotManager> slotManager;
 unique_ptr<KeyboardController> keys;
+unique_ptr<MouseController> mouse;
 
 bool endAllThreadsNow = false;
 bool slotManagerThreadRunning = false;
@@ -22,7 +23,7 @@ Input::~Input() {
 bool Input::initRawInput(HWND hwnd) {
 
 	keys = make_unique<KeyboardController>();
-	mouse = make_shared<MouseController>(hwnd);
+	mouse = make_unique<MouseController>(hwnd);
 
 	return true;
 }

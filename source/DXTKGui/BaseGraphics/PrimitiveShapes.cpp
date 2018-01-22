@@ -35,7 +35,7 @@ const Vector2 RectangleSprite::getSize() const {
 void RectangleSprite::moveBy(const Vector2& moveVector) {
 
 	position += moveVector;
-	hitArea->position = position;
+	hitArea.position = position;
 }
 
 
@@ -45,7 +45,6 @@ RectangleFrame::RectangleFrame(GraphicsAsset* pixelAsset, GUIFactory* gui) {
 	pixel = pixelAsset->getTexture();
 	guiFactory = gui;
 
-	hitArea = make_unique<HitArea>();
 	texturePanel.reset(guiFactory->createPanel());
 }
 
@@ -72,7 +71,7 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	// upper horizontal frame
 	frameHorizontal.left = 0;
 	frameHorizontal.top = 0;
-	frameHorizontal.right = width* scale.x;
+	frameHorizontal.right = width * scale.x;
 	frameHorizontal.bottom = frameThickness; // thickness of frame
 	frameTopPos = position;
 
@@ -80,7 +79,7 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	// lower horizontal frame
 
 	frameBottomPos = frameTopPos;
-	frameBottomPos.y += height* scale.y - frameThickness;
+	frameBottomPos.y += height * scale.y - frameThickness;
 	// frame sticks out passed rectangle area; (-frameThickness) pulls it back in
 
 	// left vertical frame
@@ -96,15 +95,18 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	frameRightPos.x += size.x * scale.x - frameThickness;
 	// frame sticks out passed rectangle area; (-frameThickness) pulls it back in
 
-	hitArea->position = pos;
-	hitArea->size = size * scale;
+	hitArea.position = pos;
+	hitArea.size = size * scale;
 
 	refreshTexture = true;
 }
 
 void RectangleFrame::setSize(const Vector2& size) {
-
 	setDimensions(frameTopPos, size, frameThickness);
+}
+
+void RectangleFrame::setFrameThickness(int frmThcknss) {
+	setDimensions(frameTopPos, Vector2(width, height), frmThcknss);
 }
 
 bool cyberGrow = true; // cybergrow will only function if not using texture to draw
@@ -119,8 +121,8 @@ void RectangleFrame::refreshDimensions() {
 		frameRightPos.x += getWidth() *scale.x - frameThickness;
 
 	}
-	hitArea->size = Vector2(width*scale.x, height*scale.y);
-	hitArea->position = frameTopPos;
+	hitArea.size = Vector2(width*scale.x, height*scale.y);
+	hitArea.position = frameTopPos;
 
 	refreshTexture = true;
 }
@@ -180,7 +182,7 @@ void RectangleFrame::setPosition(const Vector2& newPosition) {
 	frameLeftPos = newPosition;
 	frameRightPos = newPosition;
 	frameRightPos.x += getWidth() - frameThickness;
-	hitArea->position = newPosition;
+	hitArea.position = newPosition;
 	texturePanel->setPosition(newPosition);
 }
 
@@ -190,7 +192,7 @@ void RectangleFrame::moveBy(const Vector2& moveVector) {
 	frameBottomPos += moveVector;
 	frameLeftPos += moveVector;
 	frameRightPos += moveVector;
-	hitArea->position += moveVector;
+	hitArea.position += moveVector;
 	texturePanel->moveBy(moveVector);
 }
 
@@ -221,11 +223,11 @@ const Vector2& RectangleFrame::getPosition() const {
 }
 
 const int RectangleFrame::getWidth() const {
-	return hitArea->size.x;
+	return hitArea.size.x;
 }
 
 const int RectangleFrame::getHeight() const {
-	return hitArea->size.y;
+	return hitArea.size.y;
 }
 
 const float RectangleFrame::getLayerDepth() const {
@@ -300,9 +302,11 @@ void RectangleFrame::setLayerDepth(const float depth, bool frontToBack) {
 
 bool RectangleFrame::contains(const Vector2& point) {
 
-	return hitArea->contains(point);
+	return hitArea.contains(point);
 }
 /** **** END RECTANGLEFRAME ****** **/
+
+
 
 
 
@@ -321,10 +325,10 @@ Line::Line(GraphicsAsset* pixelAsset,
 }
 
 Line::~Line() {
-	/*wostringstream woo;
-	woo << L"\n\n*** Line Pixel ***\n" << endl;
-	woo << "\t\tResource release #: " << pixel.Reset() << endl;
-	OutputDebugString(woo.str().c_str());*/
+	//wostringstream woo;
+	//woo << L"\n\n*** Line Pixel ***" << endl;
+	//woo << "\t\tResource release #: " << pixel.Reset() << endl;
+	//OutputDebugString(woo.str().c_str());
 }
 
 const float Line::getRotation() const {
@@ -436,6 +440,10 @@ void TriangleFrame::draw(SpriteBatch* batch) {
 	batch->Draw(pixel.Get(), point3, &lineRECT3,
 		tint, angle3to1, originLine3, scale,
 		SpriteEffects_None, layerDepth);
+}
+
+bool TriangleFrame::contains(const Vector2& point) {
+	return false;
 }
 
 

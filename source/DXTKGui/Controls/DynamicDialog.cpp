@@ -4,10 +4,9 @@
 #include <comdef.h>
 
 DynamicDialog::DynamicDialog(GUIFactory* factory,
-	shared_ptr<MouseController> mouseController) : Dialog(factory, mouseController) {
+	MouseController* mouseController) : Dialog(factory, mouseController) {
 
 	texturePanel.reset(guiFactory->createPanel());
-	hitArea = make_unique<HitArea>(Vector2::Zero, Vector2::Zero);
 }
 
 DynamicDialog::~DynamicDialog() {
