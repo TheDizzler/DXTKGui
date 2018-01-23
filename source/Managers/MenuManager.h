@@ -158,7 +158,6 @@ public:
 	void confirmExit();
 
 private:
-	shared_ptr<MouseController> mouse;
 	Screen* currentScreen = NULL;
 	Screen* switchTo = NULL;
 	unique_ptr<MainScreen> mainScreen;
@@ -250,7 +249,6 @@ public:
 	virtual void controllerRemoved(ControllerSocketNumber controllerSocket,
 		PlayerSlotNumber slotNumber) override;
 	virtual void newController(shared_ptr<Joystick> newStick) override;
-	shared_ptr<MouseController> mouse;
 private:
 	
 	unique_ptr<DynamicDialog> dynamicDialog;

@@ -60,7 +60,6 @@ private:
 
 
 	GameEngine* gameEngine;
-	shared_ptr<MouseController> mouse;
 	ComPtr<ID3D11Device> device;
 
 

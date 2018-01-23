@@ -130,6 +130,8 @@ How to ScreenTransition:
 ##KNOWN ISSUES:
 >- controls overlapping each other may all call their onClick functions instead of the just the topmost
 >- when a control with a scrollbar has items removed from it dynamically, the scrubber doesn't resize properly
+>- device may not be switiching?
+>- when using keyboard selector and mouse is over a selectable control, moused-over control will stay selected
 
 ##TODO:
 >- Enable 2D array of selectable controls in SelectorManager. Currently, SelectorManager only provides a single line of selectable controls. 
