@@ -247,6 +247,10 @@ void TextLabel::setLayerDepth(const float newDepth, bool frontToBack) {
 
 
 
+bool TextLabel::contains(const Vector2 & point) const {
+	return hitArea.contains(mouse->getPosition());
+}
+
 const Vector2& TextLabel::getPosition() const {
 	return position;
 }

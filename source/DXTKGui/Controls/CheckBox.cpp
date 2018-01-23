@@ -42,8 +42,7 @@ void CheckBox::reloadGraphicsAsset() {
 bool CheckBox::update(double deltaTime) {
 
 	refreshed = false;
-	if (hitArea.contains(mouse->getPosition())
-		/*|| label->contains(mouse->getPosition())*/) {
+	if (hitArea.contains(mouse->getPosition()) || label->contains(mouse->getPosition())) {
 
 		if (!isHover) {
 			isHover = true;

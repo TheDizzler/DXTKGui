@@ -21,6 +21,14 @@
 			<sprite name="ScrollBar Down" x="64" y="64" width="32" height="32" />
 			<sprite name="ScrollBar Down Pressed" x="64" y="96" width="32" height="32" />
 
+			<sprite name="CheckBox Checked" x="96" y="0" width="32" height="32" />
+			<sprite name="CheckBox Unchecked" x="96" y="32" width="32" height="32" />
+			<sprite name="CheckBox Checked B" x="128" y="0" width="32" height="32" />
+			<sprite name="CheckBox Unchecked B" x="128" y="32" width="32" height="32" />
+			
+			
+			
+
 			<spriteset name="Dynamic Dialog">
 				<sprite name="Top Left Corner" x="0" y="17" width="16" height="16" />
 				<sprite name="Top Center" x="20" y="17" width="16" height="16" />
@@ -55,10 +63,7 @@
 		<sprite name="Button Up" file="button up (256x64).dds" />
 		<sprite name="Button Down" file="button down (256x64).dds" />
 
-		<sprite name="CheckBox Unchecked B" file="CheckBox Unchecked.dds" />
-		<sprite name="CheckBox Checked B" file="CheckBox Checked.dds" />
-		<sprite name="CheckBox Unchecked" file="CheckBox Unchecked White.dds" />
-		<sprite name="CheckBox Checked" file="CheckBox Checked White.dds" />
+		
 
 
 		<!-- Excessive buttons are excessive -->
