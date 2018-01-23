@@ -25,7 +25,7 @@ Email: tgillon.sdk@gmail.com
 	Start Win32 project
 		set to window application, empty project, no SDL
 
-	Install latest DirectXTK_desktop_2015 (2017.6.21.1 as of writing)
+	Install latest DirectXTK_desktop_2015 (2017.12.13.1 as of writing)
 	Install pugixml							(1.8.5 as of writing)
 
 	Copy /source and /assets
