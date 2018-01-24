@@ -10,7 +10,7 @@ This tool kit requires DirectXTK and PugiXML.
 ### The primary goal of this project was to have GUI controls at my fingertips with minimal hassle. This was never meant to be a professional looking, visually appealing framework, although I am trying to allow every control to have custom, imported graphics.
 
 
-Included in this project is my custom 2D game engine using DirectX Tool Kit and the test project for trying out all the features.
+~~Included in this project is my custom 2D game engine using DirectX Tool Kit and the test project for trying out all the features.~~ Moved to another repo. This ONLY has the toolkit gui code.
 
 
 You are free to use this code in anyway you see fit. However, if you do, I would really appreciate if you dropped me a line letting me know. And, of course, if you have any bug reports, suggestions, or requests, please send them along! Thanks!
@@ -130,7 +130,6 @@ How to ScreenTransition:
 ##KNOWN ISSUES:
 >- controls overlapping each other may all call their onClick functions instead of the just the topmost
 >- when a control with a scrollbar has items removed from it dynamically, the scrubber doesn't resize properly
->- device may not be switiching?
 >- when using keyboard selector and mouse is over a selectable control, moused-over control will stay selected
 
 ##TODO:
