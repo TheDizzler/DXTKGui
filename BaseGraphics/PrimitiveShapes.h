@@ -69,7 +69,7 @@ public:
 	/* bool frontToBack has no effect in RectangleFrame. */
 	virtual void setLayerDepth(const float depth, bool frontToBack = true) override;
 
-	bool contains(const Vector2& point);
+	virtual bool contains(const Vector2& point) override;
 private:
 	ComPtr<ID3D11ShaderResourceView> pixel;
 
@@ -138,6 +138,7 @@ public:
 
 	virtual void draw(SpriteBatch* batch) override;
 
+	/* Returns false for now. */
 	virtual bool contains(const Vector2& point) override;
 
 private:

@@ -13,13 +13,9 @@ public:
 	
 
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);
-	//void setVerticalScrollBarPosition(const Vector2& newPos);
 	void alwaysShowScrollBar(bool alwaysShow);
-	//void enableScrollBar(bool enable);
 
 	void setTexture(unique_ptr<GraphicsAsset> gfxAsset);
-	//void setTexture(unique_ptr<GraphicsAsset> gfxAsset, const Vector2& addMargins);
-	//void setTexture(unique_ptr<GraphicsAsset> gfxAsset, RECT& viewableArea);
 
 	virtual void reloadGraphicsAsset() override;
 
