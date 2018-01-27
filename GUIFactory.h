@@ -16,9 +16,6 @@ using namespace pugi;
 
 class GUIFactory {
 public:
-	/** If this constructor is used, the assetManifest file MUST be set in initialize(). */
-	/*GUIFactory(HWND h);
-	GUIFactory(HWND hwnd, xml_node guiAssetsNode);*/
 	virtual ~GUIFactory();
 
 	/** Required if a user wants to create their own controls. */

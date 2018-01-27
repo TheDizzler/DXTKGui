@@ -68,15 +68,13 @@ bool Button::updateSelect(double deltaTime) {
 
 	updateProjectedHitArea();
 	if (projectedHitArea.contains(mouse->getPosition())) {
-		//lastWasHover = true;
 		mouseHover = true;
 		if (!isPressed) {
 			if (!hasBeenSetHover) {
 				onHover();
 			}
 		}
-	} else if (mouseHover/*lastWasHover*/) {
-		//lastWasHover = false;
+	} else if (mouseHover) {
 		mouseHover = false;
 	}
 

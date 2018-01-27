@@ -123,7 +123,7 @@ protected:
 
 	bool isLetterJammer = false;
 	bool mouseHover = false;
-	bool lastWasHover = false;
+	//bool lastWasHover = false;
 	/** Flag to prevent continuous texture refresh. */
 	bool hasBeenSetUnpressed = false;
 	/** Flag to prevent continuous texture refresh. */
