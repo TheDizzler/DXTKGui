@@ -56,7 +56,8 @@ public:
 	bool middleClicked();
 	/** On button down. */
 	bool middlePressed();
-
+	/* Test to fix dissappearing button clicks after full screen change.
+		Seems none functional. */
 	void resetPressed();
 
 private:
@@ -77,4 +78,27 @@ private:
 	bool isRightPressed = false;
 	bool isMiddleClicked = false;
 	bool isMiddlePressed = false;
+};
+
+/* From SquareWarz. May be useful. */
+interface MouseSelectableObject {
+public:
+	virtual bool contains(const Vector2& point) = 0;
+	virtual void mouseListener(shared_ptr<MouseController> mouse) = 0;
+
+	virtual const float getLayerDepth() const = 0;
+
+	/** Action to perform when mouse button released over control. */
+	virtual void onClick() = 0;
+	/** Action to perform when mouse button held over control. */
+	virtual void onPress() = 0;
+	/** Action to perform when mouse over control. */
+	virtual void onHover() = 0;
+	/** Action to perform to return control back to neutral state. */
+	virtual void resetState() = 0;
+
+	virtual bool clicked() = 0;
+	/* Is Mouse Button down over control? */
+	virtual bool pressed() = 0;
+	virtual bool hovering() = 0;
 };
