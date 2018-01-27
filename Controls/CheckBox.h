@@ -31,7 +31,7 @@ public:
 	virtual bool pressed() override;
 	virtual bool hovering() override;
 
-	Color normalColor = Color(Vector3(0, 0, 0));
+	Color normalColor = Color(Vector3(1, 1, 1));
 	Color hoverColor = Color(Vector4(.5, .75, 1, 1));
 
 	/** Colors for text beside checkbox. */
@@ -63,10 +63,13 @@ public:
 		if (actionListener != NULL)
 			(actionListener->*onClickFunction)(this, isClicked);
 
-		if (isClicked)
-			texture = checkedSprite->getTexture().Get();
-		else
-			texture = uncheckedSprite->getTexture().Get();
+		if (isClicked) {
+			texture = checkedSprite->getTexture();
+			currentRECT = checkedSprite->getRect();
+		} else {
+			texture = uncheckedSprite->getTexture();
+			currentRECT = uncheckedSprite->getRect();
+		}
 		refreshed = true;
 	}
 
@@ -93,7 +96,9 @@ private:
 	OnClickFunction onPressFunction;
 	OnClickFunction onHoverFunction;
 
-	ID3D11ShaderResourceView* texture;
+	ComPtr<ID3D11ShaderResourceView> texture;
+	RECT currentRECT;
+
 	/** Helper function to center text in check sprite. */
 	void centerText();
 

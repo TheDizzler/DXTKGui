@@ -7,15 +7,15 @@
 bool GUIFactory::initialized = false;
 
 
-GUIFactory::GUIFactory(HWND h) {
-
-	hwnd = h;
-}
-
-GUIFactory::GUIFactory(HWND h, pugi::xml_node guiAssets) {
-	hwnd = h;
-	guiAssetsNode = guiAssets;
-}
+//GUIFactory::GUIFactory(HWND h) {
+//
+//	hwnd = h;
+//}
+//
+//GUIFactory::GUIFactory(HWND h, pugi::xml_node guiAssets) {
+//	hwnd = h;
+//	guiAssetsNode = guiAssets;
+//}
 
 
 GUIFactory::~GUIFactory() {
@@ -32,17 +32,31 @@ MouseController* GUIFactory::getMouseController() {
 }
 
 
-bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
+bool GUIFactory::initialize(HWND h, ComPtr<ID3D11Device> dev,
 	ComPtr<ID3D11DeviceContext> devCon, ComPtr<IDXGISwapChain> sChain,
 	SpriteBatch* sBatch, MouseController* mouse, const char_t* assetManifestFile) {
 
+	hwnd = h;
 
-	if (assetManifestFile != NULL) {
-	// get graphical assets from xml file
+	if (assetManifestFile == NULL) {
+		// get graphical assets from default file
+
+		docAssMan.reset(new pugi::xml_document());
+		if (!docAssMan->load_file(GUIAssets::assetManifestFile)) {
+			StringHelper::reportError(
+				L"Could not read AssetManifest file!",
+				L"Fatal Read Error!", false);
+			return false;
+		}
+
+			guiAssetsNode = docAssMan->child("root").child("gui");
+	} else {
+		// get graphical assets from custom xml file
 		docAssMan.reset(new pugi::xml_document());
 		if (!docAssMan->load_file(assetManifestFile)) {
-			MessageBox(0, L"Could not read AssetManifest file!",
-				L"Fatal Read Error!", MB_OK);
+			StringHelper::reportError(
+			 L"Could not read AssetManifest file!",
+				L"Fatal Read Error!", false);
 			return false;
 		}
 
@@ -55,8 +69,8 @@ bool GUIFactory::initialize(ComPtr<ID3D11Device> dev,
 	batch = sBatch;
 
 	if (!getGUIAssetsFromXML()) {
-		MessageBox(0, L"Sprite retrieval from Asset Manifest failed.",
-			L"Epic failure", MB_OK);
+		StringHelper::reportError(L"Sprite retrieval from Asset Manifest failed.",
+			L"Epic failure", false);
 		return false;
 	}
 
@@ -151,7 +165,7 @@ unique_ptr<Sprite> GUIFactory::getSpriteFromAsset(const char_t* assetName) {
 	return move(sprite);
 }
 
-shared_ptr<Animation> GUIFactory::getAnimation(const char_t* animationName) {
+Animation* GUIFactory::getAnimation(const char_t* animationName) {
 
 	if (animationMap.find(animationName) == animationMap.end()) {
 		wostringstream ws;
@@ -161,7 +175,7 @@ shared_ptr<Animation> GUIFactory::getAnimation(const char_t* animationName) {
 		return NULL;
 	}
 
-	return animationMap[animationName];
+	return animationMap[animationName].get();
 }
 
 
@@ -614,7 +628,7 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromTexturizable(
 
 
 	/** Create a new viewport incase the current one is not normal.*/
-	const UINT MAX_VIEWPORTS = 16;
+	/*const UINT MAX_VIEWPORTS = 16;
 	UINT numViewports = MAX_VIEWPORTS;
 	D3D11_VIEWPORT oldViewports[MAX_VIEWPORTS];
 	deviceContext->RSGetViewports(&numViewports, oldViewports);
@@ -627,7 +641,7 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromTexturizable(
 	textureViewport.MinDepth = 0.0f;
 	textureViewport.MaxDepth = 1.0f;
 	deviceContext->RSSetViewports(1, &textureViewport);
-	batch->SetViewport(textureViewport);
+	batch->SetViewport(textureViewport);*/
 
 	if (autoBatchDraw) {
 		/* This is supposed to be the bare minimum. If you need more you should
@@ -644,8 +658,8 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromTexturizable(
 	textureRenderTargetView.Reset();
 	deviceContext->Flush();
 	deviceContext->OMSetRenderTargets(1, oldRenderTargetView.GetAddressOf(), nullptr);
-	deviceContext->RSSetViewports(numViewports, oldViewports);
-	batch->SetViewport(oldViewports[0]);
+	//deviceContext->RSSetViewports(numViewports, oldViewports);
+	//batch->SetViewport(oldViewports[0]);
 
 	textureRenderTargetView.Reset();
 	oldRenderTargetView.Reset();
@@ -926,9 +940,9 @@ bool GUIFactory::getGUIAssetsFromXML() {
 
 			}
 
-			shared_ptr<Animation> animationAsset;
+			unique_ptr<Animation> animationAsset;
 			animationAsset.reset(new Animation(masterAsset->getTexture(), frames, name));
-			animationMap[name] = animationAsset;
+			animationMap[name] = move(animationAsset);
 		}
 
 		// parse all single sprites from spritesheet

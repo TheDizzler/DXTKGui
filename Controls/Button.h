@@ -128,6 +128,7 @@ protected:
 	bool hasBeenSetUnpressed = false;
 	/** Flag to prevent continuous texture refresh. */
 	bool hasBeenSetHover = false;
+	bool hasBeenReset = true;
 };
 
 
@@ -177,7 +178,7 @@ private:
 class AnimatedButton : public Selectable {
 public:
 	AnimatedButton(GUIFactory* factory, MouseController* mouseController,
-		shared_ptr<Animation> animation, Vector2 position);
+		Animation* animation, Vector2 position);
 	virtual ~AnimatedButton();
 
 	virtual void reloadGraphicsAsset() override;
@@ -229,7 +230,7 @@ public:
 	bool isOpen = false;
 	int currentFrameIndex = -1;
 
-	shared_ptr<Animation> animation;
+	Animation* animation;
 	void adjustPosition(int lastFrame);
 private:
 	typedef void (ActionListener::*OnClickFunction) (AnimatedButton*);

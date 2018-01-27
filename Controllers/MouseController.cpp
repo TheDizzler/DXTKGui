@@ -1,24 +1,20 @@
 #include "MouseController.h"
 #include "../GUIFactory.h"
-#include <sstream>
+#include "../StringHelper.h"
 
-
-MouseController::MouseController(HWND h) {
-
-	hwnd = h;
-	mouse.reset(new Mouse());
-	mouse->SetWindow(hwnd);
-	layerDepth = 1.0;
-
-}
 
 MouseController::~MouseController() {
-	mouse.reset();
+}
+
+void MouseController::initialize(HWND h) {
+	hwnd = h;
+	mouse.SetWindow(hwnd);
+	layerDepth = 1.0;
 }
 
 
 void MouseController::setState(Mouse::Mode mode) {
-	mouse->SetMode(mode);
+	mouse.SetMode(mode);
 }
 
 bool MouseController::loadMouseIcon(GUIFactory* guiFactory,
@@ -28,7 +24,7 @@ bool MouseController::loadMouseIcon(GUIFactory* guiFactory,
 	if (mouseAsset == NULL) {
 		wostringstream ws;
 		ws << "Cannot find mouse sprite file: " << spriteName;
-		MessageBox(0, ws.str().c_str(), L"Critical failure", MB_OK);
+		StringHelper::reportError(ws.str().c_str(), L"Critical failure", false);
 
 		return false;
 	}
@@ -48,7 +44,7 @@ void MouseController::loadMouseIcon(GraphicsAsset* iconAsset) {
 void MouseController::saveMouseState() {
 
 	lastState = state;
-	state = mouse->GetState();
+	state = mouse.GetState();
 	setPosition(Vector2(state.x, state.y));
 	// This is the absolute position of the mouse relative
 	// to the upper-left corner of the window
@@ -80,7 +76,7 @@ void MouseController::draw(SpriteBatch* batch) {
 int MouseController::scrollWheelValue() {
 
 	int delta = state.scrollWheelValue / WHEEL_DELTA;
-	mouse->ResetScrollWheelValue();
+	mouse.ResetScrollWheelValue();
 	return delta;
 }
 
@@ -112,6 +108,9 @@ bool MouseController::rightButtonLast() {
 bool MouseController::clicked() {
 
 	if (isClicked) {
+		wostringstream wss;
+		wss << "Clicked! " << endl;
+		OutputDebugString(wss.str().c_str());
 		isClicked = false;
 		return true;
 	}
@@ -121,6 +120,9 @@ bool MouseController::clicked() {
 bool MouseController::pressed() {
 
 	if (isPressed) {
+		wostringstream wss;
+		wss << "Pressed! " << endl;
+		OutputDebugString(wss.str().c_str());
 		isPressed = false;
 		return true;
 	}
@@ -158,5 +160,10 @@ bool MouseController::middlePressed() {
 		return true;
 	}
 	return false;
+}
+
+void MouseController::resetPressed() {
+	isPressed = true;
+	lastState.leftButton = true;
 }
 

@@ -16,7 +16,8 @@ CheckBox::CheckBox(GUIFactory* factory, MouseController* mouseController,
 
 	label.reset(guiFactory->createTextLabel(Vector2::Zero, L"", font));
 
-	texture = uncheckedSprite->getTexture().Get();
+	texture = uncheckedSprite->getTexture();
+	currentRECT = uncheckedSprite->getRect();
 }
 
 CheckBox::~CheckBox() {
@@ -27,18 +28,20 @@ CheckBox::~CheckBox() {
 }
 
 void CheckBox::reloadGraphicsAsset() {
-	texture = NULL;
+	texture.Reset();
 	uncheckedSprite->reloadGraphicsAsset(guiFactory);
 	checkedSprite->reloadGraphicsAsset(guiFactory);
 	label->reloadGraphicsAsset();
 
-	if (isClicked)
-		texture = checkedSprite->getTexture().Get();
-	else
-		texture = uncheckedSprite->getTexture().Get();
+	if (isClicked) {
+		texture = checkedSprite->getTexture();
+		currentRECT = checkedSprite->getRect();
+	} else {
+		texture = uncheckedSprite->getTexture();
+		currentRECT = uncheckedSprite->getRect();
+	}
 }
-
-
+#include "../StringHelper.h"
 bool CheckBox::update(double deltaTime) {
 
 	refreshed = false;
@@ -67,7 +70,7 @@ bool CheckBox::update(double deltaTime) {
 
 void CheckBox::draw(SpriteBatch* batch) {
 
-	batch->Draw(texture, position, &checkedSprite->getRect(), tint, rotation,
+	batch->Draw(texture.Get(), position, &currentRECT, tint, rotation,
 		origin, scale, SpriteEffects_None, layerDepth);
 	label->draw(batch);
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<root game="DirectX ToolKit GUI" xml="AssetManifest" dir="assets/">
+<root game="DirectX ToolKit GUI" xml="AssetManifest" dir="DXTKGui/assets/">
 
 	<gui dir="gui/">
 		<spritefonts dir="fonts/">

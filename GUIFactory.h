@@ -17,8 +17,8 @@ using namespace pugi;
 class GUIFactory {
 public:
 	/** If this constructor is used, the assetManifest file MUST be set in initialize(). */
-	GUIFactory(HWND h);
-	GUIFactory(HWND hwnd, xml_node guiAssetsNode);
+	/*GUIFactory(HWND h);
+	GUIFactory(HWND hwnd, xml_node guiAssetsNode);*/
 	virtual ~GUIFactory();
 
 	/** Required if a user wants to create their own controls. */
@@ -28,7 +28,7 @@ public:
 
 	/** DeviceContext and SpriteBatch references are required
 		to create textures from a GUIControl (will probably refactor this). */
-	bool initialize(ComPtr<ID3D11Device> device,
+	bool initialize(HWND hwnd, ComPtr<ID3D11Device> device,
 		ComPtr<ID3D11DeviceContext> devCon, ComPtr<IDXGISwapChain> swapChain,
 		SpriteBatch* batch, MouseController* mouse,
 		const char_t* assetManifestFile = NULL);
@@ -38,7 +38,7 @@ public:
 
 	unique_ptr<FontSet> getFont(const char_t* fontName = "Default Font");
 	unique_ptr<Sprite> getSpriteFromAsset(const char_t* assetName);
-	shared_ptr<Animation> getAnimation(const char_t* animationName);
+	Animation* getAnimation(const char_t* animationName);
 	GraphicsAsset* const getAsset(const char_t* assetName);
 	shared_ptr<AssetSet> const getAssetSet(const char_t* setName);
 
@@ -161,7 +161,7 @@ private:
 
 	map<string, string> fontMap;
 	map<string, unique_ptr<GraphicsAsset> > assetMap;
-	map<string, shared_ptr<Animation> > animationMap;
+	map<string, unique_ptr<Animation> > animationMap;
 	map<string, shared_ptr<AssetSet> > setMap;
 
 };

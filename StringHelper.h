@@ -8,7 +8,7 @@
 #include <sstream>
 #include <comdef.h>
 
-#include "../globals.h"
+
 namespace StringHelper {
 
 	inline wchar_t* convertCharStarToWCharT(const char* text) {
@@ -38,7 +38,22 @@ namespace StringHelper {
 		rtrim(s);
 	}
 
+	/** WARNING: if game is fullscreen, showing a message box will cause bad times!
+		Freezes! Forced Reboots! Demon Summons! You have been warned!!! */
+	static inline void reportError(
+		wstring failMessage = L"This is SRS Error",
+		wstring failTitle = L"Fatal Error", bool showMessageBox = false) {
 
+		wostringstream wss;
+		wss << failMessage;
+		if (showMessageBox)
+			MessageBox(NULL, wss.str().c_str(), failTitle.c_str(), MB_OK | MB_ICONERROR);
+
+		OutputDebugString(wss.str().c_str());
+	}
+
+	/** WARNING: if game is fullscreen, showing a message box will cause bad times!
+		Freezes! Forced Reboots! Demon Summons! You have been warned!!!*/
 	static inline bool reportError(HRESULT hr,
 		wstring failMessage = L"This is SRS Error",
 		wstring failTitle = L"Fatal Error", bool showMessageBox = false) {
@@ -49,7 +64,7 @@ namespace StringHelper {
 			wostringstream wss;
 			wss << failMessage;
 			wss << "\nHRESULT: " << err.ErrorMessage() << endl;
-			if (!Globals::FULL_SCREEN && showMessageBox)
+			if (showMessageBox)
 				MessageBox(NULL, wss.str().c_str(), failTitle.c_str(), MB_OK | MB_ICONERROR);
 
 			OutputDebugString(wss.str().c_str());

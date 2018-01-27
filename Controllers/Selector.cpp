@@ -57,7 +57,7 @@ SelectorManager::SelectorManager() {
 
 SelectorManager::~SelectorManager() {
 	joystick = NULL;
-	for (auto& control : controls)
+	for (Selectable* control : controls)
 		delete control;
 
 	controls.clear();

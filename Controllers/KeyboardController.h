@@ -6,7 +6,6 @@ using namespace DirectX;
 
 class KeyboardController {
 public:
-	//KeyboardController();
 	virtual ~KeyboardController();
 
 	/** Call this once at the beginning of the frame. */

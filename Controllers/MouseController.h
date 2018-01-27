@@ -13,8 +13,10 @@ class GUIFactory;
 class MouseController : public Sprite {
 public:
 
-	MouseController(HWND hwnd);
+	//MouseController(HWND hwnd);
 	virtual ~MouseController();
+
+	void initialize(HWND hwnd);
 
 	/* MODE_ABSOLUTE (default) or MODE_RELATIVE (cannot handle relative mode yet). */
 	void setState(Mouse::Mode mode);
@@ -40,19 +42,27 @@ public:
 	bool middleButtonLast();
 	bool rightButtonLast();
 
+	/** After release of button. */
 	bool clicked();
+	/** On button down. */
 	bool pressed();
 
+	/** After release of button. */
 	bool rightClicked();
+	/** On button down. */
 	bool rightPressed();
 
+	/** After release of button. */
 	bool middleClicked();
+	/** On button down. */
 	bool middlePressed();
+
+	void resetPressed();
 
 private:
 
 	HWND hwnd;
-	unique_ptr<Mouse> mouse;
+	Mouse mouse;
 
 	Mouse::State state;
 	Mouse::State lastState;

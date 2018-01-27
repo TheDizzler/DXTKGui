@@ -40,7 +40,7 @@ bool ComboBox::initialize(const pugi::char_t* fontName,
 
 	selectedLabel.reset(guiFactory->createTextLabel(
 		Vector2(position.x + textMarginX, position.y + textMarginY), L"", fontName));
-	selectedLabel->setActionListener(new SelectedOnClick(this));
+	//selectedLabel->setActionListener(new SelectedOnClick(this));
 
 	selectedBackgroundSprite.reset(guiFactory->createRectangle(position,
 		Vector2(width, comboListButton->getScaledHeight()), Color(.5, .5, .5, 1)));

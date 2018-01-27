@@ -20,11 +20,13 @@ Spinner::~Spinner() {
 void Spinner::initialize(const pugi::char_t* fontName,
 	const pugi::char_t* upButtonName, const pugi::char_t* downButtonName) {
 
-	label.reset(guiFactory->createTextLabel(Vector2::Zero, L"", fontName));
+	label.reset(guiFactory->createTextLabel(Vector2::Zero, L"Empty", fontName));
 	label->setTint(Vector4(0, 0, 0, 1));
-	label->setText("Empty");
+	//label->setText("Empty");
 	if (label->getHeight() > itemHeight)
 		itemHeight = label->getHeight();
+	if (label->getWidth() > width)
+		width = label->getWidth() + textBuffer*3;
 
 	upButton.reset((ImageButton*) guiFactory->createImageButton(upButtonName));
 	if (upButton->getHeight() * 2 > itemHeight)
