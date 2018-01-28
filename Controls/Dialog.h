@@ -78,11 +78,7 @@ protected:
 
 	Vector2 size;
 
-
-
 	unique_ptr<TextLabel> dialogText;
-
-
 
 	TransitionEffects::TransitionEffect* openTransition = NULL;
 	TransitionEffects::TransitionEffect* closeTransition = NULL;
@@ -103,9 +99,6 @@ protected:
 	private:
 		Dialog* dialog;
 	};
-
-
-
 };
 
 

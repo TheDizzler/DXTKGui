@@ -45,7 +45,11 @@ public:
 	/** If tintTexture == false, set frame color and refresh texturePanel.
 		If tintTexture == true, set texturePanel color. */
 	void setTint(const XMFLOAT4 color, bool tintTexture);
+	/** If tintTexture == false, set frame color and refresh texturePanel.
+	If tintTexture == true, set texturePanel color. */
 	void setTint(const Color& color, bool tintTexture);
+	/** If tintTexture == false, set frame color and refresh texturePanel.
+	If tintTexture == true, set texturePanel color. */
 	void setTint(const XMVECTORF32 color, bool tintTexture);
 
 	virtual bool update();

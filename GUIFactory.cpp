@@ -916,13 +916,10 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 		for (xml_node animationNode : spritesheetNode.children("animation")) {
 
 			const char_t* name = animationNode.attribute("name").as_string();
-
 			float timePerFrame = animationNode.attribute("timePerFrame").as_float();
 
 			vector<shared_ptr<Frame>> frames;
-			for (xml_node spriteNode = animationNode.child("sprite"); spriteNode;
-				spriteNode = spriteNode.next_sibling("sprite")) {
-
+			for (xml_node spriteNode : animationNode.children("sprite")) {
 
 				RECT rect;
 				rect.left = spriteNode.attribute("x").as_int();
