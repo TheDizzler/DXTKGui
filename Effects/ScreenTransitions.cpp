@@ -64,8 +64,11 @@ void ScreenTransitionManager::reloadGraphicsAssets() {
 	bg->setPosition(Vector2::Zero);
 	bg->setOrigin(Vector2::Zero);
 
-	int screenWidth = Globals::WINDOW_WIDTH;
-	int screenHeight = Globals::WINDOW_HEIGHT;
+	RECT rect;
+	GetClientRect(guiFactory->getHWND(), &rect);
+
+	int screenWidth = rect.right - rect.left;
+	int screenHeight = rect.bottom - rect.top;
 
 	if (resizeBGToFit) {
 		//scale bg image to screen

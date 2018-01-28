@@ -16,7 +16,8 @@ enum PlayerSlotNumber {
 
 /* Virtual Sockets for controllers. */
 enum ControllerSocketNumber {
-	CONTROLLER_SOCKET_ERROR = -1, SOCKET_1, SOCKET_2, SOCKET_3, SOCKET_4, SOCKET_5, SOCKET_6, SOCKET_7, SOCKET_8
+	CONTROLLER_SOCKET_ERROR = -1, SOCKET_1, SOCKET_2, SOCKET_3,
+	SOCKET_4, SOCKET_5, SOCKET_6, SOCKET_7, SOCKET_8
 };
 
 enum ControlButtons {
