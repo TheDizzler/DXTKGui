@@ -38,29 +38,30 @@ bool GUIFactory::initialize(HWND h, ComPtr<ID3D11Device> dev,
 
 	hwnd = h;
 
-	if (assetManifestFile == NULL) {
-		// get graphical assets from default file
 
-		docAssMan.reset(new pugi::xml_document());
-		if (!docAssMan->load_file(GUIAssets::assetManifestFile)) {
-			StringHelper::reportError(
-				L"Could not read AssetManifest file!",
-				L"Fatal Read Error!", false);
-			return false;
-		}
+	// get graphical assets from default file
+	unique_ptr<xml_document> docAssMan = make_unique<xml_document>();
+	if (!docAssMan->load_file(GUIAssets::assetManifestFile)) {
+		StringHelper::reportError(
+			L"Could not read AssetManifest file!",
+			L"Fatal Read Error!", false);
+		return false;
+	}
+	guiAssetsNode.push_back(docAssMan->child("root").child("gui"));
+	docs.push_back(move(docAssMan));
 
-			guiAssetsNode = docAssMan->child("root").child("gui");
-	} else {
+	if (assetManifestFile != NULL) {
 		// get graphical assets from custom xml file
-		docAssMan.reset(new pugi::xml_document());
-		if (!docAssMan->load_file(assetManifestFile)) {
+		unique_ptr<xml_document> docAssManCustom = make_unique<xml_document>();
+		if (!docAssManCustom->load_file(assetManifestFile)) {
 			StringHelper::reportError(
-			 L"Could not read AssetManifest file!",
+				L"Could not read custom AssetManifest file!",
 				L"Fatal Read Error!", false);
 			return false;
 		}
 
-		guiAssetsNode = docAssMan->child("root").child("gui");
+		guiAssetsNode.push_back(docAssManCustom->child("root").child("gui"));
+		docs.push_back(move(docAssManCustom));
 	}
 
 
@@ -68,12 +69,13 @@ bool GUIFactory::initialize(HWND h, ComPtr<ID3D11Device> dev,
 	deviceContext = devCon;
 	batch = sBatch;
 
-	if (!getGUIAssetsFromXML()) {
-		StringHelper::reportError(L"Sprite retrieval from Asset Manifest failed.",
-			L"Epic failure", false);
-		return false;
+	for (xml_node node : guiAssetsNode) {
+		if (!getGUIAssetsFromXML(node)) {
+			StringHelper::reportError(L"Asset retrieval from Asset Manifest failed.",
+				L"Epic failure", false);
+			return false;
+		}
 	}
-
 	mouseController = mouse;
 
 	initialized = true;
@@ -92,9 +94,12 @@ void GUIFactory::reInitDevice(ComPtr<ID3D11Device> dev,
 	batch = sBatch;
 	assetMap.clear();
 
-	if (!getGUIAssetsFromXML()) {
-		MessageBox(0, L"Sprite retrieval from Asset Manifest failed.",
-			L"Epic failure", MB_OK);
+	for (xml_node node : guiAssetsNode) {
+		if (!getGUIAssetsFromXML(node)) {
+			StringHelper::reportError(
+				L"Asset retrieval from Asset Manifest failed.",
+				L"Epic failure", false);
+		}
 	}
 }
 
@@ -799,16 +804,16 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 
 
 
-bool GUIFactory::getGUIAssetsFromXML() {
+bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 
 	string assetsDir =
-		guiAssetsNode.parent().attribute("dir").as_string();
+		assetNode.parent().attribute("dir").as_string();
 
 	string guiDir =
-		assetsDir + guiAssetsNode.attribute("dir").as_string();
+		assetsDir + assetNode.attribute("dir").as_string();
 
 
-	xml_node fonts = guiAssetsNode.child("spritefonts");
+	xml_node fonts = assetNode.child("spritefonts");
 	string fontDir = assetsDir + fonts.attribute("dir").as_string();
 	for (xml_node fontNode = fonts.child("font"); fontNode;
 		fontNode = fontNode.next_sibling("font")) {
@@ -824,7 +829,7 @@ bool GUIFactory::getGUIAssetsFromXML() {
 	defaultFontFile = GUIAssets::defaultFontFile;
 	fontMap["Default Font"] = GUIAssets::defaultFontFile;
 
-	for (xml_node spriteNode : guiAssetsNode.children("sprite")) {
+	for (xml_node spriteNode : assetNode.children("sprite")) {
 		string file_s = guiDir + spriteNode.attribute("file").as_string();
 		const char_t* file = file_s.c_str();
 		const char_t* name = spriteNode.attribute("name").as_string();
@@ -847,7 +852,7 @@ bool GUIFactory::getGUIAssetsFromXML() {
 		assetMap[name] = move(guiAsset);
 	}
 
-	for (xml_node spritesheetNode : guiAssetsNode.children("spritesheet")) {
+	for (xml_node spritesheetNode : assetNode.children("spritesheet")) {
 
 		string file_s = guiDir + spritesheetNode.attribute("file").as_string();
 		const char_t* file = file_s.c_str();

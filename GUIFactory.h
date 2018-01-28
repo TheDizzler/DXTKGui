@@ -139,7 +139,7 @@ private:
 	ComPtr<ID3D11Device> device;
 	ComPtr<ID3D11DeviceContext> deviceContext;
 	MouseController* mouseController;
-	unique_ptr<xml_document> docAssMan;
+	vector<unique_ptr<xml_document>> docs;
 
 	SpriteBatch* batch;
 
@@ -147,12 +147,13 @@ private:
 	Button* createOneImageButton(const char_t* buttonImage,
 		const char_t* fontName = "Default Font");
 
-	bool getGUIAssetsFromXML();
+	bool getGUIAssetsFromXML(xml_node assetNode);
 	unique_ptr<GraphicsAsset> parseSprite(xml_node spriteNode,
 		ComPtr<ID3D11ShaderResourceView> sheetTexture,
 		int xOffset = 0, int yOffset = 0);
 
-	xml_node guiAssetsNode;
+	/* Allows for multiple asset files and sources. */
+	vector<xml_node> guiAssetsNode;
 
 	const char_t* defaultFontFile;
 
