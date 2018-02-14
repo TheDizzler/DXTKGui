@@ -130,7 +130,7 @@ public:
 
 
 private:
-	BOOL bButtonStates[MAX_BUTTONS];
+	bool bButtonStates[MAX_BUTTONS];
 	BOOL lastButtonStates[MAX_BUTTONS];
 	LONG lAxisX = 0;
 	LONG lAxisY = 0;

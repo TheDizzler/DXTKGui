@@ -296,7 +296,7 @@ const Vector2& ScrollBar::getPosition() const {
 	return position;
 }
 
-const Vector2& ScrollBar::getSize() const {
+const Vector2 ScrollBar::getSize() const {
 	return Vector2(scrollBarDownButton->getWidth(), barHeight);
 }
 

@@ -37,7 +37,7 @@ bool GraphicsAsset::load(ComPtr<ID3D11Device> device, const pugi::char_t* asset,
 	getTextureDimensions(resource.Get(), &width, &height);
 
 	if (org == Vector2(-1000, -1000))
-		origin = Vector2(width / 2, height / 2);
+		origin = Vector2(FLOAT(width) / 2, FLOAT(height) / 2);
 	else
 		origin = org;
 
@@ -59,18 +59,18 @@ void GraphicsAsset::loadAsPartOfSheet(
 
 	texture = spriteSheetTexture;
 	position = locationInSheet;
-	width = size.x;
-	height = size.y;
+	width = UINT(size.x);
+	height = UINT(size.y);
 
 	if (org == Vector2(-1000, -1000))
-		origin = Vector2(width / 2, height / 2);
+		origin = Vector2(FLOAT(width) / 2, FLOAT(height) / 2);
 	else
 		origin = org;
 
-	sourceRect.left = position.x;
-	sourceRect.top = position.y;
-	sourceRect.right = position.x + width;
-	sourceRect.bottom = position.y + height;
+	sourceRect.left = LONG(position.x);
+	sourceRect.top = LONG(position.y);
+	sourceRect.right = LONG(position.x) + width;
+	sourceRect.bottom = LONG(position.y) + height;
 }
 
 void GraphicsAsset::getTextureDimensions(ID3D11Resource* res, UINT* width, UINT* height) {

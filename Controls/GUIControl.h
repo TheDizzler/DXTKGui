@@ -75,7 +75,7 @@ public:
 
 	virtual void updateProjectedHitArea();
 
-	virtual const Vector2& getScreenPosition(Matrix viewProjectionMatrix) const;
+	virtual const Vector2 getScreenPosition(Matrix viewProjectionMatrix) const;
 	virtual unique_ptr<HitArea> getScreenHitArea(Matrix viewProjectionMatrix) const;
 
 	virtual bool contains(const Vector2& point) override;

@@ -6,7 +6,7 @@ class LetterJam {
 public:
 
 	int getWidth() {
-		return (sourceRECT.right - sourceRECT.left) * scale.x;
+		return INT((sourceRECT.right - sourceRECT.left) * scale.x);
 	}
 	Vector2 position;
 	RECT sourceRECT;

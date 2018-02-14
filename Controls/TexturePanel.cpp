@@ -147,7 +147,7 @@ const int TexturePanel::getHeight() const {
 	return hitArea.size.y;
 }
 
-const Vector2& TexturePanel::getScrollBarSize() const {
+const Vector2 TexturePanel::getScrollBarSize() const {
 	if (neverShowScrollBar)
 		return Vector2::Zero;
 	return verticalScrollBar->getSize();

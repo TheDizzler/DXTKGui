@@ -50,8 +50,8 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 
 	hitArea.size = newSize;
 	projectedHitArea.size = newSize;
-	width = newSize.x;
-	height = newSize.y;
+	width = (int) newSize.x;
+	height = (int) newSize.y;
 
 	frame->setDimensions(position, hitArea.size, frameThickness);
 	rectSprite->setDimensions(position, hitArea.size);
@@ -239,8 +239,8 @@ void Button::setText(wstring text) {
 		}
 
 		projectedHitArea.size = hitArea.size;
-		width = hitArea.size.x;
-		height = hitArea.size.y;
+		width = (int) hitArea.size.x;
+		height = (int) hitArea.size.y;
 	}
 
 }
@@ -378,16 +378,16 @@ const Vector2& Button::getPosition() const {
 	return position;
 }
 
-void Button::setLayerDepth(float newDepth, bool frontToBack) {
+void Button::setLayerDepth(const float newDepth, bool frontToBack) {
 
-	layerDepth = newDepth - .00001;
+	layerDepth = newDepth - .00001f;
 	if (layerDepth < 0) {
 		if (!frontToBack)
-			layerDepth = .00001;
+			layerDepth = .00001f;
 		else
 			layerDepth = 0;
 	}
-	float nudge = .00000001;
+	float nudge = .00000001f;
 	if (!frontToBack)
 		nudge *= -1;
 	rectSprite->setLayerDepth(layerDepth + nudge, frontToBack);
@@ -416,11 +416,11 @@ const int Button::getHeight() const {
 }
 
 const int Button::getScaledWidth() const {
-	return hitArea.size.x;
+	return (int) hitArea.size.x;
 }
 
 const int Button::getScaledHeight() const {
-	return hitArea.size.y;
+	return (int) hitArea.size.y;
 }
 
 void Button::setUnpressedColor(const Color& newColor) {
@@ -473,9 +473,9 @@ ImageButton::ImageButton(GUIFactory* factory, MouseController* mouseController,
 
 	normalSprite = move(buttonSprite);
 
-	Vector2 size = Vector2(normalSprite->getWidth(), normalSprite->getHeight());
-	width = size.x;
-	height = size.y;
+	Vector2 size = Vector2((float) normalSprite->getWidth(), (float) normalSprite->getHeight());
+	width = (int) size.x;
+	height = (int) size.y;
 	hitArea.size = size;
 
 	setToUnpressedState();
@@ -493,9 +493,9 @@ ImageButton::ImageButton(GUIFactory* factory, MouseController* mouseController,
 	normalSprite = move(upButtonSprite);
 	pressedSprite = move(downButtonSprite);
 
-	Vector2 size = Vector2(normalSprite->getWidth(), normalSprite->getHeight());
-	width = size.x;
-	height = size.y;
+	Vector2 size = Vector2((float) normalSprite->getWidth(), (float) normalSprite->getHeight());
+	width = (int) size.x;
+	height = (int) size.y;
 	hitArea.size = size;
 
 	setToUnpressedState();
@@ -576,10 +576,10 @@ void ImageButton::setRotation(const float rot) {
 	rotation = rot;
 }
 
-void ImageButton::setLayerDepth(float newDepth, bool frontToBack) {
+void ImageButton::setLayerDepth(const float newDepth, bool frontToBack) {
 
 	layerDepth = newDepth;
-	float nudge = .00000001;
+	float nudge = .00000001f;
 	if (!frontToBack)
 		nudge *= -1;
 	buttonLabel->setLayerDepth(newDepth + nudge, frontToBack);
@@ -630,8 +630,8 @@ AnimatedButton::AnimatedButton(GUIFactory* factory, MouseController* mouseContro
 
 	position = pos;
 	hitArea.position = position;
-	hitArea.size = Vector2(getWidth(), getHeight());
-	center = Vector2(getWidth() / 2, getHeight() / 2);
+	hitArea.size = Vector2((float) getWidth(), (float) getHeight());
+	center = Vector2(FLOAT(getWidth()) / 2, FLOAT(getHeight()) / 2);
 }
 
 AnimatedButton::~AnimatedButton() {
@@ -706,12 +706,12 @@ void AnimatedButton::adjustPosition(int lastFrame) {
 	Vector2 newPos = oldPos;
 
 	Vector2 oldSize = Vector2(
-		animation->animationFrames[lastFrame]->sourceRect.right
-		- animation->animationFrames[lastFrame]->sourceRect.left,
-		animation->animationFrames[lastFrame]->sourceRect.bottom
-		- animation->animationFrames[lastFrame]->sourceRect.top);
+		FLOAT(animation->animationFrames[lastFrame]->sourceRect.right
+		- animation->animationFrames[lastFrame]->sourceRect.left),
+		FLOAT(animation->animationFrames[lastFrame]->sourceRect.bottom
+		- animation->animationFrames[lastFrame]->sourceRect.top));
 
-	Vector2 newSize = Vector2(getWidth(), getHeight());
+	Vector2 newSize = Vector2((float) getWidth(), (float) getHeight());
 	Vector2 difference = newSize - oldSize;
 
 	newPos -= difference / 2;
@@ -745,7 +745,7 @@ const int AnimatedButton::getHeight() const {
 		- animation->animationFrames[currentFrameIndex]->sourceRect.top;
 }
 
-void AnimatedButton::setLayerDepth(float newDepth, bool frontToBack) {
+void AnimatedButton::setLayerDepth(const float newDepth, bool frontToBack) {
 	layerDepth = newDepth;
 }
 
@@ -783,7 +783,7 @@ void AnimatedButton::onClick() {
 	if (actionListener != NULL) {
 		(actionListener->*onClickFunction)(this);
 	} else {
-		currentFrameIndex = animation->animationFrames.size() - 1;
+		currentFrameIndex = (int) animation->animationFrames.size() - 1;
 	}
 
 	isClicked = isPressed = false;
@@ -793,7 +793,7 @@ void AnimatedButton::onPress() {
 	if (actionListener != NULL) {
 		(actionListener->*onPressFunction)(this);
 	} else
-		currentFrameIndex = animation->animationFrames.size() - 2;
+		currentFrameIndex = (int) animation->animationFrames.size() - 2;
 }
 
 void AnimatedButton::onHover() {
@@ -805,7 +805,7 @@ void AnimatedButton::onHover() {
 			timeHovering = 0;
 			++currentFrameIndex;
 			if (currentFrameIndex > animation->animationFrames.size() - 3) {
-				currentFrameIndex = animation->animationFrames.size() - 3;
+				currentFrameIndex = (int) animation->animationFrames.size() - 3;
 				isOpen = true;
 			} else
 				adjustPosition(currentFrameIndex - 1);

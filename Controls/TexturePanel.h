@@ -41,7 +41,7 @@ public:
 	virtual const Vector2& getPosition() const override;
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
-	const Vector2& getScrollBarSize() const;
+	const Vector2 getScrollBarSize() const;
 
 	bool scrollBarVisible() const;
 

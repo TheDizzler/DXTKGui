@@ -44,7 +44,7 @@ public:
 	virtual void setRotation(const float rotation) override;
 	virtual const Vector2& getPosition() const override;
 
-	virtual void setLayerDepth(float newDepth, bool frontToBack = true) override;
+	virtual void setLayerDepth(const float newDepth, bool frontToBack = true) override;
 	virtual void setScale(const Vector2& scale) override;
 	/** NOTE: This DOES NOT return scaled width!
 	Use getScaledWidth(). */
@@ -108,8 +108,8 @@ protected:
 
 	/** Colors for imageless button. */
 	Color normalColor = Color(1, 1, 1, 1);
-	Color hoverColor = Color(1, .75, 0, 1);
-	Color selectedColor = Color(1, 0, .4, 1);
+	Color hoverColor = Color(1, .75f, 0, 1);
+	Color selectedColor = Color(1, 0, .4f, 1);
 
 	/* Offsets textlabel position.*/
 	Vector2 unpressedTextOffset = Vector2(-2, 0);
@@ -160,7 +160,7 @@ public:
 	virtual void setScale(const Vector2& scale) override;
 	/** Remember: Rotation is around the origin! */
 	virtual void setRotation(const float rotation) override;
-	virtual void setLayerDepth(float newDepth, bool frontToBack = true) override;
+	virtual void setLayerDepth(const float newDepth, bool frontToBack = true) override;
 
 protected:
 	virtual void setToUnpressedState() override;
@@ -198,7 +198,7 @@ public:
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
 
-	virtual void setLayerDepth(float newDepth, bool frontToBack = true) override;
+	virtual void setLayerDepth(const float newDepth, bool frontToBack = true) override;
 
 	virtual bool clicked() override;
 	virtual bool pressed() override;

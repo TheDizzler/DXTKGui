@@ -66,11 +66,11 @@ const Vector2& Dialog::getPosition() const {
 }
 
 const int Dialog::getWidth() const {
-	return size.x;
+	return (int) size.x;
 }
 
 const int Dialog::getHeight() const {
-	return size.y;
+	return (int) size.y;
 }
 
 
@@ -193,7 +193,7 @@ void PromptDialog::initialize(const pugi::char_t* font) {
 	dialogText.reset(guiFactory->createTextLabel(Vector2::Zero, L"", font, false));
 	dialogText->setTint(Color(0, 0, 0, 1));
 
-	setLayerDepth(.99);
+	setLayerDepth(.99f);
 
 	texturePanel.reset(guiFactory->createPanel());
 }
@@ -397,10 +397,10 @@ wstring PromptDialog::reformatText(size_t* scrollBarBuffer) {
 
 
 	// how long line length?
-	int maxLineLength = textFrameSize.x - *scrollBarBuffer - (dialogTextMargin.x * 2);
+	int maxLineLength = INT(textFrameSize.x - *scrollBarBuffer - (dialogTextMargin.x * 2));
 
-	int i = 0;
-	int textLength = wcslen(dialogText->getText());
+	size_t i = 0;
+	size_t textLength = wcslen(dialogText->getText());
 	bool scrollbarAdded = false;
 	bool done = false;
 	while (i < textLength) {
@@ -415,27 +415,27 @@ wstring PromptDialog::reformatText(size_t* scrollBarBuffer) {
 		}
 
 		// how long is currentLine?
-		int currentLength = dialogText->measureString(currentLine).x;
+		int currentLength = (int) dialogText->measureString(currentLine).x;
 
 		if (!done) {
 			// go through currentLine until a whitespace is found and add a newline char before it
 			wchar_t ch = currentLine[currentLine.length() - 1];
-			int back = 0;
+			size_t back = 0;
 			while (!isspace(ch)) {
 
 				++back;
 				--i;
 				// check to see if word is too long for line
-				int nextChar = currentLine.length() - back - 1;
+				int nextChar = INT(currentLine.length() - back - 1);
 				if (nextChar < 0) {
 					/* this means current word is too long for line
 					(i.e. stupidly narrow dialog box or ridiculously long word) */
 					// TODO: hyphenate word and put rest on next line
 					int excessLength = currentLength - maxLineLength;
-					int o = currentLine.length();
+					size_t o = currentLine.length();
 					while (excessLength > 0) {
 						wstring choppedWord = currentLine.substr(0, --o);
-						excessLength = dialogText->measureString(choppedWord).x - maxLineLength;
+						excessLength = (int) dialogText->measureString(choppedWord).x - maxLineLength;
 					}
 					// should have a nicely fiting word chunk now (no hypen)
 					i += o;
@@ -454,8 +454,8 @@ wstring PromptDialog::reformatText(size_t* scrollBarBuffer) {
 			&& dialogText->measureString(newText).y + dialogTextMargin.y * 2
 		> textFrameSize.y) {
 
-			*scrollBarBuffer = panel->getScrollBarSize().x;
-			maxLineLength = textFrameSize.x - *scrollBarBuffer - (dialogTextMargin.x * 2);
+			*scrollBarBuffer = (size_t) panel->getScrollBarSize().x;
+			maxLineLength = INT(textFrameSize.x - *scrollBarBuffer - (dialogTextMargin.x * 2));
 			i = 0;
 			newText = L"";
 			scrollbarAdded = true;
@@ -469,7 +469,7 @@ wstring PromptDialog::reformatText(size_t* scrollBarBuffer) {
 void PromptDialog::testMinimumSize() {
 
 	Vector2 mindialogtextSize = dialogText->measureString(L"Min accept");
-	int maxLineLength = textFrameSize.x - (dialogTextMargin.x * 2);
+	int maxLineLength = INT(textFrameSize.x - (dialogTextMargin.x * 2));
 	Vector2 newSize = size;
 	bool changed = false;
 	if (maxLineLength < mindialogtextSize.x) {
@@ -545,7 +545,7 @@ void PromptDialog::calculateDialogTextPos() {
 	} else if (dialogtextsize.y /*+ dialogTextMargin.y * 2*/ > textFrameSize.y) {
 
 		// width is fine but text is getting long
-		scrollBarBuffer = panel->getScrollBarSize().x;
+		scrollBarBuffer = (size_t) panel->getScrollBarSize().x;
 		formattedText.setText(reformatText(&scrollBarBuffer));
 		dialogtextsize = formattedText.measureString();
 	}
@@ -686,7 +686,7 @@ bool PromptDialog::calculateButtonPosition(Vector2& buttonPos) {
 	int buttonheight = getMaxButtonHeight();
 	if (buttonheight + buttonMargin * 2 > buttonFrameSize.y) {
 		// this will shrink the dialog text
-		buttonFrameSize.y = buttonheight + buttonMargin * 2 + frameThickness;
+		buttonFrameSize.y = (float) buttonheight + buttonMargin * 2 + frameThickness;
 		setDimensions(position, size, frameThickness);
 
 		// recalculate all button y positions
@@ -793,14 +793,14 @@ void PromptDialog::setPosition(const Vector2& newPosition) {
 
 void PromptDialog::setLayerDepth(const float newDepth, bool frontToBack) {
 
-	layerDepth = newDepth - .00001;
+	layerDepth = newDepth - .00001f;
 	if (layerDepth < 0) {
 		if (!frontToBack)
-			layerDepth = .00001;
+			layerDepth = .00001f;
 		else
-			layerDepth = 0;
+			layerDepth = 0.0f;
 	}
-	float nudge = .00000001;
+	float nudge = .00000001f;
 	if (!frontToBack)
 		nudge *= -1;
 	//float ld = layerDepth + nudge;

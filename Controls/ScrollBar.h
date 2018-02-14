@@ -99,7 +99,7 @@ public:
 	void scrollByIncrement(int scrollIncrement);
 
 	virtual const Vector2& getPosition() const override;
-	const Vector2& getSize() const;
+	const Vector2 getSize() const;
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
 
