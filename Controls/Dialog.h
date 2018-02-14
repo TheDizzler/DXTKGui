@@ -41,7 +41,7 @@ public:
 	Vector2 dialogTextMargin = Vector2(10, 10);
 
 	/** Not used in Dialog */
-	virtual const Vector2& XM_CALLCONV measureString() const override;
+	virtual const Vector2 XM_CALLCONV measureString() const override;
 
 	/* Trash? */
 	/* Add other GUIControls to dialog. Control position should be relative to Dialog.

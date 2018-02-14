@@ -10,7 +10,7 @@ CheckBox::CheckBox(GUIFactory* factory, MouseController* mouseController,
 
 	uncheckedSprite->setOrigin(Vector2(0, 0));
 	checkedSprite->setOrigin(Vector2(0, 0));
-	Vector2 size = Vector2(uncheckedSprite->getWidth(), uncheckedSprite->getHeight());
+	Vector2 size = Vector2((float) uncheckedSprite->getWidth(), (float) uncheckedSprite->getHeight());
 
 	hitArea.size = size;
 
@@ -121,7 +121,7 @@ void CheckBox::setScale(const Vector2& scl) {
 }
 
 
-const Vector2& XM_CALLCONV CheckBox::measureString() const {
+const Vector2 XM_CALLCONV CheckBox::measureString() const {
 	return label->measureString();
 }
 

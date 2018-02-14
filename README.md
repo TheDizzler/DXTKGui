@@ -131,7 +131,7 @@ How to ScreenTransition:
 >- controls overlapping each other may all call their onClick functions instead of the just the topmost
 >- when a control with a scrollbar has items removed from it dynamically, the scrubber doesn't resize properly
 >- when using keyboard selector and mouse is over a selectable control, moused-over control will stay selected
-
+>- lots of warnings to clean up (mostly possible data loss due to unchecked data type change)
 ##TODO:
 >- Enable 2D array of selectable controls in SelectorManager. Currently, SelectorManager only provides a single line of selectable controls. 
 >- A Panel for adding controls - this could be used to greatly reduce draw times

@@ -554,11 +554,11 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromTexturizable(
 	int widthPadding = 0;
 	float ratio = (float) screenWidth / screenHeight;
 	if (width > height) {
-		heightPadding = width / ratio - height;
-		height = width / ratio;
+		heightPadding = INT(width / ratio) - height;
+		height = INT(width / ratio);
 	} else {
-		widthPadding = height*ratio - width;
-		width = height * ratio;
+		widthPadding = INT(height*ratio) - width;
+		width = INT(height * ratio);
 	}
 	width += buffer;
 	height += buffer;
@@ -675,7 +675,7 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromTexturizable(
 	string name = "Texturized Control #" + to_string(elementCounter++);
 
 	gfxAsset->loadAsPartOfSheet(shaderResourceView, name.c_str(), Vector2::Zero,
-		Vector2(width - widthPadding - buffer, height - heightPadding - buffer), Vector2::Zero);
+		Vector2(FLOAT(width - widthPadding - buffer), FLOAT(height - heightPadding - buffer)), Vector2::Zero);
 
 	shaderResourceView.Reset();
 	return move(gfxAsset);
@@ -769,8 +769,8 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 	ZeroMemory(&textureViewport, sizeof(D3D11_VIEWPORT));
 	textureViewport.TopLeftX = 0;
 	textureViewport.TopLeftY = 0;
-	textureViewport.Width = screenWidth;
-	textureViewport.Height = screenHeight;
+	textureViewport.Width = (float) screenWidth;
+	textureViewport.Height = (float) screenHeight;
 	textureViewport.MinDepth = 0.0f;
 	textureViewport.MaxDepth = 1.0f;
 	deviceContext->RSSetViewports(1, &textureViewport);
@@ -796,7 +796,7 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 	string name = "Texturized Screen #" + to_string(screenCounter++);
 	unique_ptr<GraphicsAsset> gfxAsset = make_unique<GraphicsAsset>();
 	gfxAsset->loadAsPartOfSheet(shaderResourceView, name.c_str(), Vector2::Zero,
-		Vector2(screenWidth - buffer, screenHeight - buffer), Vector2::Zero);
+		Vector2((float) screenWidth - buffer, (float) screenHeight - buffer), Vector2::Zero);
 
 	shaderResourceView.Reset();
 	return move(gfxAsset);
@@ -837,8 +837,8 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 		Vector2 origin = Vector2(-1000, -1000);
 		xml_node originNode = spriteNode.child("origin");
 		if (originNode) {
-			origin.x = originNode.attribute("x").as_int();
-			origin.y = originNode.attribute("y").as_int();
+			origin.x = (float) originNode.attribute("x").as_int();
+			origin.y = (float) originNode.attribute("y").as_int();
 		}
 		unique_ptr<GraphicsAsset> guiAsset;
 		guiAsset.reset(new GraphicsAsset());
@@ -929,8 +929,8 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 				Vector2 origin = Vector2(0, 0);
 				xml_node originNode = spriteNode.child("origin");
 				if (originNode) {
-					origin.x = originNode.attribute("x").as_int();
-					origin.y = originNode.attribute("y").as_int();
+					origin.x = (float) originNode.attribute("x").as_int();
+					origin.y = (float) originNode.attribute("y").as_int();
 				}
 				shared_ptr<Frame> frame;
 				if (spriteNode.attribute("frameTime"))
@@ -982,17 +982,17 @@ unique_ptr<GraphicsAsset> GUIFactory::parseSprite(xml_node spriteNode,
 	const char_t* spritename = spriteNode.attribute("name").as_string();
 
 	// pos in spritesheet
-	Vector2 position = Vector2(spriteNode.attribute("x").as_int() + xOffset,
-		spriteNode.attribute("y").as_int() + yOffset);
+	Vector2 position = Vector2(FLOAT(spriteNode.attribute("x").as_int() + xOffset),
+		FLOAT(spriteNode.attribute("y").as_int() + yOffset));
 	// dimensions in spritesheet
-	Vector2 size = Vector2(spriteNode.attribute("width").as_int(),
-		spriteNode.attribute("height").as_int());
+	Vector2 size = Vector2((float) spriteNode.attribute("width").as_int(),
+		(float) spriteNode.attribute("height").as_int());
 
-	Vector2 origin = Vector2(-1000, -1000); // this indicates to GfxAsset that origin should be center
+	Vector2 origin = Vector2(-1000.0f, -1000.0f); // this indicates to GfxAsset that origin should be center
 	xml_node originNode = spriteNode.child("origin");
 	if (originNode) {
-		origin.x = originNode.attribute("x").as_int();
-		origin.y = originNode.attribute("y").as_int();
+		origin.x = (float) originNode.attribute("x").as_int();
+		origin.y = (float) originNode.attribute("y").as_int();
 	}
 
 	unique_ptr<GraphicsAsset> spriteAsset = make_unique<GraphicsAsset>();

@@ -140,13 +140,13 @@ void TextLabel::setText(wstring text) {
 	refreshTexture = true;
 }
 
-const Vector2& XM_CALLCONV TextLabel::measureString() const {
+const Vector2 XM_CALLCONV TextLabel::measureString() const {
 	Vector2 size = font->measureString(label.c_str());
 	Vector2 scaledSize = size*scale;
 	return scaledSize;
 }
 
-const Vector2& XM_CALLCONV TextLabel::measureString(wstring string) const {
+const Vector2 XM_CALLCONV TextLabel::measureString(wstring string) const {
 	Vector2 size = font->measureString(string.c_str());
 	return size;
 }
