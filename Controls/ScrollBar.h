@@ -87,6 +87,8 @@ public:
 	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
+	double getPercentScroll();
+
 	void setScrollPositionByPercent(double newPositionPercentage);
 	virtual void moveBy(const Vector2& moveVector) override;
 	virtual void setPosition(const Vector2& newPosition) override;
@@ -101,7 +103,7 @@ public:
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;
 
-	double percentScroll = 0;
+	
 
 	virtual void setLayerDepth(const float depth, bool frontToBack = true) override;
 	virtual void setScale(const Vector2& newScale) override;
@@ -110,7 +112,7 @@ public:
 	/* Unused in ScrollBar. */
 	virtual void setText(wstring text) override;
 	/* Unused in ScrollBar. */
-	virtual const Vector2& XM_CALLCONV measureString() const override;
+	virtual const Vector2 XM_CALLCONV measureString() const override;
 
 	virtual bool clicked() override;
 	virtual bool pressed() override;
@@ -142,6 +144,8 @@ private:
 	double percentForOneItem;
 	/* Percentage of scubber movement is equivalent to item. */
 	double scrubberPercentForOneItem;
+
+	double percentScroll = 0;
 
 	double firstClickTimer = 0; // time since button clicked
 	double autoScrollStartDelay = .25; // time in seconds before scrollbar starts scrolling

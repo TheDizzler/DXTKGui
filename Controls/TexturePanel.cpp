@@ -60,7 +60,7 @@ bool TexturePanel::update(double deltaTime) {
 		}
 
 		// adjust viewRect according to scrollBar percent
-		double movePercent = verticalScrollBar->percentScroll * gfxAsset->getHeight();
+		double movePercent = verticalScrollBar->getPercentScroll() * gfxAsset->getHeight();
 		viewRect.top = movePercent;
 		viewRect.bottom = movePercent + getHeight();
 	}
@@ -195,6 +195,6 @@ void TexturePanel::setFont(const pugi::char_t* font) {
 void TexturePanel::setText(wstring text) {
 }
 
-const Vector2& XM_CALLCONV TexturePanel::measureString() const {
+const Vector2 XM_CALLCONV TexturePanel::measureString() const {
 	return Vector2::Zero;
 }

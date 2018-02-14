@@ -35,7 +35,7 @@ public:
 	/* Text is not set here. The object that creates the texture sets the text. */
 	virtual void setText(wstring text) override;
 	/* Nothing to measure here. This is a texture.*/
-	virtual const Vector2& XM_CALLCONV measureString() const override;
+	virtual const Vector2 XM_CALLCONV measureString() const override;
 
 	virtual void moveBy(const Vector2& moveVector) override;
 	virtual const Vector2& getPosition() const override;

@@ -249,7 +249,7 @@ const wchar_t* Button::getText() {
 	return buttonLabel->getText();
 }
 
-const Vector2& XM_CALLCONV Button::measureString() const {
+const Vector2 XM_CALLCONV Button::measureString() const {
 	return buttonLabel->measureString();
 }
 
@@ -727,7 +727,7 @@ void AnimatedButton::setText(wstring text) {
 
 
 /** Not used in Animated Button */
-const Vector2& XM_CALLCONV AnimatedButton::measureString() const {
+const Vector2 XM_CALLCONV AnimatedButton::measureString() const {
 	return Vector2::Zero;
 }
 

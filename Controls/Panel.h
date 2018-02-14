@@ -4,7 +4,7 @@
 /** Not yet implemented. */ 
 class Panel : public GUIControlBox {
 public:
-	Panel(const Vector2& position);
+	//Panel(const Vector2& position);
 	~Panel();
 
 
@@ -16,7 +16,7 @@ public:
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 	virtual void setText(wstring text) override;
 	/** Not used in Panel.*/
-	virtual const Vector2 &XM_CALLCONV measureString() const override;
+	virtual const Vector2 XM_CALLCONV measureString() const override;
 
 	virtual const Vector2& getPosition() const override;
 	virtual const int getWidth() const override;

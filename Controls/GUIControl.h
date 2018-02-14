@@ -31,7 +31,7 @@ public:
 	virtual void setFont(const pugi::char_t* font = "Default Font") = 0;
 	virtual void setText(wstring text) = 0;
 	virtual const wchar_t* getText();
-	virtual const Vector2& XM_CALLCONV measureString() const = 0;
+	virtual const Vector2 XM_CALLCONV measureString() const = 0;
 
 	virtual void setScale(const Vector2& scl);
 

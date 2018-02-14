@@ -241,7 +241,7 @@ void Spinner::setFont(const pugi::char_t* font) {
 void Spinner::setText(wstring text) {
 }
 
-const Vector2 &XM_CALLCONV Spinner::measureString() const {
+const Vector2 XM_CALLCONV Spinner::measureString() const {
 	return Vector2(longestStringLength, itemHeight);
 }
 

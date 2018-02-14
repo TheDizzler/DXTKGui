@@ -143,9 +143,7 @@ void ComboBox::moveBy(const Vector2& moveVector) {
 
 
 void ComboBox::show() {
-
 	isOpen = !isOpen;
-
 }
 
 void ComboBox::hide() {
@@ -184,7 +182,7 @@ ListItem* ComboBox::getItem(size_t index) {
 void ComboBox::setText(wstring text) {
 }
 
-const Vector2& XM_CALLCONV ComboBox::measureString() const {
+const Vector2 XM_CALLCONV ComboBox::measureString() const {
 	return Vector2::Zero;
 }
 

@@ -36,7 +36,7 @@ public:
 	/* Not used in ComboBox. */
 	virtual void setText(wstring text) override;
 	/* Not used in ComboBox. */
-	virtual const Vector2& XM_CALLCONV measureString() const override;
+	virtual const Vector2 XM_CALLCONV measureString() const override;
 
 	virtual const Vector2& getPosition() const override;
 	virtual const int getWidth() const override;
@@ -52,8 +52,9 @@ public:
 	void addItems(vector<ListItem*> items);
 	void clear();
 
-
+	/** Toggles between open and closed. */
 	void show();
+	/** Closes if open. */
 	void hide();
 	bool isOpen = false;
 

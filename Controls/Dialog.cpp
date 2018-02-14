@@ -75,7 +75,7 @@ const int Dialog::getHeight() const {
 
 
 /** Not used in DialogBox */
-const Vector2& XM_CALLCONV Dialog::measureString() const {
+const Vector2 XM_CALLCONV Dialog::measureString() const {
 	return Vector2::Zero;
 }
 

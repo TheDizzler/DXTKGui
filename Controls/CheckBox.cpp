@@ -121,7 +121,7 @@ void CheckBox::setScale(const Vector2& scl) {
 }
 
 
-const Vector2& XM_CALLCONV CheckBox::measureString() const {
+const Vector2 XM_CALLCONV CheckBox::measureString() const {
 	return label->measureString();
 }
 

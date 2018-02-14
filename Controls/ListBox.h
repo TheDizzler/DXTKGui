@@ -112,7 +112,7 @@ public:
 	/* Not used in ListBox. */
 	virtual void setText(wstring text);
 	/* Not used in ListBox. */
-	virtual const Vector2& XM_CALLCONV measureString() const;
+	virtual const Vector2 XM_CALLCONV measureString() const;
 
 	bool multiSelect = false;
 

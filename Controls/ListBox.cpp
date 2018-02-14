@@ -85,7 +85,7 @@ bool ListBox::update(double deltaTime) {
 			refreshPanel = true;
 
 		double dif = listItems.size();
-		firstItemToDisplay = round(scrollBar->percentScroll * (double) dif);
+		firstItemToDisplay = round(scrollBar->getPercentScroll() * (double) dif);
 
 	}
 
@@ -171,7 +171,7 @@ void ListBox::addItem(ListItem* item) {
 }
 
 /** Adds a vector of ListItems to listbox and clears the input vector.*/
-void ListBox::addItems(vector<ListItem* > items) {
+void ListBox::addItems(vector<ListItem*> items) {
 
 	for (ListItem* item : items) {
 		item->initialize(width - scrollBar->getWidth(), itemHeight,
@@ -269,10 +269,12 @@ void ListBox::setWidth(int newWidth) {
 
 void ListBox::clear() {
 	firstItemToDisplay = 0;
+	selectedIndex = 0;
 	for (ListItem* listItem : listItems)
 		delete listItem;
 	listItems.clear();
 	resizeBox();
+	scrollBar->setScrollPositionByPercent(0);
 }
 
 void ListBox::setSelected(size_t newIndex) {
@@ -327,8 +329,8 @@ void ListBox::setText(wstring text) {
 }
 
 // do nothing for now
-const Vector2& XM_CALLCONV ListBox::measureString() const {
-	return XMVECTOR();
+const Vector2 XM_CALLCONV ListBox::measureString() const {
+	return Vector2::Zero;
 }
 
 void ListBox::setFont(const pugi::char_t* fnt) {

@@ -279,6 +279,10 @@ void ScrollBar::draw(SpriteBatch* batch) {
 
 }
 
+double ScrollBar::getPercentScroll() {
+	return percentScroll;
+}
+
 void ScrollBar::setScrollPositionByPercent(double newPositionPercentage) {
 	percentScroll = newPositionPercentage;
 	scrubber->setScrollPositionByPercent(percentScroll);
@@ -345,8 +349,8 @@ void ScrollBar::setFont(const pugi::char_t* font) {
 void ScrollBar::setText(wstring text) {
 }
 /* Unused in ScrollBar. */
-const Vector2& XM_CALLCONV ScrollBar::measureString() const {
-	return Vector2();
+const Vector2 XM_CALLCONV ScrollBar::measureString() const {
+	return Vector2::Zero;
 }
 /** **** ScrollBar END **** **/
 
