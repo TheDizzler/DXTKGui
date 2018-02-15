@@ -34,7 +34,7 @@ public:
 	void increase();
 	void decrease();
 
-	virtual void setLayerDepth(float newDepth, bool frontToBack = true) override;
+	virtual void setLayerDepth(const float newDepth, bool frontToBack = true) override;
 	/** Not yet implemented. */
 	virtual void setScale(const Vector2& scale) override;
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;

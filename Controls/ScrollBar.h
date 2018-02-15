@@ -18,7 +18,7 @@ public:
 	virtual void setPosition(const Vector2& position) override;
 	virtual void moveBy(const Vector2& moveVector) override;
 
-	void setScrollPositionByCoord(int newCoordinatePosition);
+	void setScrollPositionByCoord(float newCoordinatePosition);
 	void setScrollPositionByPercent(double newPositionPercentage);
 
 	void scroll(double itemIncrement, double scrubberIncrement);
@@ -82,7 +82,7 @@ public:
 
 	virtual void reloadGraphicsAsset() override;
 
-	void setScrollBar(int totalItems, int itemHeight, int maxDisplayItems);
+	void setScrollBar(size_t totalItems, size_t itemHeight, size_t maxDisplayItems);
 
 	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
@@ -92,7 +92,7 @@ public:
 	void setScrollPositionByPercent(double newPositionPercentage);
 	virtual void moveBy(const Vector2& moveVector) override;
 	virtual void setPosition(const Vector2& newPosition) override;
-	void resetPositionTo(const Vector2& newPosition);
+	//void resetPositionTo(const Vector2& newPosition);
 
 	void setBarHeight(int barHeight);
 	/** Call this from parent control on mouse scroll. */
@@ -138,7 +138,7 @@ private:
 	unique_ptr<ImageButton> scrollBarUpButton;
 	unique_ptr<ImageButton> scrollBarDownButton;
 
-	int barHeight;
+	size_t barHeight;
 
 	/* What percent of scroll is equivalent to one item. */
 	double percentForOneItem;

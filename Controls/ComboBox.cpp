@@ -255,12 +255,12 @@ void ComboBox::ShowListBoxListener::onHover(Button* button) {
 void ComboBox::ShowListBoxListener::resetState(Button * button) {
 }
 
-void ComboBox::ListBoxListener::onClick(ListBox* listbox, UINT selectedItemIndex) {
+void ComboBox::ListBoxListener::onClick(ListBox* listbox, size_t selectedItemIndex) {
 	comboBox->onClick();
 	comboBox->show();
 }
 
-void ComboBox::ListBoxListener::onHover(ListBox* listbox, short hoveredItemIndex) {
+void ComboBox::ListBoxListener::onHover(ListBox* listbox, int hoveredItemIndex) {
 	comboBox->onHover();
 }
 

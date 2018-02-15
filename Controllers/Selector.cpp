@@ -23,7 +23,7 @@ void ColorFlashSelector::reloadGraphicsAsset() {
 void ColorFlashSelector::update(double deltaTime) {
 
 	currentFlashTime += deltaTime;
-	frame->setTint(Color::Lerp(color1, color2, currentFlashTime / FLASH_TIME), true);
+	frame->setTint(Color::Lerp(color1, color2, float(currentFlashTime / FLASH_TIME)), true);
 	if (currentFlashTime > FLASH_TIME) {
 		Color temp = color1;
 		color1 = color2;
@@ -150,7 +150,7 @@ void SelectorManager::draw(SpriteBatch* batch) {
 }
 
 bool SelectorManager::hasController() {
-	return joystick;
+	return joystick != NULL;
 }
 
 void SelectorManager::addControl(Selectable* control) {
@@ -193,7 +193,7 @@ void SelectorManager::setSelected(SHORT index) {
 		controls[selected]->resetState();
 
 	if (index < 0)
-		selected = controls.size() - 1;
+		selected = short(controls.size() - 1);
 	else if (index > controls.size() - 1)
 		selected = 0;
 	else
@@ -201,7 +201,7 @@ void SelectorManager::setSelected(SHORT index) {
 
 	selector->setDimensions(
 		controls[selected]->getPosition(),
-		Vector2(controls[selected]->getWidth(), controls[selected]->getHeight()));
+		Vector2((float) controls[selected]->getWidth(), (float) controls[selected]->getHeight()));
 
 	controls[selected]->onHover();
 }
