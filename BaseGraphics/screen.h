@@ -7,7 +7,7 @@ class GameManager;
 
 /** An interface class for a game screen; menu screens,
 	level screens, etc. */
-interface Screen {
+class Screen {
 public:
 	virtual bool initialize(ComPtr<ID3D11Device> device) = 0;
 	virtual void setGameManager(GameManager* game) = 0;

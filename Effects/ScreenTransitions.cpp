@@ -183,14 +183,14 @@ FlipScreenTransition::FlipScreenTransition(bool verticalFlip) {
 bool FlipScreenTransition::run(double deltaTime) {
 
 	if (texture == oldTexture) {
-		scale = Vector2::Lerp(Vector2(1, 1), startScale, timer / transitionTime * 2);
+		scale = Vector2::Lerp(Vector2(1, 1), startScale, (float) timer / transitionTime * 2);
 		scale.Clamp(startScale, Vector2(1, 1));
 		if (scale == startScale) {
 			texture = newTexture;
 			timer = 0;
 		}
 	} else {
-		scale = Vector2::Lerp(startScale, Vector2(1, 1), timer / transitionTime * 2);
+		scale = Vector2::Lerp(startScale, Vector2(1, 1), (float) timer / transitionTime * 2);
 		scale.Clamp(startScale, Vector2(1, 1));
 		if (scale == Vector2(1, 1))
 			return true;
@@ -208,8 +208,8 @@ void FlipScreenTransition::draw(SpriteBatch* batch) {
 void FlipScreenTransition::reset() {
 
 	texture = oldTexture;
-	origin = Vector2(oldScreenAsset->getWidth() / 2, oldScreenAsset->getHeight() / 2);
-	position = Vector2(oldScreenAsset->getWidth() / 2, oldScreenAsset->getHeight() / 2);
+	origin = Vector2((float) oldScreenAsset->getWidth() / 2, (float) oldScreenAsset->getHeight() / 2);
+	position = Vector2((float) oldScreenAsset->getWidth() / 2, (float) oldScreenAsset->getHeight() / 2);
 	timer = 0;
 }
 
@@ -229,8 +229,8 @@ void SquareFlipScreenTransition::setTransitionBetween(
 	ScreenTransition::setTransitionBetween(move(oldScreen), move(newScreen), time);
 
 	int squareSize = 64;
-	int row = ceil((float) oldScreenAsset->getWidth() / squareSize) + 1;
-	int col = ceil((float) oldScreenAsset->getHeight() / squareSize) + 1;
+	int row = int(ceil((float) oldScreenAsset->getWidth() / squareSize)) + 1;
+	int col = int(ceil((float) oldScreenAsset->getHeight() / squareSize)) + 1;
 
 	for (int j = 0; j < squares.size(); ++j) {
 		for (int i = 0; i < squares[j].size(); ++i) {
@@ -255,12 +255,12 @@ void SquareFlipScreenTransition::setTransitionBetween(
 			else
 				rect.bottom = rect.top + squareSize;
 
-			Vector2 pos = Vector2(i * squareSize, j * squareSize);
+			Vector2 pos = Vector2((float) i * squareSize, (float) j * squareSize);
 
 			Square* square = new Square();
 			square->rect = rect;
 			square->origin = Vector2(
-				(rect.right - rect.left) / 2, (rect.bottom - rect.top) / 2);
+				float(rect.right - rect.left) / 2, float(rect.bottom - rect.top) / 2);
 			square->position = pos + square->origin;
 			square->texture = oldTexture;
 			square->scale = Vector2(1, 1);
@@ -296,7 +296,7 @@ bool SquareFlipScreenTransition::run(double deltaTime) {
 			square->timer += deltaTime;
 			if (square->texture == oldTexture) {
 				square->scale = Vector2::Lerp(
-					Vector2(1, 1), startScale, square->timer / transitionTime * 2);
+					Vector2(1, 1), startScale, (float) square->timer / transitionTime * 2);
 				square->scale.Clamp(startScale, Vector2(1, 1));
 
 				if (i == numInRowActive[j] - 1 && square->timer >= delay) {
@@ -312,7 +312,7 @@ bool SquareFlipScreenTransition::run(double deltaTime) {
 				allDone = false;
 			} else {
 				squares[j][i]->scale = Vector2::Lerp(
-					startScale, Vector2(1, 1), squares[j][i]->timer / transitionTime * 2);
+					startScale, Vector2(1, 1), (float) squares[j][i]->timer / transitionTime * 2);
 				squares[j][i]->scale.Clamp(startScale, Vector2(1, 1));
 				if (squares[j][i]->scale != Vector2(1, 1))
 					allDone = false;
@@ -357,7 +357,7 @@ void LineWipeScreenTransition::setTransitionBetween(
 	ScreenTransition::setTransitionBetween(move(oldScreen), move(newScreen), time);
 
 	int rows = 7;
-	int rowHeight = ceil((float) oldScreenAsset->getHeight() / rows);
+	int rowHeight = (int) ceil((float) oldScreenAsset->getHeight() / rows);
 
 	for (Line* line : lines)
 		delete line;
@@ -373,13 +373,13 @@ void LineWipeScreenTransition::setTransitionBetween(
 		rect.bottom = rect.top + rowHeight;
 		line->rect = rect;
 
-		line->position = Vector2(0, rect.top);
-		line->start = Vector2(0, rect.top);
+		line->position = Vector2(0, (float) rect.top);
+		line->start = Vector2(0, (float) rect.top);
 		if (wipeToLeft)
 			line->end = Vector2(line->position.x - oldScreenAsset->getWidth(),
 				line->position.y);
 		else
-			line->end = Vector2(oldScreenAsset->getWidth(), line->position.y);
+			line->end = Vector2((float) oldScreenAsset->getWidth(), line->position.y);
 		lines.push_back(line);
 
 	}
@@ -397,7 +397,7 @@ bool ScreenTransitions::LineWipeScreenTransition::run(double deltaTime) {
 		line->position = Vector2::Lerp(
 			line->start,
 			line->end,
-			slideTimer / transitionTime);
+			(float) slideTimer / transitionTime);
 		slideTimer -= delay;
 		if (slideTimer <= 0) {
 			allDone = false;

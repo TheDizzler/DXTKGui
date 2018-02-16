@@ -28,7 +28,7 @@ void RectangleSprite::setSize(const Vector2& size) {
 }
 
 const Vector2 RectangleSprite::getSize() const {
-	return Vector2(width, height);
+	return Vector2((float) width, (float) height);
 }
 
 
@@ -66,12 +66,12 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	frameThickness = frmThcknss;
 	Vector2 position = pos;
 
-	height = size.y;
-	width = size.x;
+	height = (int) size.y;
+	width = (int) size.x;
 	// upper horizontal frame
 	frameHorizontal.left = 0;
 	frameHorizontal.top = 0;
-	frameHorizontal.right = width * scale.x;
+	frameHorizontal.right = LONG( width * scale.x);
 	frameHorizontal.bottom = frameThickness; // thickness of frame
 	frameTopPos = position;
 
@@ -87,7 +87,7 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	frameLeftPos.y = position.y;
 	frameVertical = frameHorizontal;
 	frameVertical.right = frameThickness;
-	frameVertical.bottom = height * scale.y;
+	frameVertical.bottom = LONG(height * scale.y);
 
 
 	// right vertical frame
@@ -106,7 +106,7 @@ void RectangleFrame::setSize(const Vector2& size) {
 }
 
 void RectangleFrame::setFrameThickness(int frmThcknss) {
-	setDimensions(frameTopPos, Vector2(width, height), frmThcknss);
+	setDimensions(frameTopPos, Vector2((float) width, (float) height), frmThcknss);
 }
 
 bool cyberGrow = true; // cybergrow will only function if not using texture to draw
@@ -223,11 +223,11 @@ const Vector2& RectangleFrame::getPosition() const {
 }
 
 const int RectangleFrame::getWidth() const {
-	return hitArea.size.x;
+	return (int) hitArea.size.x;
 }
 
 const int RectangleFrame::getHeight() const {
-	return hitArea.size.y;
+	return (int) hitArea.size.y;
 }
 
 const float RectangleFrame::getLayerDepth() const {
@@ -341,8 +341,8 @@ void Line::setDimensions(const Vector2& pos, const Vector2& size) {
 
 	lineRect.left = 0;
 	lineRect.top = 0;
-	lineRect.right = size.x;
-	lineRect.bottom = size.y;
+	lineRect.right = (LONG) size.x;
+	lineRect.bottom = (LONG) size.y;
 }
 
 void Line::setRotation(const float rot) {
@@ -409,21 +409,21 @@ void TriangleFrame::setDimensions(const Vector2& p1, const Vector2& p2,
 	float length = sqrt(diff.x * diff.x + diff.y * diff.y);
 	lineRECT1.left = 0;
 	lineRECT1.top = 0;
-	lineRECT1.right = length + lengthBuffer;
+	lineRECT1.right = (LONG) length + lengthBuffer;
 	lineRECT1.bottom = thickness;
 
 	diff = point2 - point3;
 	length = sqrt(diff.x * diff.x + diff.y * diff.y);
 	lineRECT2.left = 0;
 	lineRECT2.top = 0;
-	lineRECT2.right = length + lengthBuffer;
+	lineRECT2.right = (LONG) length + lengthBuffer;
 	lineRECT2.bottom = thickness;
 
 	diff = point3 - point1;
 	length = sqrt(diff.x * diff.x + diff.y * diff.y);
 	lineRECT3.left = 0;
 	lineRECT3.top = 0;
-	lineRECT3.right = length + lengthBuffer;
+	lineRECT3.right = (LONG) length + lengthBuffer;
 	lineRECT3.bottom = thickness;
 }
 
@@ -511,20 +511,20 @@ void TriangleFrame::setScale(const Vector2& scl) {
 
 	Vector2 diff = point1 - point2;
 	float length = sqrt(diff.x * diff.x + diff.y * diff.y);
-	lineRECT1.right = length + lengthBuffer;
-	lineRECT1.bottom *= scl.x;
+	lineRECT1.right = (LONG) length + lengthBuffer;
+	lineRECT1.bottom = LONG(lineRECT1.bottom * scl.x);
 
 	diff = point2 - point3;
 	length = sqrt(diff.x * diff.x + diff.y * diff.y);
-	lineRECT2.right = length + lengthBuffer;
-	lineRECT2.bottom *= scl.x;
+	lineRECT2.right = (LONG) length + lengthBuffer;
+	lineRECT2.bottom = LONG(lineRECT2.bottom * scl.x);
 
 	diff = point3 - point1;
 	length = sqrt(diff.x * diff.x + diff.y * diff.y);
 	lineRECT3.left = 0;
 	lineRECT3.top = 0;
-	lineRECT3.right = length + lengthBuffer;
-	lineRECT3.bottom *= scl.x;
+	lineRECT3.right = (LONG) length + lengthBuffer;
+	lineRECT3.bottom = LONG(lineRECT3.bottom * scl.x);
 
 	setPosition(origpos);
 }

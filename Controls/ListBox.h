@@ -103,8 +103,8 @@ public:
 
 
 	void setSelected(size_t newIndex);
-	const UINT getSelectedIndex() const;
-	const UINT getHoveredIndex() const;
+	const size_t getSelectedIndex() const;
+	const int getHoveredIndex() const;
 	ListItem* getSelected();
 	ListItem* getItem(size_t index);
 
@@ -138,8 +138,8 @@ public:
 	public:
 		/** listbox: The ListBox this ActionListener is attached to.
 		selectedItemIndex: index of item in ListBox.*/
-		virtual void onClick(ListBox* listbox, UINT selectedItemIndex) = 0;
-		virtual void onHover(ListBox* listbox, short hoveredItemIndex) = 0;
+		virtual void onClick(ListBox* listbox, size_t selectedItemIndex) = 0;
+		virtual void onHover(ListBox* listbox, int hoveredItemIndex) = 0;
 	};
 
 
@@ -168,8 +168,8 @@ public:
 	};
 
 private:
-	typedef void (ActionListener::*OnClickFunction) (ListBox*, UINT);
-	typedef void (ActionListener::*OnHoverFunction) (ListBox*, short);
+	typedef void (ActionListener::*OnClickFunction) (ListBox*, size_t);
+	typedef void (ActionListener::*OnHoverFunction) (ListBox*, int);
 	OnClickFunction onClickFunction;
 	OnHoverFunction onHoverFunction;
 
@@ -177,23 +177,23 @@ private:
 	/* width of listbox */
 	int width;
 	/* Always smaller or equal to maxDisplayItems. */
-	UINT itemsToDisplay = 0;
+	size_t itemsToDisplay = 0;
 
-	boolean isEnumerated = false;
+	bool isEnumerated = false;
 	bool alwaysDisplayScrollBar = false;
 
 	const pugi::char_t* fontName;
 	vector<ListItem*> listItems;
-	UINT selectedIndex = 0;
-	short hoveredIndex = -1;
+	size_t selectedIndex = 0;
+	int hoveredIndex = -1;
 
-	UINT itemHeight = 32;
+	size_t itemHeight = 32;
 	Vector2 firstItemPos;
 	int longestLabelLength = 0;
 
 	unique_ptr<ScrollBar> scrollBar;
 	unique_ptr<RectangleFrame> frame;
-	int firstItemToDisplay = 0;
+	size_t firstItemToDisplay = 0;
 
 	/** ID3D11ShaderResourceView is a ComPtr! */
 	ComPtr<ID3D11ShaderResourceView> pixel;

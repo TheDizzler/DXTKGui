@@ -62,12 +62,12 @@ public:
 	public:
 		/** combobox: The ComboBox this ActionListener is attached to.
 		selectedItemIndex: index of item in ListBox.*/
-		virtual void onClick(ComboBox* combobox, UINT selectedItemIndex) = 0;
-		virtual void onHover(ComboBox* listbox, short hoveredItemIndex) = 0;
+		virtual void onClick(ComboBox* combobox, size_t selectedItemIndex) = 0;
+		virtual void onHover(ComboBox* listbox, int hoveredItemIndex) = 0;
 	};
 
-	typedef void (ActionListener::*OnClickFunction) (ComboBox*, UINT);
-	typedef void (ActionListener::*OnHoverFunction) (ComboBox*, short);
+	typedef void (ActionListener::*OnClickFunction) (ComboBox*, size_t);
+	typedef void (ActionListener::*OnHoverFunction) (ComboBox*, int);
 
 	void setActionListener(ActionListener* iOnC) {
 		if (actionListener != NULL)
@@ -136,8 +136,8 @@ private:
 
 	private:
 		ComboBox* comboBox;
-		virtual void onClick(ListBox* listbox, UINT selectedItemIndex) override;
-		virtual void onHover(ListBox* listbox, short hoveredItemIndex) override;
+		virtual void onClick(ListBox* listbox, size_t selectedItemIndex) override;
+		virtual void onHover(ListBox* listbox, int hoveredItemIndex) override;
 	};
 
 	class ShowListBoxListener : public Button::ActionListener {

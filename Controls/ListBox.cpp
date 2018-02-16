@@ -39,14 +39,14 @@ void ListBox::initialize(const pugi::char_t* fnt, GraphicsAsset* pixelAsset,
 	scrollBar.reset(scrllbr);
 	frame.reset(guiFactory->createRectangleFrame());
 	hitArea.position = position;
-	hitArea.size = Vector2(frame->getWidth(), frame->getHeight());
+	hitArea.size = Vector2((float) frame->getWidth(), (float) frame->getHeight());
 	isEnumerated = enumerateList;
 
 	texturePanel.reset(guiFactory->createPanel(true));
 	texturePanel->setTexturePosition(firstItemPos);
 
 	emptyListItem = new EmptyListItem();
-	emptyListItem->initialize(width - scrollBar->getWidth(), itemHeight,
+	emptyListItem->initialize(width - scrollBar->getWidth(), (int) itemHeight,
 		guiFactory->createTextLabel(Vector2::Zero, L"", fontName),
 		pixel, listItems.size(), isEnumerated);
 	emptyListItem->setText();
@@ -61,7 +61,7 @@ void ListBox::reloadGraphicsAsset() {
 	frame->reloadGraphicsAsset();
 	texturePanel.reset(guiFactory->createPanel(true));
 	texturePanel->setTexturePosition(firstItemPos);
-	for (int i = firstItemToDisplay; i < firstItemToDisplay + itemsToDisplay; ++i)
+	for (size_t i = firstItemToDisplay; i < firstItemToDisplay + itemsToDisplay; ++i)
 		listItems[i]->reloadGraphicsAsset(guiFactory);
 
 	resizeBox();
@@ -84,12 +84,12 @@ bool ListBox::update(double deltaTime) {
 		if (scrollBar->update(deltaTime))
 			refreshPanel = true;
 
-		double dif = listItems.size();
-		firstItemToDisplay = round(scrollBar->getPercentScroll() * (double) dif);
+		double dif = (double) listItems.size();
+		firstItemToDisplay = (int) round(scrollBar->getPercentScroll() * (double) dif);
 
 	}
 
-	for (int j = firstItemToDisplay; j < firstItemToDisplay + itemsToDisplay; ++j) {
+	for (size_t j = firstItemToDisplay; j < firstItemToDisplay + itemsToDisplay; ++j) {
 		if (listItems[j]->update(deltaTime, mouse)) {
 			refreshPanel = true;
 			if (listItems[j]->isSelected) {
@@ -107,7 +107,7 @@ bool ListBox::update(double deltaTime) {
 					}
 				}
 			} else if (listItems[j]->isHovered) {
-				hoveredIndex = j;
+				hoveredIndex = (int) j;
 				onHover();
 			} else {
 				hoveredIndex = -1;
@@ -133,11 +133,8 @@ void ListBox::draw(SpriteBatch* batch) {
 
 void ListBox::textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device) {
 
-	for (int i = firstItemToDisplay;
-		i < firstItemToDisplay + itemsToDisplay; ++i) {
-
+	for (size_t i = firstItemToDisplay; i < firstItemToDisplay + itemsToDisplay; ++i) {
 		listItems[i]->draw(batch);
-
 	}
 
 	if (itemsToDisplay == maxDisplayItems || alwaysDisplayScrollBar) {
@@ -164,8 +161,8 @@ void ListBox::setScrollBar(ScrollBarDesc& scrollBarDesc) {
 void ListBox::addItem(ListItem* item) {
 
 	listItems.push_back(item);
-	if (item->measureString().x > +scrollBar->getWidth() > longestLabelLength)
-		longestLabelLength = item->measureString().x;
+	if (item->measureString().x + scrollBar->getWidth() > longestLabelLength)
+		longestLabelLength = (int) item->measureString().x;
 
 	resizeBox();
 }
@@ -174,12 +171,12 @@ void ListBox::addItem(ListItem* item) {
 void ListBox::addItems(vector<ListItem*> items) {
 
 	for (ListItem* item : items) {
-		item->initialize(width - scrollBar->getWidth(), itemHeight,
+		item->initialize(width - scrollBar->getWidth(), (int) itemHeight,
 			guiFactory->createTextLabel(Vector2::Zero, L"", fontName),
 			pixel, listItems.size(), layerDepth, isEnumerated);
 		listItems.push_back(item);
 		if (item->measureString().x + scrollBar->getWidth() > longestLabelLength)
-			longestLabelLength = item->measureString().x;
+			longestLabelLength = (int) item->measureString().x;
 	}
 
 	items.clear();
@@ -201,13 +198,13 @@ void ListBox::resizeBox() {
 		itemsToDisplay = listItems.size();
 
 	scrollBar->setScrollBar(listItems.size(), itemHeight, maxDisplayItems);
-	int frameWidth;
+	float frameWidth;
 	if (listItems.size() > maxDisplayItems || alwaysDisplayScrollBar)
-		frameWidth = width;
+		frameWidth = (float) width;
 	else
-		frameWidth = width - scrollBar->getWidth();
+		frameWidth = (float) width - scrollBar->getWidth();
 
-	int frameHeight = itemHeight * itemsToDisplay;
+	float frameHeight = (float) itemHeight * itemsToDisplay;
 	Vector2 frameSize = Vector2(frameWidth, frameHeight);
 	frame->setDimensions(position, frameSize, frameThickness);
 	hitArea.size = frameSize;
@@ -224,9 +221,7 @@ void ListBox::moveBy(const Vector2& moveVector) {
 
 	Vector2 pos = firstItemPos;
 
-	for (int i = firstItemToDisplay;
-		i < firstItemToDisplay + itemsToDisplay; ++i) {
-
+	for (size_t i = firstItemToDisplay; i < firstItemToDisplay + itemsToDisplay; ++i) {
 		listItems[i]->updatePosition(pos);
 		pos.y += itemHeight;
 	}
@@ -245,9 +240,7 @@ void ListBox::setPosition(const Vector2& newPosition) {
 	firstItemPos += moveVector;
 	Vector2 pos = firstItemPos;
 
-	for (int i = firstItemToDisplay;
-		i < firstItemToDisplay + itemsToDisplay; ++i) {
-
+	for (size_t i = firstItemToDisplay; i < firstItemToDisplay + itemsToDisplay; ++i) {
 		listItems[i]->updatePosition(pos);
 		pos.y += itemHeight;
 	}
@@ -305,11 +298,11 @@ void ListBox::setSelected(size_t newIndex) {
 	refreshPanel = true;
 }
 
-const UINT ListBox::getSelectedIndex() const {
+const size_t ListBox::getSelectedIndex() const {
 	return selectedIndex;
 }
 
-const UINT ListBox::getHoveredIndex() const {
+const int ListBox::getHoveredIndex() const {
 	return hoveredIndex;
 }
 
@@ -348,18 +341,18 @@ const int ListBox::getWidth() const {
 
 const int ListBox::getHeight() const {
 
-	int numItems = listItems.size() > maxDisplayItems ? maxDisplayItems : listItems.size();
-	int height = numItems * itemHeight;
-	return height;
+	size_t numItems = listItems.size() > maxDisplayItems ? maxDisplayItems : listItems.size();
+	size_t height = numItems * itemHeight;
+	return (int) height;
 }
 
 void ListBox::setLayerDepth(const float depth, bool frontToBack) {
 
-	float nudge = .00000001;
+	float nudge = .00000001f;
 	if (!frontToBack)
 		nudge *= -1;
 
-	for (int i = firstItemToDisplay; i < firstItemToDisplay + itemsToDisplay; ++i)
+	for (size_t i = firstItemToDisplay; i < firstItemToDisplay + itemsToDisplay; ++i)
 		listItems[i]->setLayerDepth(depth);
 
 	if (itemsToDisplay == maxDisplayItems || alwaysDisplayScrollBar)
@@ -408,7 +401,7 @@ void ListItem::initialize(const int width, const int height,
 	itemRect.bottom = height;
 	itemRect.right = width;
 
-	hitArea.reset(new HitArea(Vector2::Zero, Vector2(width, height)));
+	hitArea.reset(new HitArea(Vector2::Zero, Vector2((float) width, (float) height)));
 
 	pixel = pixelTexture;
 	itemPosition = Vector2::Zero;
@@ -436,7 +429,7 @@ void ListItem::reloadGraphicsAsset(GUIFactory* guiFactory) {
 void ListItem::setWidth(int newWidth) {
 
 	itemRect.right = newWidth;
-	hitArea->size.x = newWidth;
+	hitArea->size.x = (float) newWidth;
 }
 
 Vector2 ListItem::measureString() const {
