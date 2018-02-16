@@ -257,11 +257,11 @@ const Vector2& TextLabel::getPosition() const {
 
 
 int const TextLabel::getWidth() const {
-	return ceil(hitArea.size.x);
+	return (int) ceil(hitArea.size.x);
 }
 
 int const TextLabel::getHeight() const {
-	return ceil(hitArea.size.y);
+	return (int) ceil(hitArea.size.y);
 }
 
 const pugi::char_t* TextLabel::getFont() const {

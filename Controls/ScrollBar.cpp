@@ -118,7 +118,7 @@ void ScrollBar::setPosition(const Vector2& newPosition) {
 	scrubber->moveBy(moveVector);
 }
 
-void ScrollBar::setBarHeight(int barHght) {
+void ScrollBar::setBarHeight(size_t barHght) {
 	barHeight = barHght;
 
 	scrollBarDownButton->setPosition(

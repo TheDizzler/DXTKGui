@@ -94,7 +94,7 @@ public:
 	virtual void setPosition(const Vector2& newPosition) override;
 	//void resetPositionTo(const Vector2& newPosition);
 
-	void setBarHeight(int barHeight);
+	void setBarHeight(size_t barHeight);
 	/** Call this from parent control on mouse scroll. */
 	void scrollByIncrement(int scrollIncrement);
 
