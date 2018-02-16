@@ -15,7 +15,8 @@ namespace StringHelper {
 
 		const size_t cSize = strlen(text) + 1;
 		wchar_t* wc = new wchar_t[cSize];
-		mbstowcs(wc, text, cSize);
+		size_t outsize;
+		mbstowcs_s(&outsize, wc, cSize, text, cSize - 1);
 
 		return wc;
 	}

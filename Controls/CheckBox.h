@@ -22,7 +22,7 @@ public:
 	virtual void setPosition(const Vector2& position) override;
 	virtual void setScale(const Vector2& scale) override;
 
-	virtual const Vector2& XM_CALLCONV measureString() const override;
+	virtual const Vector2 XM_CALLCONV measureString() const override;
 	virtual const Vector2& getPosition() const override;
 	virtual const int getWidth() const override;
 	virtual const int getHeight() const override;

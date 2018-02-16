@@ -13,7 +13,7 @@ TransitionEffects::GrowTransition::GrowTransition(IElement2D* cntrl, const Vecto
 bool TransitionEffects::GrowTransition::run(double deltaTime) {
 
 	Vector2 newscale = Vector2::Lerp(control->getScale(), endScale,
-		deltaTime*transitionSpeed);
+		float(deltaTime*transitionSpeed));
 
 
 	Vector2 diffScale = endScale - newscale;
@@ -42,7 +42,7 @@ TransitionEffects::ShrinkTransition::ShrinkTransition(IElement2D* cntrl,
 bool TransitionEffects::ShrinkTransition::run(double deltaTime) {
 
 	Vector2 newscale = Vector2::Lerp(control->getScale(), endScale,
-		deltaTime*transitionSpeed);
+		float(deltaTime*transitionSpeed));
 
 	Vector2 diffScale = newscale - endScale;
 	if (diffScale.x <= .1 && diffScale.y <= .1) {
@@ -69,7 +69,7 @@ TransitionEffects::SlideTransition::SlideTransition(IElement2D* cntrl,
 bool TransitionEffects::SlideTransition::run(double deltaTime) {
 
 	Vector2 newpos = Vector2::Lerp(
-		control->getPosition(), endPosition, deltaTime*transitionSpeed);
+		control->getPosition(), endPosition, float(deltaTime*transitionSpeed));
 
 	Vector2 diffPos = endPosition - newpos;
 	if (diffPos.x <= 3 && diffPos.y <= 3) {
@@ -103,9 +103,9 @@ int waitingCount = 0;
 bool TransitionEffects::SlideAndGrowTransition::run(double deltaTime) {
 
 	Vector2 newpos = Vector2::Lerp(
-		control->getPosition(), endPosition, deltaTime * transitionSpeed);
+		control->getPosition(), endPosition, float(deltaTime * transitionSpeed));
 	Vector2 newscale = Vector2::Lerp(control->getScale(), endScale,
-		deltaTime * transitionSpeed);
+		float(deltaTime * transitionSpeed));
 
 	Vector2 diffPos = endPosition - newpos;
 	if (diffPos.x <= 3 && diffPos.y <= 3) {
@@ -167,7 +167,7 @@ bool TransitionEffects::TrueGrowTransition::run(double deltaTime) {
 
 		Vector2 endPos = endPositions[i++];
 		Vector2 newpos = Vector2::Lerp(
-			element->getPosition(), endPos, deltaTime*transitionSpeed);
+			element->getPosition(), endPos, float(deltaTime*transitionSpeed));
 
 		Vector2 diffPos = endPos - newpos;
 		if (diffPos.x <= .3 && diffPos.y <= .3) {
@@ -180,7 +180,7 @@ bool TransitionEffects::TrueGrowTransition::run(double deltaTime) {
 
 
 	Vector2 newscale = Vector2::Lerp(containerControl->getScale(), endScale,
-		deltaTime*transitionSpeed);
+		float(deltaTime*transitionSpeed));
 
 
 	Vector2 diffScale = endScale - newscale;
@@ -248,7 +248,7 @@ void TransitionEffects::TexturedTransition::initializeEffect(Texturizable* cntrl
 	viewRect.right = gfxAsset->getWidth();
 	viewRect.bottom = gfxAsset->getHeight();
 
-	origin = Vector2(gfxAsset->getWidth() / 2, gfxAsset->getHeight() / 2);
+	origin = Vector2((float) gfxAsset->getWidth() / 2, (float) gfxAsset->getHeight() / 2);
 }
 
 
@@ -290,8 +290,8 @@ void TransitionEffects::BlindsTransition::initializeEffect(Texturizable* cntrl) 
 
 	endScale = control->getScale();
 
-	int row = ceil((float) gfxAsset->getWidth() / squareSize);
-	int col = ceil((float) gfxAsset->getHeight() / squareSize);
+	int row = (int) ceil((float) gfxAsset->getWidth() / squareSize);
+	int col = (int) ceil((float) gfxAsset->getHeight() / squareSize);
 
 	for (int j = 0; j < col; ++j) {
 		vector<RECT> rowVect;
@@ -316,7 +316,7 @@ void TransitionEffects::BlindsTransition::initializeEffect(Texturizable* cntrl) 
 
 bool TransitionEffects::BlindsTransition::run(double deltaTime) {
 
-	scale = Vector2::Lerp(startScale, endScale, timer / transitionSpeed);
+	scale = Vector2::Lerp(startScale, endScale, float(timer / transitionSpeed));
 	timer += deltaTime;
 	return timer >= transitionSpeed;
 
@@ -357,7 +357,7 @@ TransitionEffects::SpinGrowTransition::SpinGrowTransition(IElement2D* cntrl,
 void TransitionEffects::SpinGrowTransition::initializeEffect(Texturizable* cntrl) {
 	TexturedTransition::initializeEffect(cntrl);
 
-	origin = Vector2(gfxAsset->getWidth() / 2, gfxAsset->getHeight() / 2);
+	origin = Vector2((float) gfxAsset->getWidth() / 2, (float) gfxAsset->getHeight() / 2);
 	position.x += gfxAsset->getWidth() / 2;
 	position.y += gfxAsset->getHeight() / 2;
 
@@ -370,13 +370,10 @@ void TransitionEffects::SpinGrowTransition::initializeEffect(Texturizable* cntrl
 bool TransitionEffects::SpinGrowTransition::run(double deltaTime) {
 
 	timer += deltaTime;
-	scale = Vector2::Lerp(startScale, endScale, timer / transitionSpeed);
-	rotation = (/*rotation * (1.0f - timer/ transitionSpeed)*/0)
-		+ (XM_PI * 4 * timer / transitionSpeed);
-
+	scale = Vector2::Lerp(startScale, endScale, float(timer / transitionSpeed));
+	rotation = float(XM_PI * 4 * timer / transitionSpeed);
 
 	return timer >= transitionSpeed;
-
 }
 
 void TransitionEffects::SpinGrowTransition::reset() {
@@ -416,15 +413,15 @@ void TransitionEffects::SplitTransition::initializeEffect(Texturizable* cntrl) {
 	viewRectRight.bottom = gfxAsset->getHeight();
 
 	positionRight = position;
-	position.x = -gfxAsset->getWidth() / 2;
-	positionRight.x = screenWidth;
+	position.x = float(-gfxAsset->getWidth()) / 2;
+	positionRight.x = (float) screenWidth;
 
 	origin = Vector2::Zero;
 }
 
 bool TransitionEffects::SplitTransition::run(double deltaTime) {
 
-	double change = deltaTime *transitionSpeed * 10;
+	float change = float(deltaTime * transitionSpeed * 10);
 	position.x += change;
 	positionRight.x -= change;
 	if (position.x >= control->getPosition().x)
@@ -437,17 +434,17 @@ void TransitionEffects::SplitTransition::reset() {
 	position.y = control->getPosition().y;
 	positionRight.y = control->getPosition().y;
 
-	position.x = -gfxAsset->getWidth() / 2;
-	positionRight.x = screenWidth;
+	position.x = (float) -gfxAsset->getWidth() / 2;
+	positionRight.x = (float) screenWidth;
 
-	int center = control->getPosition().x + control->getWidth() / 2;
-	int differenceRight = positionRight.x - center;
-	int differenceLeft = center - (position.x + viewRect.right);
+	int center = int(control->getPosition().x + control->getWidth() / 2);
+	int differenceRight = (int) positionRight.x - center;
+	int differenceLeft = center - int(position.x + viewRect.right);
 
 	if (differenceRight > differenceLeft)
-		position.x += center - differenceRight;
+		position.x += float(center - differenceRight);
 	else
-		positionRight.x = center + differenceLeft;
+		positionRight.x = float(center + differenceLeft);
 }
 
 bool TransitionEffects::SplitTransition::draw(SpriteBatch* batch) {

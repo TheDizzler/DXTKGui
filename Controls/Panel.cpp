@@ -20,7 +20,7 @@ void Panel::setFont(const pugi::char_t* font) {
 void Panel::setText(wstring text) {
 }
 
-const Vector2 &XM_CALLCONV Panel::measureString() const {
+const Vector2 XM_CALLCONV Panel::measureString() const {
 	return Vector2::Zero;
 }
 

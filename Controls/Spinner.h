@@ -34,14 +34,14 @@ public:
 	void increase();
 	void decrease();
 
-	virtual void setLayerDepth(float newDepth, bool frontToBack = true) override;
+	virtual void setLayerDepth(const float newDepth, bool frontToBack = true) override;
 	/** Not yet implemented. */
 	virtual void setScale(const Vector2& scale) override;
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 	/** Not used in Spinner. */
 	virtual void setText(wstring text) override;
 	/** Returns the longest string in the list. */
-	virtual const Vector2 &XM_CALLCONV measureString() const override;
+	virtual const Vector2 XM_CALLCONV measureString() const override;
 
 	virtual void moveBy(const Vector2& moveVector) override;
 	virtual void setPosition(const Vector2& newPosition) override;

@@ -38,29 +38,30 @@ bool GUIFactory::initialize(HWND h, ComPtr<ID3D11Device> dev,
 
 	hwnd = h;
 
-	if (assetManifestFile == NULL) {
-		// get graphical assets from default file
 
-		docAssMan.reset(new pugi::xml_document());
-		if (!docAssMan->load_file(GUIAssets::assetManifestFile)) {
-			StringHelper::reportError(
-				L"Could not read AssetManifest file!",
-				L"Fatal Read Error!", false);
-			return false;
-		}
+	// get graphical assets from default file
+	unique_ptr<xml_document> docAssMan = make_unique<xml_document>();
+	if (!docAssMan->load_file(GUIAssets::assetManifestFile)) {
+		StringHelper::reportError(
+			L"Could not read AssetManifest file!",
+			L"Fatal Read Error!", false);
+		return false;
+	}
+	guiAssetsNode.push_back(docAssMan->child("root").child("gui"));
+	docs.push_back(move(docAssMan));
 
-			guiAssetsNode = docAssMan->child("root").child("gui");
-	} else {
+	if (assetManifestFile != NULL) {
 		// get graphical assets from custom xml file
-		docAssMan.reset(new pugi::xml_document());
-		if (!docAssMan->load_file(assetManifestFile)) {
+		unique_ptr<xml_document> docAssManCustom = make_unique<xml_document>();
+		if (!docAssManCustom->load_file(assetManifestFile)) {
 			StringHelper::reportError(
-			 L"Could not read AssetManifest file!",
+				L"Could not read custom AssetManifest file!",
 				L"Fatal Read Error!", false);
 			return false;
 		}
 
-		guiAssetsNode = docAssMan->child("root").child("gui");
+		guiAssetsNode.push_back(docAssManCustom->child("root").child("gui"));
+		docs.push_back(move(docAssManCustom));
 	}
 
 
@@ -68,12 +69,13 @@ bool GUIFactory::initialize(HWND h, ComPtr<ID3D11Device> dev,
 	deviceContext = devCon;
 	batch = sBatch;
 
-	if (!getGUIAssetsFromXML()) {
-		StringHelper::reportError(L"Sprite retrieval from Asset Manifest failed.",
-			L"Epic failure", false);
-		return false;
+	for (xml_node node : guiAssetsNode) {
+		if (!getGUIAssetsFromXML(node)) {
+			StringHelper::reportError(L"Asset retrieval from Asset Manifest failed.",
+				L"Epic failure", false);
+			return false;
+		}
 	}
-
 	mouseController = mouse;
 
 	initialized = true;
@@ -92,9 +94,12 @@ void GUIFactory::reInitDevice(ComPtr<ID3D11Device> dev,
 	batch = sBatch;
 	assetMap.clear();
 
-	if (!getGUIAssetsFromXML()) {
-		MessageBox(0, L"Sprite retrieval from Asset Manifest failed.",
-			L"Epic failure", MB_OK);
+	for (xml_node node : guiAssetsNode) {
+		if (!getGUIAssetsFromXML(node)) {
+			StringHelper::reportError(
+				L"Asset retrieval from Asset Manifest failed.",
+				L"Epic failure", false);
+		}
 	}
 }
 
@@ -549,11 +554,11 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromTexturizable(
 	int widthPadding = 0;
 	float ratio = (float) screenWidth / screenHeight;
 	if (width > height) {
-		heightPadding = width / ratio - height;
-		height = width / ratio;
+		heightPadding = INT(width / ratio) - height;
+		height = INT(width / ratio);
 	} else {
-		widthPadding = height*ratio - width;
-		width = height * ratio;
+		widthPadding = INT(height*ratio) - width;
+		width = INT(height * ratio);
 	}
 	width += buffer;
 	height += buffer;
@@ -670,7 +675,7 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromTexturizable(
 	string name = "Texturized Control #" + to_string(elementCounter++);
 
 	gfxAsset->loadAsPartOfSheet(shaderResourceView, name.c_str(), Vector2::Zero,
-		Vector2(width - widthPadding - buffer, height - heightPadding - buffer), Vector2::Zero);
+		Vector2(FLOAT(width - widthPadding - buffer), FLOAT(height - heightPadding - buffer)), Vector2::Zero);
 
 	shaderResourceView.Reset();
 	return move(gfxAsset);
@@ -764,8 +769,8 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 	ZeroMemory(&textureViewport, sizeof(D3D11_VIEWPORT));
 	textureViewport.TopLeftX = 0;
 	textureViewport.TopLeftY = 0;
-	textureViewport.Width = screenWidth;
-	textureViewport.Height = screenHeight;
+	textureViewport.Width = (float) screenWidth;
+	textureViewport.Height = (float) screenHeight;
 	textureViewport.MinDepth = 0.0f;
 	textureViewport.MaxDepth = 1.0f;
 	deviceContext->RSSetViewports(1, &textureViewport);
@@ -791,7 +796,7 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 	string name = "Texturized Screen #" + to_string(screenCounter++);
 	unique_ptr<GraphicsAsset> gfxAsset = make_unique<GraphicsAsset>();
 	gfxAsset->loadAsPartOfSheet(shaderResourceView, name.c_str(), Vector2::Zero,
-		Vector2(screenWidth - buffer, screenHeight - buffer), Vector2::Zero);
+		Vector2((float) screenWidth - buffer, (float) screenHeight - buffer), Vector2::Zero);
 
 	shaderResourceView.Reset();
 	return move(gfxAsset);
@@ -799,16 +804,16 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 
 
 
-bool GUIFactory::getGUIAssetsFromXML() {
+bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 
 	string assetsDir =
-		guiAssetsNode.parent().attribute("dir").as_string();
+		assetNode.parent().attribute("dir").as_string();
 
 	string guiDir =
-		assetsDir + guiAssetsNode.attribute("dir").as_string();
+		assetsDir + assetNode.attribute("dir").as_string();
 
 
-	xml_node fonts = guiAssetsNode.child("spritefonts");
+	xml_node fonts = assetNode.child("spritefonts");
 	string fontDir = assetsDir + fonts.attribute("dir").as_string();
 	for (xml_node fontNode = fonts.child("font"); fontNode;
 		fontNode = fontNode.next_sibling("font")) {
@@ -824,7 +829,7 @@ bool GUIFactory::getGUIAssetsFromXML() {
 	defaultFontFile = GUIAssets::defaultFontFile;
 	fontMap["Default Font"] = GUIAssets::defaultFontFile;
 
-	for (xml_node spriteNode : guiAssetsNode.children("sprite")) {
+	for (xml_node spriteNode : assetNode.children("sprite")) {
 		string file_s = guiDir + spriteNode.attribute("file").as_string();
 		const char_t* file = file_s.c_str();
 		const char_t* name = spriteNode.attribute("name").as_string();
@@ -832,8 +837,8 @@ bool GUIFactory::getGUIAssetsFromXML() {
 		Vector2 origin = Vector2(-1000, -1000);
 		xml_node originNode = spriteNode.child("origin");
 		if (originNode) {
-			origin.x = originNode.attribute("x").as_int();
-			origin.y = originNode.attribute("y").as_int();
+			origin.x = (float) originNode.attribute("x").as_int();
+			origin.y = (float) originNode.attribute("y").as_int();
 		}
 		unique_ptr<GraphicsAsset> guiAsset;
 		guiAsset.reset(new GraphicsAsset());
@@ -847,7 +852,7 @@ bool GUIFactory::getGUIAssetsFromXML() {
 		assetMap[name] = move(guiAsset);
 	}
 
-	for (xml_node spritesheetNode : guiAssetsNode.children("spritesheet")) {
+	for (xml_node spritesheetNode : assetNode.children("spritesheet")) {
 
 		string file_s = guiDir + spritesheetNode.attribute("file").as_string();
 		const char_t* file = file_s.c_str();
@@ -911,13 +916,10 @@ bool GUIFactory::getGUIAssetsFromXML() {
 		for (xml_node animationNode : spritesheetNode.children("animation")) {
 
 			const char_t* name = animationNode.attribute("name").as_string();
-
 			float timePerFrame = animationNode.attribute("timePerFrame").as_float();
 
 			vector<shared_ptr<Frame>> frames;
-			for (xml_node spriteNode = animationNode.child("sprite"); spriteNode;
-				spriteNode = spriteNode.next_sibling("sprite")) {
-
+			for (xml_node spriteNode : animationNode.children("sprite")) {
 
 				RECT rect;
 				rect.left = spriteNode.attribute("x").as_int();
@@ -927,8 +929,8 @@ bool GUIFactory::getGUIAssetsFromXML() {
 				Vector2 origin = Vector2(0, 0);
 				xml_node originNode = spriteNode.child("origin");
 				if (originNode) {
-					origin.x = originNode.attribute("x").as_int();
-					origin.y = originNode.attribute("y").as_int();
+					origin.x = (float) originNode.attribute("x").as_int();
+					origin.y = (float) originNode.attribute("y").as_int();
 				}
 				shared_ptr<Frame> frame;
 				if (spriteNode.attribute("frameTime"))
@@ -980,17 +982,17 @@ unique_ptr<GraphicsAsset> GUIFactory::parseSprite(xml_node spriteNode,
 	const char_t* spritename = spriteNode.attribute("name").as_string();
 
 	// pos in spritesheet
-	Vector2 position = Vector2(spriteNode.attribute("x").as_int() + xOffset,
-		spriteNode.attribute("y").as_int() + yOffset);
+	Vector2 position = Vector2(FLOAT(spriteNode.attribute("x").as_int() + xOffset),
+		FLOAT(spriteNode.attribute("y").as_int() + yOffset));
 	// dimensions in spritesheet
-	Vector2 size = Vector2(spriteNode.attribute("width").as_int(),
-		spriteNode.attribute("height").as_int());
+	Vector2 size = Vector2((float) spriteNode.attribute("width").as_int(),
+		(float) spriteNode.attribute("height").as_int());
 
-	Vector2 origin = Vector2(-1000, -1000); // this indicates to GfxAsset that origin should be center
+	Vector2 origin = Vector2(-1000.0f, -1000.0f); // this indicates to GfxAsset that origin should be center
 	xml_node originNode = spriteNode.child("origin");
 	if (originNode) {
-		origin.x = originNode.attribute("x").as_int();
-		origin.y = originNode.attribute("y").as_int();
+		origin.x = (float) originNode.attribute("x").as_int();
+		origin.y = (float) originNode.attribute("y").as_int();
 	}
 
 	unique_ptr<GraphicsAsset> spriteAsset = make_unique<GraphicsAsset>();

@@ -32,7 +32,7 @@ bool ComboBox::initialize(const pugi::char_t* fontName,
 	comboListButton->setActionListener(new ShowListBoxListener(this));
 
 	frame.reset(guiFactory->createRectangleFrame(
-		position, Vector2(width, comboListButton->getScaledHeight()),
+		position, Vector2((float) width, (float) comboListButton->getScaledHeight()),
 		frameThickness));
 
 	listBox.reset(lstBx);
@@ -43,7 +43,7 @@ bool ComboBox::initialize(const pugi::char_t* fontName,
 	//selectedLabel->setActionListener(new SelectedOnClick(this));
 
 	selectedBackgroundSprite.reset(guiFactory->createRectangle(position,
-		Vector2(width, comboListButton->getScaledHeight()), Color(.5, .5, .5, 1)));
+		Vector2((float) width, (float) comboListButton->getScaledHeight()), Color(.5f, .5f, .5f, 1.0f)));
 
 	height = frame->getHeight();
 
@@ -56,7 +56,7 @@ void ComboBox::reloadGraphicsAsset() {
 
 	comboListButton->reloadGraphicsAsset();
 	frame.reset(guiFactory->createRectangleFrame(
-		position, Vector2(width, comboListButton->getScaledHeight()),
+		position, Vector2((float) width, (float) comboListButton->getScaledHeight()),
 		frameThickness, frame->getTint()));
 	listBox->reloadGraphicsAsset();
 	selectedLabel->reloadGraphicsAsset();
@@ -143,9 +143,7 @@ void ComboBox::moveBy(const Vector2& moveVector) {
 
 
 void ComboBox::show() {
-
 	isOpen = !isOpen;
-
 }
 
 void ComboBox::hide() {
@@ -155,10 +153,10 @@ void ComboBox::hide() {
 void ComboBox::resizeBox() {
 
 	comboListButton->setPosition(
-		Vector2(position.x + width - comboListButton->getWidth(), position.y));
-	frame->setDimensions(position, Vector2(width, comboListButton->getHeight()));
+		Vector2(FLOAT(position.x + width - comboListButton->getWidth()), position.y));
+	frame->setDimensions(position, Vector2((float) width, (float) comboListButton->getHeight()));
 	selectedBackgroundSprite->setDimensions(position,
-		Vector2(width, comboListButton->getHeight()));
+		Vector2((float) width, (float) comboListButton->getHeight()));
 }
 
 void ComboBox::alwaysShowScrollBar(bool alwaysShow) {
@@ -184,7 +182,7 @@ ListItem* ComboBox::getItem(size_t index) {
 void ComboBox::setText(wstring text) {
 }
 
-const Vector2& XM_CALLCONV ComboBox::measureString() const {
+const Vector2 XM_CALLCONV ComboBox::measureString() const {
 	return Vector2::Zero;
 }
 
@@ -202,7 +200,7 @@ const int ComboBox::getHeight() const {
 
 void ComboBox::setLayerDepth(const float depth, bool frontToBack) {
 
-	float nudge = .00000001;
+	float nudge = .00000001f;
 	if (!frontToBack)
 		nudge *= -1;
 
@@ -257,12 +255,12 @@ void ComboBox::ShowListBoxListener::onHover(Button* button) {
 void ComboBox::ShowListBoxListener::resetState(Button * button) {
 }
 
-void ComboBox::ListBoxListener::onClick(ListBox* listbox, UINT selectedItemIndex) {
+void ComboBox::ListBoxListener::onClick(ListBox* listbox, size_t selectedItemIndex) {
 	comboBox->onClick();
 	comboBox->show();
 }
 
-void ComboBox::ListBoxListener::onHover(ListBox* listbox, short hoveredItemIndex) {
+void ComboBox::ListBoxListener::onHover(ListBox* listbox, int hoveredItemIndex) {
 	comboBox->onHover();
 }
 

@@ -203,7 +203,7 @@ Vector2 RawInputJoystick::getDirection() {
 		x = lAxisX;
 	if (lAxisY < -DEAD_ZONE || lAxisY > DEAD_ZONE)
 		y = lAxisY;
-	auto dir = Vector2(x, y);
+	auto dir = Vector2((float) x, (float) y);
 	dir.Normalize();
 	return dir;
 }
@@ -386,10 +386,10 @@ Vector2 GamePadJoystick::getDirection() {
 	float x = 0, y = 0;
 	if (lAxisX < -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE
 		|| lAxisX > XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
-		x = lAxisX / 32768.0;
+		x = lAxisX / 32768.0f;
 	if (lAxisY < -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE
 		|| lAxisY > XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
-		y = lAxisY / 32768.0;
+		y = lAxisY / 32768.0f;
 	auto dir = Vector2(x, -y);
 	//dir.Normalize();
 	return dir;

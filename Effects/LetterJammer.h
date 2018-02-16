@@ -6,12 +6,12 @@ class LetterJam {
 public:
 
 	int getWidth() {
-		return (sourceRECT.right - sourceRECT.left) * scale.x;
+		return INT((sourceRECT.right - sourceRECT.left) * scale.x);
 	}
 	Vector2 position;
 	RECT sourceRECT;
 	Color tint = Color(1, 1, 1, 1);
-	float rotation = 0.0;
+	float rotation = 0.0f;
 	Vector2 origin = Vector2(0, 0);
 	Vector2 scale = Vector2(1, 1);
 	SpriteEffects spriteEffects = SpriteEffects_None;

@@ -140,13 +140,13 @@ void TextLabel::setText(wstring text) {
 	refreshTexture = true;
 }
 
-const Vector2& XM_CALLCONV TextLabel::measureString() const {
+const Vector2 XM_CALLCONV TextLabel::measureString() const {
 	Vector2 size = font->measureString(label.c_str());
 	Vector2 scaledSize = size*scale;
 	return scaledSize;
 }
 
-const Vector2& XM_CALLCONV TextLabel::measureString(wstring string) const {
+const Vector2 XM_CALLCONV TextLabel::measureString(wstring string) const {
 	Vector2 size = font->measureString(string.c_str());
 	return size;
 }
@@ -257,11 +257,11 @@ const Vector2& TextLabel::getPosition() const {
 
 
 int const TextLabel::getWidth() const {
-	return ceil(hitArea.size.x);
+	return (int) ceil(hitArea.size.x);
 }
 
 int const TextLabel::getHeight() const {
-	return ceil(hitArea.size.y);
+	return (int) ceil(hitArea.size.y);
 }
 
 const pugi::char_t* TextLabel::getFont() const {
