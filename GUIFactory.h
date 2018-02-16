@@ -24,7 +24,8 @@ public:
 	MouseController* getMouseController();
 
 	/** DeviceContext and SpriteBatch references are required
-		to create textures from a GUIControl (will probably refactor this). */
+		to create textures from a GUIControl.
+		If an optional gui asset file is used it MUST have a node called 'gui'. */
 	bool initialize(HWND hwnd, ComPtr<ID3D11Device> device,
 		ComPtr<ID3D11DeviceContext> devCon, ComPtr<IDXGISwapChain> swapChain,
 		SpriteBatch* batch, MouseController* mouse,
