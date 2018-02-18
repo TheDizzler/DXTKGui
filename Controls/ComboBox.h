@@ -15,6 +15,7 @@ public:
 		bool enumerateList = false, const int frameThickness = 2);
 
 	virtual void reloadGraphicsAsset() override;
+	virtual void forceRefresh() override;
 
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);
 	void alwaysShowScrollBar(bool alwaysShow);
@@ -82,7 +83,6 @@ public:
 		if (actionListener != NULL)
 			(actionListener->*onClickFunction)(this, listBox->getSelectedIndex());
 		selectedLabel->setText(listBox->getSelected()->toString());
-		//comboListButton->onClick();
 	}
 
 	/** Not used in Combobox. */

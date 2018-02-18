@@ -85,6 +85,7 @@ public:
 		GraphicsAsset* pixelAsset, ScrollBar* scrollBar,
 		bool enumerateList = false, const int frameThickness = 2);
 
+	virtual void forceRefresh() override;
 	virtual void reloadGraphicsAsset() override;
 
 	virtual bool update(double deltaTime) override;
@@ -198,7 +199,7 @@ private:
 	/** ID3D11ShaderResourceView is a ComPtr! */
 	ComPtr<ID3D11ShaderResourceView> pixel;
 	unique_ptr<TexturePanel> texturePanel;
-	bool refreshPanel = false;
+	bool refreshTexture = false;
 
 	int frameThickness = 2;
 

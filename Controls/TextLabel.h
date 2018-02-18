@@ -14,6 +14,8 @@ public:
 		wstring text, const pugi::char_t* font, bool useTexture = true);
 
 	virtual ~TextLabel();
+
+	virtual void forceRefresh() override;
 	virtual void reloadGraphicsAsset() override;
 
 	virtual bool update(double deltaTime) override;

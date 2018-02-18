@@ -55,6 +55,10 @@ void Spinner::initialize(const pugi::char_t* fontName,
 }
 
 
+void Spinner::forceRefresh() {
+	refreshTexture = true;
+}
+
 void Spinner::reloadGraphicsAsset() {
 	label->reloadGraphicsAsset();
 	upButton->reloadGraphicsAsset();

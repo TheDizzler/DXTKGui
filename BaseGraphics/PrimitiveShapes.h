@@ -29,6 +29,7 @@ public:
 	RectangleFrame(GraphicsAsset* pixelAsset, GUIFactory* guifactory);
 	virtual ~RectangleFrame();
 
+	virtual void forceRefresh() override;
 	virtual void reloadGraphicsAsset();
 	void setDimensions(const Vector2& position, const Vector2& size,
 		int frameThickness = 2);

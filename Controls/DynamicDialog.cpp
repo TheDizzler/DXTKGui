@@ -10,11 +10,10 @@ DynamicDialog::DynamicDialog(GUIFactory* factory,
 }
 
 DynamicDialog::~DynamicDialog() {
-	assetSet.reset();
 }
 
 
-void DynamicDialog::initialize(shared_ptr<AssetSet> set, const pugi::char_t* font) {
+void DynamicDialog::initialize(AssetSet* set, const pugi::char_t* font) {
 
 	assetSet = set;
 	topLeftCorner = assetSet->getAsset("Top Left Corner");
@@ -35,9 +34,13 @@ void DynamicDialog::initialize(shared_ptr<AssetSet> set, const pugi::char_t* fon
 
 }
 
+void DynamicDialog::forceRefresh() {
+	refreshTexture = true;
+}
+
 void DynamicDialog::reloadGraphicsAsset() {
 	const pugi::char_t* assetSetName = assetSet->setName;
-	assetSet.reset();
+	
 	assetSet = guiFactory->getAssetSet(assetSetName);
 
 	topLeftCorner = assetSet->getAsset("Top Left Corner");

@@ -17,6 +17,7 @@ public:
 	void initialize(const pugi::char_t* fontName,
 		const pugi::char_t* upButtonName, const pugi::char_t* downButtonName);
 
+	virtual void forceRefresh() override;
 	virtual void reloadGraphicsAsset() override;
 
 	virtual unique_ptr<GraphicsAsset> texturize() override;
