@@ -66,6 +66,13 @@ void ComboBox::reloadGraphicsAsset() {
 	refreshTexture = true;
 }
 
+void ComboBox::forceRefresh() {
+	refreshTexture = true;
+	selectedLabel->forceRefresh();
+	comboListButton->forceRefresh();
+	frame->forceRefresh();
+}
+
 void ComboBox::setScrollBar(ScrollBarDesc& scrollBarDesc) {
 	listBox->setScrollBar(scrollBarDesc);
 }
@@ -77,18 +84,18 @@ bool ComboBox::update(double deltaTime) {
 		refreshTexture = true;
 	}
 
+	bool refresh = false;
+	if (isOpen) {
+		if (listBox->update(deltaTime))
+			refresh = true;
+	}
+
 	if (selectedLabel->update(deltaTime))
 		refreshTexture = true;
 	if (comboListButton->update(deltaTime))
 		refreshTexture = true;
 	if (frame->update())
 		refreshTexture = true;
-
-	bool refresh = false;
-	if (isOpen) {
-		if (listBox->update(deltaTime))
-			refresh = true;
-	}
 
 	if (refreshTexture) {
 		texturePanel->setTexture(texturize());

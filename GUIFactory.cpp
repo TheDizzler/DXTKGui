@@ -146,7 +146,7 @@ GraphicsAsset* const GUIFactory::getAsset(const char_t* assetName) {
 }
 
 
-shared_ptr<AssetSet> const GUIFactory::getAssetSet(const char_t* setName) {
+AssetSet* const GUIFactory::getAssetSet(const char_t* setName) {
 
 	if (setMap.find(setName) == setMap.end()) {
 		wostringstream ws;
@@ -155,7 +155,7 @@ shared_ptr<AssetSet> const GUIFactory::getAssetSet(const char_t* setName) {
 		return NULL;
 	}
 
-	return setMap[setName];
+	return setMap[setName].get();
 }
 
 
@@ -341,14 +341,6 @@ Button* GUIFactory::createImageButton(unique_ptr<Sprite> upSprite, const char_t*
 	return button;
 }
 
-AnimatedButton* GUIFactory::createAnimatedButton(const char_t* animatedButtonName,
-	Vector2 position) {
-
-	AnimatedButton* button = new AnimatedButton(this, mouseController,
-		getAnimation(animatedButtonName), position);
-	return button;
-}
-
 
 CheckBox* GUIFactory::createCheckBox(const Vector2& position,
 	wstring text, const char_t* fontName) {
@@ -522,7 +514,7 @@ DynamicDialog* GUIFactory::createDynamicDialog(const char_t* imageSet,
 	return dialog;
 }
 
-DynamicDialog* GUIFactory::createDynamicDialog(shared_ptr<AssetSet> dialogImageSet,
+DynamicDialog* GUIFactory::createDynamicDialog(AssetSet* dialogImageSet,
 	const Vector2& position, const Vector2& size, const char_t* fontName) {
 
 	DynamicDialog* dialog = new DynamicDialog(this, mouseController);
@@ -887,7 +879,7 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 						string subsetName(oss.str());
 						if (setMap.find(subsetName) == setMap.end()) {
 							// new set
-							setMap[subsetName] = make_shared<AssetSet>(subsetName.c_str());
+							setMap[subsetName] = make_unique<AssetSet>(subsetName.c_str());
 						}
 
 						for (xml_node spriteNode : spritesetNode.children("sprite")) {
@@ -904,7 +896,7 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 					const char_t* spriteName = spriteNode.attribute("name").as_string();
 					if (setMap.find(setName) == setMap.end()) {
 						// new set
-						setMap[setName] = make_shared<AssetSet>(setName);
+						setMap[setName] = make_unique<AssetSet>(setName);
 					}
 					setMap[setName]->addAsset(spriteNode.attribute("name").as_string(),
 						parseSprite(spriteNode, masterAsset->getTexture()));
@@ -918,7 +910,7 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 			const char_t* name = animationNode.attribute("name").as_string();
 			float timePerFrame = animationNode.attribute("timePerFrame").as_float();
 
-			vector<shared_ptr<Frame>> frames;
+			vector<unique_ptr<Frame>> frames;
 			for (xml_node spriteNode : animationNode.children("sprite")) {
 
 				RECT rect;
@@ -932,7 +924,7 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 					origin.x = (float) originNode.attribute("x").as_int();
 					origin.y = (float) originNode.attribute("y").as_int();
 				}
-				shared_ptr<Frame> frame;
+				unique_ptr<Frame> frame;
 				if (spriteNode.attribute("frameTime"))
 					frame.reset(new Frame(rect, origin,
 						spriteNode.attribute("frameTime").as_float()));
@@ -943,7 +935,7 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 			}
 
 			unique_ptr<Animation> animationAsset;
-			animationAsset.reset(new Animation(masterAsset->getTexture(), frames, name));
+			animationAsset.reset(new Animation(masterAsset->getTexture(), move(frames), name));
 			animationMap[name] = move(animationAsset);
 		}
 
@@ -954,7 +946,7 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 				string setName = spriteNode.attribute("set").as_string();
 				if (setMap.find(setName) == setMap.end()) {
 					// new set
-					setMap[setName] = make_shared<AssetSet>(setName.c_str());
+					setMap[setName] = make_unique<AssetSet>(setName.c_str());
 				}
 				setMap[setName]->addAsset(name,
 					parseSprite(spriteNode, masterAsset->getTexture()));
@@ -962,7 +954,7 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 				string setName = spritesheetNode.attribute("set").as_string();
 				if (setMap.find(setName) == setMap.end()) {
 					// new set
-					setMap[setName] = make_shared<AssetSet>(setName.c_str());
+					setMap[setName] = make_unique<AssetSet>(setName.c_str());
 				}
 				setMap[setName]->addAsset(name,
 					parseSprite(spriteNode, masterAsset->getTexture()));

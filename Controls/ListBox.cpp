@@ -51,7 +51,11 @@ void ListBox::initialize(const pugi::char_t* fnt, GraphicsAsset* pixelAsset,
 		pixel, listItems.size(), isEnumerated);
 	emptyListItem->setText();
 
-	refreshPanel = true;
+	refreshTexture = true;
+}
+
+void ListBox::forceRefresh() {
+	refreshTexture = true;
 }
 
 void ListBox::reloadGraphicsAsset() {
@@ -77,12 +81,12 @@ bool ListBox::update(double deltaTime) {
 			int mouseWheelDelta = mouse->scrollWheelValue();
 			if (mouseWheelDelta != 0) {
 				scrollBar->scrollByIncrement(-mouseWheelDelta);
-				refreshPanel = true;
+				refreshTexture = true;
 			}
 		}
 
 		if (scrollBar->update(deltaTime))
-			refreshPanel = true;
+			refreshTexture = true;
 
 		double dif = (double) listItems.size();
 		firstItemToDisplay = (int) round(scrollBar->getPercentScroll() * (double) dif);
@@ -91,7 +95,7 @@ bool ListBox::update(double deltaTime) {
 
 	for (size_t j = firstItemToDisplay; j < firstItemToDisplay + itemsToDisplay; ++j) {
 		if (listItems[j]->update(deltaTime, mouse)) {
-			refreshPanel = true;
+			refreshTexture = true;
 			if (listItems[j]->isSelected) {
 				if (!multiSelect) {
 					for (int i = 0; i < listItems.size(); ++i) {
@@ -115,11 +119,11 @@ bool ListBox::update(double deltaTime) {
 		}
 	}
 
-	if (refreshPanel) {
+	if (refreshTexture) {
 		frame->update();
 
 		texturePanel->setTexture(texturize());
-		refreshPanel = false;
+		refreshTexture = false;
 		return true;
 	}
 	return false;
@@ -209,7 +213,7 @@ void ListBox::resizeBox() {
 	frame->setDimensions(position, frameSize, frameThickness);
 	hitArea.size = frameSize;
 
-	refreshPanel = true;
+	refreshTexture = true;
 }
 
 
@@ -295,7 +299,7 @@ void ListBox::setSelected(size_t newIndex) {
 	scrollBar->setScrollPositionByPercent(
 		selectedIndex / (double) (listItems.size()));
 
-	refreshPanel = true;
+	refreshTexture = true;
 }
 
 const size_t ListBox::getSelectedIndex() const {
@@ -328,7 +332,7 @@ const Vector2 XM_CALLCONV ListBox::measureString() const {
 
 void ListBox::setFont(const pugi::char_t* fnt) {
 	fontName = fnt;
-	refreshPanel = true;
+	refreshTexture = true;
 }
 
 const Vector2& ListBox::getPosition() const {

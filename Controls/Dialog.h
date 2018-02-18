@@ -117,6 +117,7 @@ public:
 
 	void setSelectorManager(Joystick* joy, KeyboardController* keys);
 
+	virtual void forceRefresh() override;
 	virtual void reloadGraphicsAsset() override;
 
 	virtual void setScrollBar(ScrollBarDesc& scrollBarDesc);

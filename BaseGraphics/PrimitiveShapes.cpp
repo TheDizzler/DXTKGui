@@ -54,6 +54,10 @@ RectangleFrame::~RectangleFrame() {
 }
 
 
+void RectangleFrame::forceRefresh() {
+	refreshTexture = true;
+}
+
 void RectangleFrame::reloadGraphicsAsset() {
 	pixel = guiFactory->getAsset("White Pixel")->getTexture();
 	texturePanel.reset(guiFactory->createPanel());
@@ -71,7 +75,7 @@ void RectangleFrame::setDimensions(const Vector2& pos, const Vector2& size,
 	// upper horizontal frame
 	frameHorizontal.left = 0;
 	frameHorizontal.top = 0;
-	frameHorizontal.right = LONG( width * scale.x);
+	frameHorizontal.right = LONG(width * scale.x);
 	frameHorizontal.bottom = frameThickness; // thickness of frame
 	frameTopPos = position;
 

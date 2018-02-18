@@ -160,7 +160,7 @@ bool LetterJammer::isDone() {
 void LetterJammer::reset() {
 	done = false;
 	running = false;
-	if (/*refreshTexture && */label.size() > 0) {
+	if (label.size() > 0) {
 		gfxAsset = texturize();
 		textTexture = gfxAsset->getTexture();
 		refreshTexture = false;
@@ -277,7 +277,6 @@ ColorJammer::~ColorJammer() {
 	times.clear();
 	startColors.clear();
 	endColors.clear();
-	//states.clear();
 }
 
 void ColorJammer::initialize(vector<LetterJam>& jams, LPVOID pvoid) {
@@ -331,27 +330,6 @@ bool ColorJammer::run(double deltaTime, vector<LetterJam>& jams) {
 
 	for (int i = 0; i < jams.size(); ++i) {
 		times[i] += deltaTime;
-		//Color endColor = jams[i].tint;
-		/*switch (states[i]) {
-		case Red:
-		endColor.R(1);
-		break;
-		case RedReverse:
-		endColor.R(0);
-		break;
-		case Green:
-		endColor.G(1);
-		break;
-		case GreenReverse:
-		endColor.G(0);
-		break;
-		case Blue:
-		endColor.B(1);
-		break;
-		case BlueReverse:
-		endColor.B(0);
-		break;
-		}*/
 		jams[i].tint = Color::Lerp(startColors[i], endColors[i],
 			(float) times[i] / speedChange);
 		if (times[i] >= speedChange) {
@@ -397,12 +375,8 @@ bool ColorJammer::run(double deltaTime, vector<LetterJam>& jams) {
 						break;
 				}
 			}
-			//while (newState == states[i])
 			while (newColor == jams[i].tint);
 
-
-
-			//states[i] = newState;
 			endColors[i] = newColor;
 			startColors[i] = jams[i].tint;
 		}
@@ -416,6 +390,9 @@ RPGDamageJammer::RPGDamageJammer(int fallD, int speed, float fade) {
 	fallDistance = fallD;
 	fallSpeed = speed;
 	fadeOutTime = fade;
+}
+
+RPGDamageJammer::~RPGDamageJammer() {
 }
 
 const double START_DELAY = .125;

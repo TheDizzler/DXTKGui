@@ -13,7 +13,6 @@ class GUIFactory;
 class MouseController : public Sprite {
 public:
 
-	//MouseController(HWND hwnd);
 	virtual ~MouseController();
 
 	void initialize(HWND hwnd);
