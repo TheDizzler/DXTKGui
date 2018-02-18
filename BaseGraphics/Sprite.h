@@ -112,7 +112,7 @@ protected:
 
 	UINT width;
 	UINT height;
-	Vector2 position;
+	Vector2 position = Vector2::Zero;
 	Vector2 scale;
 	SpriteEffects spriteEffect = SpriteEffects_None;
 	HitArea hitArea;
