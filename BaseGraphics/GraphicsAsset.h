@@ -19,13 +19,13 @@ struct Frame {
 
 struct Animation {
 
-	Animation(ComPtr<ID3D11ShaderResourceView> tex, vector<shared_ptr<Frame>> frames,
+	Animation(ComPtr<ID3D11ShaderResourceView> tex, vector<unique_ptr<Frame>> frames,
 		string aniName)
-		: texture(tex), animationFrames(frames), animationName(aniName) {
+		: texture(tex), animationFrames(move(frames)), animationName(aniName) {
 	}
 	virtual ~Animation();
 
-	vector<shared_ptr<Frame>> animationFrames;
+	vector<unique_ptr<Frame>> animationFrames;
 	ComPtr<ID3D11ShaderResourceView> texture;
 	string animationName;
 };
@@ -83,14 +83,14 @@ public:
 	virtual ~AssetSet();
 
 	void addAsset(string assetName, unique_ptr<GraphicsAsset> asset);
-	void addAsset(string assetName, shared_ptr<Animation> asset);
+	void addAsset(string assetName, unique_ptr<Animation> asset);
 	GraphicsAsset* const getAsset(const pugi::char_t* assetName);
-	shared_ptr<Animation> getAnimation(const pugi::char_t* animationName);
+	Animation* getAnimation(const pugi::char_t* animationName);
 
 	const pugi::char_t* setName;
 
 private:
 
 	map<string, unique_ptr<GraphicsAsset> > assetMap;
-	map<string, shared_ptr<Animation>> animationMap;
+	map<string, unique_ptr<Animation>> animationMap;
 };

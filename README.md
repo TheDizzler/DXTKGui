@@ -88,7 +88,7 @@ How to Dialog:
 
 How to extend/sub-class:
 	class ControllerDialog : public Dialog
-		ControllerDialog(HWND hwnd, shared_ptr<MouseController> mouse);
+		ControllerDialog(HWND hwnd,MouseController* mouse);
 			initializeControl(guiFactory, mouse);
 			initialize(guiFactory->getAsset("White Pixel"));
 			setDimensions(position, size, frameThickness);

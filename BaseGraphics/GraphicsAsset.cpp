@@ -145,7 +145,7 @@ void AssetSet::addAsset(string assetName, unique_ptr<GraphicsAsset> asset) {
 	assetMap[assetName] = move(asset);
 }
 
-void AssetSet::addAsset(string assetName, shared_ptr<Animation> asset) {
+void AssetSet::addAsset(string assetName, unique_ptr<Animation> asset) {
 	animationMap[assetName] = move(asset);
 }
 
@@ -161,7 +161,7 @@ GraphicsAsset* const AssetSet::getAsset(const pugi::char_t* assetName) {
 	return assetMap[assetName].get();
 }
 
-shared_ptr<Animation> AssetSet::getAnimation(const pugi::char_t* animationName) {
+Animation* AssetSet::getAnimation(const pugi::char_t* animationName) {
 
 	if (animationMap.find(animationName) == animationMap.end()) {
 		wostringstream ws;
@@ -169,7 +169,7 @@ shared_ptr<Animation> AssetSet::getAnimation(const pugi::char_t* animationName) 
 		OutputDebugString(ws.str().c_str());
 		return NULL;
 	}
-	return animationMap[animationName];
+	return animationMap[animationName].get();
 }
 
 Animation::~Animation() {

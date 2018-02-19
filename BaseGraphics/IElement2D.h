@@ -48,6 +48,10 @@ class GraphicsAsset;
 interface Texturizable {
 public:
 
+	/* Force a refresh of the texture on the objects next update.
+		In general, this is unnecessary. If it is required, that is likely an 
+		indication of a bug. */
+	virtual void forceRefresh() = 0;
 	/* Call this when you want this object to be texturized. */
 	virtual unique_ptr<GraphicsAsset> texturize() = 0;
 	/* Called by GUIFactory::createTextureFromTexturizable(). Generally should not be called otherwise. */

@@ -43,6 +43,10 @@ TextLabel::~TextLabel() {
 		delete actionListener;
 }
 
+void TextLabel::forceRefresh() {
+	refreshTexture = true;
+}
+
 void TextLabel::reloadGraphicsAsset() {
 	const char_t* fontName = font->fontName;
 	font.reset();

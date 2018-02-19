@@ -219,6 +219,10 @@ void PromptDialog::setSelectorManager(Joystick* joy, KeyboardController* keys) {
 }
 
 
+void PromptDialog::forceRefresh() {
+	refreshTexture = true;
+}
+
 void PromptDialog::reloadGraphicsAsset() {
 	panel.reset(guiFactory->createPanel(false));
 	panel->setTint(Color(0, 1, 1, 1));
