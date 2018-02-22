@@ -17,8 +17,8 @@ struct Frame {
 	float frameTime;
 };
 
-struct Animation {
-
+class Animation {
+public:
 	Animation(ComPtr<ID3D11ShaderResourceView> tex, vector<unique_ptr<Frame>> frames,
 		string aniName)
 		: texture(tex), animationFrames(move(frames)), animationName(aniName) {
