@@ -4,10 +4,6 @@
 
 Sprite::Sprite() {
 
-	rotation = 0.0f;
-	scale = Vector2(1, 1);
-	tint = DirectX::Colors::White;
-	layerDepth = 0.1f;
 
 	width = 0;
 	height = 0;
@@ -16,10 +12,7 @@ Sprite::Sprite() {
 Sprite::Sprite(const Vector2& pos) {
 
 	position = pos;
-	rotation = 0.0f;
-	scale = Vector2(1, 1);
-	tint = DirectX::Colors::White;
-	layerDepth = 0.1f;
+
 	width = 0;
 	height = 0;
 
@@ -86,6 +79,10 @@ const Vector2& Sprite::getPosition() const {
 
 const Vector2& Sprite::getOrigin() const {
 	return origin;
+}
+
+const Vector2 Sprite::getCenter() const {
+	return position - origin + Vector2(width / 2, height / 2);
 }
 
 const Vector2& Sprite::getScale() const {

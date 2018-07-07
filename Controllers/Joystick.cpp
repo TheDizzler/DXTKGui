@@ -517,3 +517,97 @@ bool GamePadJoystick::startButtonDown() {
 bool GamePadJoystick::selectButtonDown() {
 	return (state.Gamepad.wButtons & selectButton) != 0;
 }
+
+DummyStick::DummyStick() : Joystick(ControllerSocketNumber(SOCKET_8)){
+}
+
+SHORT DummyStick::getXInputSlot() {
+	return SHORT();
+}
+
+void DummyStick::parseRawInput(PRAWINPUT pRawInput) {
+}
+
+Vector2 DummyStick::getDirection() {
+	return Vector2();
+}
+
+bool DummyStick::isLeftPressed() {
+	return false;
+}
+
+bool DummyStick::isRightPressed() {
+	return false;
+}
+
+bool DummyStick::isUpPressed() {
+	return false;
+}
+
+bool DummyStick::isDownPressed() {
+	return false;
+}
+
+bool DummyStick::yButtonPushed() {
+	return false;
+}
+
+bool DummyStick::xButtonPushed() {
+	return false;
+}
+
+bool DummyStick::aButtonPushed() {
+	return false;
+}
+
+bool DummyStick::bButtonPushed() {
+	return false;
+}
+
+bool DummyStick::lButtonPushed() {
+	return false;
+}
+
+bool DummyStick::rButtonPushed() {
+	return false;
+}
+
+bool DummyStick::startButtonPushed() {
+	return false;
+}
+
+bool DummyStick::selectButtonPushed() {
+	return false;
+}
+
+bool DummyStick::yButtonDown() {
+	return false;
+}
+
+bool DummyStick::xButtonDown() {
+	return false;
+}
+
+bool DummyStick::aButtonDown() {
+	return false;
+}
+
+bool DummyStick::bButtonDown() {
+	return false;
+}
+
+bool DummyStick::lButtonDown() {
+	return false;
+}
+
+bool DummyStick::rButtonDown() {
+	return false;
+}
+
+bool DummyStick::startButtonDown() {
+	return false;
+}
+
+bool DummyStick::selectButtonDown() {
+	return false;
+}

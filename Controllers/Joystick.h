@@ -189,3 +189,34 @@ private:
 	XINPUT_STATE state;
 	XINPUT_STATE lastState;
 };
+
+
+class DummyStick : public Joystick {
+public:
+	DummyStick();
+
+	// Inherited via Joystick
+	virtual SHORT getXInputSlot() override;
+	virtual void parseRawInput(PRAWINPUT pRawInput) override;
+	virtual Vector2 getDirection() override;
+	virtual bool isLeftPressed() override;
+	virtual bool isRightPressed() override;
+	virtual bool isUpPressed() override;
+	virtual bool isDownPressed() override;
+	virtual bool yButtonPushed() override;
+	virtual bool xButtonPushed() override;
+	virtual bool aButtonPushed() override;
+	virtual bool bButtonPushed() override;
+	virtual bool lButtonPushed() override;
+	virtual bool rButtonPushed() override;
+	virtual bool startButtonPushed() override;
+	virtual bool selectButtonPushed() override;
+	virtual bool yButtonDown() override;
+	virtual bool xButtonDown() override;
+	virtual bool aButtonDown() override;
+	virtual bool bButtonDown() override;
+	virtual bool lButtonDown() override;
+	virtual bool rButtonDown() override;
+	virtual bool startButtonDown() override;
+	virtual bool selectButtonDown() override;
+};

@@ -150,6 +150,8 @@ const Vector2 XM_CALLCONV TextLabel::measureString() const {
 	return scaledSize;
 }
 
+/* Convenience method when a FontSet is not available.
+Scaling is not considered. */
 const Vector2 XM_CALLCONV TextLabel::measureString(wstring string) const {
 	Vector2 size = font->measureString(string.c_str());
 	return size;

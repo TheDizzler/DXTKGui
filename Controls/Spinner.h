@@ -28,6 +28,7 @@ public:
 
 	void addItem(wstring item);
 	void addItems(const vector<wstring> items);
+	void clear();
 	/** Returns true if item found and removed from list. */
 	bool removeItem(wstring item);
 	const wstring getSelected() const;
@@ -80,7 +81,7 @@ private:
 	size_t itemHeight;
 	size_t longestStringLength;
 
-	size_t selected = 0;
+	size_t selectedIndex = 0;
 
 	bool autoSize;
 };
