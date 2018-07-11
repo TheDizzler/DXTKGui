@@ -518,7 +518,10 @@ bool GamePadJoystick::selectButtonDown() {
 	return (state.Gamepad.wButtons & selectButton) != 0;
 }
 
-DummyStick::DummyStick() : Joystick(ControllerSocketNumber(SOCKET_8)){
+DummyStick::DummyStick() : Joystick(ControllerSocketNumber(DUMMY_SOCKET)){
+}
+
+DummyStick::~DummyStick() {
 }
 
 SHORT DummyStick::getXInputSlot() {

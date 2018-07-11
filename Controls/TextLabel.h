@@ -3,7 +3,7 @@
 #include "GUIControl.h"
 
 class TexturePanel;
-class TextLabel : public GUIControl, public Texturizable {
+class TextLabel : public Selectable, public Texturizable {
 public:
 	TextLabel(GUIFactory* factory, MouseController* mouseController,
 		Vector2 position, wstring text, const pugi::char_t* font, bool useTexture = true);
@@ -18,7 +18,10 @@ public:
 	virtual void forceRefresh() override;
 	virtual void reloadGraphicsAsset() override;
 
+	/** Used by SelectorManager */
+	virtual bool updateSelect(double deltaTime) override;
 	virtual bool update(double deltaTime) override;
+	
 	void draw(SpriteBatch* batch);
 	/* Draw with an alternate color.
 		NOTE: This draws using the SpriteFont, which is highly inefficient. */

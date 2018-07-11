@@ -198,24 +198,27 @@ void PromptDialog::initialize(const pugi::char_t* font) {
 	texturePanel.reset(guiFactory->createPanel());
 }
 
-void PromptDialog::setSelectorManager(Joystick* joy, KeyboardController* keys) {
+void PromptDialog::setSelectorManager(Joystick* joy, KeyboardController* keys, unique_ptr<Selector> selector) {
 
-	if (!selector) {
-		selector = make_unique<SelectorManager>();
-		selector->initialize(make_unique<ColorFlashSelector>(guiFactory));
+	if (!selectorManager) {
+		selectorManager = make_unique<SelectorManager>();
+		if (selector)
+			selectorManager->initialize(move(selector));
+		else
+			selectorManager->initialize(make_unique<ColorFlashSelector>(guiFactory));
 
 		if (controls[ButtonOK]) {
-			selector->addControl((Selectable*) controls[ButtonOK].release());
+			selectorManager->addControl((Selectable*) controls[ButtonOK].release());
 		}
 		if (controls[ButtonNeutral]) {
-			selector->addControl((Selectable*) controls[ButtonNeutral].release());
+			selectorManager->addControl((Selectable*) controls[ButtonNeutral].release());
 		}
 		if (controls[ButtonCancel]) {
-			selector->addControl((Selectable*) controls[ButtonCancel].release());
+			selectorManager->addControl((Selectable*) controls[ButtonCancel].release());
 		}
 	}
 
-	selector->setControllers(joy, keys);
+	selectorManager->setControllers(joy, keys, mouse);
 }
 
 
@@ -236,8 +239,8 @@ void PromptDialog::reloadGraphicsAsset() {
 			continue;
 		control->reloadGraphicsAsset();
 	}
-	if (selector)
-		selector->reloadGraphicsAssets();
+	if (selectorManager)
+		selectorManager->reloadGraphicsAssets();
 
 	if (closeTransition != NULL)
 		closeTransition->initializeEffect(this);
@@ -343,8 +346,8 @@ bool PromptDialog::update(double deltaTime) {
 
 	}
 
-	if (selector)
-		selector->update(deltaTime);
+	if (selectorManager)
+		selectorManager->update(deltaTime);
 
 	if (refreshTexture) {
 		texturePanel->setTexture(texturize());
@@ -367,8 +370,8 @@ void PromptDialog::draw(SpriteBatch* batch) {
 		//OutputDebugString(L"Closing\n");
 	} else {
 		texturePanel->draw(batch);
-		if (selector)
-			selector->draw(batch);
+		if (selectorManager)
+			selectorManager->draw(batch);
 	}
 }
 
@@ -782,8 +785,8 @@ void PromptDialog::setPosition(const Vector2& newPosition) {
 	buttonFrameSprite->moveBy(moveVector);
 	panel->moveBy(moveVector);
 
-	if (selector)
-		selector->moveBy(moveVector);
+	if (selectorManager)
+		selectorManager->moveBy(moveVector);
 
 	for (auto const& control : controls) {
 		if (control == NULL)
@@ -905,8 +908,8 @@ void PromptDialog::setDraggedPosition(Vector2& newPosition) {
 	buttonFrameSprite->moveBy(moveVector);
 	panel->moveBy(moveVector);
 
-	if (selector)
-		selector->moveBy(moveVector);
+	if (selectorManager)
+		selectorManager->moveBy(moveVector);
 
 	for (auto const& control : controls) {
 		if (control == NULL)

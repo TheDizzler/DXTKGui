@@ -70,7 +70,7 @@ void Button::setDimensions(const Vector2& pos, const Vector2& size,
 
 bool Button::updateSelect(double deltaTime) {
 
-	updateProjectedHitArea();
+	/*updateProjectedHitArea();
 	if (projectedHitArea.contains(mouse->getPosition())) {
 		mouseHover = true;
 		if (!isPressed) {
@@ -93,7 +93,7 @@ bool Button::updateSelect(double deltaTime) {
 		} else if (mouseHover && mouse->pressed()) {
 			onPress();
 		}
-	}
+	}*/
 
 	if (buttonLabel->update(deltaTime) && !isLetterJammer)
 		refreshTexture = true;

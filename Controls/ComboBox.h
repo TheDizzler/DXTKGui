@@ -3,7 +3,7 @@
 #include "ListBox.h"
 
 
-class ComboBox : public GUIControl, public Texturizable {
+class ComboBox : public Selectable, public Texturizable {
 public:
 	ComboBox(GUIFactory* factory, MouseController* mouseController,
 		const Vector2& position, const int width,
@@ -20,6 +20,8 @@ public:
 	void setScrollBar(ScrollBarDesc& scrollBarDesc);
 	void alwaysShowScrollBar(bool alwaysShow);
 
+	/* For use by SelectorManager */
+	virtual bool updateSelect(double deltaTime) override;
 	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 

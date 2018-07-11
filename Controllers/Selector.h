@@ -22,6 +22,34 @@ public:
 };
 
 
+class GrowSelector : public Selector {
+public:
+
+	GrowSelector(GUIFactory* guiFactory);
+	virtual ~GrowSelector();
+
+	virtual void reloadGraphicsAsset() override;
+
+
+	virtual void update(double deltaTime) override;
+	virtual void draw(SpriteBatch* batch) override;
+
+	virtual void setDimensions(const Vector2& position, const Vector2& size) override;
+	virtual void moveBy(const Vector2 & moveVector) override;
+
+private:
+	unique_ptr<RectangleFrame> frame;
+
+	short frameThickness = 5;
+	double currentGrowTime = 0;
+	double maxGrowTime = 1.5;
+	Vector2 originalPos;
+	Vector2 originalSize;
+	Vector2 currentSize;
+	Vector2 maxSize;
+	float growFactor = 1.5;
+};
+
 class ColorFlashSelector : public Selector {
 public:
 	ColorFlashSelector(GUIFactory* guiFactory);
@@ -51,7 +79,8 @@ private:
 
 /* A manager for simultaneous mouse, joystick and keyboard control.
 	NOTE: SelectorManager manages (handles update and draw) of all
-	GUIControls added to it.*/
+	GUIControls added to it.
+	NOTE: SelectorManager handles garbage collection as well! */
 class SelectorManager {
 public:
 	SelectorManager();
@@ -59,11 +88,17 @@ public:
 
 	void reloadGraphicsAssets();
 	void initialize(unique_ptr<Selector> newSelector);
-	void setControllers(Joystick* joy, KeyboardController* keys);
-	void setJoystick(Joystick* joystick);
+	void setControllers(Joystick* joy, KeyboardController* keys, MouseController* mouse);
+	/** Returns false if joystick is a DummyStick or NULL. */
+	bool setJoystick(Joystick* joystick);
+	void setMouse(MouseController* mouse);
+	void setKeys(KeyboardController* keys);
 
-	void update(double deltaTime);
+	/* Returns true if a control was refreshed */
+	bool update(double deltaTime);
 	void draw(SpriteBatch* batch);
+	void drawWithoutSelector(SpriteBatch* batch);
+	void drawSelector(SpriteBatch* batch);
 
 	bool hasController();
 
@@ -80,7 +115,7 @@ private:
 	unique_ptr<Selector> selector;
 
 	Joystick* joystick = NULL;
-	//MouseController* mouse = NULL;
+	MouseController* mouse = NULL;
 	KeyboardController* keyController = NULL;
 
 	vector<Selectable*> controls;
@@ -89,6 +124,8 @@ private:
 
 	const double DELAY_TIME = .5;
 	double timeSincePressed = DELAY_TIME;
+
+	bool selectedSetByMouse = false;
 
 
 };

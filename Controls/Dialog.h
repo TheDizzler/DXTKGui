@@ -115,7 +115,9 @@ public:
 
 	void initialize(const pugi::char_t* font = "Default Font");
 
-	void setSelectorManager(Joystick* joy, KeyboardController* keys);
+	/** Default Selector: ColorFlashSelector */
+	void setSelectorManager(Joystick* joy, KeyboardController* keys,
+		unique_ptr<Selector> selector = NULL);
 
 	virtual void forceRefresh() override;
 	virtual void reloadGraphicsAsset() override;
@@ -233,5 +235,5 @@ protected:
 	bool movable = false;
 	bool centerText = false;
 
-	unique_ptr<SelectorManager> selector = NULL;
+	unique_ptr<SelectorManager> selectorManager = NULL;
 };

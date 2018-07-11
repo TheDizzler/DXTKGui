@@ -1,9 +1,10 @@
 #include "CheckBox.h"
 #include "../GUIFactory.h"
+#include "../StringHelper.h"
 
 CheckBox::CheckBox(GUIFactory* factory, MouseController* mouseController,
 	unique_ptr<Sprite> unchkdSprite, unique_ptr<Sprite> chckdSprite,
-	const pugi::char_t* font) : GUIControl(factory, mouseController) {
+	const pugi::char_t* font) : Selectable(factory, mouseController) {
 
 	uncheckedSprite = move(unchkdSprite);
 	checkedSprite = move(chckdSprite);
@@ -41,7 +42,17 @@ void CheckBox::reloadGraphicsAsset() {
 		currentRECT = uncheckedSprite->getRect();
 	}
 }
-#include "../StringHelper.h"
+
+bool CheckBox::updateSelect(double deltaTime) {
+	//return update(deltaTime);
+
+	if (label->update(deltaTime))
+		refreshed = true;
+
+	return refreshed;
+}
+
+
 bool CheckBox::update(double deltaTime) {
 
 	refreshed = false;
@@ -99,8 +110,26 @@ void CheckBox::setPosition(const Vector2& pos) {
 
 
 void CheckBox::setChecked(bool checked) {
-	isClicked = checked;
+	isChecked = checked;
 }
+
+void CheckBox::onClick() {
+	
+	setChecked(!isChecked);
+
+	if (actionListener != NULL) {
+		(actionListener->*onClickFunction)(this, isChecked);
+	}
+
+	if (isChecked) {
+		texture = checkedSprite->getTexture();
+		currentRECT = checkedSprite->getRect();
+	} else {
+		texture = uncheckedSprite->getTexture();
+		currentRECT = uncheckedSprite->getRect();
+	}
+}
+
 
 void CheckBox::centerText() {
 

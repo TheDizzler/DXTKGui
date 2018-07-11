@@ -59,6 +59,9 @@ public:
 		Seems none functional. */
 	void resetPressed();
 
+	/** Has the mouse moved since last update? */
+	bool hasMoved = false;
+
 private:
 
 	HWND hwnd;

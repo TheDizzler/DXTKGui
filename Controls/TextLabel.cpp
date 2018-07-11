@@ -3,7 +3,7 @@
 
 TextLabel::TextLabel(GUIFactory* factory, MouseController* mouseController,
 	Vector2 pos, wstring text, const pugi::char_t* fontName, bool texture)
-	: GUIControl(factory, mouseController) {
+	: Selectable(factory, mouseController) {
 
 	position = pos;
 	font = guiFactory->getFont(fontName);
@@ -15,7 +15,7 @@ TextLabel::TextLabel(GUIFactory* factory, MouseController* mouseController,
 }
 
 TextLabel::TextLabel(GUIFactory* factory, MouseController* mouseController,
-	wstring text, unique_ptr<FontSet> fnt, bool texture) : GUIControl(factory, mouseController) {
+	wstring text, unique_ptr<FontSet> fnt, bool texture) : Selectable(factory, mouseController) {
 
 	position = Vector2::Zero;
 	font = move(fnt);
@@ -27,7 +27,7 @@ TextLabel::TextLabel(GUIFactory* factory, MouseController* mouseController,
 }
 
 TextLabel::TextLabel(GUIFactory* factory, MouseController* mouseController,
-	wstring text, const pugi::char_t* fontName, bool texture) : GUIControl(factory, mouseController) {
+	wstring text, const pugi::char_t* fontName, bool texture) : Selectable(factory, mouseController) {
 
 	position = Vector2::Zero;
 	font = guiFactory->getFont(fontName);
@@ -56,6 +56,10 @@ void TextLabel::reloadGraphicsAsset() {
 	refreshTexture = true;
 }
 
+
+bool TextLabel::updateSelect(double deltaTime) {
+	return update(deltaTime);
+}
 
 bool TextLabel::update(double deltaTime) {
 

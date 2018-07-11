@@ -74,7 +74,7 @@ public:
 
 
 /** A simple control to display various (text) items. */
-class ListBox : public GUIControl, public Texturizable {
+class ListBox : public Selectable, public Texturizable {
 public:
 	ListBox(GUIFactory* factory, MouseController* mouseController,
 		const Vector2& position, const int width,
@@ -88,6 +88,9 @@ public:
 	virtual void forceRefresh() override;
 	virtual void reloadGraphicsAsset() override;
 
+
+	/* For use by SelectorManager */
+	virtual bool updateSelect(double deltaTime) override;
 	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 

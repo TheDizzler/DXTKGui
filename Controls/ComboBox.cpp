@@ -3,7 +3,7 @@
 
 ComboBox::ComboBox(GUIFactory* factory, MouseController* mouseController,
 	const Vector2& pos, const int len, size_t itemHeight, const int maxItemsShown)
-	: GUIControl(factory, mouseController) {
+	: Selectable(factory, mouseController) {
 
 	position = pos;
 	width = len;
@@ -75,6 +75,10 @@ void ComboBox::forceRefresh() {
 
 void ComboBox::setScrollBar(ScrollBarDesc& scrollBarDesc) {
 	listBox->setScrollBar(scrollBarDesc);
+}
+
+bool ComboBox::updateSelect(double deltaTime) {
+	return update(deltaTime);
 }
 
 bool ComboBox::update(double deltaTime) {

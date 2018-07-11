@@ -3,7 +3,7 @@
 
 Spinner::Spinner(GUIFactory* factory, MouseController* mouseController,
 	const Vector2& pos, const size_t len, const size_t itmHght, bool autoSz)
-	: GUIControl(factory, mouseController) {
+	: Selectable(factory, mouseController) {
 
 	position = pos;
 	width = len + textBuffer * 2;
@@ -72,6 +72,10 @@ void Spinner::reloadGraphicsAsset() {
 
 unique_ptr<GraphicsAsset> Spinner::texturize() {
 	return move(guiFactory->createTextureFromTexturizable(this));
+}
+
+bool Spinner::updateSelect(double deltaTime) {
+	return update(deltaTime);
 }
 
 bool Spinner::update(double deltaTime) {

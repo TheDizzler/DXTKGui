@@ -14,7 +14,7 @@ public:
 		MouseController* mouseController) {
 		guiFactory = factory;
 		mouse = mouseController;
-		
+
 
 		translationMatrix = [&]() -> Matrix { return Matrix::Identity; };
 		cameraZoom = [&]() -> float { return 1; };
@@ -111,12 +111,19 @@ protected:
 	float rotation = 0.0f;
 	float layerDepth = 0.9f;
 
+
 	bool isHover = false;
 	/** Button is held down over control but has not been released. */
 	bool isPressed = false;
 	/** While still hovering over control, button has been pressed and released. */
 	bool isClicked = false;
 
+	/* Flag for mouse hovering logic. */
+	bool mouseHover = false;
+	/** Flag to prevent continuous texture refresh. */
+	bool hasBeenSetUnpressed = false;
+	/** Flag to prevent continuous texture refresh. */
+	bool hasBeenSetHover = false;
 
 	GUIFactory* guiFactory;
 	MouseController* mouse;
@@ -141,9 +148,13 @@ public:
 
 /** A GUIControl that can be used in a SelectionManager. */
 interface Selectable : public GUIControl {
+	friend class SelectorManager;
 public:
 	Selectable(GUIFactory* factory, MouseController* mouseController)
 		: GUIControl(factory, mouseController) {
 	}
+	virtual ~Selectable() {
+	}
+
 	virtual bool updateSelect(double deltaTime) = 0;
 };

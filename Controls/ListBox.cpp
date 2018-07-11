@@ -3,7 +3,7 @@
 
 ListBox::ListBox(GUIFactory* factory, MouseController* mouseController,
 	const Vector2& pos, const int len, size_t itmHght, const int maxItemsShown)
-	: GUIControl(factory, mouseController) {
+	: Selectable(factory, mouseController) {
 
 	position = pos;
 	width = len;
@@ -72,6 +72,10 @@ void ListBox::reloadGraphicsAsset() {
 
 }
 
+
+bool ListBox::updateSelect(double deltaTime) {
+	return update(deltaTime);
+}
 
 bool ListBox::update(double deltaTime) {
 

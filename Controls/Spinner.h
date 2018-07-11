@@ -3,7 +3,7 @@
 #include "Button.h"
 
 
-class Spinner : public GUIControl, public Texturizable {
+class Spinner : public Selectable, public Texturizable {
 	friend class SpinnerUpButtonListener;
 	friend class SpinnerDownButtonListener;
 public:
@@ -23,6 +23,8 @@ public:
 	virtual unique_ptr<GraphicsAsset> texturize() override;
 	virtual void textureDraw(SpriteBatch* batch, ComPtr<ID3D11Device> device = NULL) override;
 
+	/* For use by SelectorManager */
+	virtual bool updateSelect(double deltaTime) override;
 	virtual bool update(double deltaTime) override;
 	virtual void draw(SpriteBatch* batch) override;
 
