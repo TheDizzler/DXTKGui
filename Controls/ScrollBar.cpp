@@ -289,7 +289,14 @@ void ScrollBar::setScrollPositionByPercent(double newPositionPercentage) {
 }
 
 void ScrollBar::scrollByIncrement(int scrollIncrement) {
-	scrubber->scroll(scrollIncrement * percentForOneItem, scrollIncrement* scrubberPercentForOneItem);
+	scrubber->scroll(scrollIncrement * percentForOneItem, scrollIncrement * scrubberPercentForOneItem);
+}
+
+void ScrollBar::scrollByOne(bool increase) {
+	if (increase)
+		scrubber->scroll(percentForOneItem, scrubberPercentForOneItem);
+	else
+		scrubber->scroll(-percentForOneItem, -scrubberPercentForOneItem);
 }
 
 const Vector2& ScrollBar::getPosition() const {

@@ -3,7 +3,7 @@
 
 ComboBox::ComboBox(GUIFactory* factory, MouseController* mouseController,
 	const Vector2& pos, const int len, size_t itemHeight, const int maxItemsShown)
-	: Selectable(factory, mouseController) {
+	: SelectableContainer(factory, mouseController) {
 
 	position = pos;
 	width = len;
@@ -52,6 +52,7 @@ bool ComboBox::initialize(const pugi::char_t* fontName,
 	return true;
 }
 
+
 void ComboBox::reloadGraphicsAsset() {
 
 	comboListButton->reloadGraphicsAsset();
@@ -78,7 +79,26 @@ void ComboBox::setScrollBar(ScrollBarDesc& scrollBarDesc) {
 }
 
 bool ComboBox::updateSelect(double deltaTime) {
-	return update(deltaTime);
+
+	bool refresh = false;
+	if (isOpen) {
+		if (listBox->updateSelect(deltaTime))
+			refresh = true;
+	}
+
+	if (selectedLabel->updateSelect(deltaTime))
+		refreshTexture = true;
+	if (comboListButton->updateSelect(deltaTime))
+		refreshTexture = true;
+	if (frame->update())
+		refreshTexture = true;
+
+	if (refreshTexture) {
+		texturePanel->setTexture(texturize());
+		refreshTexture = false;
+		return true;
+	}
+	return refresh;
 }
 
 bool ComboBox::update(double deltaTime) {
@@ -161,6 +181,21 @@ void ComboBox::hide() {
 	isOpen = false;
 }
 
+void ComboBox::onClick() {
+	if (isOpen) {
+		if (actionListener != NULL)
+			(actionListener->*onClickFunction)(this, listBox->getSelectedIndex());
+		selectedLabel->setText(listBox->getSelected()->toString());
+		refreshTexture = true;
+	} else {
+		comboListButton->onClick();
+		refreshTexture = true;
+	}
+}
+
+void ComboBox::resetState() {
+}
+
 void ComboBox::resizeBox() {
 
 	comboListButton->setPosition(
@@ -180,6 +215,18 @@ void ComboBox::setFont(const pugi::char_t * font) {
 void ComboBox::setSelected(size_t newIndex) {
 	listBox->setSelected(newIndex);
 	selectedLabel->setText(listBox->getSelected()->toString());
+}
+
+const size_t ComboBox::getSelectedIndex() const {
+	return listBox->getSelectedIndex();
+}
+
+void ComboBox::setHovered(int newIndex) {
+	listBox->setHovered(newIndex);
+}
+
+const int ComboBox::getHoveredIndex() const {
+	return listBox->getHoveredIndex();
 }
 
 ListItem* ComboBox::getSelected() {

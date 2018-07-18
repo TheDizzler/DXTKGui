@@ -3,7 +3,7 @@
 #include "ListBox.h"
 
 
-class ComboBox : public Selectable, public Texturizable {
+class ComboBox : public SelectableContainer, public Texturizable {
 public:
 	ComboBox(GUIFactory* factory, MouseController* mouseController,
 		const Vector2& position, const int width,
@@ -31,9 +31,12 @@ public:
 	virtual void moveBy(const Vector2& moveVector) override;
 	virtual void setFont(const pugi::char_t * font = "Default Font") override;
 
-	void setSelected(size_t newIndex);
-	ListItem* getSelected();
-	ListItem* getItem(size_t index);
+	virtual void setSelected(size_t newIndex) override;
+	virtual const size_t getSelectedIndex() const override;
+	virtual void setHovered(int newIndex) override;
+	virtual const int getHoveredIndex() const override;
+	virtual ListItem* getSelected() override;
+	virtual ListItem* getItem(size_t index) override;
 
 
 	/* Not used in ComboBox. */
@@ -81,11 +84,7 @@ public:
 	}
 
 	/** Called when ListBox item selected (unless overriden) */
-	virtual void onClick() override {
-		if (actionListener != NULL)
-			(actionListener->*onClickFunction)(this, listBox->getSelectedIndex());
-		selectedLabel->setText(listBox->getSelected()->toString());
-	}
+	virtual void onClick() override;
 
 	/** Not used in Combobox. */
 	virtual void onPress() override {
@@ -97,11 +96,21 @@ public:
 			(actionListener->*onHoverFunction)(this, listBox->getHoveredIndex());
 	}
 
-	virtual void resetState() override {
-		
+	virtual void resetState() override;
+
+	virtual bool isSelectLocked() override {
+		return selectLocked;
+	}
+
+	virtual void setSelectLock(bool lock) {
+		selectLocked = lock;
+		listBox->setSelectLock(lock);
+		comboListButton->onClick();
+		refreshTexture = true;
 	}
 
 private:
+	
 	bool refreshTexture = true;
 	unique_ptr<TexturePanel> texturePanel;
 
@@ -126,10 +135,13 @@ private:
 
 	void resizeBox();
 
+	/** Control is using internal selection mechanism */
+	bool selectLocked = false;
+
 	ActionListener* actionListener = NULL;
 	OnClickFunction onClickFunction;
 	OnHoverFunction onHoverFunction;
-	
+
 
 	class ListBoxListener : public ListBox::ActionListener {
 	public:
@@ -162,8 +174,10 @@ private:
 		virtual void onClick(TextLabel* button) override {
 			comboBox->show();
 		}
-		virtual void onPress(TextLabel* button) override{}
-		virtual void onHover(TextLabel* button) override{}
+		virtual void onPress(TextLabel* button) override {
+		}
+		virtual void onHover(TextLabel* button) override {
+		}
 	private:
 		ComboBox* comboBox;
 	};

@@ -97,6 +97,7 @@ public:
 	void setBarHeight(size_t barHeight);
 	/** Call this from parent control on mouse scroll. */
 	void scrollByIncrement(int scrollIncrement);
+	void scrollByOne(bool increase);
 
 	virtual const Vector2& getPosition() const override;
 	const Vector2 getSize() const;

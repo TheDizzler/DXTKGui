@@ -17,6 +17,8 @@ GrowSelector::~GrowSelector() {
 }
 
 void GrowSelector::reloadGraphicsAsset() {
+	frame->reloadGraphicsAsset();
+
 }
 
 void GrowSelector::update(double deltaTime) {
@@ -195,18 +197,46 @@ bool SelectorManager::update(double deltaTime) {
 
 
 	if (keyController) {
-		if (keyController->isKeyPressed(Keyboard::Down)
-			|| keyController->isKeyPressed(Keyboard::Right)) {
-			setSelected(selected + 1);
-			ignoreMouse = true;
-		} else if (keyController->isKeyPressed(Keyboard::Up)
-			|| keyController->isKeyPressed(Keyboard::Left)) {
-			setSelected(selected - 1);
-			ignoreMouse = true;
-		} else if (keyController->isKeyPressed(Keyboard::Enter)) {
-			controls[selected]->onClick();
-			controls[selected]->onHover();
-			ignoreMouse = true;
+		if (!controls[selected]->isSelectLocked()) {
+			if (keyController->isKeyPressed(Keyboard::Down)
+				|| keyController->isKeyPressed(Keyboard::Right)) {
+				setSelected(selected + 1);
+				ignoreMouse = true;
+			} else if (keyController->isKeyPressed(Keyboard::Up)
+				|| keyController->isKeyPressed(Keyboard::Left)) {
+				setSelected(selected - 1);
+				ignoreMouse = true;
+			} else if (keyController->isKeyPressed(Keyboard::Enter)) {
+				//controls[selected]->onClick();
+				controls[selected]->setSelectLock(true);
+				controls[selected]->onHover();
+				ignoreMouse = true;
+			}
+		} else {
+
+			SelectableContainer* box = static_cast<SelectableContainer*>(controls[selected]);
+
+			if (keyController->isKeyPressed(Keyboard::Down)
+				|| keyController->isKeyPressed(Keyboard::Right)) {
+
+				box->setHovered(box->getHoveredIndex() + 1);
+
+			} else if (keyController->isKeyPressed(Keyboard::Up)
+				|| keyController->isKeyPressed(Keyboard::Left)) {
+
+				box->setHovered(box->getHoveredIndex() - 1);
+
+			} else if (keyController->isKeyPressed(Keyboard::Enter)) {
+
+				box->setSelected(box->getHoveredIndex());
+				box->onClick();
+
+			} else if (keyController->isKeyPressed(Keyboard::Escape)
+			|| keyController->isKeyPressed(Keyboard::Tab)) {
+
+				// un-Select Lock
+				box->setSelectLock(false);
+			}
 		}
 	}
 
@@ -215,7 +245,7 @@ bool SelectorManager::update(double deltaTime) {
 
 		if (!ignoreMouse) {
 			controls[i]->updateProjectedHitArea();
-			if (controls[i]->projectedHitArea.contains(mouse->getPosition())) {
+			if (controls[i]->getProjectedHitArea().contains(mouse->getPosition())) {
 				mouseHovering = true;
 				if (!selectedSetByMouse) {
 					setSelected(i);
@@ -263,6 +293,10 @@ void SelectorManager::drawWithoutSelector(SpriteBatch* batch) {
 void SelectorManager::drawSelector(SpriteBatch* batch) {
 	if (selected > -1)
 		selector->draw(batch);
+}
+
+size_t SelectorManager::size() {
+	return controls.size();
 }
 
 bool SelectorManager::hasController() {

@@ -42,7 +42,7 @@ private:
 
 	short frameThickness = 5;
 	double currentGrowTime = 0;
-	double maxGrowTime = 1.5;
+	double maxGrowTime = 1.0;
 	Vector2 originalPos;
 	Vector2 originalSize;
 	Vector2 currentSize;
@@ -100,6 +100,7 @@ public:
 	void drawWithoutSelector(SpriteBatch* batch);
 	void drawSelector(SpriteBatch* batch);
 
+	size_t size();
 	bool hasController();
 
 	void addControl(Selectable* control);

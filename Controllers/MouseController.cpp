@@ -111,9 +111,9 @@ bool MouseController::rightButtonLast() {
 bool MouseController::clicked() {
 
 	if (isClicked) {
-		wostringstream wss;
+		/*wostringstream wss;
 		wss << "Clicked! " << endl;
-		OutputDebugString(wss.str().c_str());
+		OutputDebugString(wss.str().c_str());*/
 		isClicked = false;
 		return true;
 	}
@@ -123,9 +123,9 @@ bool MouseController::clicked() {
 bool MouseController::pressed() {
 
 	if (isPressed) {
-		wostringstream wss;
+		/*wostringstream wss;
 		wss << "Pressed! " << endl;
-		OutputDebugString(wss.str().c_str());
+		OutputDebugString(wss.str().c_str());*/
 		isPressed = false;
 		return true;
 	}

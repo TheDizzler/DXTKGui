@@ -16,6 +16,8 @@ using namespace Microsoft::WRL;
 interface IElement2D {
 public:
 
+	virtual ~IElement2D() {
+	};
 	virtual const Vector2& getPosition() const = 0;
 	virtual const Vector2& getOrigin() const = 0;
 	virtual const Vector2& getScale() const = 0;
@@ -47,10 +49,12 @@ public:
 class GraphicsAsset;
 interface Texturizable {
 public:
+	virtual ~Texturizable() {
+	};
 
-	/* Force a refresh of the texture on the objects next update.
-		In general, this is unnecessary. If it is required, that is likely an 
-		indication of a bug. */
+/* Force a refresh of the texture on the objects next update.
+	In general, this is unnecessary. If it is required, that is likely an
+	indication of a bug. */
 	virtual void forceRefresh() = 0;
 	/* Call this when you want this object to be texturized. */
 	virtual unique_ptr<GraphicsAsset> texturize() = 0;

@@ -69,6 +69,11 @@ void GUIControl::updateProjectedHitArea() {
 	projectedHitArea.size = hitArea.size * cameraZoom();
 }
 
+HitArea& GUIControl::getProjectedHitArea() {
+
+	return projectedHitArea;
+}
+
 const Vector2 GUIControl::getScreenPosition(Matrix viewProjectionMatrix) const {
 
 	Vector2 screenCords = XMVector2Transform(hitArea.position, viewProjectionMatrix);

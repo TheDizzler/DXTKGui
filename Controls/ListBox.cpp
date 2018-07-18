@@ -3,7 +3,7 @@
 
 ListBox::ListBox(GUIFactory* factory, MouseController* mouseController,
 	const Vector2& pos, const int len, size_t itmHght, const int maxItemsShown)
-	: Selectable(factory, mouseController) {
+	: SelectableContainer(factory, mouseController) {
 
 	position = pos;
 	width = len;
@@ -48,8 +48,10 @@ void ListBox::initialize(const pugi::char_t* fnt, GraphicsAsset* pixelAsset,
 	emptyListItem = new EmptyListItem();
 	emptyListItem->initialize(width - scrollBar->getWidth(), (int) itemHeight,
 		guiFactory->createTextLabel(Vector2::Zero, L"", fontName),
-		pixel, listItems.size(), isEnumerated);
+		pixel, 0, isEnumerated);
 	emptyListItem->setText();
+
+	//selectorManager = make_unique<SelectorManager>(guiFactory);
 
 	refreshTexture = true;
 }
@@ -61,20 +63,45 @@ void ListBox::forceRefresh() {
 void ListBox::reloadGraphicsAsset() {
 	pixel = guiFactory->getAsset("White Pixel")->getTexture();
 	scrollBar->reloadGraphicsAsset();
-	//frame.reset(guiFactory->createRectangleFrame());
 	frame->reloadGraphicsAsset();
 	texturePanel.reset(guiFactory->createPanel(true));
 	texturePanel->setTexturePosition(firstItemPos);
-	for (size_t i = firstItemToDisplay; i < firstItemToDisplay + itemsToDisplay; ++i)
-		listItems[i]->reloadGraphicsAsset(guiFactory);
+	for (ListItem* listItem : listItems)
+		listItem->reloadGraphicsAsset(guiFactory);
 
 	resizeBox();
-
 }
 
 
 bool ListBox::updateSelect(double deltaTime) {
-	return update(deltaTime);
+
+	if (!selectLocked) {
+		return update(deltaTime);
+	}
+
+	if (itemsToDisplay == maxDisplayItems || alwaysDisplayScrollBar) {
+		if (scrollBar->update(deltaTime))
+			refreshTexture = true;
+
+		double dif = (double) listItems.size();
+		firstItemToDisplay = (int) round(scrollBar->getPercentScroll() * (double) dif);
+	}
+
+	for (size_t j = firstItemToDisplay; j < firstItemToDisplay + itemsToDisplay; ++j) {
+		if (listItems[j]->updateSelect(deltaTime)) {
+			refreshTexture = true;
+
+		}
+	}
+
+	if (refreshTexture) {
+		frame->update();
+
+		texturePanel->setTexture(texturize());
+		refreshTexture = false;
+		return true;
+	}
+	return false;
 }
 
 bool ListBox::update(double deltaTime) {
@@ -169,6 +196,7 @@ void ListBox::setScrollBar(ScrollBarDesc& scrollBarDesc) {
 void ListBox::addItem(ListItem* item) {
 
 	listItems.push_back(item);
+	//selectorManager->addControl(item);
 	if (item->measureString().x + scrollBar->getWidth() > longestLabelLength)
 		longestLabelLength = (int) item->measureString().x;
 
@@ -183,6 +211,7 @@ void ListBox::addItems(vector<ListItem*> items) {
 			guiFactory->createTextLabel(Vector2::Zero, L"", fontName),
 			pixel, listItems.size(), layerDepth, isEnumerated);
 		listItems.push_back(item);
+		//selectorManager->addControl(item);
 		if (item->measureString().x + scrollBar->getWidth() > longestLabelLength)
 			longestLabelLength = (int) item->measureString().x;
 	}
@@ -310,6 +339,39 @@ const size_t ListBox::getSelectedIndex() const {
 	return selectedIndex;
 }
 
+void ListBox::setHovered(int newIndex) {
+
+	if (listItems.size() <= 0)
+		return;
+	int oldIndex = hoveredIndex;
+	if (newIndex >= (int)listItems.size()) {
+		hoveredIndex = listItems.size() - 1;
+		return;
+	} else if (newIndex < 0) {
+		hoveredIndex = 0;
+		return;
+	} else {
+		hoveredIndex = newIndex;
+	}
+	if (oldIndex != -1)
+		listItems[oldIndex]->isHovered = false;
+	listItems[hoveredIndex]->isHovered = true;
+	onHover();
+
+	if (hoveredIndex < firstItemToDisplay) {
+		scrollBar->setScrollPositionByPercent(
+			hoveredIndex / (double) (listItems.size()));
+		//scrollBar->scrollByOne(false);
+	} else if (hoveredIndex > firstItemToDisplay + maxDisplayItems - 1) {
+	//firstItemToDisplay += hoveredIndex
+		//scrollBar->scrollByOne(true);
+		scrollBar->setScrollPositionByPercent(
+			(hoveredIndex - maxDisplayItems + 1)/ (double) (listItems.size()));
+	}
+
+	refreshTexture = true;
+}
+
 const int ListBox::getHoveredIndex() const {
 	return hoveredIndex;
 }
@@ -389,6 +451,11 @@ bool ListBox::hovering() {
 	return false;
 }
 
+void ListBox::onClick() {
+	if (actionListener != NULL)
+		(actionListener->*onClickFunction)(this, selectedIndex);
+}
+
 /** **** ListBox END **** **/
 
 
@@ -451,6 +518,11 @@ const wchar_t* ListItem::toString() {
 	return textLabel->getText();
 }
 
+
+bool ListItem::updateSelect(double deltaTime) {
+
+	return textLabel->update(deltaTime);
+}
 
 bool ListItem::update(double deltaTime, MouseController* mouse) {
 
@@ -533,5 +605,31 @@ void ListItem::setSelected(bool select) {
 	} else
 		textLabel->setTint(normalFontColor);
 }
+//
+//void ListItem::reloadGraphicsAsset() {
+//	pixel = guiFactory->getAsset("White Pixel")->getTexture();
+//	textLabel->reloadGraphicsAsset();
+//}
+//
+//void ListItem::onClick() {
+//}
+//
+//void ListItem::onPress() {
+//}
+//
+//void ListItem::onHover() {
+//}
+//
+//bool ListItem::hovering() {
+//	return false;
+//}
+//
+//void ListItem::updateProjectedHitArea() {
+//}
+//
+//HitArea & ListItem::getProjectedHitArea() {
+//	// TODO: insert return statement here
+//}
+
 /** **** ListItem END **** **/
 

@@ -3,7 +3,7 @@
 
 Spinner::Spinner(GUIFactory* factory, MouseController* mouseController,
 	const Vector2& pos, const size_t len, const size_t itmHght, bool autoSz)
-	: Selectable(factory, mouseController) {
+	: Selectable (factory, mouseController) {
 
 	position = pos;
 	width = len + textBuffer * 2;

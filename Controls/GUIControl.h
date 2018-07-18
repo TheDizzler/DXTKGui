@@ -74,6 +74,7 @@ public:
 
 
 	virtual void updateProjectedHitArea();
+	virtual HitArea& getProjectedHitArea();
 
 	virtual const Vector2 getScreenPosition(Matrix viewProjectionMatrix) const;
 	virtual unique_ptr<HitArea> getScreenHitArea(Matrix viewProjectionMatrix) const;
@@ -133,7 +134,7 @@ protected:
 
 
 /** A GUI control that can hold other GUI controls.
-		Not actually implemented.... */
+		Implemented, but not really used??? */
 interface GUIControlBox : public GUIControl {
 public:
 	GUIControlBox(GUIFactory* factory, MouseController* mouseController)
@@ -157,4 +158,31 @@ public:
 	}
 
 	virtual bool updateSelect(double deltaTime) = 0;
+	/** If this control has sub-selectable controls this is used to enable selection of those. */
+	virtual bool isSelectLocked() {
+		return false;
+	}
+	/** Override if this Control has sub-selectable controls. Otherwise, just call onClick(). */
+	virtual void setSelectLock(bool lock) {
+		onClick();
+	}
+};
+
+class ListItem;
+interface SelectableContainer : public Selectable {
+public:
+	SelectableContainer(GUIFactory* factory, MouseController* mouseController)
+		: Selectable(factory, mouseController) {
+	}
+	virtual ~SelectableContainer() {
+	}
+
+	virtual void setSelected(size_t newIndex) = 0;
+	virtual const size_t getSelectedIndex() const = 0;
+	virtual void setHovered(int newIndex) = 0;
+	virtual const int getHoveredIndex() const = 0;
+	virtual ListItem* getSelected() = 0;
+	virtual ListItem* getItem(size_t index) = 0;
+
+
 };

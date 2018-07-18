@@ -7,8 +7,8 @@ class ListItem {
 public:
 	virtual ~ListItem();
 
-	void initialize(const int width, const int height,
-		TextLabel* label, ComPtr<ID3D11ShaderResourceView> pixelTexture,
+	void initialize(const int width, const int height, TextLabel* label,
+		ComPtr<ID3D11ShaderResourceView> pixelTexture,
 		size_t listPosition = 0, float layerDepth = .925, bool enumerateList = false);
 
 	virtual void reloadGraphicsAsset(GUIFactory* guiFactory);
@@ -18,6 +18,7 @@ public:
 	Vector2 measureString() const;
 	const wchar_t* toString();
 
+	bool updateSelect(double deltaTime);
 	bool update(double deltaTime, MouseController* mouse);
 	void updatePosition(const Vector2& position);
 	virtual void draw(SpriteBatch* batch);
@@ -27,6 +28,7 @@ public:
 	void setSelected(bool isSelected);
 	bool isSelected = false;
 	bool isHovered = false;
+
 protected:
 
 	Color selectedFontColor = Color(0, 0, 0, 1);
@@ -53,7 +55,7 @@ protected:
 	size_t textMarginX = 10;
 	size_t textMarginY = 5;
 
-	
+
 	bool buttonDownLast = false;
 
 	ComPtr<ID3D11ShaderResourceView> pixel;
@@ -61,7 +63,9 @@ protected:
 	bool isEnumerated;
 	size_t listPosition = 0;
 
-	GUIFactory* guiFactory;
+	//GUIFactory* guiFactory;
+
+
 };
 
 class EmptyListItem : public ListItem {
@@ -74,7 +78,7 @@ public:
 
 
 /** A simple control to display various (text) items. */
-class ListBox : public Selectable, public Texturizable {
+class ListBox : public SelectableContainer, public Texturizable {
 public:
 	ListBox(GUIFactory* factory, MouseController* mouseController,
 		const Vector2& position, const int width,
@@ -106,11 +110,12 @@ public:
 	void clear();
 
 
-	void setSelected(size_t newIndex);
-	const size_t getSelectedIndex() const;
-	const int getHoveredIndex() const;
-	ListItem* getSelected();
-	ListItem* getItem(size_t index);
+	virtual void setSelected(size_t newIndex) override;
+	virtual const size_t getSelectedIndex() const override;
+	virtual void setHovered(int newIndex) override;
+	virtual const int getHoveredIndex() const override;
+	virtual ListItem* getSelected() override;
+	virtual ListItem* getItem(size_t index) override;
 
 
 	/* Not used in ListBox. */
@@ -155,10 +160,8 @@ public:
 		actionListener = iOnC;
 	}
 
-	void onClick() {
-		if (actionListener != NULL)
-			(actionListener->*onClickFunction)(this, selectedIndex);
-	}
+	virtual void onClick() override;
+
 	/** Not used in ListBox. */
 	virtual void onPress() override {
 	};
@@ -167,9 +170,20 @@ public:
 		if (actionListener != NULL)
 			(actionListener->*onHoverFunction)(this, hoveredIndex);
 	};
-	
+
 	virtual void resetState() override {
+		selectLocked = false;
 	};
+
+	virtual bool isSelectLocked() override {
+		return selectLocked;
+	}
+
+	virtual void setSelectLock(bool lock) {
+		hoveredIndex = selectedIndex;
+		selectLocked = lock;
+	}
+
 
 private:
 	typedef void (ActionListener::*OnClickFunction) (ListBox*, size_t);
@@ -211,5 +225,8 @@ private:
 	void setWidth(int newWidth);
 	void resizeBox();
 
+	/** Control is using internal selection mechanism */
+	bool selectLocked = false;
+	//unique_ptr<SelectorManager> selectorManager;
 
 };
