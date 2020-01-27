@@ -25,11 +25,13 @@ Email: tgillon.sdk@gmail.com
 	Start Win32 project
 		set to window application, empty project, no SDL
 
-	Install latest DirectXTK_desktop_2015 (2017.12.13.1 as of writing)
-	Install pugixml							(1.8.5 as of writing)
+	Install latest directxtk_desktop_2015 (2017.12.13.1 as of writing)
+		NOT directxtk12_desktop_2015
+	Install pugixml							(1.8.5 as of writing) 1.9.0 no issues?
 
-	Copy /source and /assets
-	Copy X3DAudio.lib & XAPOFX.lib
+	Copy /source from DXTKGui Test Project https://github.com/TheDizzler/DXTKGui-Test-Project
+	Also copy X3DAudio.lib & XAPOFX.lib
+	Add https://github.com/TheDizzler/DXTKGui.git as a remote subtree
 
 	Debug && x64
 	
@@ -108,7 +110,13 @@ How to ScreenTransition:
 				);
 			
 			
-
+How to SelectorManager:
+	
+	selectorManager.initialize(make_unique<SelectorType>(&guiFactory)); 
+	selectorManager.setControllers(joystick, &keys);
+	selectorManager.addControl(Selectable);
+	
+	
 ##DONE:
 >- Optimized control draw speed (for almost everything)
 >- Primitve Shapes - filled rectangle; un-filled rectangle; triangle (needs work); line
