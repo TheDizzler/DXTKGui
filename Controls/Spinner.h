@@ -17,6 +17,7 @@ public:
 	void initialize(const pugi::char_t* fontName,
 		const pugi::char_t* upButtonName, const pugi::char_t* downButtonName);
 
+	virtual void forceRefresh() override;
 	virtual void reloadGraphicsAsset() override;
 
 	virtual unique_ptr<GraphicsAsset> texturize() override;
@@ -34,14 +35,14 @@ public:
 	void increase();
 	void decrease();
 
-	virtual void setLayerDepth(float newDepth, bool frontToBack = true) override;
+	virtual void setLayerDepth(const float newDepth, bool frontToBack = true) override;
 	/** Not yet implemented. */
 	virtual void setScale(const Vector2& scale) override;
 	virtual void setFont(const pugi::char_t* font = "Default Font") override;
 	/** Not used in Spinner. */
 	virtual void setText(wstring text) override;
 	/** Returns the longest string in the list. */
-	virtual const Vector2 &XM_CALLCONV measureString() const override;
+	virtual const Vector2 XM_CALLCONV measureString() const override;
 
 	virtual void moveBy(const Vector2& moveVector) override;
 	virtual void setPosition(const Vector2& newPosition) override;

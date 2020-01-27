@@ -60,9 +60,9 @@ bool TexturePanel::update(double deltaTime) {
 		}
 
 		// adjust viewRect according to scrollBar percent
-		double movePercent = verticalScrollBar->percentScroll * gfxAsset->getHeight();
-		viewRect.top = movePercent;
-		viewRect.bottom = movePercent + getHeight();
+		double movePercent = verticalScrollBar->getPercentScroll() * gfxAsset->getHeight();
+		viewRect.top = (long) movePercent;
+		viewRect.bottom = (long) movePercent + getHeight();
 	}
 
 	return refreshed;
@@ -85,15 +85,15 @@ void TexturePanel::setDimensions(const Vector2& pos, const Vector2& size) {
 
 	viewRect.left = 0;
 	viewRect.top = 0;
-	viewRect.right = size.x;
-	viewRect.bottom = size.y;
+	viewRect.right = (LONG) size.x;
+	viewRect.bottom = (LONG) size.y;
 
 	hitArea.size = size;
 	setPosition(pos);
 	if (verticalScrollBar) {
 		Vector2 vertScrollBarPos = Vector2(position.x + size.x, position.y);
 		verticalScrollBar->setPosition(vertScrollBarPos);
-		verticalScrollBar->setBarHeight(size.y);
+		verticalScrollBar->setBarHeight((size_t)size.y);
 	}
 }
 
@@ -110,7 +110,7 @@ void TexturePanel::setTexturePosition(const Vector2& texPos) {
 void TexturePanel::setLayerDepth(const float newDepth, bool frontToBack) {
 
 	layerDepth = newDepth;
-	float nudge = .00000001;
+	float nudge = .00000001f;
 	if (!frontToBack)
 		nudge *= -1;
 
@@ -140,14 +140,14 @@ const Vector2& TexturePanel::getPosition() const {
 }
 
 const int TexturePanel::getWidth() const {
-	return hitArea.size.x;
+	return (int) hitArea.size.x;
 }
 
 const int TexturePanel::getHeight() const {
-	return hitArea.size.y;
+	return (int) hitArea.size.y;
 }
 
-const Vector2& TexturePanel::getScrollBarSize() const {
+const Vector2 TexturePanel::getScrollBarSize() const {
 	if (neverShowScrollBar)
 		return Vector2::Zero;
 	return verticalScrollBar->getSize();
@@ -195,6 +195,6 @@ void TexturePanel::setFont(const pugi::char_t* font) {
 void TexturePanel::setText(wstring text) {
 }
 
-const Vector2& XM_CALLCONV TexturePanel::measureString() const {
+const Vector2 XM_CALLCONV TexturePanel::measureString() const {
 	return Vector2::Zero;
 }

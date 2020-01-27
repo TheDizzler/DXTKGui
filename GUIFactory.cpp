@@ -146,7 +146,7 @@ GraphicsAsset* const GUIFactory::getAsset(const char_t* assetName) {
 }
 
 
-shared_ptr<AssetSet> const GUIFactory::getAssetSet(const char_t* setName) {
+AssetSet* const GUIFactory::getAssetSet(const char_t* setName) {
 
 	if (setMap.find(setName) == setMap.end()) {
 		wostringstream ws;
@@ -155,7 +155,7 @@ shared_ptr<AssetSet> const GUIFactory::getAssetSet(const char_t* setName) {
 		return NULL;
 	}
 
-	return setMap[setName];
+	return setMap[setName].get();
 }
 
 
@@ -341,14 +341,6 @@ Button* GUIFactory::createImageButton(unique_ptr<Sprite> upSprite, const char_t*
 	return button;
 }
 
-AnimatedButton* GUIFactory::createAnimatedButton(const char_t* animatedButtonName,
-	Vector2 position) {
-
-	AnimatedButton* button = new AnimatedButton(this, mouseController,
-		getAnimation(animatedButtonName), position);
-	return button;
-}
-
 
 CheckBox* GUIFactory::createCheckBox(const Vector2& position,
 	wstring text, const char_t* fontName) {
@@ -522,7 +514,7 @@ DynamicDialog* GUIFactory::createDynamicDialog(const char_t* imageSet,
 	return dialog;
 }
 
-DynamicDialog* GUIFactory::createDynamicDialog(shared_ptr<AssetSet> dialogImageSet,
+DynamicDialog* GUIFactory::createDynamicDialog(AssetSet* dialogImageSet,
 	const Vector2& position, const Vector2& size, const char_t* fontName) {
 
 	DynamicDialog* dialog = new DynamicDialog(this, mouseController);
@@ -554,11 +546,11 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromTexturizable(
 	int widthPadding = 0;
 	float ratio = (float) screenWidth / screenHeight;
 	if (width > height) {
-		heightPadding = width / ratio - height;
-		height = width / ratio;
+		heightPadding = INT(width / ratio) - height;
+		height = INT(width / ratio);
 	} else {
-		widthPadding = height*ratio - width;
-		width = height * ratio;
+		widthPadding = INT(height*ratio) - width;
+		width = INT(height * ratio);
 	}
 	width += buffer;
 	height += buffer;
@@ -675,7 +667,7 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromTexturizable(
 	string name = "Texturized Control #" + to_string(elementCounter++);
 
 	gfxAsset->loadAsPartOfSheet(shaderResourceView, name.c_str(), Vector2::Zero,
-		Vector2(width - widthPadding - buffer, height - heightPadding - buffer), Vector2::Zero);
+		Vector2(FLOAT(width - widthPadding - buffer), FLOAT(height - heightPadding - buffer)), Vector2::Zero);
 
 	shaderResourceView.Reset();
 	return move(gfxAsset);
@@ -769,8 +761,8 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 	ZeroMemory(&textureViewport, sizeof(D3D11_VIEWPORT));
 	textureViewport.TopLeftX = 0;
 	textureViewport.TopLeftY = 0;
-	textureViewport.Width = screenWidth;
-	textureViewport.Height = screenHeight;
+	textureViewport.Width = (float) screenWidth;
+	textureViewport.Height = (float) screenHeight;
 	textureViewport.MinDepth = 0.0f;
 	textureViewport.MaxDepth = 1.0f;
 	deviceContext->RSSetViewports(1, &textureViewport);
@@ -796,7 +788,7 @@ unique_ptr<GraphicsAsset> GUIFactory::createTextureFromScreen(
 	string name = "Texturized Screen #" + to_string(screenCounter++);
 	unique_ptr<GraphicsAsset> gfxAsset = make_unique<GraphicsAsset>();
 	gfxAsset->loadAsPartOfSheet(shaderResourceView, name.c_str(), Vector2::Zero,
-		Vector2(screenWidth - buffer, screenHeight - buffer), Vector2::Zero);
+		Vector2((float) screenWidth - buffer, (float) screenHeight - buffer), Vector2::Zero);
 
 	shaderResourceView.Reset();
 	return move(gfxAsset);
@@ -837,8 +829,8 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 		Vector2 origin = Vector2(-1000, -1000);
 		xml_node originNode = spriteNode.child("origin");
 		if (originNode) {
-			origin.x = originNode.attribute("x").as_int();
-			origin.y = originNode.attribute("y").as_int();
+			origin.x = (float) originNode.attribute("x").as_int();
+			origin.y = (float) originNode.attribute("y").as_int();
 		}
 		unique_ptr<GraphicsAsset> guiAsset;
 		guiAsset.reset(new GraphicsAsset());
@@ -887,7 +879,7 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 						string subsetName(oss.str());
 						if (setMap.find(subsetName) == setMap.end()) {
 							// new set
-							setMap[subsetName] = make_shared<AssetSet>(subsetName.c_str());
+							setMap[subsetName] = make_unique<AssetSet>(subsetName.c_str());
 						}
 
 						for (xml_node spriteNode : spritesetNode.children("sprite")) {
@@ -904,7 +896,7 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 					const char_t* spriteName = spriteNode.attribute("name").as_string();
 					if (setMap.find(setName) == setMap.end()) {
 						// new set
-						setMap[setName] = make_shared<AssetSet>(setName);
+						setMap[setName] = make_unique<AssetSet>(setName);
 					}
 					setMap[setName]->addAsset(spriteNode.attribute("name").as_string(),
 						parseSprite(spriteNode, masterAsset->getTexture()));
@@ -916,13 +908,10 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 		for (xml_node animationNode : spritesheetNode.children("animation")) {
 
 			const char_t* name = animationNode.attribute("name").as_string();
-
 			float timePerFrame = animationNode.attribute("timePerFrame").as_float();
 
-			vector<shared_ptr<Frame>> frames;
-			for (xml_node spriteNode = animationNode.child("sprite"); spriteNode;
-				spriteNode = spriteNode.next_sibling("sprite")) {
-
+			vector<unique_ptr<Frame>> frames;
+			for (xml_node spriteNode : animationNode.children("sprite")) {
 
 				RECT rect;
 				rect.left = spriteNode.attribute("x").as_int();
@@ -932,10 +921,10 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 				Vector2 origin = Vector2(0, 0);
 				xml_node originNode = spriteNode.child("origin");
 				if (originNode) {
-					origin.x = originNode.attribute("x").as_int();
-					origin.y = originNode.attribute("y").as_int();
+					origin.x = (float) originNode.attribute("x").as_int();
+					origin.y = (float) originNode.attribute("y").as_int();
 				}
-				shared_ptr<Frame> frame;
+				unique_ptr<Frame> frame;
 				if (spriteNode.attribute("frameTime"))
 					frame.reset(new Frame(rect, origin,
 						spriteNode.attribute("frameTime").as_float()));
@@ -946,7 +935,7 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 			}
 
 			unique_ptr<Animation> animationAsset;
-			animationAsset.reset(new Animation(masterAsset->getTexture(), frames, name));
+			animationAsset.reset(new Animation(masterAsset->getTexture(), move(frames), name));
 			animationMap[name] = move(animationAsset);
 		}
 
@@ -957,7 +946,7 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 				string setName = spriteNode.attribute("set").as_string();
 				if (setMap.find(setName) == setMap.end()) {
 					// new set
-					setMap[setName] = make_shared<AssetSet>(setName.c_str());
+					setMap[setName] = make_unique<AssetSet>(setName.c_str());
 				}
 				setMap[setName]->addAsset(name,
 					parseSprite(spriteNode, masterAsset->getTexture()));
@@ -965,7 +954,7 @@ bool GUIFactory::getGUIAssetsFromXML(xml_node assetNode) {
 				string setName = spritesheetNode.attribute("set").as_string();
 				if (setMap.find(setName) == setMap.end()) {
 					// new set
-					setMap[setName] = make_shared<AssetSet>(setName.c_str());
+					setMap[setName] = make_unique<AssetSet>(setName.c_str());
 				}
 				setMap[setName]->addAsset(name,
 					parseSprite(spriteNode, masterAsset->getTexture()));
@@ -985,17 +974,17 @@ unique_ptr<GraphicsAsset> GUIFactory::parseSprite(xml_node spriteNode,
 	const char_t* spritename = spriteNode.attribute("name").as_string();
 
 	// pos in spritesheet
-	Vector2 position = Vector2(spriteNode.attribute("x").as_int() + xOffset,
-		spriteNode.attribute("y").as_int() + yOffset);
+	Vector2 position = Vector2(FLOAT(spriteNode.attribute("x").as_int() + xOffset),
+		FLOAT(spriteNode.attribute("y").as_int() + yOffset));
 	// dimensions in spritesheet
-	Vector2 size = Vector2(spriteNode.attribute("width").as_int(),
-		spriteNode.attribute("height").as_int());
+	Vector2 size = Vector2((float) spriteNode.attribute("width").as_int(),
+		(float) spriteNode.attribute("height").as_int());
 
-	Vector2 origin = Vector2(-1000, -1000); // this indicates to GfxAsset that origin should be center
+	Vector2 origin = Vector2(-1000.0f, -1000.0f); // this indicates to GfxAsset that origin should be center
 	xml_node originNode = spriteNode.child("origin");
 	if (originNode) {
-		origin.x = originNode.attribute("x").as_int();
-		origin.y = originNode.attribute("y").as_int();
+		origin.x = (float) originNode.attribute("x").as_int();
+		origin.y = (float) originNode.attribute("y").as_int();
 	}
 
 	unique_ptr<GraphicsAsset> spriteAsset = make_unique<GraphicsAsset>();

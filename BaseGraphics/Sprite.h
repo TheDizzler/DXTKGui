@@ -15,16 +15,25 @@ struct HitArea {
 
 	bool collision(_In_ const HitArea* other) const {
 
-
 		if (position.x < other->position.x + other->size.x
 			&& position.x + size.x > other->position.x
 			&& position.y < other->position.y + other->size.y
 			&& position.y + size.y > other->position.y) {
 
 			return true;
-
 		}
+		return false;
+	}
 
+	bool collision(_In_ const HitArea& other) const {
+
+		if (position.x < other.position.x + other.size.x
+			&& position.x + size.x > other.position.x
+			&& position.y < other.position.y + other.size.y
+			&& position.y + size.y > other.position.y) {
+
+			return true;
+		}
 		return false;
 	}
 

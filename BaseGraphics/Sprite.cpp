@@ -52,7 +52,7 @@ void Sprite::load(GraphicsAsset* const graphicsAsset) {
 	sourceRect = graphicsAsset->getSourceRect();
 
 	hitArea.position = Vector2(position.x - origin.x, position.y - origin.y);
-	hitArea.size = Vector2(width, height);
+	hitArea.size = Vector2((float) width, (float) height);
 }
 
 
@@ -113,11 +113,11 @@ const float Sprite::getLayerDepth() const {
 }
 
 const int Sprite::getWidth() const {
-	return hitArea.size.x;
+	return (int) hitArea.size.x;
 }
 
 const int Sprite::getHeight() const {
-	return hitArea.size.y;
+	return (int) hitArea.size.y;
 }
 
 
@@ -138,13 +138,13 @@ void Sprite::setDimensions(const Vector2& pos, const Vector2& size) {
 
 void Sprite::setSize(const Vector2& size) {
 
-	width = size.x;
-	height = size.y;
+	width = (UINT) size.x;
+	height = (UINT) size.y;
 
 	sourceRect.left = 0;
 	sourceRect.top = 0;
-	sourceRect.bottom = size.y;
-	sourceRect.right = size.x;
+	sourceRect.bottom = (long) size.y;
+	sourceRect.right = (long) size.x;
 
 	hitArea.position = Vector2(position.x - origin.x *scale.x, position.y - origin.y*scale.y);
 	hitArea.size = Vector2(size.x*scale.x, size.y*scale.y);
@@ -165,7 +165,7 @@ void Sprite::setOrigin(const Vector2& orgn) {
 }
 
 void Sprite::setOriginCenter() {
-	origin = Vector2(getWidth() / 2, getHeight() / 2);
+	origin = Vector2((float) getWidth() / 2, (float) getHeight() / 2);
 	hitArea.position = Vector2(position.x - origin.x*scale.x,
 		position.y - origin.y*scale.y);
 }

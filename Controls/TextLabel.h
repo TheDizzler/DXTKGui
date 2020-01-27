@@ -14,6 +14,8 @@ public:
 		wstring text, const pugi::char_t* font, bool useTexture = true);
 
 	virtual ~TextLabel();
+
+	virtual void forceRefresh() override;
 	virtual void reloadGraphicsAsset() override;
 
 	virtual bool update(double deltaTime) override;
@@ -51,10 +53,10 @@ public:
 	//virtual void setText(wstring text, bool useTexture);
 	virtual const wchar_t* getText() override;
 	/* Calculated with scaling. */
-	virtual const Vector2& XM_CALLCONV measureString() const override;
+	virtual const Vector2 XM_CALLCONV measureString() const override;
 	/* Convenience method when a FontSet is not available.
 		Scaling is not considered. */
-	const Vector2& XM_CALLCONV measureString(wstring string) const;
+	const Vector2 XM_CALLCONV measureString(wstring string) const;
 
 
 	virtual bool clicked() override;

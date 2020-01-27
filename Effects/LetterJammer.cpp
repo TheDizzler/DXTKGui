@@ -108,10 +108,10 @@ void LetterJammer::setText(wstring text) {
 
 
 		RECT rect;
-		rect.left = ((Vector2) font->measureString(label.substr(0, i).c_str())).x + 1;
+		rect.left = (long) ((Vector2) font->measureString(label.substr(0, i).c_str())).x + 1;
 		rect.top = 0; // if multiline text allowed something will have to be done about this
-		rect.right = stringMeasurement.x;
-		rect.bottom = ceil(stringMeasurement.y);
+		rect.right = (long) stringMeasurement.x;
+		rect.bottom = (long) ceil(stringMeasurement.y);
 
 		Vector2 pos = position;
 		pos.x += rect.left;
@@ -160,7 +160,7 @@ bool LetterJammer::isDone() {
 void LetterJammer::reset() {
 	done = false;
 	running = false;
-	if (/*refreshTexture && */label.size() > 0) {
+	if (label.size() > 0) {
 		gfxAsset = texturize();
 		textTexture = gfxAsset->getTexture();
 		refreshTexture = false;
@@ -200,7 +200,7 @@ void DragonJammer::initialize(vector<LetterJam>& jams, LPVOID pvoid) {
 bool DragonJammer::run(double deltaTime, vector<LetterJam>& letterJams) {
 	for (int i = 0; i < letterJams.size(); ++i) {
 		times[i] += deltaTime*i;
-		letterJams[i].position.y = position.y + amplitude * sin(speed * times[i]);
+		letterJams[i].position.y = position.y + FLOAT(amplitude * sin(speed * times[i]));
 	}
 	return false;
 }
@@ -260,7 +260,7 @@ bool PulsatingJammer::run(double deltaTime, vector<LetterJam>& jams) {
 
 		jams[i].position.x += nudgeBy / horizontalAdjustment;
 		int oldWidth = jams[i].getWidth();
-		float scl = scaleOffset + amplitude*sin(speed * times[i]);
+		float scl = scaleOffset + FLOAT(amplitude*sin(speed * times[i]));
 		jams[i].scale = Vector2(scl, scl);
 		int newWidth = jams[i].getWidth();
 		nudgeBy += newWidth - oldWidth;
@@ -277,7 +277,6 @@ ColorJammer::~ColorJammer() {
 	times.clear();
 	startColors.clear();
 	endColors.clear();
-	//states.clear();
 }
 
 void ColorJammer::initialize(vector<LetterJam>& jams, LPVOID pvoid) {
@@ -331,29 +330,8 @@ bool ColorJammer::run(double deltaTime, vector<LetterJam>& jams) {
 
 	for (int i = 0; i < jams.size(); ++i) {
 		times[i] += deltaTime;
-		//Color endColor = jams[i].tint;
-		/*switch (states[i]) {
-		case Red:
-		endColor.R(1);
-		break;
-		case RedReverse:
-		endColor.R(0);
-		break;
-		case Green:
-		endColor.G(1);
-		break;
-		case GreenReverse:
-		endColor.G(0);
-		break;
-		case Blue:
-		endColor.B(1);
-		break;
-		case BlueReverse:
-		endColor.B(0);
-		break;
-		}*/
 		jams[i].tint = Color::Lerp(startColors[i], endColors[i],
-			times[i] / speedChange);
+			(float) times[i] / speedChange);
 		if (times[i] >= speedChange) {
 			times[i] = 0;
 			if (jams[i].tint.x > 1)
@@ -397,12 +375,8 @@ bool ColorJammer::run(double deltaTime, vector<LetterJam>& jams) {
 						break;
 				}
 			}
-			//while (newState == states[i])
 			while (newColor == jams[i].tint);
 
-
-
-			//states[i] = newState;
 			endColors[i] = newColor;
 			startColors[i] = jams[i].tint;
 		}
@@ -418,12 +392,15 @@ RPGDamageJammer::RPGDamageJammer(int fallD, int speed, float fade) {
 	fadeOutTime = fade;
 }
 
+RPGDamageJammer::~RPGDamageJammer() {
+}
+
 const double START_DELAY = .125;
 void RPGDamageJammer::initialize(vector<LetterJam>& jams, LPVOID pvoid) {
 
 	times.clear();
 
-	basePosition = jams[0].position.y;
+	basePosition = (int) jams[0].position.y;
 	startTint = jams[0].tint;
 	endTint = startTint;
 	endTint.w = 0;
@@ -445,15 +422,15 @@ bool RPGDamageJammer::run(double deltaTime, vector<LetterJam>& jams) {
 
 			if (times[i] >= FADE_TIME * 2) {
 				jams[i].tint = Color::Lerp(startTint, endTint,
-					times[i] / (FADE_TIME + fadeOutTime));
+					FLOAT(times[i] / (FADE_TIME + fadeOutTime)));
 				if (i == jams.size() - 1 && jams[jams.size() - 1].tint.w < 0)
 					return true;
 			} else if (times[i] >= FADE_TIME) {
-				jams[i].position.y = basePosition;
+				jams[i].position.y = (float) basePosition;
 			} else {
 				jams[i].tint.w = 1;
-				jams[i].position.y = (basePosition - fallDistance)
-					+ (fallDistance / times[i])*sin(-fallSpeed * times[i]);
+				jams[i].position.y = FLOAT((basePosition - fallDistance)
+					+ (fallDistance / times[i]) * sin(-fallSpeed * times[i]));
 			}
 		}
 	}

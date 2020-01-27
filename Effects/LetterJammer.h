@@ -6,12 +6,12 @@ class LetterJam {
 public:
 
 	int getWidth() {
-		return (sourceRECT.right - sourceRECT.left) * scale.x;
+		return INT((sourceRECT.right - sourceRECT.left) * scale.x);
 	}
 	Vector2 position;
 	RECT sourceRECT;
 	Color tint = Color(1, 1, 1, 1);
-	float rotation = 0.0;
+	float rotation = 0.0f;
 	Vector2 origin = Vector2(0, 0);
 	Vector2 scale = Vector2(1, 1);
 	SpriteEffects spriteEffects = SpriteEffects_None;
@@ -31,6 +31,7 @@ class DragonJammer : public JammerEffect {
 public:
 	DragonJammer(int amplitude, float speed);
 	virtual ~DragonJammer();
+
 	/* PVOID must be a Vector2. */
 	virtual void initialize(vector<LetterJam>& letterJams, LPVOID pvoid);
 	virtual bool run(double deltaTime, vector<LetterJam>& letterJams) override;
@@ -49,6 +50,7 @@ public:
 	PulsatingJammer(float amplitude = .125, float scaleOffset = 1,
 		float speed = 1, int horizontalAdjustment = 2);
 	virtual ~PulsatingJammer();
+
 	virtual void initialize(vector<LetterJam>& letterJams, LPVOID pvoid);
 	virtual bool run(double deltaTime, vector<LetterJam>& letterJams) override;
 
@@ -88,6 +90,8 @@ private:
 class RPGDamageJammer : public JammerEffect {
 public:
 	RPGDamageJammer(int fallDistance, int fallSpeed, float fadeOutTime);
+	virtual ~RPGDamageJammer();
+
 	virtual void initialize(vector<LetterJam>& letterJams, LPVOID pvoid) override;
 	virtual bool run(double deltaTime, vector<LetterJam>& letterJams) override;
 

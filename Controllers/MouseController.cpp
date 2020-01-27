@@ -45,7 +45,7 @@ void MouseController::saveMouseState() {
 
 	lastState = state;
 	state = mouse.GetState();
-	setPosition(Vector2(state.x, state.y));
+	setPosition(Vector2((float) state.x, (float) state.y));
 	// This is the absolute position of the mouse relative
 	// to the upper-left corner of the window
 
